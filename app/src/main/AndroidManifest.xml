@@ -8,8 +8,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".ui.activity.FlActivity"></activity>
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".ui.activity.SsActivity"></activity>
+        <activity android:name=".ui.activity.XqActivity" />
+        <activity android:name=".ui.activity.JrgxActivity" />
+        <activity android:name=".ui.activity.WjjpActivity" />
+        <activity android:name=".ui.activity.PhbActivity" />
+        <activity android:name=".ui.activity.FlActivity" />
         <activity android:name=".ui.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="9dp"
+    android:background="#FAFAFA">
+    <LinearLayout
+        android:layout_width="210dp"
+        android:layout_height="105dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="54dp"
+            android:layout_height="75dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="16dp"
+            android:src="@mipmap/a"
+            android:id="@+id/kd_book"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="7dp">
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="13dp"
+                android:src="@mipmap/home_kd_1"
+                android:id="@+id/kd_top"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:textSize="12sp"
+                android:textColor="#2F3236"
+                android:text="冰与火之歌"
+                android:textStyle="bold"
+                android:layout_below="@+id/kd_top"
+                android:id="@+id/kd_name"/>
+
+            <TextView
+                android:id="@+id/kd_rd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="热度："
+                android:textColor="#828486"
+                android:textSize="11sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toRightOf="@+id/kd_rd"
+                    android:text="123456"
+                    android:textColor="#E8564E"
+                    android:textSize="11sp"
+                    android:id="@+id/kd_num"/>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

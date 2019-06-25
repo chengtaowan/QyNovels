@@ -7,8 +7,10 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.jdhd.qynovels.R;
@@ -19,7 +21,7 @@ import com.jdhd.qynovels.ui.fragment.FlFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlActivity extends AppCompatActivity implements Fl_Title_Adapter.onTitleClick{
+public class FlActivity extends AppCompatActivity implements Fl_Title_Adapter.onTitleClick, View.OnClickListener {
      private ImageView back,search;
      private RecyclerView rv;
      private List<Fl_Title_Bean> list=new ArrayList<>();
@@ -34,6 +36,8 @@ public class FlActivity extends AppCompatActivity implements Fl_Title_Adapter.on
     private void init() {
         back=findViewById(R.id.fl_back);
         search=findViewById(R.id.fl_ss);
+        back.setOnClickListener(this);
+        search.setOnClickListener(this);
         rv=findViewById(R.id.fl_rv);
         LinearLayoutManager manager=new LinearLayoutManager(this);
         manager.setOrientation(RecyclerView.VERTICAL);
@@ -59,5 +63,16 @@ public class FlActivity extends AppCompatActivity implements Fl_Title_Adapter.on
         FragmentTransaction transaction=manager.beginTransaction();
         transaction.replace(R.id.rv_fr,fragmentList.get(index));
         transaction.commit();
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(R.id.fl_back==view.getId()){
+            finish();
+        }
+        else if(R.id.fl_ss==view.getId()){
+            Intent intent=new Intent(FlActivity.this,SsActivity.class);
+            startActivity(intent);
+        }
     }
 }

@@ -14,14 +14,14 @@ import android.widget.ImageView;
 import com.google.android.material.tabs.TabLayout;
 import com.jdhd.qynovels.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CaseFragment extends Fragment implements TabLayout.OnTabSelectedListener{
+public class CaseFragment extends Fragment {
 
-    private TabLayout tab;
-    private ImageView search;
-    private ViewPager home_vp;
     public CaseFragment() {
         // Required empty public constructor
     }
@@ -37,32 +37,9 @@ public class CaseFragment extends Fragment implements TabLayout.OnTabSelectedLis
     }
 
     private void init(View view) {
-        tab=view.findViewById(R.id.tab);
-        tab.addTab(tab.newTab().setText("精选"));
-        tab.addTab(tab.newTab().setText("男生"));
-        tab.addTab(tab.newTab().setText("女生"));
-        tab.addTab(tab.newTab().setText("图书"));
-        tab.setSelectedTabIndicatorHeight(0);
-        tab.setOnTabSelectedListener(this);
-        search=view.findViewById(R.id.search);
-        home_vp=view.findViewById(R.id.home_vp);
-        home_vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
+
 
     }
 
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-       home_vp.setCurrentItem(tab.getPosition());
-       
-    }
 
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
-    }
 }

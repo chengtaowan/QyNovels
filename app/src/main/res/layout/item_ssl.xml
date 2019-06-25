@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="100dp"
+            android:src="@mipmap/a"
+            android:id="@+id/ss_book" />
+        <TextView
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="7dp"
+            android:textColor="#2F3236"
+            android:text="挚爱梵高"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_below="@+id/ss_book"
+            android:id="@+id/ss_name" />
+
+        <TextView
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textColor="#828486"
+            android:textSize="11sp"
+            android:text="123656次搜索"
+            android:layout_below="@+id/ss_name"
+            android:id="@+id/ss_num"
+            android:gravity="center"
+            android:layout_marginBottom="15dp" />
+    </RelativeLayout>
+
+
+</LinearLayout>
