@@ -10,7 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.SsActivity"></activity>
+        <activity android:name=".ui.activity.LsActivity"></activity>
+        <activity android:name=".ui.activity.SsActivity" />
         <activity android:name=".ui.activity.XqActivity" />
         <activity android:name=".ui.activity.JrgxActivity" />
         <activity android:name=".ui.activity.WjjpActivity" />

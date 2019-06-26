@@ -19,7 +19,7 @@ import com.jdhd.qynovels.ui.fragment.WodeFragment;
 
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener{
     private RadioGroup rg;
-    private RadioButton rb_case,rb_shop,rb_fl,rb_wd;
+    public static RadioButton rb_case,rb_shop,rb_fl,rb_wd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

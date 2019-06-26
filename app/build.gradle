@@ -32,4 +32,5 @@ dependencies {
     implementation 'com.android.support:design:29.0.0'
     implementation 'com.android.support:recyclerview-v7:29.0.0'
     implementation 'com.youth.banner:banner:1.4.10'
+    implementation 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.3.0'
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="19dp"
+    >
+    <TextView
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:background="#E8564E"
+        android:text="1"
+        android:gravity="center"
+        android:textColor="#fff"
+        android:textSize="10sp"
+        android:id="@+id/ss_rs_num"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#2F3236"
+        android:textSize="14sp"
+        android:text="万历十五年"
+        android:layout_marginLeft="5dp"
+        android:gravity="center_vertical"
+        android:layout_marginTop="2dp"
+        android:id="@+id/ss_rs_name"/>
+
+</LinearLayout>

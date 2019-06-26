@@ -8,7 +8,8 @@
     android:orientation="vertical">
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="-20dp"
         android:background="@mipmap/sj_bg">
     </ImageView>
     <ImageView
@@ -24,72 +25,27 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="18dp"
         android:layout_marginRight="15dp"
-        android:id="@+id/sc_qd"/>
+        android:id="@+id/sj_qd"/>
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@mipmap/sj_ls"
-        android:layout_toLeftOf="@+id/sc_qd"
+        android:layout_toLeftOf="@+id/sj_qd"
         android:layout_marginRight="15dp"
         android:layout_marginTop="18dp"
-        android:id="@+id/sc_ls"/>
+        android:id="@+id/sj_ls"/>
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@mipmap/home_ss"
-        android:layout_toLeftOf="@+id/sc_ls"
+        android:layout_toLeftOf="@+id/sj_ls"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="18dp"/>
-    <LinearLayout
+        android:layout_marginTop="18dp"
+        android:id="@+id/sj_ss"/>
+
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_height="match_parent"
         android:layout_marginTop="44dp"
-        android:background="@drawable/sc_shap"
-        android:orientation="horizontal"
-        >
-        <ImageView
-            android:layout_width="43dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:src="@mipmap/a"
-            android:id="@+id/sc_book"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:paddingLeft="7dp"
-            android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#2F3236"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:text="冰与火之歌"
-                    android:id="@+id/sc_name"/>
-                <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="20dp"
-                    android:src="@mipmap/sj_re"
-                    android:layout_marginLeft="8dp"/>
-            </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="7dp"
-                android:lines="2"
-                android:ellipsize="end"
-                android:text="11111111111111111111111111111111111111111111111111111111111111111111111111111111"
-                android:textColor="#828486"
-                android:textSize="12sp"/>
-        </LinearLayout>
-    </LinearLayout>
+        android:id="@+id/sj_rv"></androidx.recyclerview.widget.RecyclerView>
 </RelativeLayout>

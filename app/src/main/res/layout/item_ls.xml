@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff">
+    <com.mcxtzhang.swipemenulib.SwipeMenuLayout
+        android:layout_height="75dp"
+        android:layout_width="match_parent"
+        android:id="@+id/sml"
+        android:background="#fff">
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="#fff">
+
+            <ImageView
+                android:layout_height="60dp"
+                android:layout_width="43dp"
+                android:src="@mipmap/a"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="15dp"
+                android:id="@+id/ls_book"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:background="#fff">
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/ls_name"
+                android:layout_marginTop="10dp"
+                android:textSize="14sp"
+                android:textColor="#2F3236"
+                android:text="冰与火之歌"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="10sp"
+                android:textColor="#828486"
+                android:text="读到：第一章：标题名"
+                android:id="@+id/ls_zj"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+               android:layout_alignParentBottom="true"
+                android:layout_marginBottom="7dp"
+                android:textSize="12sp"
+                android:textColor="#828486"
+                android:text="今天"
+                android:id="@+id/ls_day"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <Button
+            android:layout_height="match_parent"
+            android:layout_width="100dp"
+            android:id="@+id/ls_del"
+            android:textColor="@android:color/white"
+            android:text="删除"
+            android:background="#E8564E"/>
+    </com.mcxtzhang.swipemenulib.SwipeMenuLayout>
+</LinearLayout>
