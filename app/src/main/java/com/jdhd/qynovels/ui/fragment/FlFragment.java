@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.ui.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,11 +14,12 @@ import android.view.ViewGroup;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.FlAdapter;
+import com.jdhd.qynovels.ui.activity.MorePhbActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FlFragment extends Fragment {
+public class FlFragment extends Fragment implements FlAdapter.onItemClick{
 
     private RecyclerView rv;
     public FlFragment() {
@@ -41,6 +43,12 @@ public class FlFragment extends Fragment {
         rv.setLayoutManager(manager);
         FlAdapter adapter=new FlAdapter(getContext());
         rv.setAdapter(adapter);
+        adapter.setOnItemClick(this);
     }
 
+    @Override
+    public void onFlClick(int index) {
+        Intent intent=new Intent(getContext(), MorePhbActivity.class);
+        startActivity(intent);
+    }
 }

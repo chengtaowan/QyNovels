@@ -15,6 +15,11 @@ import com.jdhd.qynovels.R;
 
 public class Ss_NrAdapter extends RecyclerView.Adapter<Ss_NrAdapter.Ss_NrViewHolder>{
     private Context context;
+    private onItemClick onItemClick;
+
+    public void setOnItemClick(Ss_NrAdapter.onItemClick onItemClick) {
+        this.onItemClick = onItemClick;
+    }
 
     public Ss_NrAdapter(Context context) {
         this.context = context;
@@ -29,7 +34,7 @@ public class Ss_NrAdapter extends RecyclerView.Adapter<Ss_NrAdapter.Ss_NrViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Ss_NrViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull Ss_NrViewHolder holder, final int position) {
         holder.grade.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Oswald-Bold.otf"));
         if(position==9){
             holder.book.setVisibility(View.GONE);
@@ -41,6 +46,12 @@ public class Ss_NrAdapter extends RecyclerView.Adapter<Ss_NrAdapter.Ss_NrViewHol
             holder.fen.setVisibility(View.GONE);
             holder.wj.setVisibility(View.GONE);
         }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onItemClick.onNrClick(position);
+            }
+        });
     }
 
     @Override
@@ -62,5 +73,8 @@ public class Ss_NrAdapter extends RecyclerView.Adapter<Ss_NrAdapter.Ss_NrViewHol
             fen=itemView.findViewById(R.id.gf_fen);
             wj=itemView.findViewById(R.id.gf_wj);
         }
+    }
+    public interface onItemClick{
+        void onNrClick(int index);
     }
 }

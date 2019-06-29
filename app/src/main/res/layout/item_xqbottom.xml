@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff"
+    android:paddingBottom="15dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:background="#FAFAFA"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="免费声明"
+        android:layout_marginTop="23dp"
+        android:layout_marginLeft="15dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#2F3236"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="本书数字版权由***提供并授权发行，所有费用已由我司承担，您可免费阅读。"
+        android:textColor="#ff2f3236"
+        android:textSize="14sp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:lineSpacingExtra="3dp"/>
+</LinearLayout>

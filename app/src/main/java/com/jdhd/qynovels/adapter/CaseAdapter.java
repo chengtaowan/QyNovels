@@ -31,6 +31,11 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private FragmentActivity activity;
     public static final int TYPE_TITLE=0;
     public static final int TYPE_LIST=1;
+    private onItemClick onItemClick;
+
+    public void setOnItemClick(CaseAdapter.onItemClick onItemClick) {
+        this.onItemClick = onItemClick;
+    }
 
     public CaseAdapter(Context context, FragmentActivity activity) {
         this.context = context;
@@ -54,14 +59,13 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         if(holder instanceof TitleViewHolder){
             TitleViewHolder viewHolder= (TitleViewHolder) holder;
             viewHolder.ll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent=new Intent(context, XqActivity.class);
-                    context.startActivity(intent);
+                    onItemClick.onClick(position);
                 }
             });
         }
@@ -129,6 +133,8 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             rv=itemView.findViewById(R.id.sj_rvlist);
         }
     }
-
+    public interface onItemClick{
+        void onClick(int index);
+    }
 
 }

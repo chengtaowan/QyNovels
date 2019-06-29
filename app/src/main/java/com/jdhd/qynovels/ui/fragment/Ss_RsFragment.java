@@ -2,6 +2,7 @@ package com.jdhd.qynovels.ui.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,11 +15,12 @@ import android.view.ViewGroup;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Ss_RsAdapter;
+import com.jdhd.qynovels.ui.activity.XqActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Ss_RsFragment extends Fragment {
+public class Ss_RsFragment extends Fragment implements Ss_RsAdapter.onItemClick{
 
     private RecyclerView rv;
     public Ss_RsFragment() {
@@ -41,6 +43,12 @@ public class Ss_RsFragment extends Fragment {
         rv.setLayoutManager(manager);
         Ss_RsAdapter adapter=new Ss_RsAdapter(getContext());
         rv.setAdapter(adapter);
+        adapter.setOnItemClick(this);
     }
 
+    @Override
+    public void onRsClick(int index) {
+        Intent intent=new Intent(getContext(), XqActivity.class);
+        startActivity(intent);
+    }
 }

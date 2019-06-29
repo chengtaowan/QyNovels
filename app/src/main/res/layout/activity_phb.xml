@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.activity.PhbActivity">
+    tools:context=".ui.activity.PhbActivity"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="false">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="44dp"
@@ -35,6 +37,7 @@
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/phb_vp"></androidx.viewpager.widget.ViewPager>
+        android:id="@+id/phb_vp"
+        android:background="#fff"></androidx.viewpager.widget.ViewPager>
 
 </LinearLayout>

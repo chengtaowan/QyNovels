@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -17,6 +18,7 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.ShopAdapter;
 import com.jdhd.qynovels.ui.fragment.MphbFragment;
 import com.jdhd.qynovels.ui.fragment.WphbFragment;
+import com.jdhd.qynovels.utils.StatusBarUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phb);
+        StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
     }
 
@@ -54,7 +57,9 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        finish();
+        Intent intent=new Intent(PhbActivity.this,MainActivity.class);
+        intent.putExtra("fragment_flag", 2);
+        startActivity(intent);
     }
 
     @Override
@@ -79,5 +84,17 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent=new Intent(PhbActivity.this,MainActivity.class);
+        intent.putExtra("fragment_flag", 2);
+        startActivity(intent);
+    }
 }

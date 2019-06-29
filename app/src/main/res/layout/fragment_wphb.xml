@@ -14,5 +14,6 @@
         android:layout_height="match_parent"
         android:layout_weight="76"
         android:id="@+id/phbw_ll"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical"
+        android:background="#fff"></LinearLayout>
 </LinearLayout>

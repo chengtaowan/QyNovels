@@ -14,6 +14,11 @@ import com.jdhd.qynovels.R;
 
 public class FlAdapter extends RecyclerView.Adapter<FlAdapter.FlViewHolder>{
     private Context context;
+    private onItemClick onItemClick;
+
+    public void setOnItemClick(FlAdapter.onItemClick onItemClick) {
+        this.onItemClick = onItemClick;
+    }
 
     public FlAdapter(Context context) {
         this.context = context;
@@ -28,8 +33,13 @@ public class FlAdapter extends RecyclerView.Adapter<FlAdapter.FlViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FlViewHolder holder, int position) {
-
+    public void onBindViewHolder(@NonNull FlViewHolder holder, final int position) {
+       holder.itemView.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               onItemClick.onFlClick(position);
+           }
+       });
     }
 
     @Override
@@ -47,5 +57,8 @@ public class FlAdapter extends RecyclerView.Adapter<FlAdapter.FlViewHolder>{
             type=itemView.findViewById(R.id.fl_type);
             num=itemView.findViewById(R.id.fl_num);
         }
+    }
+    public interface onItemClick{
+        void onFlClick(int index);
     }
 }

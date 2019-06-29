@@ -17,6 +17,7 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Fl_Title_Adapter;
 import com.jdhd.qynovels.module.Fl_Title_Bean;
 import com.jdhd.qynovels.ui.fragment.FlFragment;
+import com.jdhd.qynovels.utils.StatusBarUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class FlActivity extends AppCompatActivity implements Fl_Title_Adapter.on
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fl);
+        StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
     }
 
@@ -68,11 +70,28 @@ public class FlActivity extends AppCompatActivity implements Fl_Title_Adapter.on
     @Override
     public void onClick(View view) {
         if(R.id.fl_back==view.getId()){
-            finish();
+            Intent intent=new Intent(FlActivity.this,MainActivity.class);
+            intent.putExtra("fragment_flag", 2);
+            startActivity(intent);
         }
         else if(R.id.fl_ss==view.getId()){
             Intent intent=new Intent(FlActivity.this,SsActivity.class);
+            intent.putExtra("ss",3);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent=new Intent(FlActivity.this,MainActivity.class);
+        intent.putExtra("fragment_flag", 2);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
     }
 }

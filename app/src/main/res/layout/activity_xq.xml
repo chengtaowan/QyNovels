@@ -1,13 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.XqActivity">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="详情"
+    tools:context=".ui.activity.XqActivity"
+    >
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:src="@mipmap/a"
+        android:scaleType="fitXY"
+        android:id="@+id/xq_bj"
+        android:layout_marginTop="-60dp"
         />
-</LinearLayout>
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:id="@+id/xq_sv">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/xq_ll">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                android:orientation="vertical"
+                android:id="@+id/xq_rl">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="69dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/xq_book"
+                        android:layout_width="72dp"
+                        android:layout_height="100dp"
+                        android:layout_marginLeft="15dp"
+                        android:src="@mipmap/a" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="11dp"
+                        android:layout_marginBottom="22dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/xq_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="冰与火之歌权力的游戏"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="22dp"
+                                android:text="8.5"
+                                android:textColor="#FFFFFF"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:id="@+id/xq_num"/>
+                            <com.example.xlhratingbar_lib.XLHRatingBar
+                            android:id="@+id/xq_xx"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="5dp"></com.example.xlhratingbar_lib.XLHRatingBar>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="9dp"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/xq_author"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:text="乔治.马丁"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:gravity="center_vertical"
+                                android:text="【著】"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="6dp"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/xq_finishtype"
+                                android:layout_width="40dp"
+                                android:layout_height="18dp"
+                                android:background="@drawable/shap_xq"
+                                android:gravity="center"
+                                android:text="连载中"
+                                android:textColor="#fff"
+                                android:textSize="9sp" />
+                            <TextView
+                                android:id="@+id/xq_zs"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="6dp"
+                                android:text="1234万字"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginBottom="55dp">
+                <include layout="@layout/item_xqtop"/>
+                <include layout="@layout/item_xqcenter"/>
+                <include layout="@layout/item_xqbottom"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:id="@+id/xq_jrsj"
+            android:background="@drawable/shap_jrsj"
+            >
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="14dp"
+                android:src="@mipmap/xqy_jrsj"
+                android:layout_gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="加入书架"
+                android:textColor="#2F3236"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginLeft="2dp"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_alignParentRight="true"
+            android:background="#E8564E"
+            android:text="免费阅读图书"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:id="@+id/xq_yd"/>
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/xq_back"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="30dp"
+        android:src="@mipmap/back_b" />
+    <!--<androidx.appcompat.widget.Toolbar-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="48dp"-->
+        <!--android:background="#000"></androidx.appcompat.widget.Toolbar>-->
+</RelativeLayout>

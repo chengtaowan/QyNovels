@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.ui.fragment;
 
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Ss_LxAdapter;
+import com.jdhd.qynovels.ui.activity.XqActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Ss_LxFragment extends Fragment {
+public class Ss_LxFragment extends Fragment implements Ss_LxAdapter.onItemClick{
 
     private RecyclerView rv;
     private List<String> list=new ArrayList<>();
@@ -55,6 +57,12 @@ public class Ss_LxFragment extends Fragment {
         rv.addItemDecoration(did);
         Ss_LxAdapter adapter=new Ss_LxAdapter(getContext(),list);
         rv.setAdapter(adapter);
+        adapter.setOnItemClick(this);
     }
 
+    @Override
+    public void onLxClick(int index) {
+        Intent intent=new Intent(getContext(), XqActivity.class);
+        startActivity(intent);
+    }
 }

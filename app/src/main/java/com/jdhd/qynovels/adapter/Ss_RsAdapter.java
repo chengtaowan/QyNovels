@@ -14,6 +14,11 @@ import com.jdhd.qynovels.R;
 
 public class Ss_RsAdapter extends RecyclerView.Adapter<Ss_RsAdapter.Ss_RsViewHolder>{
     private Context context;
+    private onItemClick onItemClick;
+
+    public void setOnItemClick(Ss_RsAdapter.onItemClick onItemClick) {
+        this.onItemClick = onItemClick;
+    }
 
     public Ss_RsAdapter(Context context) {
         this.context = context;
@@ -28,7 +33,7 @@ public class Ss_RsAdapter extends RecyclerView.Adapter<Ss_RsAdapter.Ss_RsViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Ss_RsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull Ss_RsViewHolder holder, final int position) {
         if(position==1){
             holder.num.setText("6");
             holder.num.setTextColor(Color.parseColor("#828486"));
@@ -74,6 +79,12 @@ public class Ss_RsAdapter extends RecyclerView.Adapter<Ss_RsAdapter.Ss_RsViewHol
             holder.num.setTextColor(Color.parseColor("#828486"));
             holder.num.setBackgroundColor(Color.parseColor("#FAFAFA"));
         }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onItemClick.onRsClick(position);
+            }
+        });
     }
 
     @Override
@@ -88,5 +99,8 @@ public class Ss_RsAdapter extends RecyclerView.Adapter<Ss_RsAdapter.Ss_RsViewHol
             num=itemView.findViewById(R.id.ss_rs_num);
             name=itemView.findViewById(R.id.ss_rs_name);
         }
+    }
+    public interface onItemClick{
+        void onRsClick(int index);
     }
 }

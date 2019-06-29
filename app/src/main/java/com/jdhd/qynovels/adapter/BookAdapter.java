@@ -119,6 +119,16 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 @Override
                 public void onClick(View view) {
                     Intent intent=new Intent(context, XqActivity.class);
+                    intent.putExtra("xq",2);
+                    if(type==1){
+                        intent.putExtra("lx",2);
+                    }
+                    else if(type==2){
+                        intent.putExtra("lx",3);
+                    }
+                    else if(type==3){
+                        intent.putExtra("lx",4);
+                    }
                     context.startActivity(intent);
                 }
             });
@@ -215,18 +225,49 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     @Override
     public void onSsclick(int index) {
         Intent intent=new Intent(context, XqActivity.class);
+        intent.putExtra("xq",2);
+        if(type==1){
+            intent.putExtra("lx",2);
+        }
+        else if(type==2){
+            intent.putExtra("lx",3);
+        }
+        else if(type==3){
+            intent.putExtra("lx",4);
+        }
+
         context.startActivity(intent);
     }
 
     @Override
     public void onGfclick(int index) {
         Intent intent=new Intent(context, XqActivity.class);
+        intent.putExtra("xq",2);
+        if(type==1){
+            intent.putExtra("lx",2);
+        }
+        else if(type==2){
+            intent.putExtra("lx",3);
+        }
+        else if(type==3){
+            intent.putExtra("lx",4);
+        }
         context.startActivity(intent);
     }
 
     @Override
     public void onXsclick(int index) {
         Intent intent=new Intent(context, XqActivity.class);
+        intent.putExtra("xq",2);
+        if(type==1){
+            intent.putExtra("lx",2);
+        }
+        else if(type==2){
+            intent.putExtra("lx",3);
+        }
+        else if(type==3){
+            intent.putExtra("lx",4);
+        }
         context.startActivity(intent);
     }
 

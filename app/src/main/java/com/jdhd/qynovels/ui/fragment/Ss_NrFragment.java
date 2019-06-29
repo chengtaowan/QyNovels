@@ -2,6 +2,7 @@ package com.jdhd.qynovels.ui.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,11 +15,12 @@ import android.view.ViewGroup;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Ss_NrAdapter;
+import com.jdhd.qynovels.ui.activity.XqActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Ss_NrFragment extends Fragment {
+public class Ss_NrFragment extends Fragment implements Ss_NrAdapter.onItemClick{
 
     private RecyclerView rv;
     public Ss_NrFragment() {
@@ -41,6 +43,12 @@ public class Ss_NrFragment extends Fragment {
         rv.setLayoutManager(manager);
         Ss_NrAdapter adapter=new Ss_NrAdapter(getContext());
         rv.setAdapter(adapter);
+        adapter.setOnItemClick(this);
     }
 
+    @Override
+    public void onNrClick(int index) {
+        Intent intent=new Intent(getContext(), XqActivity.class);
+        startActivity(intent);
+    }
 }

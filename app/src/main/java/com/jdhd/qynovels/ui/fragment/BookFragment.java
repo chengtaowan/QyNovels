@@ -1,8 +1,11 @@
 package com.jdhd.qynovels.ui.fragment;
 
 
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +23,11 @@ import com.jdhd.qynovels.adapter.BookAdapter;
 public class BookFragment extends Fragment {
 
     private RecyclerView rv;
+    private  int lastOffset;//距离
+
+    private  int lastPosition;//第几个item
+
+    private SharedPreferences sharedPreferences;
     public BookFragment() {
         // Required empty public constructor
     }
@@ -40,6 +48,75 @@ public class BookFragment extends Fragment {
         rv.setLayoutManager(manager);
         BookAdapter adapter=new BookAdapter(getContext(),0,3);
         rv.setAdapter(adapter);
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(recyclerView.getLayoutManager() !=null) {
+                    getPositionAndOffset();
+                }
+            }
+        });
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        getPositionAndOffset();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        scrollToPosition();
+    }
+
+    private void scrollToPosition() {
+
+        sharedPreferences= getContext().getSharedPreferences("key", Activity.MODE_PRIVATE);
+
+        lastOffset=sharedPreferences.getInt("lastOffset",0);
+
+        lastPosition=sharedPreferences.getInt("lastPosition",0);
+
+        if(rv.getLayoutManager() !=null&&lastPosition>=0) {
+
+            ((LinearLayoutManager)rv.getLayoutManager()).scrollToPositionWithOffset(lastPosition,lastOffset);
+
+        }
+
+    }
+
+
+    private  void getPositionAndOffset() {
+
+        LinearLayoutManager layoutManager = (LinearLayoutManager)rv.getLayoutManager();
+
+//获取可视的第一个view
+
+        View topView = layoutManager.getChildAt(0);
+
+        if(topView !=null) {
+
+//获取与该view的顶部的偏移量
+
+            lastOffset= topView.getTop();
+
+//得到该View的数组位置
+
+            lastPosition= layoutManager.getPosition(topView);
+
+            sharedPreferences= getContext().getSharedPreferences("key", Activity.MODE_PRIVATE);
+
+            SharedPreferences.Editor editor =sharedPreferences.edit();
+
+            editor.putInt("lastOffset",lastOffset);
+
+            editor.putInt("lastPosition",lastPosition);
+
+            editor.commit();
+
+        }
+
+    }
 }

@@ -14,5 +14,5 @@
         android:layout_weight="76"
         android:id="@+id/phbm_ll"
         android:orientation="vertical"
-        ></LinearLayout>
+        android:background="#fff"></LinearLayout>
 </LinearLayout>

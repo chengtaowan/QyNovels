@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CaseFragment extends Fragment implements View.OnClickListener{
+public class CaseFragment extends Fragment implements View.OnClickListener,CaseAdapter.onItemClick{
     private ImageView ss,ls,qd;
     private RecyclerView rv;
     private List<BookBean> list=new ArrayList<>();
@@ -61,6 +61,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener{
       rv.setLayoutManager(manager);
       CaseAdapter adapter=new CaseAdapter(getContext(),getActivity());
       rv.setAdapter(adapter);
+      adapter.setOnItemClick(this);
     }
 
 
@@ -68,15 +69,24 @@ public class CaseFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         if(R.id.sj_ss==view.getId()){
             Intent intent=new Intent(getActivity(), SsActivity.class);
+            intent.putExtra("ss",1);
             startActivity(intent);
         }
         else if(R.id.sj_ls==view.getId()){
             Intent intent=new Intent(getActivity(), LsActivity.class);
+            intent.putExtra("ls",1);
             startActivity(intent);
         }
         else if(R.id.sj_qd==view.getId()){
             Intent intent=new Intent(getActivity(), SsActivity.class);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onClick(int index) {
+        Intent intent=new Intent(getActivity(),XqActivity.class);
+        intent.putExtra("xq",1);
+        startActivity(intent);
     }
 }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.MorePhbActivity"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="false"
+    android:background="#fff"
+    android:orientation="vertical"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#fff">
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25sp"
+            android:src="@mipmap/back_h"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/xs_back"/>
+
+        <TextView
+            android:id="@+id/more_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="新书速递"
+            android:textColor="#2F3236"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#FAFAFA"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/xs_rv"></androidx.recyclerview.widget.RecyclerView>
+</LinearLayout>

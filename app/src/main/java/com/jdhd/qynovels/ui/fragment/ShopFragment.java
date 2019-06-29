@@ -1,13 +1,17 @@
 package com.jdhd.qynovels.ui.fragment;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +36,11 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
     private ImageView search;
     private ViewPager home_vp;
     private List<Fragment> list=new ArrayList<>();
+    private Context context;
+    private int type;
+
     public ShopFragment() {
-        // Required empty public constructor
+
     }
 
 
@@ -43,6 +50,8 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_shop, container, false);
         init(view);
+        Intent intent=getActivity().getIntent();
+        type=intent.getIntExtra("lx",1);
         return view;
     }
     private void init(View view) {
@@ -65,6 +74,24 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
         ShopAdapter adapter=new ShopAdapter(getChildFragmentManager(),list);
         home_vp.setAdapter(adapter);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        changeFragment();
+
+    }
+    private void changeFragment(){
+        if(type==2){
+           home_vp.setCurrentItem(1);
+        }
+        else if(type==3){
+            home_vp.setCurrentItem(2);
+        }
+        else if(type==4){
+            home_vp.setCurrentItem(3);
+        }
     }
 
     @Override
@@ -92,6 +119,9 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
     @Override
     public void onClick(View view) {
         Intent intent=new Intent(getContext(), SsActivity.class);
+        intent.putExtra("ss",2);
         startActivity(intent);
     }
+
+
 }

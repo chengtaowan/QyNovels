@@ -3,12 +3,9 @@ package com.jdhd.qynovels.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.ui.activity.FlActivity;
-import com.jdhd.qynovels.ui.activity.JrgxActivity;
+import com.jdhd.qynovels.ui.activity.XssdActivity;
 import com.jdhd.qynovels.ui.activity.PhbActivity;
 import com.jdhd.qynovels.ui.activity.WjjpActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
@@ -205,7 +202,7 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            context.startActivity(intent);
        }
        else if(R.id.home_jrgx==view.getId()){
-           Intent intent=new Intent(context, JrgxActivity.class);
+           Intent intent=new Intent(context, XssdActivity.class);
            context.startActivity(intent);
        }
     }
@@ -218,6 +215,7 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
         }
         else{
             Intent intent=new Intent(context, XqActivity.class);
+            intent.putExtra("xq",2);
             context.startActivity(intent);
         }
     }
@@ -225,24 +223,28 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
     @Override
     public void onGfclick(int index) {
         Intent intent=new Intent(context, XqActivity.class);
+        intent.putExtra("xq",2);
         context.startActivity(intent);
     }
 
     @Override
     public void onKdclick(int index) {
         Intent intent=new Intent(context, XqActivity.class);
+        intent.putExtra("xq",2);
         context.startActivity(intent);
     }
 
     @Override
     public void onSsclick(int index) {
         Intent intent=new Intent(context, XqActivity.class);
+        intent.putExtra("xq",2);
         context.startActivity(intent);
     }
 
     @Override
     public void onXsclick(int index) {
         Intent intent=new Intent(context, XqActivity.class);
+        intent.putExtra("xq",2);
         context.startActivity(intent);
     }
 

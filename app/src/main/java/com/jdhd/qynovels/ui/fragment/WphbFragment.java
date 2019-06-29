@@ -59,7 +59,7 @@ public class WphbFragment extends Fragment implements Fl_Title_Adapter.onTitleCl
         rv.setAdapter(adapter);
         adapter.setOnTitleClick(this);
         for(int i=0;i<list.size();i++){
-            fragmentList.add(new FlFragment());
+            fragmentList.add(new PhbFragment());
         }
         FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
         FragmentTransaction transaction=fragmentManager.beginTransaction();

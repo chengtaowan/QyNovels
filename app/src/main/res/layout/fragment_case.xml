@@ -5,11 +5,12 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragment.CaseFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#fff">
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="66dp"
-        android:layout_marginTop="-20dp"
+        android:layout_height="105dp"
+        android:layout_marginTop="-40dp"
         android:background="@mipmap/sj_bg">
     </ImageView>
     <ImageView
@@ -17,13 +18,13 @@
         android:layout_height="16dp"
         android:src="@mipmap/sj_logo"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="18dp"/>
+        android:layout_marginTop="38dp"/>
     <ImageView
         android:layout_width="35dp"
         android:layout_height="20dp"
         android:src="@mipmap/sj_qd"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="38dp"
         android:layout_marginRight="15dp"
         android:id="@+id/sj_qd"/>
     <ImageView
@@ -32,7 +33,7 @@
         android:src="@mipmap/sj_ls"
         android:layout_toLeftOf="@+id/sj_qd"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="38dp"
         android:id="@+id/sj_ls"/>
     <ImageView
         android:layout_width="20dp"
@@ -40,12 +41,12 @@
         android:src="@mipmap/home_ss"
         android:layout_toLeftOf="@+id/sj_ls"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="38dp"
         android:id="@+id/sj_ss"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="64dp"
         android:id="@+id/sj_rv"></androidx.recyclerview.widget.RecyclerView>
 </RelativeLayout>

@@ -17,6 +17,11 @@ import java.util.List;
 public class Ss_LxAdapter extends RecyclerView.Adapter<Ss_LxAdapter.Ss_LxViewHolder>{
     private Context context;
     private List<String> list;
+    private onItemClick onItemClick;
+
+    public void setOnItemClick(Ss_LxAdapter.onItemClick onItemClick) {
+        this.onItemClick = onItemClick;
+    }
 
     public Ss_LxAdapter(Context context, List<String> list) {
         this.context = context;
@@ -32,9 +37,15 @@ public class Ss_LxAdapter extends RecyclerView.Adapter<Ss_LxAdapter.Ss_LxViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Ss_LxViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull Ss_LxViewHolder holder, final int position) {
 
        holder.tex.setText(list.get(position));
+       holder.itemView.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               onItemClick.onLxClick(position);
+           }
+       });
     }
 
     @Override
@@ -48,5 +59,8 @@ public class Ss_LxAdapter extends RecyclerView.Adapter<Ss_LxAdapter.Ss_LxViewHol
             super(itemView);
             tex=itemView.findViewById(R.id.ss_lx_name);
         }
+    }
+    public interface onItemClick{
+        void onLxClick(int index);
     }
 }
