@@ -60,6 +60,7 @@ public class XssdActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(int index) {
         Intent intent=new Intent(XssdActivity.this, XqActivity.class);
+        intent.putExtra("xq",5);
         startActivity(intent);
     }
 }

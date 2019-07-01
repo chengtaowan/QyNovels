@@ -60,6 +60,7 @@ public class WjjpAdapter extends RecyclerView.Adapter<WjjpAdapter.WjjpViewHolder
     @Override
     public void onXsclick(int index) {
         Intent intent=new Intent(context, XqActivity.class);
+        intent.putExtra("xq",4);
         context.startActivity(intent);
     }
 

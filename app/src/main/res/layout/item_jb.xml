@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="60dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="首次分享奖励"
+        android:textColor="#ff2f3236"
+        android:textSize="14sp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="15dp"
+        android:id="@+id/des"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2018-12-25 12:12:23"
+        android:textColor="#ff828486"
+        android:textSize="10sp"
+        android:layout_marginLeft="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/time"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+20"
+        android:textColor="#ffef8e44"
+        android:textSize="20sp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="15dp"
+        android:id="@+id/num"/>
+</RelativeLayout>

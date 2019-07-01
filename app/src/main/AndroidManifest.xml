@@ -12,21 +12,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Main"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.TxActivity"></activity>
+        <activity android:name=".ui.activity.JbActivity"></activity>
+        <activity android:name=".ui.activity.CjwtActivity" />
+        <activity android:name=".ui.activity.GywmActivity" />
+        <activity android:name=".ui.activity.TxActivity" />
         <activity android:name=".ui.activity.ZhglActivity" />
         <activity android:name=".ui.activity.SzActivity" />
         <activity android:name=".ui.activity.XgncActivity" />
-        <activity android:name=".ui.activity.GrzlActivity"></activity>
+        <activity android:name=".ui.activity.GrzlActivity" />
         <activity android:name=".ui.activity.LoginActivity" />
         <activity android:name=".ui.activity.MorePhbActivity" />
         <activity android:name=".ui.activity.LsActivity" />
         <activity android:name=".ui.activity.SsActivity" />
-        <activity android:name=".ui.activity.XqActivity" ></activity>
+        <activity android:name=".ui.activity.XqActivity" />
         <activity android:name=".ui.activity.XssdActivity" />
         <activity android:name=".ui.activity.WjjpActivity" />
         <activity android:name=".ui.activity.PhbActivity" />
         <activity android:name=".ui.activity.FlActivity" />
-        <activity android:name=".ui.activity.MainActivity" android:launchMode="singleTop">
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -24,12 +24,15 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
     private TextView type;
     private RdFragment rdFragment;
     private GxFragment gxFragment;
+    private int ptype;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_phb);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
+        Intent intent=getIntent();
+        ptype=intent.getIntExtra("more",1);
     }
 
     private void init() {
@@ -63,8 +66,15 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(intent);
         }
         else if(R.id.more_back==view.getId()){
-            Intent intent=new Intent(MorePhbActivity.this,WjjpActivity.class);
-            startActivity(intent);
+            if(ptype==1){
+                Intent intent=new Intent(MorePhbActivity.this,FlActivity.class);
+                startActivity(intent);
+            }
+            else if(ptype==2){
+                Intent intent=new Intent(MorePhbActivity.this,WjjpActivity.class);
+                startActivity(intent);
+            }
+
         }
     }
 
@@ -99,8 +109,14 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent=new Intent(MorePhbActivity.this,WjjpActivity.class);
-        startActivity(intent);
+        if(ptype==1){
+            Intent intent=new Intent(MorePhbActivity.this,FlActivity.class);
+            startActivity(intent);
+        }
+        else if(ptype==2){
+            Intent intent=new Intent(MorePhbActivity.this,WjjpActivity.class);
+            startActivity(intent);
+        }
     }
     @Override
     protected void onPause() {

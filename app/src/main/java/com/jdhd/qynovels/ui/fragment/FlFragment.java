@@ -49,6 +49,7 @@ public class FlFragment extends Fragment implements FlAdapter.onItemClick{
     @Override
     public void onFlClick(int index) {
         Intent intent=new Intent(getContext(), MorePhbActivity.class);
+        intent.putExtra("more",1);
         startActivity(intent);
     }
 }

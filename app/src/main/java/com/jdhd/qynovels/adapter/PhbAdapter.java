@@ -16,6 +16,11 @@ import com.jdhd.qynovels.R;
 
 public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
     private Context context;
+    private onItemClick onItemClick;
+
+    public void setOnItemClick(PhbAdapter.onItemClick onItemClick) {
+        this.onItemClick = onItemClick;
+    }
 
     public PhbAdapter(Context context) {
         this.context = context;
@@ -30,7 +35,7 @@ public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PhbViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PhbViewHolder holder, final int position) {
         holder.num.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Oswald-Bold.otf"));
         holder.num.setText(position+1+"");
         if(position==0){
@@ -42,6 +47,12 @@ public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
         else if(position==2){
             holder.num.setTextColor(Color.parseColor("#F2C63F"));
         }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onItemClick.onClick(position);
+            }
+        });
     }
 
     @Override
@@ -59,5 +70,8 @@ public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
             type=itemView.findViewById(R.id.fl_type);
             num=itemView.findViewById(R.id.fl_num);
         }
+    }
+    public interface onItemClick{
+        void onClick(int index);
     }
 }

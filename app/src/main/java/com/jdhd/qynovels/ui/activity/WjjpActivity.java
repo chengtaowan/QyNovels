@@ -52,6 +52,7 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onMoreClick(int index) {
         Intent intent=new Intent(WjjpActivity.this,MorePhbActivity.class);
+        intent.putExtra("more",2);
         startActivity(intent);
     }
 

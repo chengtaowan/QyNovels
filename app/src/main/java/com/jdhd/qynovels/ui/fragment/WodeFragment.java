@@ -10,11 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.ui.activity.CjwtActivity;
 import com.jdhd.qynovels.ui.activity.GrzlActivity;
+import com.jdhd.qynovels.ui.activity.JbActivity;
 import com.jdhd.qynovels.ui.activity.LoginActivity;
 import com.jdhd.qynovels.ui.activity.LsActivity;
 import com.jdhd.qynovels.ui.activity.SzActivity;
@@ -25,9 +28,11 @@ import com.jdhd.qynovels.ui.activity.TxActivity;
  */
 public class WodeFragment extends Fragment implements View.OnClickListener{
 
-    private TextView wo_dl;
-    private RelativeLayout wd_ls,wd_tx,wd_fk,wd_sz;
+    private TextView wo_dl,wd_name,wd_hbm;
+    private RelativeLayout wd_ls,wd_tx,wd_fk,wd_sz,wd_lb,wd_yq,wd_xj;
     private ImageView wd_toux;
+    private int action;
+    private LinearLayout wdjb;
     public WodeFragment() {
         // Required empty public constructor
     }
@@ -39,6 +44,16 @@ public class WodeFragment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_wode, container, false);
         init(view);
+        Intent intent=getActivity().getIntent();
+        action=intent.getIntExtra("action",1);
+        if(action==0){
+            wd_lb.setVisibility(View.GONE);
+            wd_yq.setVisibility(View.GONE);
+            wd_xj.setVisibility(View.GONE);
+            wo_dl.setVisibility(View.GONE);
+            wd_name.setVisibility(View.VISIBLE);
+            wd_hbm.setVisibility(View.VISIBLE);
+        }
         return view;
     }
 
@@ -48,7 +63,14 @@ public class WodeFragment extends Fragment implements View.OnClickListener{
         wd_tx=view.findViewById(R.id.wd_tx);
         wd_fk=view.findViewById(R.id.wd_fk);
         wd_sz =view.findViewById(R.id.wd_sz);
+        wd_lb=view.findViewById(R.id.wd_lb);
+        wd_yq=view.findViewById(R.id.wd_yq);
+        wd_xj=view.findViewById(R.id.wd_xj);
         wd_toux=view.findViewById(R.id.wd_toux);
+        wd_name=view.findViewById(R.id.wd_name);
+        wd_hbm=view.findViewById(R.id.wd_hbm);
+        wdjb=view.findViewById(R.id.wd_wdjb);
+        wdjb.setOnClickListener(this);
         wo_dl.setOnClickListener(this);
         wd_ls.setOnClickListener(this);
         wd_tx.setOnClickListener(this);
@@ -73,7 +95,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener{
             startActivity(intent);
         }
         else if(R.id.wd_fk==view.getId()){
-            Intent intent=new Intent(getContext(), SzActivity.class);
+            Intent intent=new Intent(getContext(), CjwtActivity.class);
             startActivity(intent);
         }
         else if(R.id.wd_sz==view.getId()){
@@ -82,6 +104,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener{
         }
         else if(R.id.wd_toux==view.getId()){
             Intent intent=new Intent(getContext(), GrzlActivity.class);
+            startActivity(intent);
+        }
+        else if(R.id.wd_wdjb==view.getId()){
+            Intent intent=new Intent(getContext(), JbActivity.class);
             startActivity(intent);
         }
     }

@@ -53,6 +53,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else if(R.id.dl_but==view.getId()){
             Intent intent=new Intent(LoginActivity.this,MainActivity.class);
             intent.putExtra("fragment_flag", 4);
+            intent.putExtra("action",0);
             startActivity(intent);
         }
     }

@@ -73,7 +73,7 @@ public class BookFragment extends Fragment {
 
     private void scrollToPosition() {
 
-        sharedPreferences= getContext().getSharedPreferences("key", Activity.MODE_PRIVATE);
+        sharedPreferences= getContext().getSharedPreferences("book", Activity.MODE_PRIVATE);
 
         lastOffset=sharedPreferences.getInt("lastOffset",0);
 
@@ -106,7 +106,7 @@ public class BookFragment extends Fragment {
 
             lastPosition= layoutManager.getPosition(topView);
 
-            sharedPreferences= getContext().getSharedPreferences("key", Activity.MODE_PRIVATE);
+            sharedPreferences= getContext().getSharedPreferences("book", Activity.MODE_PRIVATE);
 
             SharedPreferences.Editor editor =sharedPreferences.edit();
 

@@ -150,11 +150,23 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
             intent.putExtra("lx",sc_type);
             startActivity(intent);
         }
+        else if(type==3){
+            Intent intent=new Intent(XqActivity.this,PhbActivity.class);
+            startActivity(intent);
+        }
+        else if(type==4){
+            Intent intent=new Intent(XqActivity.this,WjjpActivity.class);
+            startActivity(intent);
+        }
+        else if(type==5){
+            Intent intent=new Intent(XqActivity.this,XssdActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void scrollToPosition() {
 
-        sharedPreferences= getSharedPreferences("key", Activity.MODE_PRIVATE);
+        sharedPreferences= getSharedPreferences("xq", Activity.MODE_PRIVATE);
 
         lastOffset=sharedPreferences.getInt("lastOffset",0);
 
@@ -187,7 +199,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
 
             lastPosition= layoutManager.getPosition(topView);
 
-            sharedPreferences=getSharedPreferences("key", Activity.MODE_PRIVATE);
+            sharedPreferences=getSharedPreferences("xq", Activity.MODE_PRIVATE);
 
             SharedPreferences.Editor editor =sharedPreferences.edit();
 
