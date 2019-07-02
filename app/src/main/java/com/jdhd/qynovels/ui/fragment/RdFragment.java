@@ -23,10 +23,11 @@ import com.jdhd.qynovels.ui.activity.XqActivity;
 public class RdFragment extends Fragment implements MoreAdapter.onItemClick{
 
    private RecyclerView rv;
-    public RdFragment() {
-        // Required empty public constructor
-    }
 
+
+    public RdFragment() {
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,7 +49,9 @@ public class RdFragment extends Fragment implements MoreAdapter.onItemClick{
 
     @Override
     public void onClick(int index) {
+
         Intent intent=new Intent(getContext(), XqActivity.class);
+        intent.putExtra("xq",6);
         startActivity(intent);
     }
 }

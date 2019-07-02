@@ -105,6 +105,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener{
         else if(R.id.wd_toux==view.getId()){
             Intent intent=new Intent(getContext(), GrzlActivity.class);
             startActivity(intent);
+//            getActivity().finish();
         }
         else if(R.id.wd_wdjb==view.getId()){
             Intent intent=new Intent(getContext(), JbActivity.class);

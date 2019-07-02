@@ -3,8 +3,15 @@
     package="com.jdhd.qynovels">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.hardware.camera"/>
+    <uses-permission android:name="android.hardware.autofocus"/>
 
     <application
+        android:name=".app.MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/iconz"
         android:label="@string/app_name"
@@ -12,19 +19,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Main"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.JbActivity"></activity>
+        <activity android:name=".ui.activity.Main2Activity"></activity>
+        <activity android:name=".ui.activity.JbActivity" />
         <activity android:name=".ui.activity.CjwtActivity" />
         <activity android:name=".ui.activity.GywmActivity" />
         <activity android:name=".ui.activity.TxActivity" />
         <activity android:name=".ui.activity.ZhglActivity" />
         <activity android:name=".ui.activity.SzActivity" />
         <activity android:name=".ui.activity.XgncActivity" />
-        <activity android:name=".ui.activity.GrzlActivity" />
+        <activity android:name=".ui.activity.GrzlActivity"
+            android:launchMode="singleTask"
+            />
         <activity android:name=".ui.activity.LoginActivity" />
         <activity android:name=".ui.activity.MorePhbActivity" />
         <activity android:name=".ui.activity.LsActivity" />
         <activity android:name=".ui.activity.SsActivity" />
-        <activity android:name=".ui.activity.XqActivity" />
+        <activity
+            android:name=".ui.activity.XqActivity"
+            android:launchMode="singleTask" />
         <activity android:name=".ui.activity.XssdActivity" />
         <activity android:name=".ui.activity.WjjpActivity" />
         <activity android:name=".ui.activity.PhbActivity" />
@@ -38,6 +50,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.jdhd.qynovels.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 
 </manifest>

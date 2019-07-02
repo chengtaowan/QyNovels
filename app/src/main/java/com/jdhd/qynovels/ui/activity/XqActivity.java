@@ -101,6 +101,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     public void onClick(View view) {
         if(R.id.xq_back==view.getId()){
            change();
+           finish();
         }
 
     }
@@ -123,7 +124,8 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        //change();
+        change();
+        finish();
     }
 
     @Override
@@ -160,6 +162,10 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
         }
         else if(type==5){
             Intent intent=new Intent(XqActivity.this,XssdActivity.class);
+            startActivity(intent);
+        }
+        else if(type==6){
+            Intent intent=new Intent(XqActivity.this,MorePhbActivity.class);
             startActivity(intent);
         }
     }

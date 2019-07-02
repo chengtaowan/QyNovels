@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activity.TxActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#fff">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="20dp"
@@ -43,7 +44,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@mipmap/tx_kp"
-            android:scaleType="fitXY" />
+            android:scaleType="fitXY"
+            android:id="@+id/img"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,23 +99,26 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:background="@drawable/shape_txz">
+            android:background="@drawable/shape_txz"
+            android:id="@+id/tx10">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现15元"
+                android:text="提现10元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:id="@+id/txxj10"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需15000金币"
+                android:text="需10000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="3dp"/>
+                android:layout_marginTop="3dp"
+                android:id="@+id/txjb10"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -121,7 +126,8 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:background="@drawable/shape_txz"
-            android:layout_marginLeft="15dp">
+            android:layout_marginLeft="15dp"
+            android:id="@+id/tx15">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -129,7 +135,8 @@
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:id="@+id/txxj15"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -137,7 +144,8 @@
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="3dp"/>
+                android:layout_marginTop="3dp"
+                android:id="@+id/txjb15"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -153,23 +161,26 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:background="@drawable/shape_txz">
+            android:background="@drawable/shape_txz"
+            android:id="@+id/tx20">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现15元"
+                android:text="提现20元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:id="@+id/txxj20"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需15000金币"
+                android:text="需20000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="3dp"/>
+                android:layout_marginTop="3dp"
+                android:id="@+id/txjb20"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -177,23 +188,26 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:background="@drawable/shape_txz"
-            android:layout_marginLeft="15dp">
+            android:layout_marginLeft="15dp"
+            android:id="@+id/tx25">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现15元"
+                android:text="提现25元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:id="@+id/txxj25"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需15000金币"
+                android:text="需25000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="3dp"/>
+                android:layout_marginTop="3dp"
+                android:id="@+id/txjb25"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -209,23 +223,26 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:background="@drawable/shape_txz">
+            android:background="@drawable/shape_txz"
+            android:id="@+id/tx30">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现15元"
+                android:text="提现30元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:id="@+id/txxj30"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需15000金币"
+                android:text="需30000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="3dp"/>
+                android:layout_marginTop="3dp"
+                android:id="@+id/txjb30"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -233,23 +250,26 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:background="@drawable/shape_txz"
-            android:layout_marginLeft="15dp">
+            android:layout_marginLeft="15dp"
+            android:id="@+id/tx50">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现15元"
+                android:text="提现50元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:id="@+id/txxj50"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需15000金币"
+                android:text="需50000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
-                android:layout_marginTop="3dp"/>
+                android:layout_marginTop="3dp"
+                android:id="@+id/txjb50"/>
         </LinearLayout>
     </LinearLayout>
     <TextView
@@ -259,7 +279,8 @@
         android:textColor="#ffef8e44"
         android:textSize="12sp"
         android:layout_gravity="center"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="30dp"
+        android:id="@+id/txjl"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp"

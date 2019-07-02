@@ -58,8 +58,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="11dp"
             android:src="@mipmap/my_touxiang"
-            android:id="@+id/xg_tx"
-            android:scaleType="fitXY"/>
+            android:id="@+id/xg_tx"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.jdhd.qynovels.utils.StatusBarUtil;
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener{
     private RadioGroup rg;
     public static RadioButton rb_case,rb_shop,rb_fl,rb_wd;
+    public static LinearLayout ll;
     private Fragment currentFragment=new Fragment();
 
     @Override
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     }
 
     private void init() {
+        ll=findViewById(R.id.ll);
         rg=findViewById(R.id.rg);
         rb_case=findViewById(R.id.rb_case);
         rb_shop=findViewById(R.id.rb_shop);
@@ -133,8 +136,11 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                     Toast.makeText(MainActivity.this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
                     exitTime = System.currentTimeMillis();
                 } else {
-                    finish();
-                    System.exit(0);
+                    Intent home = new Intent(Intent.ACTION_MAIN);
+                    home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    home.addCategory(Intent.CATEGORY_HOME);
+                    startActivity(home);
+
                 }
         }
         return true;
