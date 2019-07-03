@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.GgActivity">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="67dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/logo">
+        <ImageView
+            android:layout_width="109dp"
+            android:layout_height="30dp"
+            android:layout_centerInParent="true"
+            android:src="@mipmap/qb_logo"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/gg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/logo"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/a" />
+    <RelativeLayout
+        android:layout_width="65dp"
+        android:layout_height="18dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="19dp"
+        android:background="@drawable/shape_gg">
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="28dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="5s"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="10dp"
+            android:layout_centerVertical="true"
+            android:background="#FFFFFF"
+            android:layout_toRightOf="@+id/time"
+            android:id="@+id/line"/>
+
+        <TextView
+            android:id="@+id/tg"
+            android:layout_width="36dp"
+            android:layout_height="match_parent"
+            android:layout_alignStart="@+id/line"
+            android:layout_marginStart="0dp"
+            android:layout_toRightOf="@+id/line"
+            android:gravity="center"
+            android:text="跳过"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+    </RelativeLayout>
+</RelativeLayout>

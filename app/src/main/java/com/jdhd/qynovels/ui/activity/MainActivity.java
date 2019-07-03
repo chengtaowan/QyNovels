@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -107,6 +109,29 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        SharedPreferences  sharedPreferencesjx= getSharedPreferences("jx", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editorjx =sharedPreferencesjx.edit();
+        editorjx.putInt("lastOffset",0);
+        editorjx.putInt("lastPosition",0);
+        editorjx.commit();
+
+        SharedPreferences  sharedPreferencesman= getSharedPreferences("man", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editorman =sharedPreferencesman.edit();
+        editorman.putInt("lastOffset",0);
+        editorman.putInt("lastPosition",0);
+        editorman.commit();
+
+        SharedPreferences  sharedPreferenceswm= getSharedPreferences("wm", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editorwm =sharedPreferenceswm.edit();
+        editorwm.putInt("lastOffset",0);
+        editorwm.putInt("lastPosition",0);
+        editorwm.commit();
+
+        SharedPreferences  sharedPreferencesbook= getSharedPreferences("book", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editorbook =sharedPreferencesbook.edit();
+        editorbook.putInt("lastOffset",0);
+        editorbook.putInt("lastPosition",0);
+        editorbook.commit();
         System.exit(0);
     }
 
@@ -136,6 +161,29 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                     Toast.makeText(MainActivity.this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
                     exitTime = System.currentTimeMillis();
                 } else {
+                    SharedPreferences  sharedPreferencesjx= getSharedPreferences("jx", Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editorjx =sharedPreferencesjx.edit();
+                    editorjx.putInt("lastOffset",0);
+                    editorjx.putInt("lastPosition",0);
+                    editorjx.commit();
+
+                    SharedPreferences  sharedPreferencesman= getSharedPreferences("man", Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editorman =sharedPreferencesman.edit();
+                    editorman.putInt("lastOffset",0);
+                    editorman.putInt("lastPosition",0);
+                    editorman.commit();
+
+                    SharedPreferences  sharedPreferenceswm= getSharedPreferences("wm", Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editorwm =sharedPreferenceswm.edit();
+                    editorwm.putInt("lastOffset",0);
+                    editorwm.putInt("lastPosition",0);
+                    editorwm.commit();
+
+                    SharedPreferences  sharedPreferencesbook= getSharedPreferences("book", Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editorbook =sharedPreferencesbook.edit();
+                    editorbook.putInt("lastOffset",0);
+                    editorbook.putInt("lastPosition",0);
+                    editorbook.commit();
                     Intent home = new Intent(Intent.ACTION_MAIN);
                     home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     home.addCategory(Intent.CATEGORY_HOME);
@@ -143,6 +191,32 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
                 }
         }
+            else if(keyCode==KeyEvent.KEYCODE_MENU){
+                System.exit(0);
+                SharedPreferences  sharedPreferencesjx= getSharedPreferences("jx", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editorjx =sharedPreferencesjx.edit();
+                editorjx.putInt("lastOffset",0);
+                editorjx.putInt("lastPosition",0);
+                editorjx.commit();
+
+                SharedPreferences  sharedPreferencesman= getSharedPreferences("man", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editorman =sharedPreferencesman.edit();
+                editorman.putInt("lastOffset",0);
+                editorman.putInt("lastPosition",0);
+                editorman.commit();
+
+                SharedPreferences  sharedPreferenceswm= getSharedPreferences("wm", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editorwm =sharedPreferenceswm.edit();
+                editorwm.putInt("lastOffset",0);
+                editorwm.putInt("lastPosition",0);
+                editorwm.commit();
+
+                SharedPreferences  sharedPreferencesbook= getSharedPreferences("book", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editorbook =sharedPreferencesbook.edit();
+                editorbook.putInt("lastOffset",0);
+                editorbook.putInt("lastPosition",0);
+                editorbook.commit();
+            }
         return true;
 
     }

@@ -78,7 +78,7 @@ public class CustomPopWindow extends PopupWindow {
         pop_ks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pop_ks.setBackgroundResource(R.drawable.shape_ks);
+                pop_ks.setBackgroundResource(R.drawable.shape_ks_on);
                 ksdz.setTextColor(Color.parseColor("#FFFFFF"));
                 kxsp.setTextColor(Color.parseColor("#FFFFFF"));
                 pop_pt.setBackgroundResource(R.drawable.shape_pt);
@@ -91,12 +91,12 @@ public class CustomPopWindow extends PopupWindow {
         pop_pt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pop_ks.setBackgroundResource(R.drawable.shape_pt);
-                ksdz.setTextColor(Color.parseColor("#E8564E"));
-                kxsp.setTextColor(Color.parseColor("#E8564E"));
-                pop_pt.setBackgroundResource(R.drawable.shape_ks);
-                ptdz.setTextColor(Color.parseColor("#FFFFFF"));
-                gzdz.setTextColor(Color.parseColor("#FFFFFF"));
+                pop_ks.setBackgroundResource(R.drawable.shape_ks);
+                ksdz.setTextColor(Color.parseColor("#FFFFFF"));
+                kxsp.setTextColor(Color.parseColor("#FFFFFF"));
+                pop_pt.setBackgroundResource(R.drawable.shape_pt_on);
+                ptdz.setTextColor(Color.parseColor("#E8564E"));
+                gzdz.setTextColor(Color.parseColor("#E8564E"));
                 Toast.makeText(context,"普通提现",Toast.LENGTH_SHORT).show();
                 //dismiss();
             }

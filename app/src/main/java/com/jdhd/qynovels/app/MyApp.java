@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
 
+import com.uuzuche.lib_zxing.activity.ZXingLibrary;
+
 public class MyApp extends Application {
     private static Context context;
     @Override
@@ -14,6 +16,7 @@ public class MyApp extends Application {
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         builder.detectFileUriExposure();
+        ZXingLibrary.initDisplayOpinion(this);
 
     }
     public static Context getAppContext() {

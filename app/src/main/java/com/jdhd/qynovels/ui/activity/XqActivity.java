@@ -28,6 +28,9 @@ import com.jdhd.qynovels.ui.fragment.JxFragment;
 import com.jdhd.qynovels.utils.FastBlurUtil;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.widget.PersonalScrollView;
+import com.jdhd.qynovels.widget.RatingBar;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +42,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     private String url="http://www.qubaobei.com//ios//cf//uploadfile//132//3//2127.jpg";
     private ScrollView sv;
     private TextView num;
+    private RatingBar start;
     private RecyclerView rv;
     private int type;
     private int sc_type;
@@ -71,6 +75,20 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
         sv=findViewById(R.id.xq_sv);
         num=findViewById(R.id.xq_num);
         rv=findViewById(R.id.xq_rv);
+        start=findViewById(R.id.xq_start);
+        BigDecimal bigDecimal=new BigDecimal(num.getText().toString());
+        BigDecimal pf = bigDecimal.setScale(0, BigDecimal.ROUND_UP);
+        int zs= (Integer.parseInt(pf.toString())/2);
+        int ys=(Integer.parseInt(pf.toString())%2);
+        start.setSelected(false);
+
+        start.setStartTotalNumber(zs+ys);
+        if(ys==0){
+           start.setSelectedNumber(Float.parseFloat(zs+0.8+""));
+        }
+        else if(ys==1){
+            start.setSelectedNumber(Float.parseFloat(zs+0.5+""));
+        }
 //        sv.setImageView(bj);
 //        sv.setLine_up(ll);
         num.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Oswald-Bold.otf"));

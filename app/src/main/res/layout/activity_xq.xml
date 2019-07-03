@@ -70,11 +70,20 @@
                                 android:textSize="18sp"
                                 android:textStyle="bold"
                                 android:id="@+id/xq_num"/>
-                            <com.example.xlhratingbar_lib.XLHRatingBar
-                            android:id="@+id/xq_xx"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginLeft="5dp"></com.example.xlhratingbar_lib.XLHRatingBar>
+                            <com.jdhd.qynovels.widget.RatingBar
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:starHalfRes="@mipmap/xqy_bx"
+                                app:starSelectedRes="@mipmap/xqy_yx"
+                                app:starWidth="18dp"
+                                app:checked="false"
+                                app:starHeight="18dp"
+                                app:starDistance="3dp"
+                                app:starIsFull="false"
+                                app:starEmptyRes="@mipmap/xqy_yx"
+                                android:layout_marginLeft="3dp"
+                                android:id="@+id/xq_start"
+                                android:layout_marginTop="5dp"/>
                         </LinearLayout>
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -112,10 +121,11 @@
                                 android:text="连载中"
                                 android:textColor="#fff"
                                 android:textSize="9sp" />
+
                             <TextView
                                 android:id="@+id/xq_zs"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="66dp"
+                                android:layout_height="3dp"
                                 android:layout_marginLeft="6dp"
                                 android:text="1234万字"
                                 android:textColor="#FFFFFF"
