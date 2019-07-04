@@ -1,11 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('D:\\key\\qykey.jks')
+            storePassword '123456'
+            keyPassword '123456'
+            keyAlias = 'key0'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.0"
     defaultConfig {
         applicationId "com.jdhd.qynovels"
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -15,6 +23,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
 }
@@ -44,4 +55,13 @@ dependencies {
     implementation 'pub.devrel:easypermissions:1.3.0'
     implementation 'com.github.dmytrodanylyk.shadow-layout:library:1.0.3'
     implementation 'cn.yipianfengye.android:zxing-library:2.2'
+
+    implementation 'com.rxjava.rxhttp:rxhttp:1.0.8'
+//注解处理器，生成RxHttp类，即可一条链发送请求
+    annotationProcessor 'com.rxjava.rxhttp:rxhttp-compiler:1.0.8'
+    implementation 'com.rxjava.rxlife:rxlife:1.0.7'
+
+    //微信
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+
 }

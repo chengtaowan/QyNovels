@@ -3,14 +3,22 @@ package com.jdhd.qynovels.ui.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.SyncStateContract;
 
 import com.jdhd.qynovels.R;
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 public class StartActivity extends AppCompatActivity {
+
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -33,5 +41,9 @@ public class StartActivity extends AppCompatActivity {
                 handler.sendMessage(message);
             }
         },1000);
+
+
     }
+
+
 }
