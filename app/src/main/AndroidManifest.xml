@@ -8,14 +8,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.hardware.camera" />
-    <uses-permission android:name="android.hardware.autofocus" />
-    <!-- 读取手机IMEI的设备权限 -->
+    <uses-permission android:name="android.hardware.autofocus" /> <!-- 读取手机IMEI的设备权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- for mta statistics, not necessary -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
-    <!-- for mta statistics, not necessary-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".app.MyApp"
@@ -26,11 +23,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Main"
         android:usesCleartextTraffic="true">
-        <activity android:name=".wxapi.WXEntryActivity"
+        <activity android:name=".ui.activity.TxjlActivity"></activity>
+        <activity android:name=".ui.activity.QdActivity" />
+        <activity
+            android:name=".wxapi.WXEntryActivity"
             android:exported="true"
-            android:taskAffinity="net.sourceforge.simcpux"
-            android:launchMode="singleTask"/>
-        <activity android:name=".ui.activity.GgActivity"></activity>
+            android:launchMode="singleTask"
+            android:taskAffinity="net.sourceforge.simcpux" />
+        <activity android:name=".ui.activity.GgActivity" />
         <activity android:name=".ui.activity.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.ShareActivity" />
-        <activity android:name=".ui.activity.YdwActivity"></activity>
+        <activity android:name=".ui.activity.YdwActivity" />
         <activity android:name=".ui.activity.JbActivity" />
         <activity android:name=".ui.activity.CjwtActivity" />
         <activity android:name=".ui.activity.GywmActivity" />

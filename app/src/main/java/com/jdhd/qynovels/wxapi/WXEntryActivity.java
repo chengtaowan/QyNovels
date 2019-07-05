@@ -1,18 +1,35 @@
 package com.jdhd.qynovels.wxapi;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.TokenBean;
+import com.jdhd.qynovels.module.UserBean;
+import com.jdhd.qynovels.persenter.impl.IPersonalPresenterImpl;
+import com.jdhd.qynovels.ui.activity.MainActivity;
+import com.jdhd.qynovels.ui.fragment.WodeFragment;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
+import com.jdhd.qynovels.view.IPersonalView;
+import com.rxjava.rxlife.RxLife;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,19 +42,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
 import rxhttp.wrapper.annotation.DefaultDomain;
+import rxhttp.wrapper.param.RxHttp;
+import rxhttp.wrapper.parse.SimpleParser;
 
-public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
+public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IPersonalView {
     private IWXAPI api;
     private static final String APP_ID = "wxf2f9d368f73b6719";
     private String brand,model,sv,imei;
     private int os,root,sim,network,time;
+    public static String token="";
+    private IPersonalPresenterImpl personalPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         api = MyApp.getApi();
         api.handleIntent(getIntent(), this);
+        personalPresenter=new IPersonalPresenterImpl(this,WXEntryActivity.this);
     }
 
     @Override
@@ -51,7 +76,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
             case BaseResp.ErrCode.ERR_OK://同意授权
                  if(baseResp.getType()==1){
                      String code=((SendAuth.Resp) baseResp).code;
-                     Log.e("asd",code+"--");
                      getInfo();
                      Map<String,String> map=new HashMap<>();
                      map.put("code",code);
@@ -64,30 +88,29 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                      map.put("sim",sim+"");
                      map.put("network",network+"");
                      map.put("time",time+"");
-                     StringBuffer buffer=new StringBuffer();
-                     buffer.append("123456789");
-                     List<Map.Entry<String, String>> infoIds = new ArrayList<Map.Entry<String, String>>(map.entrySet());
-                     // 对所有传入参数按照字段名的 ASCII 码从小到大排序（字典序）
-                     Collections.sort(infoIds, new Comparator<Map.Entry<String, String>>() {
-
-                         public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
-                             return (o1.getKey()).toString().compareTo(o2.getKey());
-                         }
-                     });
-                     for (Map.Entry<String, String> item : infoIds) {
-                         if (item.getKey() != null || item.getKey() != "") {
-                             String key = item.getKey();
-                             String val = item.getValue();
-                             buffer.append(key+val);
-                         }
-                     }
-                     String s = md5(buffer.toString());
+                     String s = DeviceInfoUtils.md5(DeviceInfoUtils.getCompareTo(map));
                      Map<String,String> map1=new HashMap<>();
                      map1=map;
                      map1.put("sign",s);
+                     String baseUrl = MyApp.Url.baseUrl+"token";
+                     RxHttp.postForm(baseUrl)
+                             .add(map1)
+                             .asParser(new SimpleParser<TokenBean>(){})
+                             .subscribe(tokenBean->{
+                                 if(tokenBean.getCode()==200&&tokenBean.getMsg().equals("success")){
+                                     token=tokenBean.getData().getToken();
+                                     SharedPreferences preferences=getSharedPreferences("token",MODE_PRIVATE);
+                                     SharedPreferences.Editor editor=preferences.edit();
+                                     editor.putString("token",token);
+                                     editor.putString("login","success");
+                                     editor.commit();
+                                     personalPresenter.loadData();
+                                 }
+                             },throwable->{
+                                Log.e("asd","th"+throwable.getMessage());
+                             });
 
-
-
+                     finish();
                  }
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED://拒绝授权
@@ -111,26 +134,15 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         network=DeviceInfoUtils.getNetWork(this);
         time=DeviceInfoUtils.getTime();
     }
-    public static String md5(String string) {
-        if (TextUtils.isEmpty(string)) {
-            return "";
-        }
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-            byte[] bytes = md5.digest(string.getBytes());
-            String result = "";
-            for (byte b : bytes) {
-                String temp = Integer.toHexString(b & 0xff);
-                if (temp.length() == 1) {
-                    temp = "0" + temp;
-                }
-                result += temp;
-            }
-            return result;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "";
+
+    @Override
+    public void onSuccess(UserBean userBean) {
+        WodeFragment.user = userBean;
+        EventBus.getDefault().post(userBean);
+    }
+
+    @Override
+    public void onError(String error) {
+
     }
 }

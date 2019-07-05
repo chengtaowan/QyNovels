@@ -5,9 +5,17 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.DataOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 public class DeviceInfoUtils {
     /**
@@ -150,5 +158,48 @@ public class DeviceInfoUtils {
     public static int getTime(){
         int time= (int) (System.currentTimeMillis()/1000);//获取系统时间的10位的时间戳
         return time;
+    }
+
+    public static String md5(String string) {
+        if (TextUtils.isEmpty(string)) {
+            return "";
+        }
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+            byte[] bytes = md5.digest(string.getBytes());
+            String result = "";
+            for (byte b : bytes) {
+                String temp = Integer.toHexString(b & 0xff);
+                if (temp.length() == 1) {
+                    temp = "0" + temp;
+                }
+                result += temp;
+            }
+            return result;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    public static String getCompareTo(Map map){
+        StringBuffer buffer=new StringBuffer();
+        buffer.append("123456789");
+        List<Map.Entry<String, String>> infoIds = new ArrayList<Map.Entry<String, String>>(map.entrySet());
+        // 对所有传入参数按照字段名的 ASCII 码从小到大排序（字典序）
+        Collections.sort(infoIds, new Comparator<Map.Entry<String, String>>() {
+
+            public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+                return (o1.getKey()).toString().compareTo(o2.getKey());
+            }
+        });
+        for (Map.Entry<String, String> item : infoIds) {
+            if (item.getKey() != null || item.getKey() != "") {
+                String key = item.getKey();
+                String val = item.getValue();
+                buffer.append(key+val);
+            }
+        }
+        return buffer.toString();
     }
 }

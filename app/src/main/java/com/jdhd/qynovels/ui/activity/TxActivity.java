@@ -109,7 +109,8 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             startActivity(intent);
         }
         else if(R.id.txjl==view.getId()){
-
+            Intent intent=new Intent(TxActivity.this,TxjlActivity.class);
+            startActivity(intent);
         }
         else if(R.id.tx10==view.getId()){
             showPopWindow(img);

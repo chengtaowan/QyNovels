@@ -29,11 +29,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText phone,yzm;
     private TextView yy;
     private Button but;
-    // APP_ID 替换为你的应用从官方网站申请到的合法appID
-    private static final String APP_ID = "wxf2f9d368f73b6719";
 
-    // IWXAPI 是第三方app和微信通信的openApi接口
-    private IWXAPI api;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,23 +50,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         wx.setOnClickListener(this);
         yy.setOnClickListener(this);
     }
-    private void regToWx() {
-        // 通过WXAPIFactory工厂，获取IWXAPI的实例
-        api = WXAPIFactory.createWXAPI(this, APP_ID, true);
 
-        // 将应用的appId注册到微信
-        api.registerApp(APP_ID);
-
-//        //建议动态监听微信启动广播进行注册到微信
-//        registerReceiver(new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                // 将该app注册到微信
-//                api.registerApp(SyncStateContract.Constants._ID);
-//            }
-//        }, new IntentFilter(ConstantsAPI.ACTION_REFRESH_WXAPP));
-
-    }
 
     @Override
     public void onClick(View view) {
@@ -78,7 +58,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
            finish();
         }
         else if(R.id.dl_wx==view.getId()){
-            regToWx();
             if(!MyApp.getApi().isWXAppInstalled()){
                 Toast.makeText(LoginActivity.this,"请先安装微信客户端",Toast.LENGTH_SHORT).show();
                 return;
@@ -86,8 +65,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             SendAuth.Req req = new SendAuth.Req();
             req.scope = "snsapi_userinfo";
             req.state = "wechat_sdk_demo_test";
-            api.sendReq(req);
-
+            MyApp.getApi().sendReq(req);
+            finish();
         }
         else if(R.id.dl_yy==view.getId()){
 

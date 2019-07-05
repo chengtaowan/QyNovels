@@ -10,6 +10,7 @@ import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
 import okhttp3.OkHttpClient;
 import rxhttp.HttpSender;
+import rxhttp.wrapper.annotation.DefaultDomain;
 
 public class MyApp extends Application {
     private static Context context;
@@ -28,7 +29,7 @@ public class MyApp extends Application {
 //        HttpSender.setDebug(true);
 ////或者，调试模式下会有日志输出
 //        HttpSender.init(new OkHttpClient(),true);
-        api = WXAPIFactory.createWXAPI(this, APP_ID, true);
+        regToWx();
 
     }
     public static Context getAppContext() {
@@ -38,4 +39,27 @@ public class MyApp extends Application {
     public static IWXAPI getApi() {
         return api;
     }
+    private void regToWx() {
+        // 通过WXAPIFactory工厂，获取IWXAPI的实例
+        api = WXAPIFactory.createWXAPI(this, APP_ID, true);
+
+        // 将应用的appId注册到微信
+        api.registerApp(APP_ID);
+
+//        //建议动态监听微信启动广播进行注册到微信
+//        registerReceiver(new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                // 将该app注册到微信
+//                api.registerApp(SyncStateContract.Constants._ID);
+//            }
+//        }, new IntentFilter(ConstantsAPI.ACTION_REFRESH_WXAPP));
+
+    }
+
+    public class Url{
+        @DefaultDomain()
+        public static final String baseUrl = "http://15492b50l3.51mypc.cn:37652/api.php/v1/";
+    }
+
 }

@@ -22,6 +22,7 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.CaseAdapter;
 import com.jdhd.qynovels.module.BookBean;
 import com.jdhd.qynovels.ui.activity.LsActivity;
+import com.jdhd.qynovels.ui.activity.QdActivity;
 import com.jdhd.qynovels.ui.activity.SsActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 
@@ -78,7 +79,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener,CaseA
             startActivity(intent);
         }
         else if(R.id.sj_qd==view.getId()){
-            Intent intent=new Intent(getActivity(), SsActivity.class);
+            Intent intent=new Intent(getActivity(), QdActivity.class);
             startActivity(intent);
         }
     }
