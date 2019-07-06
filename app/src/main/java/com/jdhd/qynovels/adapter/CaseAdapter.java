@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.BookBean;
+import com.jdhd.qynovels.module.CaseBean;
 import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.ui.fragment.ShopFragment;
@@ -26,20 +27,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ListAdapter.onItemClick {
-    private List<BookBean> list=new ArrayList<>();
+    private List<CaseBean.DataBean.ListBean> list=new ArrayList<>();
     private Context context;
     private FragmentActivity activity;
     public static final int TYPE_TITLE=0;
     public static final int TYPE_LIST=1;
     private onItemClick onItemClick;
-
+    public void refresh(List<CaseBean.DataBean.ListBean> list){
+        this.list=list;
+        notifyDataSetChanged();
+    }
     public void setOnItemClick(CaseAdapter.onItemClick onItemClick) {
         this.onItemClick = onItemClick;
     }
 
-    public CaseAdapter(Context context, FragmentActivity activity) {
+    public CaseAdapter(Context context,FragmentActivity activity) {
         this.context = context;
-        this.activity = activity;
+        this.activity=activity;
     }
 
     @NonNull
@@ -70,15 +74,15 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             });
         }
         else if(holder instanceof ListViewHolder){
-            for(int i=0;i<5;i++){
-                list.add(new BookBean(R.mipmap.a,"冰与火之歌权力的游戏"+i,"读到：第一章：标题名"));
-            }
+
             ListViewHolder viewHolder= (ListViewHolder) holder;
             LinearLayoutManager manager=new LinearLayoutManager(context);
             viewHolder.rv.setLayoutManager(manager);
-            ListAdapter adapter=new ListAdapter(context,list);
+            ListAdapter adapter=new ListAdapter(context);
+            adapter.refresh(list);
             viewHolder.rv.setAdapter(adapter);
             adapter.setOnItemClick(this);
+
         }
 
     }

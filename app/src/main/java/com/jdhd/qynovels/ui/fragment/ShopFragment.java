@@ -7,22 +7,24 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.ShopAdapter;
+import com.jdhd.qynovels.module.ModuleBean;
+import com.jdhd.qynovels.persenter.impl.bookshop.IModulePresenterImpl;
 import com.jdhd.qynovels.ui.activity.SsActivity;
+import com.jdhd.qynovels.view.bookshop.IModuleView;
+import com.tencent.mm.opensdk.utils.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedListener,View.OnClickListener{
+public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedListener,View.OnClickListener, IModuleView {
 
     private TabLayout tab;
     private ImageView search;
@@ -38,7 +40,12 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
     private List<Fragment> list=new ArrayList<>();
     private Context context;
     private int type;
-
+    private RelativeLayout jz;
+    private ImageView gif;
+    private IModulePresenterImpl modulePresenter;
+    private JxFragment jxFragment=new JxFragment();
+    private ManFragment manFragment=new ManFragment();
+    private WmanFragment wmanFragment=new WmanFragment();
     public ShopFragment() {
 
     }
@@ -49,28 +56,25 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_shop, container, false);
+        modulePresenter=new IModulePresenterImpl(this,getContext());
+        modulePresenter.loadData();
         init(view);
         Intent intent=getActivity().getIntent();
         type=intent.getIntExtra("lx",1);
         return view;
     }
     private void init(View view) {
+        jz=view.findViewById(R.id.jz);
+        gif=view.findViewById(R.id.case_gif);
         tab=view.findViewById(R.id.tab);
-        tab.addTab(tab.newTab().setText("精选"));
-        tab.addTab(tab.newTab().setText("男生"));
-        tab.addTab(tab.newTab().setText("女生"));
-        tab.addTab(tab.newTab().setText("图书"));
         tab.setSelectedTabIndicatorHeight(0);
-        tab.getTabAt(0).select();
         tab.addOnTabSelectedListener(this);
         search=view.findViewById(R.id.search);
         search.setOnClickListener(this);
         home_vp=view.findViewById(R.id.home_vp);
-        home_vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
-        list.add(new JxFragment());
-        list.add(new ManFragment());
-        list.add(new WmanFragment());
-        list.add(new BookFragment());
+        list.add(jxFragment);
+        list.add(manFragment);
+        list.add(wmanFragment);
         ShopAdapter adapter=new ShopAdapter(getChildFragmentManager(),list);
         home_vp.setAdapter(adapter);
 
@@ -88,9 +92,6 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
         }
         else if(type==3){
             home_vp.setCurrentItem(2);
-        }
-        else if(type==4){
-            home_vp.setCurrentItem(3);
         }
     }
 
@@ -124,4 +125,33 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
     }
 
 
+    @Override
+    public void onSuccess(ModuleBean moduleBean) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                jxFragment.setType(moduleBean.getData().getList().get(0).getId());
+                manFragment.setType(moduleBean.getData().getList().get(1).getId());
+                wmanFragment.setType(moduleBean.getData().getList().get(2).getId());
+                jz.setVisibility(View.GONE);
+                for(int i=0;i<moduleBean.getData().getList().size();i++){
+                    tab.addTab(tab.newTab().setText(moduleBean.getData().getList().get(i).getModuleName()));
+                    Log.e("type",moduleBean.getData().getList().get(i).getId()+"");
+                }
+                tab.getTabAt(0).select();
+                home_vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
+            }
+        });
+    }
+
+    @Override
+    public void onError(String error) {
+        Log.e("moduleerror",error);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        modulePresenter.destoryView();
+    }
 }

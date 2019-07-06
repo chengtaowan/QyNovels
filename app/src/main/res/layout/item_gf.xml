@@ -19,7 +19,8 @@
         android:layout_width="72dp"
         android:layout_height="100dp"
         android:src="@mipmap/a"
-        android:id="@+id/gf_book"/>
+        android:id="@+id/gf_book"
+        android:scaleType="fitXY"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,16 +56,19 @@
                 android:textColor="#EF8E44"
                 android:id="@+id/gf_fen"/>
         </LinearLayout>
+
         <TextView
+            android:id="@+id/gf_des"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/gf_num"
+            android:layout_marginStart="-42dp"
             android:layout_marginTop="34dp"
+            android:ellipsize="end"
             android:lines="2"
             android:text="1111111111111111111111111111111111111111111111111111111111111111111111111111111111"
             android:textColor="#828486"
-            android:textSize="14sp"
-            android:id="@+id/gf_des"
-            android:ellipsize="end"/>
+            android:textSize="14sp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -22,7 +22,8 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
             android:src="@mipmap/a"
-            android:id="@+id/rs_book"/>
+            android:id="@+id/rs_book"
+            android:scaleType="fitXY"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -34,7 +35,8 @@
             android:textColor="#2F3236"
             android:textStyle="bold"
             android:layout_marginTop="7dp"
-            android:id="@+id/rs_name"/>
+            android:id="@+id/rs_name"
+            android:gravity="center"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

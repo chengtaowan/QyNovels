@@ -10,11 +10,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.ShopBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class KdAdapter extends RecyclerView.Adapter<KdAdapter.KdViewHolder>{
     private Context context;
     private onItemClick onItemClick;
+    private List<ShopBean.DataBean.ListBeanX.ListBean> list=new ArrayList<>();
+    public void refresh(List<ShopBean.DataBean.ListBeanX.ListBean> list){
+        this.list=list;
+        notifyDataSetChanged();
+    }
 
     public void setOnItemClick(KdAdapter.onItemClick onItemClick) {
         this.onItemClick = onItemClick;
@@ -34,6 +44,18 @@ public class KdAdapter extends RecyclerView.Adapter<KdAdapter.KdViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull KdViewHolder holder, final int position) {
+        Glide.with(context).load(list.get(position).getImage()).into(holder.book);
+        holder.name.setText(list.get(position).getName());
+        holder.num.setText(list.get(position).getHot()+"");
+        if(position==0){
+            holder.top.setImageResource(R.mipmap.home_kd_1);
+        }
+        else if(position==1){
+            holder.top.setImageResource(R.mipmap.home_kd_2);
+        }
+        else if(position==2){
+            holder.top.setImageResource(R.mipmap.home_kd_3);
+        }
        holder.itemView.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
@@ -44,7 +66,7 @@ public class KdAdapter extends RecyclerView.Adapter<KdAdapter.KdViewHolder>{
 
     @Override
     public int getItemCount() {
-        return 3;
+        return list.size();
     }
 
     class KdViewHolder extends RecyclerView.ViewHolder{

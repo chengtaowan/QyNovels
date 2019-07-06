@@ -11,23 +11,39 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.JxAdapter;
+import com.jdhd.qynovels.module.ShopBean;
+import com.jdhd.qynovels.persenter.impl.bookshop.IJxPresenterImpl;
+import com.jdhd.qynovels.view.bookshop.IJxView;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class JxFragment extends Fragment {
+public class JxFragment extends Fragment implements IJxView {
     private RecyclerView rv;
     private  int lastOffset;//距离
 
     private  int lastPosition;//第几个item
 
     private  SharedPreferences sharedPreferences;
+    private int type;
+    private IJxPresenterImpl jxPresenter;
+    private JxAdapter adapter;
+    private RelativeLayout jz;
+    private ImageView gif;
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public JxFragment() {
         // Required empty public constructor
@@ -39,15 +55,20 @@ public class JxFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_jx, container, false);
+        jxPresenter=new IJxPresenterImpl(this,1);
+        jxPresenter.loadData();
         init(view);
         return view;
     }
 
     private void init(View view) {
+        jz=view.findViewById(R.id.jz);
+        gif=view.findViewById(R.id.case_gif);
+        Glide.with(getContext()).load(R.mipmap.re).into(gif);
         rv=view.findViewById(R.id.jx_rv);
         LinearLayoutManager manager=new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
-        JxAdapter adapter=new JxAdapter(getContext());
+        adapter=new JxAdapter(getContext());
         rv.setAdapter(adapter);
         rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -120,4 +141,25 @@ public class JxFragment extends Fragment {
 
     }
 
+    @Override
+    public void onSuccess(ShopBean shopBean) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                jz.setVisibility(View.GONE);
+               adapter.refresh(shopBean.getData().getList());
+            }
+        });
+    }
+
+    @Override
+    public void onError(String error) {
+        Log.e("jxerror",error);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        jxPresenter.destoryView();
+    }
 }

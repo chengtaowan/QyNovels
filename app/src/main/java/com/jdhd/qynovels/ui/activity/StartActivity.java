@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.SyncStateContract;
+import android.transition.Fade;
 
 import com.jdhd.qynovels.R;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;

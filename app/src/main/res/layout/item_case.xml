@@ -7,7 +7,8 @@
     <ImageView
         android:layout_width="54dp"
         android:layout_height="75dp"
-        android:src="@mipmap/a"
+        android:src="@mipmap/book_100"
+        android:scaleType="fitXY"
         android:layout_marginTop="25dp"
         android:id="@+id/case_book"/>
     <RelativeLayout
@@ -18,7 +19,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="冰与火之歌权力的游戏"
+            android:text=""
             android:textColor="#2F3236"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -27,7 +28,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="读到：第一章：标题名"
+            android:text=""
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="15dp"
             android:id="@+id/case_zj"/>

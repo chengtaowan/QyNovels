@@ -11,7 +11,8 @@
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:statusBarColor">#00ffffff</item>
-
+        <item name="android:windowAnimationStyle">@style/anim_fade</item>
+        <item name="android:windowNoTitle">true</item>
 
     </style>
     <style name="tabtext" >
@@ -38,6 +39,19 @@
     <style name="popwindow_anim_style">
         <item name="android:windowEnterAnimation">@anim/popup_show</item>
         <item name="android:windowExitAnimation">@anim/popup_gone</item>
+    </style>
+
+
+    <!--activity 淡入淡出-->
+    <style name="AnimActivity" parent="Theme.AppCompat.Light.NoActionBar">
+
+    </style>
+
+    <style name="anim_fade" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/anim_fade_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/anim_fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/anim_fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/anim_fade_out</item>
     </style>
 
 </resources>

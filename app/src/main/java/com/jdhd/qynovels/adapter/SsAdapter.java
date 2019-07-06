@@ -10,12 +10,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.ShopBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
     private Context context;
     private int type;
     private onItemClick onItemClick;
+    private List<ShopBean.DataBean.ListBeanX.ListBean> list=new ArrayList<>();
+    public void refresh(List<ShopBean.DataBean.ListBeanX.ListBean> list){
+        this.list=list;
+        notifyDataSetChanged();
+    }
 
     public void setOnItemClick(SsAdapter.onItemClick onItemClick) {
         this.onItemClick = onItemClick;
@@ -36,6 +46,12 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull SsViewHolder holder, final int position) {
+        if(list.size()==0){
+            return;
+        }
+        Glide.with(context).load(list.get(position).getImage()).into(holder.book);
+        holder.name.setText(list.get(position).getName());
+        holder.num.setText(list.get(position).getSearch()+"次搜索");
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,7 +63,7 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
     @Override
     public int getItemCount() {
         if(type==1){
-            return 8;
+            return list.size();
         }
         else {
             return 4;

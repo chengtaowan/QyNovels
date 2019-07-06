@@ -19,7 +19,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.ShopBean;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SsAdapter.onItemClick,XsAdapter.onItemClick,GfAdapter.onItemClick{
     public static final int TYPE_IMG=0;
@@ -31,7 +35,12 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private Context context;
     private int tp;//推荐类型
     private int type;//男生、女生、图书区分
-
+    private List<ShopBean.DataBean.ListBeanX> list=new ArrayList();
+    private List<ShopBean.DataBean.ListBeanX.ListBean> listBeans=new ArrayList<>();
+    public void refresh(List<ShopBean.DataBean.ListBeanX> list){
+        this.list=list;
+        notifyDataSetChanged();
+    }
 
     public BookAdapter(Context context, int tp, int type) {
         this.context = context;

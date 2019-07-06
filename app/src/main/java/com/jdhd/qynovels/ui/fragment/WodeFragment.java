@@ -16,16 +16,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.TokenBean;
 import com.jdhd.qynovels.module.UserBean;
-import com.jdhd.qynovels.persenter.impl.IPersonalPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.activity.CjwtActivity;
 import com.jdhd.qynovels.ui.activity.GrzlActivity;
 import com.jdhd.qynovels.ui.activity.JbActivity;
@@ -33,20 +30,11 @@ import com.jdhd.qynovels.ui.activity.LoginActivity;
 import com.jdhd.qynovels.ui.activity.LsActivity;
 import com.jdhd.qynovels.ui.activity.SzActivity;
 import com.jdhd.qynovels.ui.activity.TxActivity;
-import com.jdhd.qynovels.utils.DeviceInfoUtils;
-import com.jdhd.qynovels.view.IPersonalView;
-import com.jdhd.qynovels.wxapi.WXEntryActivity;
+import com.jdhd.qynovels.view.personal.IPersonalView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import okhttp3.CacheControl;
-import rxhttp.wrapper.param.RxHttp;
-import rxhttp.wrapper.parse.SimpleParser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,6 +51,8 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
     private String avatar,sex,nickname,red_code;
     private int uid,total_gold,today_gold,read_time,balance,message_count,bind_show;
     private float money;
+    private ImageView gif;
+    private RelativeLayout jz;
     private IPersonalPresenterImpl personalPresenter;
     public WodeFragment() {
         // Required empty public constructor
@@ -104,6 +94,8 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wd_lb=view.findViewById(R.id.wd_lb);
         wd_yq=view.findViewById(R.id.wd_yq);
         wd_xj=view.findViewById(R.id.wd_xj);
+        jz=view.findViewById(R.id.jz);
+        gif=view.findViewById(R.id.case_gif);
         wd_toux=view.findViewById(R.id.wd_toux);
         wd_name=view.findViewById(R.id.wd_name);
         wd_hbm=view.findViewById(R.id.wd_hbm);
@@ -118,6 +110,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wd_fk.setOnClickListener(this);
         wd_sz.setOnClickListener(this);
         wd_toux.setOnClickListener(this);
+        Glide.with(getContext()).load(R.mipmap.re).into(gif);
         if(user.getData()!=null){
             Glide.with(getContext()).load(user.getData().getAvatar())
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -208,6 +201,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                jz.setVisibility(View.GONE);
                 user=userBean;
                 Glide.with(getContext()).load(user.getData().getAvatar())
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -233,5 +227,9 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
        Log.e("asd",error);
     }
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        personalPresenter.destoryView();
+    }
 }

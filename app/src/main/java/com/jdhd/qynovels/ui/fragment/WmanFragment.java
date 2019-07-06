@@ -10,23 +10,39 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.BookAdapter;
+import com.jdhd.qynovels.module.ShopBean;
+import com.jdhd.qynovels.persenter.impl.bookshop.IJxPresenterImpl;
+import com.jdhd.qynovels.view.bookshop.IJxView;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WmanFragment extends Fragment {
+public class WmanFragment extends Fragment implements IJxView {
     private RecyclerView rv;
     private  int lastOffset;//距离
 
     private  int lastPosition;//第几个item
 
     private SharedPreferences sharedPreferences;
+    private int type;
+    private RelativeLayout jz;
+    private ImageView gif;
+    private BookAdapter adapter;
+    private IJxPresenterImpl jxPresenter;
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public WmanFragment() {
         // Required empty public constructor
@@ -38,14 +54,19 @@ public class WmanFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_book, container, false);
+        jxPresenter=new IJxPresenterImpl(this,3);
+        jxPresenter.loadData();
         init(view);
         return view;
     }
     private void init(View view) {
+        jz=view.findViewById(R.id.jz);
+        gif=view.findViewById(R.id.case_gif);
+        Glide.with(getContext()).load(R.mipmap.re).into(gif);
         rv=view.findViewById(R.id.book_rv);
         LinearLayoutManager manager=new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
-        BookAdapter adapter=new BookAdapter(getContext(),0,2);
+        adapter=new BookAdapter(getContext(),0,2);
         rv.setAdapter(adapter);
         rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -56,6 +77,22 @@ public class WmanFragment extends Fragment {
                 }
             }
         });
+    }
+    @Override
+    public void onSuccess(ShopBean shopBean) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                jz.setVisibility(View.GONE);
+                adapter.refresh(shopBean.getData().getList());
+                Log.e("wsize",shopBean.getData().getList().size()+"---");
+            }
+        });
+    }
+
+    @Override
+    public void onError(String error) {
+
     }
 
     @Override
@@ -68,6 +105,12 @@ public class WmanFragment extends Fragment {
     public void onPause() {
         super.onPause();
         getPositionAndOffset();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        jxPresenter.destoryView();
     }
 
     private void scrollToPosition() {
@@ -118,4 +161,6 @@ public class WmanFragment extends Fragment {
         }
 
     }
+
+
 }

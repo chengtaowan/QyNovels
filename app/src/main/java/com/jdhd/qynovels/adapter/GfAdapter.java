@@ -11,12 +11,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.ShopBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
     private Context context;
     private int type;
     private onItemClick onItemClick;
+    private List<ShopBean.DataBean.ListBeanX.ListBean> list=new ArrayList<>();
+    public void refresh(List<ShopBean.DataBean.ListBeanX.ListBean> list){
+        this.list=list;
+        notifyDataSetChanged();
+    }
 
     public void setOnItemClick(GfAdapter.onItemClick onItemClick) {
         this.onItemClick = onItemClick;
@@ -43,6 +53,15 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
         if(type==1){
             holder.type.setVisibility(View.VISIBLE);
         }
+        if(list.size()==0){
+            return;
+        }
+        Glide.with(context).load(list.get(position).getImage()).into(holder.book);
+        holder.name.setText(list.get(position).getName());
+        holder.grade.setText(list.get(position).getGrade()+"");
+        holder.des.setText(list.get(position).getIntro());
+        holder.type.setText(list.get(position).getFinishStatus()+"");
+        holder.num.setText(list.get(position).getNumber()+"万字");
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,7 +72,7 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
 
     @Override
     public int getItemCount() {
-        return 5;
+        return list.size();
     }
 
     class GfViewHolder extends RecyclerView.ViewHolder{

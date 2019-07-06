@@ -1,15 +1,13 @@
-package com.jdhd.qynovels.persenter.impl;
+package com.jdhd.qynovels.persenter.impl.personal;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.TokenBean;
 import com.jdhd.qynovels.module.UserBean;
-import com.jdhd.qynovels.persenter.inter.IPersonalPresenter;
+import com.jdhd.qynovels.persenter.inter.personal.IPersonalPresenter;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
-import com.jdhd.qynovels.view.IPersonalView;
+import com.jdhd.qynovels.view.personal.IPersonalView;
 
 import java.util.HashMap;
 import java.util.Map;

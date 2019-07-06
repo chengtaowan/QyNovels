@@ -1,51 +1,28 @@
 package com.jdhd.qynovels.wxapi;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.TokenBean;
 import com.jdhd.qynovels.module.UserBean;
-import com.jdhd.qynovels.persenter.impl.IPersonalPresenterImpl;
-import com.jdhd.qynovels.ui.activity.MainActivity;
+import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.WodeFragment;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
-import com.jdhd.qynovels.view.IPersonalView;
-import com.rxjava.rxlife.RxLife;
+import com.jdhd.qynovels.view.personal.IPersonalView;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import io.reactivex.Observer;
-import io.reactivex.Scheduler;
-import io.reactivex.disposables.Disposable;
-import rxhttp.wrapper.annotation.DefaultDomain;
 import rxhttp.wrapper.param.RxHttp;
 import rxhttp.wrapper.parse.SimpleParser;
 

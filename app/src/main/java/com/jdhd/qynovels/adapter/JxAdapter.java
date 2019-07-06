@@ -2,7 +2,13 @@ package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,28 +22,44 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.ShopBean;
 import com.jdhd.qynovels.ui.activity.FlActivity;
 import com.jdhd.qynovels.ui.activity.XssdActivity;
 import com.jdhd.qynovels.ui.activity.PhbActivity;
 import com.jdhd.qynovels.ui.activity.WjjpActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.tencent.mm.opensdk.utils.Log;
 import com.youth.banner.Banner;
+import com.youth.banner.BannerConfig;
 import com.youth.banner.loader.ImageLoader;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener,RsAdapter.onItemClick,KdAdapter.onItemClick,SsAdapter.onItemClick,XsAdapter.onItemClick,GfAdapter.onItemClick{
-    public static final int TYPE_BANNER=0;
-    public static final int TYPE_TYPE=1;
-    public static final int TYPE_LINE=2;
-    public static final int TYPE_RS=3;
-    public static final int TYPE_KD=4;
-    public static final int TYPE_SS=5;
-    public static final int TYPE_XS=6;
-    public static final int TYPE_GF=7;
+    public static final int TYPE_BANNER=MyApp.ModuleType.kSectionTypeBanner;
+    public static final int TYPE_TYPE=MyApp.ModuleType.kSectionTypeFunction;
+    public static final int TYPE_RS=MyApp.ModuleType.kSectionTypeTodayHotSearch;
+    public static final int TYPE_KD=MyApp.ModuleType.kSectionTypeWeekWatch;
+    public static final int TYPE_SS=MyApp.ModuleType.kSectionTypeRealTimeHotSearch;
+    public static final int TYPE_XS=MyApp.ModuleType.kSectionTypeNewBookFresh;
+    public static final int TYPE_GF=MyApp.ModuleType.kSectionTypeHighMarks;
     private Context context;
+    private List<ShopBean.DataBean.ListBeanX> list=new ArrayList();
+    private List<ShopBean.DataBean.ListBeanX.ListBean> listBeans=new ArrayList<>();
+    public void refresh(List<ShopBean.DataBean.ListBeanX> list){
+        this.list=list;
+        notifyDataSetChanged();
+    }
 
     public JxAdapter(Context context) {
         this.context = context;
@@ -54,10 +76,6 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
         else if(viewType==TYPE_TYPE){
             View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_type, parent, false);
             viewHolder=new TypeViewHolder(view);
-        }
-        else if(viewType==TYPE_LINE){
-            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_line, parent, false);
-            viewHolder=new LineViewHolder(view);
         }
         else if(viewType==TYPE_RS){
             View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_base, parent, false);
@@ -79,75 +97,104 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
             View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_xs, parent, false);
             viewHolder=new GfViewHolder(view);
         }
+
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if(list.size()==0){
+            return;
+        }
        if(holder instanceof BannerViewHolder){
            BannerViewHolder viewHolder= (BannerViewHolder) holder;
-           List<Integer> imglist=new ArrayList<>();
-           imglist.add(R.mipmap.ggw_sy);
-           imglist.add(R.mipmap.ggw_sy);
-           imglist.add(R.mipmap.ggw_sy);
+           List<String> imglist=new ArrayList<>();
+           if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeBanner){
+               for(int i=0;i<list.get(position).getList().size();i++){
+                   imglist.add(list.get(position).getList().get(i).getUrl());
+               }
+           }
            viewHolder.banner.setImageLoader(new GlideImageLoader());   //设置图片加载器
            viewHolder.banner.setImages(imglist);  //设置banner中显示图片
            viewHolder.banner.start();  //设置完毕后调用
        }
        else if(holder instanceof TypeViewHolder){
            TypeViewHolder viewHolder= (TypeViewHolder) holder;
+
+           if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeFunction){
+               Glide.with(context).load(list.get(position).getList().get(0).getIcon()).into(viewHolder.img1);
+               Glide.with(context).load(list.get(position).getList().get(1).getIcon()).into(viewHolder.img2);
+               Glide.with(context).load(list.get(position).getList().get(2).getIcon()).into(viewHolder.img3);
+               Glide.with(context).load(list.get(position).getList().get(3).getIcon()).into(viewHolder.img4);
+               viewHolder.tex1.setText(list.get(position).getList().get(0).getName());
+               viewHolder.tex2.setText(list.get(position).getList().get(1).getName());
+               viewHolder.tex3.setText(list.get(position).getList().get(2).getName());
+               viewHolder.tex4.setText(list.get(position).getList().get(3).getName());
+           }
            viewHolder.fl.setOnClickListener(this);
            viewHolder.phb.setOnClickListener(this);
            viewHolder.wjjp.setOnClickListener(this);
            viewHolder.jrgx.setOnClickListener(this);
        }
-       else if(holder instanceof LineViewHolder){
-           LineViewHolder viewHolder= (LineViewHolder) holder;
-       }
        else if(holder instanceof RsViewHolder){
            RsViewHolder viewHolder= (RsViewHolder) holder;
-           viewHolder.tex.setText("今日大热搜");
+           if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeTodayHotSearch){
+              viewHolder.tex.setText(list.get(position).getName());
+           }
            GridLayoutManager manager=new GridLayoutManager(context, 3);
            viewHolder.rv.addItemDecoration(new SpaceItemDecoration(20));
            viewHolder.rv.setLayoutManager(manager);
            RsAdapter adapter=new RsAdapter(context);
+           adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
            adapter.setOnItemClick(this);
        }
        else if(holder instanceof KdViewHolder){
            KdViewHolder viewHolder= (KdViewHolder) holder;
-           viewHolder.tex.setText("本周看点");
+           if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeWeekWatch){
+               viewHolder.tex.setText(list.get(position).getName());
+           }
            LinearLayoutManager manager=new LinearLayoutManager(context);
            manager.setOrientation(RecyclerView.HORIZONTAL);
            viewHolder.rv.setLayoutManager(manager);
            KdAdapter adapter=new KdAdapter(context);
+           adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
            adapter.setOnItemClick(this);
        }
        else if(holder instanceof SsViewHolder){
            SsViewHolder viewHolder= (SsViewHolder) holder;
-           viewHolder.tex.setText("实时热搜");
+           if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeRealTimeHotSearch){
+               viewHolder.tex.setText(list.get(position).getName());
+           }
            GridLayoutManager manager=new GridLayoutManager(context, 4);
            viewHolder.rv.setLayoutManager(manager);
            SsAdapter adapter= new SsAdapter(context,1);
+           adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
            adapter.setOnItemClick(this);
        }
        else if(holder instanceof XsViewHolder){
            XsViewHolder viewHolder= (XsViewHolder) holder;
-           viewHolder.tex.setText("新书抢先");
+           if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeNewBookFresh){
+               viewHolder.tex.setText(list.get(position).getName());
+           }
            GridLayoutManager manager=new GridLayoutManager(context, 4);
            viewHolder.rv.setLayoutManager(manager);
            XsAdapter adapter=new XsAdapter(context);
+           adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
            adapter.setOnItemClick(this);
        }
        else if(holder instanceof GfViewHolder){
            GfViewHolder viewHolder= (GfViewHolder) holder;
-           viewHolder.tex.setText("高分精选");
+           if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeHighMarks){
+               viewHolder.tex.setText(list.get(position).getName());
+           }
            LinearLayoutManager manager=new LinearLayoutManager(context);
            viewHolder.rv.setLayoutManager(manager);
            GfAdapter adapter=new GfAdapter(context,0);
+           adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
            adapter.setOnItemClick(this);
        }
@@ -155,7 +202,7 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
 
     @Override
     public int getItemCount() {
-        return 8;
+        return list.size();
     }
 
     @Override
@@ -167,21 +214,18 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
             return TYPE_TYPE;
         }
         else if(position==2){
-            return TYPE_LINE;
-        }
-        else if(position==3){
             return TYPE_RS;
         }
-        else if(position==4){
+        else if(position==3){
             return TYPE_KD;
         }
-        else if(position==5){
+        else if(position==4){
             return TYPE_SS;
         }
-        else if(position==6){
+        else if(position==5){
             return TYPE_XS;
         }
-        else if(position==7){
+        else if(position==6){
             return TYPE_GF;
         }
         return -1;
@@ -261,21 +305,25 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
 
     class TypeViewHolder extends RecyclerView.ViewHolder{
         private LinearLayout fl,phb,wjjp,jrgx;
+        private ImageView img1,img2,img3,img4;
+        private TextView tex1,tex2,tex3,tex4;
         public TypeViewHolder(@NonNull View itemView) {
             super(itemView);
             fl=itemView.findViewById(R.id.home_fl);
             phb=itemView.findViewById(R.id.home_phb);
             wjjp=itemView.findViewById(R.id.home_wjjp);
             jrgx=itemView.findViewById(R.id.home_jrgx);
+            img1=itemView.findViewById(R.id.type_img1);
+            img2=itemView.findViewById(R.id.type_img2);
+            img3=itemView.findViewById(R.id.type_img3);
+            img4=itemView.findViewById(R.id.type_img4);
+            tex1=itemView.findViewById(R.id.type_tex1);
+            tex2=itemView.findViewById(R.id.type_tex2);
+            tex3=itemView.findViewById(R.id.type_tex3);
+            tex4=itemView.findViewById(R.id.type_tex4);
         }
     }
 
-    class LineViewHolder extends RecyclerView.ViewHolder{
-
-        public LineViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-    }
 
     class RsViewHolder extends RecyclerView.ViewHolder{
         private TextView tex;
@@ -328,7 +376,9 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
     public class GlideImageLoader extends ImageLoader {
         @Override
         public void displayImage(Context context, Object path, ImageView imageView) {
-            Glide.with(context).load(path).into(imageView);
+            Glide.with(context)
+                    .load(path)
+                    .into(imageView);
         }
     }
     public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
@@ -351,3 +401,5 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
 
 
 }
+
+

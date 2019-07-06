@@ -1,4 +1,4 @@
-package com.jdhd.qynovels.view;
+package com.jdhd.qynovels.view.personal;
 
 import com.jdhd.qynovels.module.UserBean;
 

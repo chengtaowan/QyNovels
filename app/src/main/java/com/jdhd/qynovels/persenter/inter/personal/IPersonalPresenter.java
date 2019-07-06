@@ -1,4 +1,4 @@
-package com.jdhd.qynovels.persenter.inter;
+package com.jdhd.qynovels.persenter.inter.personal;
 
 import com.jdhd.qynovels.module.TokenBean;
 import com.jdhd.qynovels.module.UserBean;

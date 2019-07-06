@@ -49,4 +49,5 @@
         android:layout_height="match_parent"
         android:layout_marginTop="64dp"
         android:id="@+id/sj_rv"></androidx.recyclerview.widget.RecyclerView>
+    <include layout="@layout/item_jz"/>
 </RelativeLayout>

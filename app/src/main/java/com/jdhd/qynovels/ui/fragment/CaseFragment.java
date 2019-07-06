@@ -1,30 +1,30 @@
 package com.jdhd.qynovels.ui.fragment;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
-import com.google.android.material.tabs.TabLayout;
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.CaseAdapter;
-import com.jdhd.qynovels.module.BookBean;
+import com.jdhd.qynovels.module.CaseBean;
+import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
 import com.jdhd.qynovels.ui.activity.LsActivity;
 import com.jdhd.qynovels.ui.activity.QdActivity;
 import com.jdhd.qynovels.ui.activity.SsActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.view.bookcase.ICaseView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +32,14 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CaseFragment extends Fragment implements View.OnClickListener,CaseAdapter.onItemClick{
+public class CaseFragment extends Fragment implements View.OnClickListener,CaseAdapter.onItemClick, ICaseView {
     private ImageView ss,ls,qd;
     private RecyclerView rv;
-    private List<BookBean> list=new ArrayList<>();
+    private ICasePresenterImpl casePresenter;
+    private CaseAdapter adapter;
+    private List<CaseBean.DataBean.ListBean> list=new ArrayList<>();
+    private RelativeLayout jz;
+    private ImageView gif;
     public CaseFragment() {
         // Required empty public constructor
     }
@@ -46,7 +50,10 @@ public class CaseFragment extends Fragment implements View.OnClickListener,CaseA
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_case, container, false);
+        casePresenter=new ICasePresenterImpl(this,getContext());
+        casePresenter.loadData();
         init(view);
+
         return  view;
     }
 
@@ -55,14 +62,17 @@ public class CaseFragment extends Fragment implements View.OnClickListener,CaseA
       ls=view.findViewById(R.id.sj_ls);
       qd=view.findViewById(R.id.sj_qd);
       rv=view.findViewById(R.id.sj_rv);
+      jz=view.findViewById(R.id.jz);
+      gif=view.findViewById(R.id.case_gif);
       ss.setOnClickListener(this);
       ls.setOnClickListener(this);
       qd.setOnClickListener(this);
       LinearLayoutManager manager=new LinearLayoutManager(getContext());
       rv.setLayoutManager(manager);
-      CaseAdapter adapter=new CaseAdapter(getContext(),getActivity());
+      adapter=new CaseAdapter(getContext(),getActivity());
       rv.setAdapter(adapter);
       adapter.setOnItemClick(this);
+      Glide.with(getContext()).load(R.mipmap.re).into(gif);
     }
 
 
@@ -89,5 +99,29 @@ public class CaseFragment extends Fragment implements View.OnClickListener,CaseA
         Intent intent=new Intent(getActivity(),XqActivity.class);
         intent.putExtra("xq",1);
         startActivity(intent);
+    }
+
+    @Override
+    public void onSuccess(CaseBean caseBean) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                jz.setVisibility(View.GONE);
+                list=caseBean.getData().getList();
+                adapter.refresh(list);
+            }
+        });
+
+    }
+
+    @Override
+    public void onError(String error) {
+        Log.e("caseerror",error);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        casePresenter.destoryView();
     }
 }
