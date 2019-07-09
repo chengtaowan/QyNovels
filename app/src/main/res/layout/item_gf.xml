@@ -61,8 +61,6 @@
             android:id="@+id/gf_des"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/gf_num"
-            android:layout_marginStart="-42dp"
             android:layout_marginTop="34dp"
             android:ellipsize="end"
             android:lines="2"

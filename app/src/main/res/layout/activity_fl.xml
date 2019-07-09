@@ -56,7 +56,12 @@
             android:layout_weight="76"
             android:id="@+id/rv_fr"
             android:orientation="vertical"
-            android:background="#fff"></LinearLayout>
+            android:background="#fff">
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/rl_rv"></androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

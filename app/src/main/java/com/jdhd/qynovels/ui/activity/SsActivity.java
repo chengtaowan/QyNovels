@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.adapter.Ss_NrAdapter;
 import com.jdhd.qynovels.ui.fragment.Ss_LxFragment;
 import com.jdhd.qynovels.ui.fragment.Ss_NrFragment;
 import com.jdhd.qynovels.ui.fragment.Ss_RsFragment;
@@ -25,6 +26,7 @@ public class SsActivity extends AppCompatActivity implements View.OnClickListene
     private ImageView back;
     private TextView ss;
     private EditText name;
+    private Ss_NrFragment ss_nrFragment=new Ss_NrFragment();
     int type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +71,10 @@ public class SsActivity extends AppCompatActivity implements View.OnClickListene
         }
         else if(R.id.ss_ss==view.getId()){
             if(name.getText().length()>0){
+                ss_nrFragment.setContent(name.getText().toString());
                 FragmentManager manager=getSupportFragmentManager();
                 FragmentTransaction transaction=manager.beginTransaction();
-                transaction.replace(R.id.ss_ll,new Ss_NrFragment());
+                transaction.replace(R.id.ss_ll,ss_nrFragment);
                 transaction.commit();
             }
             else{

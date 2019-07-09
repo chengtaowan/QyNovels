@@ -67,7 +67,7 @@ public class ManFragment extends Fragment implements IJxView {
         rv=view.findViewById(R.id.book_rv);
         LinearLayoutManager manager=new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
-        adapter=new BookAdapter(getContext(),0,1);
+        adapter=new BookAdapter(getContext(),1,0);
         rv.setAdapter(adapter);
         rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -86,7 +86,6 @@ public class ManFragment extends Fragment implements IJxView {
             public void run() {
               jz.setVisibility(View.GONE);
               adapter.refresh(shopBean.getData().getList());
-              Log.e("msize",shopBean.getData().getList().size()+"---");
             }
         });
     }

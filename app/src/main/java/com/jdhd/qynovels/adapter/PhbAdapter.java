@@ -12,11 +12,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.RankContentBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
     private Context context;
     private onItemClick onItemClick;
+    private List<RankContentBean.DataBean.ListBean> list=new ArrayList<>();
+    public void refresh(List<RankContentBean.DataBean.ListBean> list){
+        this.list=list;
+        notifyDataSetChanged();
+    }
 
     public void setOnItemClick(PhbAdapter.onItemClick onItemClick) {
         this.onItemClick = onItemClick;
@@ -38,6 +48,9 @@ public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
     public void onBindViewHolder(@NonNull PhbViewHolder holder, final int position) {
         holder.num.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Oswald-Bold.otf"));
         holder.num.setText(position+1+"");
+        Glide.with(context).load(list.get(position).getImage()).into(holder.img);
+        holder.name.setText(list.get(position).getName());
+        holder.type.setText(list.get(position).getAuthor());
         if(position==0){
             holder.num.setTextColor(Color.parseColor("#E8564E"));
         }
@@ -57,7 +70,7 @@ public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
 
     @Override
     public int getItemCount() {
-        return 10;
+        return list.size();
     }
 
     class PhbViewHolder extends RecyclerView.ViewHolder{

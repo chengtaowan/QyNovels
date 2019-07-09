@@ -24,9 +24,12 @@ import android.widget.TextView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.XqAdapter;
+import com.jdhd.qynovels.module.BookInfoBean;
+import com.jdhd.qynovels.persenter.impl.bookcase.IBookInfoPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.JxFragment;
 import com.jdhd.qynovels.utils.FastBlurUtil;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.jdhd.qynovels.view.bookcase.IBookInfoView;
 import com.jdhd.qynovels.widget.PersonalScrollView;
 import com.jdhd.qynovels.widget.RatingBar;
 
@@ -35,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class XqActivity extends AppCompatActivity implements View.OnClickListener {
+public class XqActivity extends AppCompatActivity implements View.OnClickListener , IBookInfoView {
     private LinearLayout ll;
     private ImageView bj,back;
     private List<String> list=new ArrayList<>();
@@ -51,6 +54,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     private  int lastPosition;//第几个item
 
     private  SharedPreferences sharedPreferences;
+    private IBookInfoPresenterImpl bookInfoPresenter;
 
 
     @Override
@@ -121,6 +125,16 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
            change();
            finish();
         }
+
+    }
+
+    @Override
+    public void onSuccess(BookInfoBean bookInfoBean) {
+
+    }
+
+    @Override
+    public void onError(String error) {
 
     }
 

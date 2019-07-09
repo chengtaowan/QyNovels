@@ -4,10 +4,11 @@ import java.util.List;
 
 public class CaseBean {
 
+
     /**
      * code : 200
      * msg : success
-     * data : {"list":[{"id":365,"name":"阴阳合神","image":"http://www.hxtk.com/cover/0/376.jpg","author":"昊天之恋","readContent":"天下是天下人的天下，是老百姓的天下","readStatus":10,"bookStatus":20,"bookId":256,"pageNum":3}]}
+     * data : {"list":[{"id":365,"name":"阴阳合神","image":"http://www.hxtk.com/cover/0/376.jpg","author":"昊天之恋","readContent":"天下是天下人的天下，是老百姓的天下","readStatus":10,"bookStatus":20,"bookId":256,"pageNum":3}],"hot":{"bookId":617,"name":"风云少年","image":"http://cdn.taxiaoshuo.com/FoAeDznDs-PtrYPU9rqJ7p3pA_8I.jpg","intro":"龙跃飞是一个灵力大陆上的少年，在过去的时候曾经也是一个风云的人物，但是因为个人的放荡不羁，得罪了一些更加有实力的人，被人差不多打成了废物\u2026\u2026 自那以后，他开始研究了医药学，却也从此开始了一个新的人生\u2026\u2026","author":"星辰"}}
      */
 
     private int code;
@@ -39,7 +40,21 @@ public class CaseBean {
     }
 
     public static class DataBean {
+        /**
+         * list : [{"id":365,"name":"阴阳合神","image":"http://www.hxtk.com/cover/0/376.jpg","author":"昊天之恋","readContent":"天下是天下人的天下，是老百姓的天下","readStatus":10,"bookStatus":20,"bookId":256,"pageNum":3}]
+         * hot : {"bookId":617,"name":"风云少年","image":"http://cdn.taxiaoshuo.com/FoAeDznDs-PtrYPU9rqJ7p3pA_8I.jpg","intro":"龙跃飞是一个灵力大陆上的少年，在过去的时候曾经也是一个风云的人物，但是因为个人的放荡不羁，得罪了一些更加有实力的人，被人差不多打成了废物\u2026\u2026 自那以后，他开始研究了医药学，却也从此开始了一个新的人生\u2026\u2026","author":"星辰"}
+         */
+
+        private HotBean hot;
         private List<ListBean> list;
+
+        public HotBean getHot() {
+            return hot;
+        }
+
+        public void setHot(HotBean hot) {
+            this.hot = hot;
+        }
 
         public List<ListBean> getList() {
             return list;
@@ -47,6 +62,62 @@ public class CaseBean {
 
         public void setList(List<ListBean> list) {
             this.list = list;
+        }
+
+        public static class HotBean {
+            /**
+             * bookId : 617
+             * name : 风云少年
+             * image : http://cdn.taxiaoshuo.com/FoAeDznDs-PtrYPU9rqJ7p3pA_8I.jpg
+             * intro : 龙跃飞是一个灵力大陆上的少年，在过去的时候曾经也是一个风云的人物，但是因为个人的放荡不羁，得罪了一些更加有实力的人，被人差不多打成了废物…… 自那以后，他开始研究了医药学，却也从此开始了一个新的人生……
+             * author : 星辰
+             */
+
+            private int bookId;
+            private String name;
+            private String image;
+            private String intro;
+            private String author;
+
+            public int getBookId() {
+                return bookId;
+            }
+
+            public void setBookId(int bookId) {
+                this.bookId = bookId;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public String getImage() {
+                return image;
+            }
+
+            public void setImage(String image) {
+                this.image = image;
+            }
+
+            public String getIntro() {
+                return intro;
+            }
+
+            public void setIntro(String intro) {
+                this.intro = intro;
+            }
+
+            public String getAuthor() {
+                return author;
+            }
+
+            public void setAuthor(String author) {
+                this.author = author;
+            }
         }
 
         public static class ListBean {

@@ -1,18 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="24"
-        android:id="@+id/phbm_rv"
-        android:background="#FAFAFA"></androidx.recyclerview.widget.RecyclerView>
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="76"
-        android:id="@+id/phbm_ll"
-        android:orientation="vertical"
-        android:background="#fff"></LinearLayout>
-</LinearLayout>
+        android:orientation="horizontal">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="24"
+            android:id="@+id/phbm_rv"
+            android:background="#FAFAFA"></androidx.recyclerview.widget.RecyclerView>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="76"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/phbm_ll"
+                android:orientation="vertical"
+                android:background="#fff"
+                >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="13dp"
+                    android:background="@drawable/shape_phb">
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="大热搜"
+                            android:textColor="#ff6d6f72"
+                            android:textSize="10sp"
+                            android:layout_centerVertical="true"
+                            android:id="@+id/phb_des"/>
+                        <TextView
+                            android:layout_marginLeft="15dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5月29日更新"
+                            android:id="@+id/phb_time"
+                            android:textColor="#ff2f3236"
+                            android:textSize="10sp"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/phb_des"/>
+                    </RelativeLayout>
+                </RelativeLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/phb_rv"
+                    android:background="#fff"></androidx.recyclerview.widget.RecyclerView>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+    <include layout="@layout/item_jz"/>
+</RelativeLayout>

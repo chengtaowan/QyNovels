@@ -11,28 +11,28 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.module.Fl_Title_Bean;
+import com.jdhd.qynovels.module.ClassBean;
 import com.jdhd.qynovels.module.RankBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Fl_Title_Adapter extends RecyclerView.Adapter<Fl_Title_Adapter.Fl_Title_ViewHolder>{
+public class Fl_biaoti_Adapter extends RecyclerView.Adapter<Fl_biaoti_Adapter.Fl_Title_ViewHolder>{
     private Context context;
-    private List<RankBean.DataBean.ListBean.ChildBean> list=new ArrayList<>();
+    private List<ClassBean.DataBean.ListBean> list=new ArrayList<>();
     private List<Boolean> isClick;
     private onTitleClick onTitleClick;
 
-    public void refresh(List<RankBean.DataBean.ListBean.ChildBean> list){
+    public void refresh(List<ClassBean.DataBean.ListBean> list){
         this.list=list;
         notifyDataSetChanged();
     }
 
-    public void setOnTitleClick(Fl_Title_Adapter.onTitleClick onTitleClick) {
+    public void setOnTitleClick(Fl_biaoti_Adapter.onTitleClick onTitleClick) {
         this.onTitleClick = onTitleClick;
     }
 
-    public Fl_Title_Adapter(Context context) {
+    public Fl_biaoti_Adapter(Context context) {
         this.context = context;
     }
 

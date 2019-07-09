@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.BookBean;
 import com.jdhd.qynovels.module.CaseBean;
@@ -28,13 +29,18 @@ import java.util.List;
 
 public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ListAdapter.onItemClick {
     private List<CaseBean.DataBean.ListBean> list=new ArrayList<>();
+    private CaseBean.DataBean.HotBean hotbean=new CaseBean.DataBean.HotBean();
     private Context context;
     private FragmentActivity activity;
     public static final int TYPE_TITLE=0;
     public static final int TYPE_LIST=1;
     private onItemClick onItemClick;
-    public void refresh(List<CaseBean.DataBean.ListBean> list){
+    public void refreshlist(List<CaseBean.DataBean.ListBean> list){
         this.list=list;
+        notifyDataSetChanged();
+    }
+    public void refreshhot(CaseBean.DataBean.HotBean hotbean){
+        this.hotbean=hotbean;
         notifyDataSetChanged();
     }
     public void setOnItemClick(CaseAdapter.onItemClick onItemClick) {
@@ -66,6 +72,9 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         if(holder instanceof TitleViewHolder){
             TitleViewHolder viewHolder= (TitleViewHolder) holder;
+            viewHolder.des.setText(hotbean.getIntro());
+            Glide.with(context).load(hotbean.getImage()).into(viewHolder.book);
+            viewHolder.name.setText(hotbean.getName());
             viewHolder.ll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

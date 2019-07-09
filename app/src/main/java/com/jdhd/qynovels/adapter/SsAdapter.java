@@ -49,15 +49,29 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
         if(list.size()==0){
             return;
         }
-        Glide.with(context).load(list.get(position).getImage()).into(holder.book);
-        holder.name.setText(list.get(position).getName());
-        holder.num.setText(list.get(position).getSearch()+"次搜索");
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onItemClick.onSsclick(position);
-            }
-        });
+        if(type==1){
+            Glide.with(context).load(list.get(position).getImage()).into(holder.book);
+            holder.name.setText(list.get(position).getName());
+            holder.num.setText(list.get(position).getSearch()+"次搜索");
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClick.onSsclick(position);
+                }
+            });
+        }
+        else{
+            Glide.with(context).load(list.get(position+1).getImage()).into(holder.book);
+            holder.name.setText(list.get(position+1).getName());
+            holder.num.setText(list.get(position+1).getSearch()+"次搜索");
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClick.onSsclick(position+1);
+                }
+            });
+        }
+
     }
 
     @Override
@@ -66,7 +80,7 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
             return list.size();
         }
         else {
-            return 4;
+            return list.size()-1;
         }
 
     }

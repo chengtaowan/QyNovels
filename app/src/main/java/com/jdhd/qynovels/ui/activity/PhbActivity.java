@@ -7,52 +7,91 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.ShopAdapter;
+import com.jdhd.qynovels.module.RankBean;
+import com.jdhd.qynovels.persenter.impl.bookshop.IRankPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.MphbFragment;
 import com.jdhd.qynovels.ui.fragment.WphbFragment;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.jdhd.qynovels.view.bookshop.IRankView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhbActivity extends AppCompatActivity implements View.OnClickListener,TabLayout.OnTabSelectedListener {
+public class PhbActivity extends AppCompatActivity implements View.OnClickListener,TabLayout.OnTabSelectedListener, IRankView {
     private ImageView back;
     private TabLayout tab;
     private List<Fragment> fragmentList=new ArrayList<>();
+    private IRankPresenterImpl rankPresenter;
     private ViewPager vp;
+    private RelativeLayout jz;
+    private ImageView gif;
+    private MphbFragment mphbFragment=new MphbFragment();
+    private WphbFragment wphbFragment=new WphbFragment();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phb);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        rankPresenter=new IRankPresenterImpl(this);
+        rankPresenter.loadData();
         init();
     }
 
     private void init() {
+        jz=findViewById(R.id.jz);
+        gif=findViewById(R.id.case_gif);
+        Glide.with(this).load(R.mipmap.re).into(gif);
         back=findViewById(R.id.phb_back);
         back.setOnClickListener(this);
         tab=findViewById(R.id.phb_tab);
-        tab.addTab(tab.newTab().setText("男生排行榜"));
-        tab.addTab(tab.newTab().setText("女生排行榜"));
         tab.setSelectedTabIndicatorHeight(0);
-        tab.getTabAt(0).select();
         tab.addOnTabSelectedListener(this);
         vp=findViewById(R.id.phb_vp);
-        vp.setOffscreenPageLimit(0);
-        fragmentList.add(new MphbFragment());
-        fragmentList.add(new WphbFragment());
-        ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager(),fragmentList);
-        vp.setAdapter(adapter);
-        vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
 
+
+    }
+    @Override
+    public void onSuccess(RankBean rankBean) {
+       runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               jz.setVisibility(View.GONE);
+             for(int i=0;i<rankBean.getData().getList().size();i++){
+                tab.addTab(tab.newTab().setText(rankBean.getData().getList().get(i).getName()));
+             }
+               tab.getTabAt(0).select();
+               Bundle bundle = new Bundle();
+               bundle.putParcelableArrayList("data", (ArrayList<RankBean.DataBean.ListBean.ChildBean>) rankBean.getData().getList().get(0).getChild());
+               mphbFragment.setArguments(bundle);
+               Bundle bundlew = new Bundle();
+               bundlew.putParcelableArrayList("data", (ArrayList<RankBean.DataBean.ListBean.ChildBean>) rankBean.getData().getList().get(1).getChild());
+               wphbFragment.setArguments(bundlew);
+               vp.setOffscreenPageLimit(0);
+               fragmentList.add(mphbFragment);
+               fragmentList.add(wphbFragment);
+               ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager(),fragmentList);
+               vp.setAdapter(adapter);
+               vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
+           }
+       });
+    }
+
+    @Override
+    public void onError(String error) {
+        Log.e("phberror",error);
     }
 
     @Override
@@ -97,4 +136,6 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
         intent.putExtra("fragment_flag", 2);
         startActivity(intent);
     }
+
+
 }

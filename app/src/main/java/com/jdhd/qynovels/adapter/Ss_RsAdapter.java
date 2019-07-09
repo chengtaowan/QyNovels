@@ -11,11 +11,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.HotSearchBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Ss_RsAdapter extends RecyclerView.Adapter<Ss_RsAdapter.Ss_RsViewHolder>{
     private Context context;
     private onItemClick onItemClick;
-
+    private List<HotSearchBean.DataBean.ListBean> list=new ArrayList<>();
+    public void refresh(List<HotSearchBean.DataBean.ListBean> list){
+        this.list=list;
+        notifyDataSetChanged();
+    }
     public void setOnItemClick(Ss_RsAdapter.onItemClick onItemClick) {
         this.onItemClick = onItemClick;
     }
@@ -34,51 +42,17 @@ public class Ss_RsAdapter extends RecyclerView.Adapter<Ss_RsAdapter.Ss_RsViewHol
 
     @Override
     public void onBindViewHolder(@NonNull Ss_RsViewHolder holder, final int position) {
-        if(position==1){
-            holder.num.setText("6");
-            holder.num.setTextColor(Color.parseColor("#828486"));
-            holder.num.setBackgroundColor(Color.parseColor("#FAFAFA"));
-        }
-        else if(position==2){
+         if(position==1){
             holder.num.setText("2");
             holder.num.setTextColor(Color.parseColor("#FFFFFF"));
             holder.num.setBackgroundColor(Color.parseColor("#EF8E44"));
         }
         else if(position==3){
-            holder.num.setText("7");
-            holder.num.setTextColor(Color.parseColor("#828486"));
-            holder.num.setBackgroundColor(Color.parseColor("#FAFAFA"));
-        }
-        else if(position==4){
             holder.num.setText("3");
             holder.num.setTextColor(Color.parseColor("#FFFFFF"));
             holder.num.setBackgroundColor(Color.parseColor("#F2C63F"));
         }
-        else if(position==5){
-            holder.num.setText("8");
-            holder.num.setTextColor(Color.parseColor("#828486"));
-            holder.num.setBackgroundColor(Color.parseColor("#FAFAFA"));
-        }
-        else if(position==6){
-            holder.num.setText("4");
-            holder.num.setTextColor(Color.parseColor("#828486"));
-            holder.num.setBackgroundColor(Color.parseColor("#FAFAFA"));
-        }
-        else if(position==7){
-            holder.num.setText("9");
-            holder.num.setTextColor(Color.parseColor("#828486"));
-            holder.num.setBackgroundColor(Color.parseColor("#FAFAFA"));
-        }
-        else if(position==8){
-            holder.num.setText("5");
-            holder.num.setTextColor(Color.parseColor("#828486"));
-            holder.num.setBackgroundColor(Color.parseColor("#FAFAFA"));
-        }
-        else if(position==9){
-            holder.num.setText("10");
-            holder.num.setTextColor(Color.parseColor("#828486"));
-            holder.num.setBackgroundColor(Color.parseColor("#FAFAFA"));
-        }
+        holder.name.setText(list.get(position).getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,7 +63,7 @@ public class Ss_RsAdapter extends RecyclerView.Adapter<Ss_RsAdapter.Ss_RsViewHol
 
     @Override
     public int getItemCount() {
-        return 10;
+        return list.size();
     }
 
     class Ss_RsViewHolder extends RecyclerView.ViewHolder{

@@ -136,7 +136,6 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
                 jz.setVisibility(View.GONE);
                 for(int i=0;i<moduleBean.getData().getList().size();i++){
                     tab.addTab(tab.newTab().setText(moduleBean.getData().getList().get(i).getModuleName()));
-                    Log.e("type",moduleBean.getData().getList().get(i).getId()+"");
                 }
                 tab.getTabAt(0).select();
                 home_vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));

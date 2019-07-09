@@ -10,61 +10,75 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.adapter.FlAdapter;
 import com.jdhd.qynovels.adapter.Fl_Title_Adapter;
+import com.jdhd.qynovels.adapter.Fl_biaoti_Adapter;
+import com.jdhd.qynovels.module.ClassBean;
 import com.jdhd.qynovels.module.Fl_Title_Bean;
+import com.jdhd.qynovels.persenter.impl.bookshop.IClassPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.FlFragment;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.jdhd.qynovels.view.bookshop.IClassView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlActivity extends AppCompatActivity implements Fl_Title_Adapter.onTitleClick, View.OnClickListener {
+public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.onTitleClick, View.OnClickListener , IClassView ,FlAdapter.onItemClick{
      private ImageView back,search;
      private RecyclerView rv;
-     private List<Fl_Title_Bean> list=new ArrayList<>();
-     private List<Fragment> fragmentList=new ArrayList<>();
+     private RecyclerView datarv;
+     private IClassPresenterImpl classPresenter;
+     private Fl_biaoti_Adapter adapter;
+     private FlAdapter fladapter;
+     private List<ClassBean.DataBean.ListBean> list=new ArrayList<>();
+     int count=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fl);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        classPresenter=new IClassPresenterImpl(this);
+        classPresenter.loadData();
         init();
     }
 
     private void init() {
+        datarv=findViewById(R.id.rl_rv);
+        LinearLayoutManager manager=new LinearLayoutManager(this);
+        manager.setOrientation(RecyclerView.VERTICAL);
+        datarv.setLayoutManager(manager);
+        fladapter=new FlAdapter(this);
+        datarv.setAdapter(fladapter);
+        fladapter.setOnItemClick(this);
         back=findViewById(R.id.fl_back);
         search=findViewById(R.id.fl_ss);
         back.setOnClickListener(this);
         search.setOnClickListener(this);
         rv=findViewById(R.id.fl_rv);
-        LinearLayoutManager manager=new LinearLayoutManager(this);
-        manager.setOrientation(RecyclerView.VERTICAL);
-        rv.setLayoutManager(manager);
-        list.add(new Fl_Title_Bean("女生"));
-        list.add(new Fl_Title_Bean("男生"));
-        list.add(new Fl_Title_Bean("图书"));
-        Fl_Title_Adapter adapter=new Fl_Title_Adapter(this,list);
+        LinearLayoutManager manager1=new LinearLayoutManager(this);
+        manager1.setOrientation(RecyclerView.VERTICAL);
+        rv.setLayoutManager(manager1);
+        adapter=new Fl_biaoti_Adapter(this);
         rv.setAdapter(adapter);
         adapter.setOnTitleClick(this);
-        for(int i=0;i<list.size();i++){
-            fragmentList.add(new FlFragment());
-        }
-        FragmentManager fragmentManager=getSupportFragmentManager();
-        FragmentTransaction transaction=fragmentManager.beginTransaction();
-        transaction.replace(R.id.rv_fr,fragmentList.get(0));
-        transaction.commit();
+
+
     }
 
     @Override
     public void onclick(int index) {
-        FragmentManager manager=getSupportFragmentManager();
-        FragmentTransaction transaction=manager.beginTransaction();
-        transaction.replace(R.id.rv_fr,fragmentList.get(index));
-        transaction.commit();
+        classPresenter.loadData();
+        for(int i=0;i<list.size();i++){
+            if(i==index){
+                fladapter.refresh(list.get(index).getChild());
+            }
+        }
+
     }
 
     @Override
@@ -93,5 +107,32 @@ public class FlActivity extends AppCompatActivity implements Fl_Title_Adapter.on
     protected void onPause() {
         super.onPause();
         finish();
+    }
+
+    @Override
+    public void onSuccess(ClassBean classBean) {
+       runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               list=classBean.getData().getList();
+               adapter.refresh(classBean.getData().getList());
+               if(count==0){
+                   fladapter.refresh(list.get(0).getChild());
+               }
+               count++;
+           }
+       });
+    }
+
+    @Override
+    public void onError(String error) {
+       Log.e("rlerror",error);
+    }
+
+    @Override
+    public void onFlClick(int index) {
+        Intent intent=new Intent(this, MorePhbActivity.class);
+        intent.putExtra("more",1);
+        startActivity(intent);
     }
 }

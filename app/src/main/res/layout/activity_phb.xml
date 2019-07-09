@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,7 +11,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:background="#fff">
+        android:background="#fff"
+        android:id="@+id/pp">
         <ImageView
             android:layout_width="25dp"
             android:layout_height="25dp"
@@ -33,11 +34,14 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#FAFAFA"/>
+        android:background="#FAFAFA"
+        android:layout_below="@+id/pp"
+        android:id="@+id/line"/>
     <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/phb_vp"
-        android:background="#fff"></androidx.viewpager.widget.ViewPager>
-
-</LinearLayout>
+        android:background="#fff"
+        android:layout_below="@+id/line"></androidx.viewpager.widget.ViewPager>
+    <include layout="@layout/item_jz"/>
+</RelativeLayout>

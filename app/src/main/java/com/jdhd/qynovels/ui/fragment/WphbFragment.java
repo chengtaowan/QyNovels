@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.ui.fragment;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -14,12 +15,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Fl_Title_Adapter;
+import com.jdhd.qynovels.adapter.PhbAdapter;
 import com.jdhd.qynovels.module.Fl_Title_Bean;
+import com.jdhd.qynovels.module.RankBean;
+import com.jdhd.qynovels.module.RankContentBean;
+import com.jdhd.qynovels.persenter.impl.bookshop.IRankContentPresenterImpl;
+import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.view.bookshop.IRankContentView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +38,15 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WphbFragment extends Fragment implements Fl_Title_Adapter.onTitleClick{
+public class WphbFragment extends Fragment implements Fl_Title_Adapter.onTitleClick,PhbAdapter.onItemClick,IRankContentView {
 
-    private RecyclerView rv;
-    private List<Fl_Title_Bean> list=new ArrayList<>();
-    private List<Fragment> fragmentList=new ArrayList<>();
+    private RecyclerView rv,datarv;
+    private TextView des,time;
+    private IRankContentPresenterImpl rankContentPresenter;
+    private PhbAdapter adapter;
+    private RelativeLayout jz;
+    private ImageView gif;
+    private List<RankBean.DataBean.ListBean.ChildBean> list=new ArrayList<>();
     public WphbFragment() {
         // Required empty public constructor
     }
@@ -42,37 +57,76 @@ public class WphbFragment extends Fragment implements Fl_Title_Adapter.onTitleCl
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View  view= inflater.inflate(R.layout.fragment_wphb, container, false);
+        Bundle bundle=this.getArguments();
+        if(bundle!=null){
+            list = bundle.getParcelableArrayList("data");
+        }
+        rankContentPresenter=new IRankContentPresenterImpl(this);
+        rankContentPresenter.setId(list.get(0).getId());
+        rankContentPresenter.loadData();
         init(view);
         return view;
     }
 
     private void init(View view) {
-        rv=view.findViewById(R.id.phbw_rv);
+        jz=view.findViewById(R.id.jz);
+        gif=view.findViewById(R.id.case_gif);
+        Glide.with(getContext()).load(R.mipmap.re).into(gif);
+        des=view.findViewById(R.id.phb_des);
+        time=view.findViewById(R.id.phb_time);
+        des.setText(list.get(0).getName()+"");
+        time.setText(MphbFragment.changeData(list.get(0).getUpdateTime()+"")+"日更新");
+        datarv=view.findViewById(R.id.phb_rv);
         LinearLayoutManager manager=new LinearLayoutManager(getContext());
         manager.setOrientation(RecyclerView.VERTICAL);
-        rv.setLayoutManager(manager);
-        list.add(new Fl_Title_Bean("大热搜"));
-        list.add(new Fl_Title_Bean("完结榜"));
-        list.add(new Fl_Title_Bean("黑马榜"));
-        list.add(new Fl_Title_Bean("热搜榜"));
-        Fl_Title_Adapter adapter=new Fl_Title_Adapter(getContext(),list);
-        rv.setAdapter(adapter);
-        adapter.setOnTitleClick(this);
-        for(int i=0;i<list.size();i++){
-            fragmentList.add(new PhbFragment());
-        }
-        FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
-        FragmentTransaction transaction=fragmentManager.beginTransaction();
-        transaction.replace(R.id.phbw_ll,fragmentList.get(0));
-        transaction.commit();
+        datarv.setLayoutManager(manager);
+        adapter=new PhbAdapter(getContext());
+        datarv.setAdapter(adapter);
+        adapter.setOnItemClick(this);
+        rv=view.findViewById(R.id.phbw_rv);
+        LinearLayoutManager manager1=new LinearLayoutManager(getContext());
+        manager1.setOrientation(RecyclerView.VERTICAL);
+        rv.setLayoutManager(manager1);
+        Fl_Title_Adapter adapter1=new Fl_Title_Adapter(getContext());
+        adapter1.refresh(list);
+        rv.setAdapter(adapter1);
+        adapter1.setOnTitleClick(this);
     }
     @Override
     public void onclick(int index) {
-        FragmentManager manager=getActivity().getSupportFragmentManager();
-        FragmentTransaction transaction=manager.beginTransaction();
-        transaction.replace(R.id.phbw_ll,fragmentList.get(index));
-        transaction.commit();
+        des.setText(list.get(index).getName());
+        time.setText(MphbFragment.changeData(list.get(index).getUpdateTime()+"")+"日更新");
+        rankContentPresenter.setId(list.get(index).getId());
+        rankContentPresenter.loadData();
+    }
+
+    @Override
+    public void onClick(int index) {
+        Intent intent=new Intent(getContext(), XqActivity.class);
+        intent.putExtra("fragment_flag", 2);
+        intent.putExtra("xq",3);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onSuccess(RankContentBean rankContentBean) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                jz.setVisibility(View.GONE);
+                adapter.refresh(rankContentBean.getData().getList());
+            }
+        });
+    }
+
+    @Override
+    public void onError(String error) {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        rankContentPresenter.destoryView();
+    }
 }
