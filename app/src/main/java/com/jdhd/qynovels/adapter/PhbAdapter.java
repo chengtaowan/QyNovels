@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.module.RankContentBean;
+import com.jdhd.qynovels.module.bookshop.RankContentBean;
 
 import java.util.ArrayList;
 import java.util.List;

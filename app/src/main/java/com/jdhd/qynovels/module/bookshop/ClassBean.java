@@ -1,4 +1,4 @@
-package com.jdhd.qynovels.module;
+package com.jdhd.qynovels.module.bookshop;
 
 import java.util.List;
 

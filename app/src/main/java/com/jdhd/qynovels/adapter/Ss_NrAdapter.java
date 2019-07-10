@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.module.SearchContentBean;
+import com.jdhd.qynovels.module.bookcase.SearchContentBean;
 
 import java.util.ArrayList;
 import java.util.List;

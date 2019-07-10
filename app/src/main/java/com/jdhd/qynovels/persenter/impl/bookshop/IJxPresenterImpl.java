@@ -1,9 +1,7 @@
 package com.jdhd.qynovels.persenter.impl.bookshop;
 
-import android.util.Log;
-
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.ShopBean;
+import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.persenter.inter.bookshop.IJxPresenter;
 import com.jdhd.qynovels.view.bookshop.IJxView;
 

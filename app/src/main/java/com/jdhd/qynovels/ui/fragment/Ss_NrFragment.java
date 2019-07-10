@@ -1,7 +1,6 @@
 package com.jdhd.qynovels.ui.fragment;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,7 +15,7 @@ import android.view.ViewGroup;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Ss_NrAdapter;
-import com.jdhd.qynovels.module.SearchContentBean;
+import com.jdhd.qynovels.module.bookcase.SearchContentBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.ISearchContentPresenterImpl;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.view.bookshop.ISearchContentView;

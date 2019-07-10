@@ -1,6 +1,5 @@
 package com.jdhd.qynovels.ui.activity;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,106 +7,73 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.adapter.XqAdapter;
-import com.jdhd.qynovels.module.BookInfoBean;
+import com.jdhd.qynovels.adapter.XqymAdapter;
+import com.jdhd.qynovels.module.bookcase.AddBookBean;
+import com.jdhd.qynovels.module.bookcase.BookInfoBean;
+import com.jdhd.qynovels.persenter.impl.bookcase.IAddBookRankPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookInfoPresenterImpl;
-import com.jdhd.qynovels.ui.fragment.JxFragment;
-import com.jdhd.qynovels.utils.FastBlurUtil;
-import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.jdhd.qynovels.view.bookcase.IAddBookRankView;
 import com.jdhd.qynovels.view.bookcase.IBookInfoView;
-import com.jdhd.qynovels.widget.PersonalScrollView;
-import com.jdhd.qynovels.widget.RatingBar;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 
-public class XqActivity extends AppCompatActivity implements View.OnClickListener , IBookInfoView {
-    private LinearLayout ll;
-    private ImageView bj,back;
-    private List<String> list=new ArrayList<>();
-    private String url="http://www.qubaobei.com//ios//cf//uploadfile//132//3//2127.jpg";
-    private ScrollView sv;
-    private TextView num;
-    private RatingBar start;
+public class XqActivity extends AppCompatActivity implements View.OnClickListener , IBookInfoView, IAddBookRankView {
     private RecyclerView rv;
-    private int type;
+    private static int type;
     private int sc_type;
     private  int lastOffset;//距离
-
     private  int lastPosition;//第几个item
-
     private  SharedPreferences sharedPreferences;
     private IBookInfoPresenterImpl bookInfoPresenter;
+    private RelativeLayout jz;
+    private ImageView gif;
+    private XqymAdapter adapter;
+    private LinearLayout jrsj;
+    private TextView yd;
+    private IAddBookRankPresenterImpl addBookRankPresenter;
+    private int id;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_xq);
-        StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
-        init();
+        setContentView(R.layout.activity_xqym);
         Intent intent=getIntent();
         type=intent.getIntExtra("xq",1);
         sc_type=intent.getIntExtra("lx",1);
+        id=intent.getIntExtra("id",0);
+        Log.e("id",id+"---");
+        bookInfoPresenter=new IBookInfoPresenterImpl(this);
+        bookInfoPresenter.setId(id);
+        bookInfoPresenter.loadData();
+        addBookRankPresenter=new IAddBookRankPresenterImpl(this);
+
+        init();
     }
 
 
     private void init() {
-//        finishtype=findViewById(R.id.xq_finishtype);
-//        finishtype.getBackground().setAlpha(51);
-        back=findViewById(R.id.xq_back);
-        back.setOnClickListener(this);
-        ll=findViewById(R.id.xq_ll);
-        bj=findViewById(R.id.xq_bj);
-        sv=findViewById(R.id.xq_sv);
-        num=findViewById(R.id.xq_num);
+        jrsj=findViewById(R.id.xq_jrsj);
+        jrsj.setOnClickListener(this);
+        yd=findViewById(R.id.xq_yd);
+        jz=findViewById(R.id.jz);
+        gif=findViewById(R.id.case_gif);
+        Glide.with(this).load(R.mipmap.re).into(gif);
         rv=findViewById(R.id.xq_rv);
-        start=findViewById(R.id.xq_start);
-        BigDecimal bigDecimal=new BigDecimal(num.getText().toString());
-        BigDecimal pf = bigDecimal.setScale(0, BigDecimal.ROUND_UP);
-        int zs= (Integer.parseInt(pf.toString())/2);
-        int ys=(Integer.parseInt(pf.toString())%2);
-        start.setSelected(false);
-
-        start.setStartTotalNumber(zs+ys);
-        if(ys==0){
-           start.setSelectedNumber(Float.parseFloat(zs+0.8+""));
-        }
-        else if(ys==1){
-            start.setSelectedNumber(Float.parseFloat(zs+0.5+""));
-        }
-//        sv.setImageView(bj);
-//        sv.setLine_up(ll);
-        num.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/Oswald-Bold.otf"));
         LinearLayoutManager manager=new LinearLayoutManager(this);
         rv.setLayoutManager(manager);
-        XqAdapter adapter=new XqAdapter(this);
+        adapter=new XqymAdapter(this,XqActivity.this);
         rv.setAdapter(adapter);
-        //new MyThread().start();
-        Resources res = getResources();
-        Bitmap scaledBitmap = BitmapFactory.decodeResource(res, R.mipmap.a);
-
-        //        scaledBitmap为目标图像，10是缩放的倍数（越大模糊效果越高）
-//        Bitmap blurBitmap = FastBlurUtil.toBlur(scaledBitmap, 2);
-//        bj.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//        bj.setImageBitmap(blurBitmap);
         rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -121,37 +87,49 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        if(R.id.xq_back==view.getId()){
-           change();
-           finish();
-        }
+       if(R.id.xq_jrsj==view.getId()){
+           Log.e("asd","点击加入"+id);
+           addBookRankPresenter.setId(id);
+         addBookRankPresenter.loadData();
+       }
+       else if(R.id.xq_yd==view.getId()){
+
+       }
 
     }
 
     @Override
     public void onSuccess(BookInfoBean bookInfoBean) {
+       runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               jz.setVisibility(View.GONE);
+               adapter.refresh(bookInfoBean.getData());
+           }
+       });
+    }
 
+    @Override
+    public void onSuccess(AddBookBean addBookBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.e("asd",addBookBean.getMsg());
+            }
+        });
+    }
+
+    @Override
+    public void onAddError(String error) {
+        Log.e("adderror",error);
     }
 
     @Override
     public void onError(String error) {
-
+       Log.e("xqerror",error);
     }
 
-    class MyThread extends Thread{
-        @Override
-        public void run() {
-            super.run();
-            final Bitmap blurBitmap2 = FastBlurUtil.GetUrlBitmap(url, 2);
-            // 刷新ui必须在主线程中执行
-           runOnUiThread(new Runnable() {
-               @Override
-               public void run() {
-                   bj.setImageBitmap(blurBitmap2);
-               }
-           });
-        }
-    }
+
 
     @Override
     public void onBackPressed() {
@@ -249,5 +227,12 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
 
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        bookInfoPresenter.destoryView();
+        addBookRankPresenter.destoryView();
     }
 }

@@ -1,14 +1,10 @@
 package com.jdhd.qynovels.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,12 +12,9 @@ import android.widget.ImageView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.FlAdapter;
-import com.jdhd.qynovels.adapter.Fl_Title_Adapter;
 import com.jdhd.qynovels.adapter.Fl_biaoti_Adapter;
-import com.jdhd.qynovels.module.ClassBean;
-import com.jdhd.qynovels.module.Fl_Title_Bean;
+import com.jdhd.qynovels.module.bookshop.ClassBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IClassPresenterImpl;
-import com.jdhd.qynovels.ui.fragment.FlFragment;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.bookshop.IClassView;
 

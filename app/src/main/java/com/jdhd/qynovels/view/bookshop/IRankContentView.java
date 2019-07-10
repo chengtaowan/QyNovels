@@ -1,6 +1,6 @@
 package com.jdhd.qynovels.view.bookshop;
 
-import com.jdhd.qynovels.module.RankContentBean;
+import com.jdhd.qynovels.module.bookshop.RankContentBean;
 
 public interface IRankContentView {
     void onSuccess(RankContentBean rankContentBean);

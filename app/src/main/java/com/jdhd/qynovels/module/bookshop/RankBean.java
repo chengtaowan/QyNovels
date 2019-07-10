@@ -1,4 +1,4 @@
-package com.jdhd.qynovels.module;
+package com.jdhd.qynovels.module.bookshop;
 
 import android.os.Parcel;
 import android.os.Parcelable;

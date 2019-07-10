@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <androidx.recyclerview.widget.RecyclerView
+    <com.yanzhenjie.recyclerview.SwipeRecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/sj_rvlist"
         android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"></androidx.recyclerview.widget.RecyclerView>
+        android:layout_marginRight="15dp"></com.yanzhenjie.recyclerview.SwipeRecyclerView>
 </LinearLayout>

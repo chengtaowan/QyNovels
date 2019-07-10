@@ -1,7 +1,7 @@
 package com.jdhd.qynovels.persenter.impl.bookshop;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.RankBean;
+import com.jdhd.qynovels.module.bookshop.RankBean;
 import com.jdhd.qynovels.persenter.inter.bookshop.IRankPresenter;
 import com.jdhd.qynovels.view.bookshop.IRankView;
 

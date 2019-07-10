@@ -1,4 +1,4 @@
-package com.jdhd.qynovels.module;
+package com.jdhd.qynovels.module.bookshop;
 
 public class Fl_Title_Bean {
     public String title;

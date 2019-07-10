@@ -3,7 +3,7 @@ package com.jdhd.qynovels.persenter.impl.bookshop;
 import android.content.Context;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.ModuleBean;
+import com.jdhd.qynovels.module.bookshop.ModuleBean;
 import com.jdhd.qynovels.persenter.inter.bookshop.IModulePresenter;
 import com.jdhd.qynovels.view.bookshop.IModuleView;
 

@@ -5,12 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +20,8 @@ import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Fl_Title_Adapter;
 import com.jdhd.qynovels.adapter.PhbAdapter;
-import com.jdhd.qynovels.module.Fl_Title_Bean;
-import com.jdhd.qynovels.module.RankBean;
-import com.jdhd.qynovels.module.RankContentBean;
+import com.jdhd.qynovels.module.bookshop.RankBean;
+import com.jdhd.qynovels.module.bookshop.RankContentBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IRankContentPresenterImpl;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.view.bookshop.IRankContentView;

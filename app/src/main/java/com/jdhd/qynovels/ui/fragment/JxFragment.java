@@ -2,7 +2,6 @@ package com.jdhd.qynovels.ui.fragment;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -21,7 +20,7 @@ import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.JxAdapter;
-import com.jdhd.qynovels.module.ShopBean;
+import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IJxPresenterImpl;
 import com.jdhd.qynovels.view.bookshop.IJxView;
 

@@ -16,11 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.ShopBean;
+import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 
 import java.util.ArrayList;
@@ -138,7 +136,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                  viewHolder.tex.setText(list.get(position).getName());
                  LinearLayoutManager manager=new LinearLayoutManager(context);
                  viewHolder.rv.setLayoutManager(manager);
-                 GfAdapter adapter=new GfAdapter(context,0);
+                 GfAdapter adapter=new GfAdapter(context,0,0);
                  adapter.refresh(list.get(position).getList());
                  viewHolder.rv.setAdapter(adapter);
                  adapter.setOnItemClick(this);

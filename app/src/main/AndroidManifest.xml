@@ -23,7 +23,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Main"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.TxjlActivity"></activity>
+        <activity android:name=".ui.activity.MuluActivity"></activity>
+        <activity android:name=".ui.activity.TxjlActivity" />
         <activity android:name=".ui.activity.QdActivity" />
         <activity
             android:name=".wxapi.WXEntryActivity"
@@ -55,8 +56,7 @@
         <activity android:name=".ui.activity.LsActivity" />
         <activity android:name=".ui.activity.SsActivity" />
         <activity
-            android:name=".ui.activity.XqActivity"
-            android:launchMode="singleTask" />
+            android:name=".ui.activity.XqActivity" />
         <activity android:name=".ui.activity.XssdActivity" />
         <activity android:name=".ui.activity.WjjpActivity" />
         <activity android:name=".ui.activity.PhbActivity" />

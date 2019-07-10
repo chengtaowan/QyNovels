@@ -18,7 +18,7 @@ import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.CaseAdapter;
-import com.jdhd.qynovels.module.CaseBean;
+import com.jdhd.qynovels.module.bookcase.CaseBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
 import com.jdhd.qynovels.ui.activity.LsActivity;
 import com.jdhd.qynovels.ui.activity.QdActivity;
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CaseFragment extends Fragment implements View.OnClickListener,CaseAdapter.onItemClick, ICaseView {
+public class CaseFragment extends Fragment implements View.OnClickListener, ICaseView,CaseAdapter.onItemClick {
     private ImageView ss,ls,qd;
     private RecyclerView rv;
     private ICasePresenterImpl casePresenter;
@@ -40,6 +40,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener,CaseA
     private List<CaseBean.DataBean.ListBean> list=new ArrayList<>();
     private RelativeLayout jz;
     private ImageView gif;
+    private int hotid;
     public CaseFragment() {
         // Required empty public constructor
     }
@@ -67,11 +68,16 @@ public class CaseFragment extends Fragment implements View.OnClickListener,CaseA
       ss.setOnClickListener(this);
       ls.setOnClickListener(this);
       qd.setOnClickListener(this);
-      LinearLayoutManager manager=new LinearLayoutManager(getContext());
-      rv.setLayoutManager(manager);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext()) {
+            @Override
+            public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+                return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
+        };
+      rv.setLayoutManager(layoutManager);
       adapter=new CaseAdapter(getContext(),getActivity());
       rv.setAdapter(adapter);
-      adapter.setOnItemClick(this);
       Glide.with(getContext()).load(R.mipmap.re).into(gif);
     }
 
@@ -94,12 +100,6 @@ public class CaseFragment extends Fragment implements View.OnClickListener,CaseA
         }
     }
 
-    @Override
-    public void onClick(int index) {
-        Intent intent=new Intent(getActivity(),XqActivity.class);
-        intent.putExtra("xq",1);
-        startActivity(intent);
-    }
 
     @Override
     public void onSuccess(CaseBean caseBean) {
@@ -110,6 +110,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener,CaseA
                 list=caseBean.getData().getList();
                 adapter.refreshlist(caseBean.getData().getList());
                 adapter.refreshhot(caseBean.getData().getHot());
+                hotid=caseBean.getData().getHot().getBookId();
             }
         });
 
@@ -124,5 +125,13 @@ public class CaseFragment extends Fragment implements View.OnClickListener,CaseA
     public void onDestroy() {
         super.onDestroy();
         casePresenter.destoryView();
+    }
+
+    @Override
+    public void onClick(int index) {
+        Intent intent=new Intent(getContext(),XqActivity.class);
+        intent.putExtra("xq",1);
+        intent.putExtra("id",list.get(index).getId());
+        startActivity(intent);
     }
 }

@@ -2,13 +2,7 @@ package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,30 +16,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.ShopBean;
+import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.ui.activity.FlActivity;
 import com.jdhd.qynovels.ui.activity.XssdActivity;
 import com.jdhd.qynovels.ui.activity.PhbActivity;
 import com.jdhd.qynovels.ui.activity.WjjpActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
-import com.tencent.mm.opensdk.utils.Log;
 import com.youth.banner.Banner;
-import com.youth.banner.BannerConfig;
 import com.youth.banner.loader.ImageLoader;
 
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener,RsAdapter.onItemClick,KdAdapter.onItemClick,SsAdapter.onItemClick,XsAdapter.onItemClick,GfAdapter.onItemClick{
+public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener,KdAdapter.onItemClick,SsAdapter.onItemClick,XsAdapter.onItemClick,GfAdapter.onItemClick{
     public static final int TYPE_BANNER=MyApp.ModuleType.kSectionTypeBanner;
     public static final int TYPE_TYPE=MyApp.ModuleType.kSectionTypeFunction;
     public static final int TYPE_RS=MyApp.ModuleType.kSectionTypeTodayHotSearch;
@@ -147,7 +132,6 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            RsAdapter adapter=new RsAdapter(context);
            adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
-           adapter.setOnItemClick(this);
        }
        else if(holder instanceof KdViewHolder){
            KdViewHolder viewHolder= (KdViewHolder) holder;
@@ -193,7 +177,7 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            }
            LinearLayoutManager manager=new LinearLayoutManager(context);
            viewHolder.rv.setLayoutManager(manager);
-           GfAdapter adapter=new GfAdapter(context,0);
+           GfAdapter adapter=new GfAdapter(context,0,0);
            adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
            adapter.setOnItemClick(this);
@@ -249,19 +233,6 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            Intent intent=new Intent(context, XssdActivity.class);
            context.startActivity(intent);
        }
-    }
-
-    @Override
-    public void onRsclick(int index) {
-        if(index==5){
-            Intent intent=new Intent(context, PhbActivity.class);
-            context.startActivity(intent);
-        }
-        else{
-            Intent intent=new Intent(context, XqActivity.class);
-            intent.putExtra("xq",2);
-            context.startActivity(intent);
-        }
     }
 
     @Override

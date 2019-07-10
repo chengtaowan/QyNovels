@@ -10,9 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.personal.GoldListBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class JbAdapter extends RecyclerView.Adapter<JbAdapter.JbViewHolder> {
-
+    private List<GoldListBean.DataBean.ListBean> list=new ArrayList<>();
+    public void refresh(List<GoldListBean.DataBean.ListBean> list){
+        this.list=list;
+        notifyDataSetChanged();
+    }
     @NonNull
     @Override
     public JbViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -23,12 +31,14 @@ public class JbAdapter extends RecyclerView.Adapter<JbAdapter.JbViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull JbViewHolder holder, int position) {
-
+       holder.des.setText(list.get(position).getTitle());
+       holder.time.setText(list.get(position).getTime());
+       holder.num.setText(list.get(position).getAward());
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return list.size();
     }
 
     class JbViewHolder extends RecyclerView.ViewHolder{

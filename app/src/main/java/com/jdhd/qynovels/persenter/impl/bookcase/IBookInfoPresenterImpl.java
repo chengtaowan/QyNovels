@@ -1,7 +1,7 @@
 package com.jdhd.qynovels.persenter.impl.bookcase;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.BookInfoBean;
+import com.jdhd.qynovels.module.bookcase.BookInfoBean;
 import com.jdhd.qynovels.persenter.inter.bookcase.IBookInfoPresenter;
 import com.jdhd.qynovels.view.bookcase.IBookInfoView;
 

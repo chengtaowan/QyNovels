@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.module.HotSearchBean;
+import com.jdhd.qynovels.module.bookcase.HotSearchBean;
 
 import java.util.ArrayList;
 import java.util.List;

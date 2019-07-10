@@ -1,7 +1,7 @@
 package com.jdhd.qynovels.persenter.impl.bookshop;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.ClassBean;
+import com.jdhd.qynovels.module.bookshop.ClassBean;
 import com.jdhd.qynovels.persenter.inter.bookshop.IClassPresenter;
 import com.jdhd.qynovels.view.bookshop.IClassView;
 

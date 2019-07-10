@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.TokenBean;
-import com.jdhd.qynovels.module.UserBean;
+import com.jdhd.qynovels.module.personal.TokenBean;
+import com.jdhd.qynovels.module.personal.UserBean;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.WodeFragment;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;

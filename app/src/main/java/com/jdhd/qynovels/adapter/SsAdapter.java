@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.module.ShopBean;
+import com.jdhd.qynovels.module.bookshop.ShopBean;
+import com.jdhd.qynovels.ui.activity.XqActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,10 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onItemClick.onSsclick(position);
+                    Intent intent=new Intent(context, XqActivity.class);
+                    intent.putExtra("xq",2);
+                    intent.putExtra("id",list.get(position).getId());
+                    context.startActivity(intent);
                 }
             });
         }
@@ -67,7 +72,10 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onItemClick.onSsclick(position+1);
+                    Intent intent=new Intent(context, XqActivity.class);
+                    intent.putExtra("xq",2);
+                    intent.putExtra("id",list.get(position+1).getId());
+                    context.startActivity(intent);
                 }
             });
         }

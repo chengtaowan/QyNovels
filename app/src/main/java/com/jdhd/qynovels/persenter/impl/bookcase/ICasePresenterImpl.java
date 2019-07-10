@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.CaseBean;
+import com.jdhd.qynovels.module.bookcase.CaseBean;
 import com.jdhd.qynovels.persenter.inter.bookcase.ICasePresenter;
 import com.jdhd.qynovels.view.bookcase.ICaseView;
 

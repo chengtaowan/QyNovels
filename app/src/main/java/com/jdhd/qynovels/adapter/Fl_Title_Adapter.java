@@ -11,8 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.module.Fl_Title_Bean;
-import com.jdhd.qynovels.module.RankBean;
+import com.jdhd.qynovels.module.bookshop.RankBean;
 
 import java.util.ArrayList;
 import java.util.List;

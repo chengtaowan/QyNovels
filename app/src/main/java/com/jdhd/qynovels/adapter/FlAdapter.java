@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.module.ClassBean;
+import com.jdhd.qynovels.module.bookshop.ClassBean;
 
 import java.util.ArrayList;
 import java.util.List;

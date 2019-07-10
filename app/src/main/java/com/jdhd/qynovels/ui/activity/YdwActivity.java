@@ -43,7 +43,7 @@ public class YdwActivity extends AppCompatActivity implements View.OnClickListen
         hyh.setOnClickListener(this);
         LinearLayoutManager manager=new LinearLayoutManager(this);
         rv.setLayoutManager(manager);
-        GfAdapter adapter=new GfAdapter(this,0);
+        GfAdapter adapter=new GfAdapter(this,0,0);
         rv.setAdapter(adapter);
     }
 

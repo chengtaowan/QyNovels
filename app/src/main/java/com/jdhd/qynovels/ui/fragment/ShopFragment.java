@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.google.android.material.tabs.TabLayout;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.ShopAdapter;
-import com.jdhd.qynovels.module.ModuleBean;
+import com.jdhd.qynovels.module.bookshop.ModuleBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IModulePresenterImpl;
 import com.jdhd.qynovels.ui.activity.SsActivity;
 import com.jdhd.qynovels.view.bookshop.IModuleView;

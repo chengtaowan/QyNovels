@@ -1,11 +1,14 @@
 package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,17 +16,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.module.BookBean;
-import com.jdhd.qynovels.module.CaseBean;
+import com.jdhd.qynovels.module.bookcase.CaseBean;
+import com.jdhd.qynovels.module.bookcase.DelBookRackBean;
+import com.jdhd.qynovels.persenter.impl.bookcase.IDelBookRankPresenterImpl;
+import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.view.bookcase.IDelBookRankView;
+import com.mcxtzhang.swipemenulib.SwipeMenuLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder>{
+public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> implements IDelBookRankView {
 
     private Context context;
     private List<CaseBean.DataBean.ListBean> list=new ArrayList<>();
     private onItemClick onItemClick;
+    private IDelBookRankPresenterImpl delBookRankPresenter;
 
     public void setOnItemClick(ListAdapter.onItemClick onItemClick) {
         this.onItemClick = onItemClick;
@@ -39,6 +47,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     @NonNull
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        delBookRankPresenter=new IDelBookRankPresenterImpl(this);
         View view= LayoutInflater.from(context).inflate(R.layout.item_case,parent,false);
         ListViewHolder viewHolder=new ListViewHolder(view);
         return viewHolder;
@@ -68,10 +77,23 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
             if(list.get(position).getReadStatus()==20){
                holder.yd.setVisibility(View.VISIBLE);
             }
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            holder.ll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onItemClick.onlistClick(position);
+                    Intent intent=new Intent(context, XqActivity.class);
+                    intent.putExtra("xq",2);
+                    intent.putExtra("id",list.get(position).getId());
+                    context.startActivity(intent);
+                }
+            });
+            holder.del.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                  delBookRankPresenter.setId(list.get(position).getId());
+                  delBookRankPresenter.loadData();
+                  list.remove(position);
+                  notifyDataSetChanged();
+                  holder.sml.quickClose();
                 }
             });
         }
@@ -88,9 +110,24 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
     }
 
+    @Override
+    public void onSuccess(DelBookRackBean delBookRackBean) {
+        Log.e("del","删除成功");
+
+
+    }
+
+    @Override
+    public void onAddError(String error) {
+       Log.e("delbookerror",error);
+    }
+
     class ListViewHolder extends RecyclerView.ViewHolder{
         private ImageView book;
         private TextView name,zj,yd,tg,xh;
+        private Button del;
+        private SwipeMenuLayout sml;
+        private LinearLayout ll;
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             book=itemView.findViewById(R.id.case_book);
@@ -99,6 +136,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
             yd=itemView.findViewById(R.id.case_yd);
             tg=itemView.findViewById(R.id.case_tg);
             xh=itemView.findViewById(R.id.case_xh);
+            del=itemView.findViewById(R.id.case_del);
+            sml=itemView.findViewById(R.id.case_sml);
+            ll=itemView.findViewById(R.id.case_ll);
         }
     }
     public interface onItemClick{

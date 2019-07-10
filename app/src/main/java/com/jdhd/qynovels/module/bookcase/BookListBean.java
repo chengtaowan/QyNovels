@@ -1,13 +1,13 @@
-package com.jdhd.qynovels.module;
+package com.jdhd.qynovels.module.bookcase;
 
 import java.util.List;
 
-public class ModuleBean {
+public class BookListBean {
 
     /**
      * code : 200
      * msg : success
-     * data : {"list":[{"id":1,"moduleName":"精选"},{"id":2,"moduleName":"男生"},{"id":3,"moduleName":"男生完结"},{"id":1,"moduleName":"女生完结"},{"id":3,"moduleName":"男生更新"},{"id":1,"moduleName":"女生更新"}]}
+     * data : {"list":[{"id":3261,"name":"让她继续等着呗","readType":10,"wordNum":2526},{"id":3262,"name":"让她继续等着呗","readType":20,"wordNum":2562}]}
      */
 
     private int code;
@@ -51,12 +51,16 @@ public class ModuleBean {
 
         public static class ListBean {
             /**
-             * id : 1
-             * moduleName : 精选
+             * id : 3261
+             * name : 让她继续等着呗
+             * readType : 10
+             * wordNum : 2526
              */
 
             private int id;
-            private String moduleName;
+            private String name;
+            private int readType;
+            private int wordNum;
 
             public int getId() {
                 return id;
@@ -66,12 +70,28 @@ public class ModuleBean {
                 this.id = id;
             }
 
-            public String getModuleName() {
-                return moduleName;
+            public String getName() {
+                return name;
             }
 
-            public void setModuleName(String moduleName) {
-                this.moduleName = moduleName;
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public int getReadType() {
+                return readType;
+            }
+
+            public void setReadType(int readType) {
+                this.readType = readType;
+            }
+
+            public int getWordNum() {
+                return wordNum;
+            }
+
+            public void setWordNum(int wordNum) {
+                this.wordNum = wordNum;
             }
         }
     }

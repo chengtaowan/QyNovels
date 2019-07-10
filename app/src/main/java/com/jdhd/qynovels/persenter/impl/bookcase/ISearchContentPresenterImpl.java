@@ -1,7 +1,7 @@
 package com.jdhd.qynovels.persenter.impl.bookcase;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.SearchContentBean;
+import com.jdhd.qynovels.module.bookcase.SearchContentBean;
 import com.jdhd.qynovels.persenter.inter.bookcase.ISearchContentPresenter;
 import com.jdhd.qynovels.view.bookshop.ISearchContentView;
 

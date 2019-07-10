@@ -1,9 +1,7 @@
 package com.jdhd.qynovels.persenter.impl.bookshop;
 
-import android.util.Log;
-
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.RankContentBean;
+import com.jdhd.qynovels.module.bookshop.RankContentBean;
 import com.jdhd.qynovels.persenter.inter.bookshop.IRankContentPresenter;
 import com.jdhd.qynovels.view.bookshop.IRankContentView;
 

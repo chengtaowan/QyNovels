@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#fff">
     <LinearLayout
@@ -54,7 +56,7 @@
                     android:textSize="20sp"
                     android:textColor="#2F3236"
                     android:textStyle="bold"
-                    android:id="@+id/xq_rs"/>
+                    android:id="@+id/xq_zd"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -64,18 +66,16 @@
                 android:layout_gravity="center"/>
         </LinearLayout>
     </LinearLayout>
-    <TextView
+    <com.jdhd.qynovels.widget.ExpandTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="主要描述了在一片虚构的中世纪世界里所发生的一系列宫廷斗争、疆场厮杀、游历冒险和魔法抗衡的故事。在内容及风格上， 《冰与火之歌》是现实生活的"
-        android:textColor="#ff2f3236"
-        android:textSize="14sp"
         android:layout_marginTop="9dp"
         android:layout_marginLeft="15dp"
         android:gravity="center_vertical"
         android:id="@+id/xq_bookdes"
         android:lineSpacingExtra="2dp"
-        android:layout_marginRight="15dp"/>
+        android:layout_marginRight="15dp"
+        app:showLines="4"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -95,63 +95,7 @@
             android:paddingBottom="4dp"
             android:gravity="center"
             android:background="@drawable/shape_xqtype"
-            android:id="@+id/xq_type1"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="现代修真"
-            android:textSize="12sp"
-            android:textColor="#828486"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:gravity="center"
-            android:background="@drawable/shape_xqtype"
-            android:id="@+id/xq_type2"
-            android:layout_marginLeft="10dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="现代修真"
-            android:textSize="12sp"
-            android:textColor="#828486"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:gravity="center"
-            android:background="@drawable/shape_xqtype"
-            android:id="@+id/xq_type3"
-            android:layout_marginLeft="10dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="现代修真"
-            android:textSize="12sp"
-            android:textColor="#828486"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:gravity="center"
-            android:background="@drawable/shape_xqtype"
-            android:id="@+id/xq_type4"
-            android:layout_marginLeft="10dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="现代修真"
-            android:textSize="12sp"
-            android:textColor="#828486"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:gravity="center"
-            android:background="@drawable/shape_xqtype"
-            android:id="@+id/xq_type5"
-            android:layout_marginLeft="10dp"/>
+            android:id="@+id/xq_type"/>
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
@@ -164,7 +108,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp">
+        android:layout_marginRight="15dp"
+        android:id="@+id/ml"
+        android:layout_marginBottom="15dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -205,4 +151,36 @@
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:background="#FAFAFA"/>
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/xq_gg">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:src="@mipmap/a"
+            android:scaleType="fitXY"
+            android:id="@+id/xq_img"
+            android:background="@drawable/shape_yj"/>
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/gg_gb"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="6dp"
+            android:id="@+id/xq_close"/>
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="15dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:src="@mipmap/gg_bt"
+            android:id="@+id/gg"/>
+    </RelativeLayout>
 </LinearLayout>
