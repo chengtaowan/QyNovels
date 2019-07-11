@@ -51,8 +51,8 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
     private String avatar,sex,nickname,red_code;
     private int uid,total_gold,today_gold,read_time,balance,message_count,bind_show;
     private float money;
-    private ImageView gif;
-    private RelativeLayout jz;
+//    private ImageView gif;
+//    private RelativeLayout jz;
     private IPersonalPresenterImpl personalPresenter;
     public WodeFragment() {
         // Required empty public constructor
@@ -94,8 +94,8 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wd_lb=view.findViewById(R.id.wd_lb);
         wd_yq=view.findViewById(R.id.wd_yq);
         wd_xj=view.findViewById(R.id.wd_xj);
-        jz=view.findViewById(R.id.jz);
-        gif=view.findViewById(R.id.case_gif);
+//        jz=view.findViewById(R.id.jz);
+//        gif=view.findViewById(R.id.case_gif);
         wd_toux=view.findViewById(R.id.wd_toux);
         wd_name=view.findViewById(R.id.wd_name);
         wd_hbm=view.findViewById(R.id.wd_hbm);
@@ -110,11 +110,17 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wd_fk.setOnClickListener(this);
         wd_sz.setOnClickListener(this);
         wd_toux.setOnClickListener(this);
-        Glide.with(getContext()).load(R.mipmap.re).into(gif);
+        //Glide.with(getContext()).load(R.mipmap.re).into(gif);
         if(user.getData()!=null){
-            Glide.with(getContext()).load(user.getData().getAvatar())
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(wd_toux);
+            Log.e("avatar1",user.getData().getAvatar());
+            if(user.getData().getAvatar()!=null){
+                Glide.with(getContext())
+                        .load(user.getData().getAvatar())
+                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                        .into(wd_toux);
+            }else{
+                wd_toux.setImageResource(R.mipmap.my_touxiang);
+            }
             wd_name.setText(user.getData().getNickname());
             wd_hbm.setText("红包码："+user.getData().getRed_code());
             wd_jb.setText(user.getData().getTotal_gold()+"");
@@ -126,6 +132,9 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             else{
                 wd_xx.setImageResource(R.mipmap.my_xx);
             }
+        }
+        else{
+            Log.e("www","111");
         }
     }
 
@@ -160,6 +169,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         }
         else if(R.id.wd_wdjb==view.getId()){
             Intent intent=new Intent(getContext(), JbActivity.class);
+            intent.putExtra("ye",user.getData().getBalance());
+            intent.putExtra("money",user.getData().getMoney());
+            intent.putExtra("today",user.getData().getToday_gold());
+            intent.putExtra("total",user.getData().getTotal_gold());
             startActivity(intent);
         }
     }
@@ -172,21 +185,32 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wo_dl.setVisibility(View.GONE);
         wd_name.setVisibility(View.VISIBLE);
         wd_hbm.setVisibility(View.VISIBLE);
-        Glide.with(getContext()).load(userBean.getData().getAvatar())
-              .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-              .into(wd_toux);
-        wd_name.setText(userBean.getData().getNickname());
-        wd_hbm.setText("红包码："+userBean.getData().getRed_code());
-        wd_jb.setText(userBean.getData().getTotal_gold()+"");
-        wd_jrjb.setText(userBean.getData().getToday_gold()+"");
-        wd_ydsj.setText(userBean.getData().getRead_time()+"");
-        if(userBean.getData().getMessage_count()>0){
-            wd_xx.setImageResource(R.mipmap.my_xx_on);
+        Log.e("userbean",(userBean.getData()==null)+"");
+        if(userBean.getData()!=null) {
+            Log.e("avatar2",userBean.getData().getAvatar());
+            if (userBean.getData().getAvatar() != null) {
+                Glide.with(getContext())
+                        .load(userBean.getData().getAvatar())
+                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                        .into(wd_toux);
+            } else {
+                wd_toux.setImageResource(R.mipmap.my_touxiang);
+            }
+
+            wd_name.setText(userBean.getData().getNickname());
+            wd_hbm.setText("红包码：" + userBean.getData().getRed_code());
+            wd_jb.setText(userBean.getData().getTotal_gold() + "");
+            wd_jrjb.setText(userBean.getData().getToday_gold() + "");
+            wd_ydsj.setText(userBean.getData().getRead_time() + "");
+            if (userBean.getData().getMessage_count() > 0) {
+                wd_xx.setImageResource(R.mipmap.my_xx_on);
+            } else {
+                wd_xx.setImageResource(R.mipmap.my_xx);
+            }
         }
         else{
-            wd_xx.setImageResource(R.mipmap.my_xx);
+            Log.e("www","222");
         }
-
     }
 
     @Override
@@ -201,14 +225,25 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                jz.setVisibility(View.GONE);
+                //jz.setVisibility(View.GONE);
+                if(userBean==null){
+                    return;
+                }
                 user=userBean;
-                Glide.with(getContext()).load(user.getData().getAvatar())
-                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(wd_toux);
+                if(user.getData()!=null) {
+                    Log.e("avatar3",user.getData().getAvatar());
+                    if (user.getData().getAvatar() != null) {
+                        Glide.with(getContext())
+                                .load(user.getData().getAvatar())
+                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                .into(wd_toux);
+                    } else {
+                        wd_toux.setImageResource(R.mipmap.my_touxiang);
+                    }
+
                 wd_name.setText(user.getData().getNickname());
                 wd_hbm.setText("红包码："+user.getData().getRed_code());
-                wd_jb.setText(user.getData().getTotal_gold()+"");
+                wd_jb.setText(user.getData().getBalance()+"");
                 wd_jrjb.setText(user.getData().getToday_gold()+"");
                 wd_ydsj.setText(user.getData().getRead_time()+"");
                 if(user.getData().getMessage_count()>0){
@@ -218,8 +253,11 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                     wd_xx.setImageResource(R.mipmap.my_xx);
                 }
             }
+                else{
+                    Log.e("www","333");
+                }
+            }
         });
-
     }
 
     @Override

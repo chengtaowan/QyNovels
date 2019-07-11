@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.SyncStateContract;
 import android.util.Log;
@@ -18,17 +19,36 @@ import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.personal.CaptchaBean;
+import com.jdhd.qynovels.module.personal.TokenBean;
+import com.jdhd.qynovels.module.personal.UserBean;
+import com.jdhd.qynovels.persenter.impl.personal.ICaptchaPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.ILoginPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
+import com.jdhd.qynovels.ui.fragment.WodeFragment;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.jdhd.qynovels.view.personal.ICaptchaView;
+import com.jdhd.qynovels.view.personal.ILoginView;
+import com.jdhd.qynovels.view.personal.IPersonalView;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener , ICaptchaView, ILoginView {
     private ImageView gb,wx;
     private EditText phone,yzm;
     private TextView yy;
     private Button but;
+    private ICaptchaPresenterImpl captchaPresenter;
+    private ILoginPresenterImpl loginPresenter;
+    private int recLen = 59;
+    Timer timer = new Timer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +89,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             finish();
         }
         else if(R.id.dl_yy==view.getId()){
-
+            String tel=phone.getText().toString();
+            captchaPresenter=new ICaptchaPresenterImpl(this,LoginActivity.this,tel);
+            captchaPresenter.loadData();
         }
         else if(R.id.dl_but==view.getId()){
-            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 4);
-            intent.putExtra("action",0);
-            startActivity(intent);
+            String tel=phone.getText().toString();
+            String y=yzm.getText().toString();
+            loginPresenter=new ILoginPresenterImpl(this,this,tel,y);
+            loginPresenter.loadData();
+
         }
     }
     @Override
@@ -83,4 +106,56 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onPause();
     }
 
+    @Override
+    public void onCaptchaSuccess(CaptchaBean captchaBean) {
+        yy.setClickable(false);
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    // UI thread
+                    @Override
+                    public void run() {
+                        recLen--;
+                        yy.setText("已发送  "+recLen+"s");
+                        if(recLen <=0){
+                            yy.setText("获取语音验证码");
+                            yy.setClickable(true);
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(task, 1000, 1000);
+        yzm.setText(captchaBean.getData().getCode()+"");
+    }
+
+    @Override
+    public void onCaptchaError(String error) {
+        Log.e("yzmerror",error);
+    }
+
+
+    @Override
+    public void onTokenSuccess(TokenBean tokenBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences preferences=getSharedPreferences("token",MODE_PRIVATE);
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putString("token",tokenBean.getData().getToken());
+                editor.putString("login","success");
+                editor.commit();
+                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                intent.putExtra("fragment_flag", 4);
+                intent.putExtra("action",0);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public void onTokenError(String error) {
+        Log.e("tokenerror",error);
+    }
 }

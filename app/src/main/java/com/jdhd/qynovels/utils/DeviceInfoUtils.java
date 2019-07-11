@@ -9,12 +9,15 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.DataOutputStream;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DeviceInfoUtils {
@@ -185,6 +188,11 @@ public class DeviceInfoUtils {
     public static String getCompareTo(Map map){
         StringBuffer buffer=new StringBuffer();
         buffer.append("123456789");
+        if(map.get("token")!=null){
+            buffer.append(map.get("token"));
+            map.remove("token");
+        }
+
         List<Map.Entry<String, String>> infoIds = new ArrayList<Map.Entry<String, String>>(map.entrySet());
         // 对所有传入参数按照字段名的 ASCII 码从小到大排序（字典序）
         Collections.sort(infoIds, new Comparator<Map.Entry<String, String>>() {
@@ -202,4 +210,15 @@ public class DeviceInfoUtils {
         }
         return buffer.toString();
     }
+    public static String NumtFormat(int num){
+        String str = NumberFormat.getNumberInstance(Locale.US).format(num);
+        return str;
+    }
+    public static double NumtoMoney(int num){
+        double newnum=num/10000;
+        BigDecimal bg = new BigDecimal(newnum);
+        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return f1;
+    }
+
 }

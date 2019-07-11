@@ -53,6 +53,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
             case BaseResp.ErrCode.ERR_OK://同意授权
                  if(baseResp.getType()==1){
                      String code=((SendAuth.Resp) baseResp).code;
+                     Log.e("code",code);
                      getInfo();
                      Map<String,String> map=new HashMap<>();
                      map.put("code",code);
@@ -65,13 +66,22 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
                      map.put("sim",sim+"");
                      map.put("network",network+"");
                      map.put("time",time+"");
+                     String compareTo = DeviceInfoUtils.getCompareTo(map);
                      String s = DeviceInfoUtils.md5(DeviceInfoUtils.getCompareTo(map));
-                     Map<String,String> map1=new HashMap<>();
-                     map1=map;
-                     map1.put("sign",s);
-                     String baseUrl = MyApp.Url.baseUrl+"token";
-                     RxHttp.postForm(baseUrl)
-                             .add(map1)
+                     map.put("sign",s);
+//                     Log.e("brand",brand);
+//                     Log.e("model",model);
+//                     Log.e("sv",sv);
+//                     Log.e("os",os+"");
+//                     Log.e("imei",imei);
+//                     Log.e("root",root+"");
+//                     Log.e("sim",sim+"");
+//                     Log.e("network",network+"");
+//                     Log.e("time",time+"");
+//                     Log.e("sign",s);
+//                     Log.e("compare",compareTo);
+                     RxHttp.postForm(MyApp.Url.baseUrl+"token")
+                             .add(map)
                              .asParser(new SimpleParser<TokenBean>(){})
                              .subscribe(tokenBean->{
                                  if(tokenBean.getCode()==200&&tokenBean.getMsg().equals("success")){

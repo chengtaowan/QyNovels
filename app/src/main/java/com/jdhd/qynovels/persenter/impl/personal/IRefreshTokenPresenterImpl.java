@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.personal.UserBean;
+import com.jdhd.qynovels.module.personal.GoldListBean;
+import com.jdhd.qynovels.module.personal.RefreshTokenBean;
 import com.jdhd.qynovels.persenter.inter.personal.IPersonalPresenter;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
-import com.jdhd.qynovels.view.personal.IPersonalView;
+import com.jdhd.qynovels.view.personal.IGoldListView;
+import com.jdhd.qynovels.view.personal.IRefreshTokenView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,13 +19,13 @@ import okhttp3.CacheControl;
 import rxhttp.wrapper.param.RxHttp;
 import rxhttp.wrapper.parse.SimpleParser;
 
-public class IPersonalPresenterImpl implements IPersonalPresenter {
-    private IPersonalView personalView;
+public class IRefreshTokenPresenterImpl implements IPersonalPresenter {
+    private IRefreshTokenView iRefreshTokenView;
     private Context context;
     private String token;
 
-    public IPersonalPresenterImpl(IPersonalView personalView, Context context) {
-        this.personalView = personalView;
+    public IRefreshTokenPresenterImpl(IRefreshTokenView iRefreshTokenView, Context context) {
+        this.iRefreshTokenView = iRefreshTokenView;
         this.context = context;
     }
 
@@ -35,27 +37,29 @@ public class IPersonalPresenterImpl implements IPersonalPresenter {
         Map<String,String> map=new HashMap<>();
         map.put("time",time+"");
         map.put("token",token);
-        String sign=DeviceInfoUtils.md5(DeviceInfoUtils.getCompareTo(map));
+        String compareTo = DeviceInfoUtils.getCompareTo(map);
+        String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
-        RxHttp.get(MyApp.Url.baseUrl+"personal")
+        RxHttp.postForm(MyApp.Url.baseUrl+"refreshToken")
                 .addHeader("token",token)
                 .add(map)
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                .asParser(new SimpleParser<UserBean>(){})
-                .subscribe(userBean->{
-                    if(userBean.getCode()==200&&userBean.getMsg().equals("请求成功")){
-                       personalView.onSuccess(userBean);
+                .asParser(new SimpleParser<RefreshTokenBean>(){})
+                .subscribe(refreshTokenBean->{
+                    Log.e("msg",refreshTokenBean.getMsg());
+                    if(refreshTokenBean.getCode()==200&&refreshTokenBean.getMsg().equals("请求成功")){
+                       iRefreshTokenView.onSuccess(refreshTokenBean);
                     }
                 },throwable->{
-                    personalView.onError(throwable.getMessage());
+                    iRefreshTokenView.onError(throwable.getMessage());
                 });
     }
 
 
     @Override
     public void destoryView() {
-        if(personalView!=null){
-            personalView=null;
+        if(iRefreshTokenView!=null){
+            iRefreshTokenView=null;
         }
     }
 

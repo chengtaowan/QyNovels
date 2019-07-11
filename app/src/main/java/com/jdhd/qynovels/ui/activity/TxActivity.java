@@ -1,6 +1,8 @@
 package com.jdhd.qynovels.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,28 +18,48 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.adapter.TxAdapter;
+import com.jdhd.qynovels.module.personal.DrawSetBean;
+import com.jdhd.qynovels.persenter.impl.personal.IDrawSetPresenterImpl;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.jdhd.qynovels.view.personal.IDrawSetView;
 import com.jdhd.qynovels.widget.CustomPopWindow;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TxActivity extends AppCompatActivity implements View.OnClickListener {
+public class TxActivity extends AppCompatActivity implements View.OnClickListener, IDrawSetView {
     private LinearLayout tx10,tx15,tx20,tx25,tx30,tx50;
     private ImageView back,img;
     private TextView txjl,txxj10,txxj15,txxj20,txxj25,txxj30,txxj50,txjb10,txjb15,txjb20,txjb25,txjb30,txjb50;
     private List<LinearLayout> linearLayouts=new ArrayList<>();
+    private TextView ye,money;
     private List<TextView> xjlist=new ArrayList<>();
     private List<TextView> jblist=new ArrayList<>();
+    private String yue;
+    private double mone;
+    private RecyclerView rv;
+    private TxAdapter adapter;
+    private IDrawSetPresenterImpl drawSetPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tx);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        Intent intent=getIntent();
+        yue=intent.getStringExtra("jb");
+        mone=intent.getDoubleExtra("money",0);
+        drawSetPresenter=new IDrawSetPresenterImpl(this,this);
+        drawSetPresenter.loadData();
         init();
     }
 
     private void init() {
+        rv=findViewById(R.id.tx_rv);
+        ye=findViewById(R.id.ye);
+        money=findViewById(R.id.money);
+        ye.setText(yue);
+        money.setText("约"+mone+"元");
         tx10=findViewById(R.id.tx10);
         tx15=findViewById(R.id.tx15);
         tx20=findViewById(R.id.tx20);
@@ -85,7 +107,35 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
         tx25.setOnClickListener(this);
         tx30.setOnClickListener(this);
         tx50.setOnClickListener(this);
+        LinearLayoutManager manager=new LinearLayoutManager(this);
+        rv.setLayoutManager(manager);
+        adapter=new TxAdapter();
+        rv.setAdapter(adapter);
 
+    }
+    @Override
+    public void onSuccess(DrawSetBean drawSetBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              adapter.refresh(drawSetBean.getData().getRule());
+              for(int i=0;i<drawSetBean.getData().getSetting().size();i++){
+                  xjlist.get(i).setText("提现"+drawSetBean.getData().getSetting().get(i).getMoney()+"元");
+                  jblist.get(i).setText("需"+drawSetBean.getData().getSetting().get(i).getGold()+"金币");
+              }
+            }
+        });
+    }
+
+    @Override
+    public void onError(String error) {
+       Log.e("txerror",error);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        drawSetPresenter.destoryView();
     }
 
     @Override
@@ -241,4 +291,6 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
         });
 
     }
+
+
 }

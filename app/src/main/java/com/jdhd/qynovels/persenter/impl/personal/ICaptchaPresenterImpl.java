@@ -5,13 +5,12 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.module.personal.GoldListBean;
-import com.jdhd.qynovels.module.personal.UserBean;
+import com.jdhd.qynovels.module.personal.CaptchaBean;
+import com.jdhd.qynovels.module.personal.DrawListBean;
 import com.jdhd.qynovels.persenter.inter.personal.IPersonalPresenter;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
-import com.jdhd.qynovels.utils.RxHttpUtils;
-import com.jdhd.qynovels.view.personal.IGoldListView;
-import com.jdhd.qynovels.view.personal.IPersonalView;
+import com.jdhd.qynovels.view.personal.ICaptchaView;
+import com.jdhd.qynovels.view.personal.IDrawListView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,14 +19,16 @@ import okhttp3.CacheControl;
 import rxhttp.wrapper.param.RxHttp;
 import rxhttp.wrapper.parse.SimpleParser;
 
-public class IGoldListPresenterImpl implements IPersonalPresenter {
-    private IGoldListView iGoldListView;
+public class ICaptchaPresenterImpl implements IPersonalPresenter {
+    private ICaptchaView iCaptchaView;
     private Context context;
     private String token;
+    private String tel;
 
-    public IGoldListPresenterImpl(IGoldListView iGoldListView, Context context) {
-        this.iGoldListView = iGoldListView;
+    public ICaptchaPresenterImpl(ICaptchaView iCaptchaView, Context context, String tel) {
+        this.iCaptchaView = iCaptchaView;
         this.context = context;
+        this.tel = tel;
     }
 
     @Override
@@ -37,32 +38,34 @@ public class IGoldListPresenterImpl implements IPersonalPresenter {
         int time= DeviceInfoUtils.getTime();
         Map<String,String> map=new HashMap<>();
         map.put("time",time+"");
-        map.put("page","1");
-        map.put("limit","10");
-        map.put("token",token);
+        if(token!=null){
+            map.put("token",token);
+        }
+        map.put("tel",tel);
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
-        RxHttp.postForm(MyApp.Url.baseUrl+"goldList")
-                .addHeader("token",token)
+        Log.e("time",time+"");
+        Log.e("tel",tel);
+        Log.e("sign",sign);
+        RxHttp.postForm(MyApp.Url.baseUrl+"captcha")
                 .add(map)
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                .asParser(new SimpleParser<GoldListBean>(){})
-                .subscribe(goldListBean->{
-                    Log.e("msg",goldListBean.getMsg());
-                    if(goldListBean.getCode()==200&&goldListBean.getMsg().equals("请求成功")){
-                       iGoldListView.onSuccess(goldListBean);
+                .asParser(new SimpleParser<CaptchaBean>(){})
+                .subscribe(captchaBean->{
+                    if(captchaBean.getCode()==200&&captchaBean.getMsg().equals("验证码发送成功")){
+                        iCaptchaView.onCaptchaSuccess(captchaBean);
                     }
                 },throwable->{
-                    iGoldListView.onError(throwable.getMessage());
+                    iCaptchaView.onCaptchaError(throwable.getMessage());
                 });
     }
 
 
     @Override
     public void destoryView() {
-        if(iGoldListView!=null){
-            iGoldListView=null;
+        if(iCaptchaView!=null){
+            iCaptchaView=null;
         }
     }
 

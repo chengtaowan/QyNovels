@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.LoginActivity">
+    tools:context=".ui.activity.LoginActivity"
+    android:background="#fff">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +37,8 @@
         android:layout_below="@+id/dl_phone"
         android:orientation="horizontal"
         android:layout_marginTop="20dp"
-        android:id="@+id/dl_rl">
+        android:id="@+id/dl_rl"
+        android:background="#fff">
         <EditText
             android:layout_width="230dp"
             android:layout_height="wrap_content"
@@ -55,8 +57,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="获取语音验证码"
             android:textColor="#ffe8564e"
+            android:text="获取语音验证码"
             android:textSize="12sp"
             android:layout_alignParentRight="true"
             android:id="@+id/dl_yy"
