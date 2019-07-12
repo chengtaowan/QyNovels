@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -11,12 +12,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.personal.NickNameBean;
+import com.jdhd.qynovels.persenter.impl.personal.INickNamePresenterImpl;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.jdhd.qynovels.view.personal.INickNameView;
 
-public class XgncActivity extends AppCompatActivity implements View.OnClickListener {
+import org.greenrobot.eventbus.EventBus;
+
+public class XgncActivity extends AppCompatActivity implements View.OnClickListener, INickNameView {
     private ImageView back,qc;
     private TextView bc;
     private EditText nc;
+    private INickNamePresenterImpl nickNamePresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +55,8 @@ public class XgncActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(XgncActivity.this,"昵称不能为空",Toast.LENGTH_SHORT).show();
             }
             else{
-                Intent intent=new Intent(XgncActivity.this,GrzlActivity.class);
-                intent.putExtra("nc",nc.getText().toString());
-                startActivity(intent);
+                nickNamePresenter=new INickNamePresenterImpl(this,XgncActivity.this,nc.getText().toString());
+                nickNamePresenter.loadData();
             }
 
         }
@@ -59,5 +65,22 @@ public class XgncActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         finish();
+    }
+
+    @Override
+    public void onNickNameSuccess(NickNameBean nickNameBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                EventBus.getDefault().post(nickNameBean.getData().getNickname());
+                Intent intent=new Intent(XgncActivity.this,GrzlActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public void onNickNameError(String error) {
+        Log.e("nicknameerror",error);
     }
 }

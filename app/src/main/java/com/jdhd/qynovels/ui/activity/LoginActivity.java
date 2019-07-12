@@ -90,8 +90,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         else if(R.id.dl_yy==view.getId()){
             String tel=phone.getText().toString();
-            captchaPresenter=new ICaptchaPresenterImpl(this,LoginActivity.this,tel);
-            captchaPresenter.loadData();
+            if(tel.equals("")){
+                Toast.makeText(LoginActivity.this,"请输入手机号",Toast.LENGTH_SHORT).show();
+            }
+            else{
+                captchaPresenter=new ICaptchaPresenterImpl(this,LoginActivity.this,tel);
+                captchaPresenter.loadData();
+            }
+
         }
         else if(R.id.dl_but==view.getId()){
             String tel=phone.getText().toString();

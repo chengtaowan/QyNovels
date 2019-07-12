@@ -31,6 +31,7 @@ public class IPersonalPresenterImpl implements IPersonalPresenter {
     public void loadData() {
         SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
+        Log.e("weixintoken",token);
         int time= DeviceInfoUtils.getTime();
         Map<String,String> map=new HashMap<>();
         map.put("time",time+"");

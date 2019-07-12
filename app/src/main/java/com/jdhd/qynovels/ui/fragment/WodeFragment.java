@@ -48,7 +48,8 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
     private String token;
     private LinearLayout wdjb;
     public static UserBean user=new UserBean();
-    private String avatar,sex,nickname,red_code;
+    private String avatar,sex,nickname,red_code,wxname,mobel;
+    private int bindwx;
     private int uid,total_gold,today_gold,read_time,balance,message_count,bind_show;
     private float money;
 //    private ImageView gif;
@@ -81,6 +82,17 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             wd_name.setVisibility(View.VISIBLE);
             wd_hbm.setVisibility(View.VISIBLE);
         }
+        Intent nameintent=getActivity().getIntent();
+        String action = nameintent.getAction();
+        if(nameintent!=null&&action!=null){
+            if(action.equals("name")){
+                String name=nameintent.getStringExtra("nickname");
+                wd_name.setText(name);
+            }else{
+
+            }
+
+        }
         return view;
     }
 
@@ -112,14 +124,18 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wd_toux.setOnClickListener(this);
         //Glide.with(getContext()).load(R.mipmap.re).into(gif);
         if(user.getData()!=null){
-            Log.e("avatar1",user.getData().getAvatar());
-            if(user.getData().getAvatar()!=null){
+            avatar=user.getData().getAvatar();
+            sex=user.getData().getSex();
+            nickname=user.getData().getNickname();
+            uid=user.getData().getUid();
+            mobel=user.getData().getMobile();
+            bindwx=user.getData().getBind_wx();
+            wxname=user.getData().getNickname();
+            if(!user.getData().getAvatar().equals("")){
                 Glide.with(getContext())
                         .load(user.getData().getAvatar())
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(wd_toux);
-            }else{
-                wd_toux.setImageResource(R.mipmap.my_touxiang);
             }
             wd_name.setText(user.getData().getNickname());
             wd_hbm.setText("红包码："+user.getData().getRed_code());
@@ -132,9 +148,6 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             else{
                 wd_xx.setImageResource(R.mipmap.my_xx);
             }
-        }
-        else{
-            Log.e("www","111");
         }
     }
 
@@ -165,6 +178,13 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         }
         else if(R.id.wd_toux==view.getId()){
             Intent intent=new Intent(getContext(), GrzlActivity.class);
+            intent.putExtra("name",nickname);
+            intent.putExtra("avatar",avatar);
+            intent.putExtra("sex",sex);
+            intent.putExtra("uid",uid);
+            intent.putExtra("mobile",mobel+"");
+            intent.putExtra("bindwx",bindwx);
+            intent.putExtra("wxname",wxname);
             startActivity(intent);
         }
         else if(R.id.wd_wdjb==view.getId()){
@@ -176,6 +196,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             startActivity(intent);
         }
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void changeavatar(String url){
+        Glide.with(getContext()).load(url).into(wd_toux);
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void notifyData(UserBean userBean){
@@ -185,16 +209,19 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wo_dl.setVisibility(View.GONE);
         wd_name.setVisibility(View.VISIBLE);
         wd_hbm.setVisibility(View.VISIBLE);
-        Log.e("userbean",(userBean.getData()==null)+"");
         if(userBean.getData()!=null) {
-            Log.e("avatar2",userBean.getData().getAvatar());
-            if (userBean.getData().getAvatar() != null) {
+            avatar=user.getData().getAvatar();
+            sex=user.getData().getSex();
+            nickname=user.getData().getNickname();
+            uid=user.getData().getUid();
+            mobel=user.getData().getMobile();
+            bindwx=user.getData().getBind_wx();
+            wxname=user.getData().getNickname();
+            if (!userBean.getData().getAvatar().equals("")) {
                 Glide.with(getContext())
                         .load(userBean.getData().getAvatar())
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(wd_toux);
-            } else {
-                wd_toux.setImageResource(R.mipmap.my_touxiang);
             }
 
             wd_name.setText(userBean.getData().getNickname());
@@ -208,9 +235,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                 wd_xx.setImageResource(R.mipmap.my_xx);
             }
         }
-        else{
-            Log.e("www","222");
-        }
+
     }
 
     @Override
@@ -231,14 +256,18 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                 }
                 user=userBean;
                 if(user.getData()!=null) {
-                    Log.e("avatar3",user.getData().getAvatar());
-                    if (user.getData().getAvatar() != null) {
+                    avatar=user.getData().getAvatar();
+                    sex=user.getData().getSex();
+                    nickname=user.getData().getNickname();
+                    uid=user.getData().getUid();
+                    mobel=user.getData().getMobile();
+                    bindwx=user.getData().getBind_wx();
+                    wxname=user.getData().getNickname();
+                    if (!user.getData().getAvatar() .equals("")) {
                         Glide.with(getContext())
                                 .load(user.getData().getAvatar())
                                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                                 .into(wd_toux);
-                    } else {
-                        wd_toux.setImageResource(R.mipmap.my_touxiang);
                     }
 
                 wd_name.setText(user.getData().getNickname());
@@ -253,9 +282,6 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                     wd_xx.setImageResource(R.mipmap.my_xx);
                 }
             }
-                else{
-                    Log.e("www","333");
-                }
             }
         });
     }

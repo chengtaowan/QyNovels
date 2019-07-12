@@ -14,16 +14,18 @@ import rxhttp.wrapper.parse.SimpleParser;
 public class IModulePresenterImpl implements IModulePresenter {
     private IModuleView iModuleView;
     private Context context;
+    private int type;
 
-    public IModulePresenterImpl(IModuleView iModuleView, Context context) {
+    public IModulePresenterImpl(IModuleView iModuleView, Context context, int type) {
         this.iModuleView = iModuleView;
         this.context = context;
+        this.type = type;
     }
 
     @Override
     public void loadData() {
         RxHttp.postForm(MyApp.Url.baseUrl+"module")
-                .add("type","10")
+                .add("type",type)
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                 .asParser(new SimpleParser<ModuleBean>(){})
                 .subscribe(moduleBean->{

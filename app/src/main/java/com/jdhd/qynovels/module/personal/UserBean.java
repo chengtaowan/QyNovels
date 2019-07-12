@@ -52,6 +52,9 @@ public class UserBean {
          * sex : 未知
          * nickname :
          * uid : 524531
+         * mobile:12345678901
+         * bind_wx:1绑定   0未绑定
+         * wx_name:111
          * red_code : QP8GUZ2
          * create_time : 1970-01-01 08:00:00
          * total_gold : 10000
@@ -68,6 +71,7 @@ public class UserBean {
         private String sex;
         private String nickname;
         private int uid;
+        private String mobile;
         private String red_code;
         private String create_time;
         private int total_gold;
@@ -78,6 +82,32 @@ public class UserBean {
         private Object invite_id;
         private int money;
         private int bind_show;
+        private int bind_wx;
+        private String wx_name;
+
+        public String getMobile() {
+            return mobile;
+        }
+
+        public void setMobile(String mobile) {
+            this.mobile = mobile;
+        }
+
+        public int getBind_wx() {
+            return bind_wx;
+        }
+
+        public void setBind_wx(int bind_wx) {
+            this.bind_wx = bind_wx;
+        }
+
+        public String getWx_name() {
+            return wx_name;
+        }
+
+        public void setWx_name(String wx_name) {
+            this.wx_name = wx_name;
+        }
 
         public String getAvatar() {
             return avatar;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,7 +11,8 @@
     android:clipToPadding="false">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="44dp">
+        android:layout_height="44dp"
+        android:id="@+id/rl">
         <ImageView
             android:layout_width="25dp"
             android:layout_height="25sp"
@@ -19,22 +20,28 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:id="@+id/wj_back"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:text="完结"
-            android:textColor="#2F3236"
-            android:textSize="18sp"
-            android:layout_centerInParent="true"
-            android:textStyle="bold"/>
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/wj_back"
+            android:layout_marginLeft="38dp"
+            android:layout_marginRight="38dp"
+            android:id="@+id/phb_tab"
+            app:tabTextAppearance="@style/phbtabtext"
+            app:tabSelectedTextColor="#E8564E"
+            app:tabTextColor="#2F3236"></com.google.android.material.tabs.TabLayout>
     </RelativeLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#FAFAFA"/>
-    <androidx.recyclerview.widget.RecyclerView
+        android:background="#FAFAFA"
+        android:id="@+id/line"
+        android:layout_below="@+id/rl"/>
+    <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/wj_rv"></androidx.recyclerview.widget.RecyclerView>
+        android:id="@+id/phb_vp"
+        android:background="#fff"
+        android:layout_below="@+id/line"></androidx.viewpager.widget.ViewPager>
 
-</LinearLayout>
+</RelativeLayout>

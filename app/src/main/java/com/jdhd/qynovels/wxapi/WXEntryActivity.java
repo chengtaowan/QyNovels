@@ -69,17 +69,17 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
                      String compareTo = DeviceInfoUtils.getCompareTo(map);
                      String s = DeviceInfoUtils.md5(DeviceInfoUtils.getCompareTo(map));
                      map.put("sign",s);
-//                     Log.e("brand",brand);
-//                     Log.e("model",model);
-//                     Log.e("sv",sv);
-//                     Log.e("os",os+"");
-//                     Log.e("imei",imei);
-//                     Log.e("root",root+"");
-//                     Log.e("sim",sim+"");
-//                     Log.e("network",network+"");
-//                     Log.e("time",time+"");
-//                     Log.e("sign",s);
-//                     Log.e("compare",compareTo);
+                     Log.e("brand",brand);
+                     Log.e("model",model);
+                     Log.e("sv",sv);
+                     Log.e("os",os+"");
+                     Log.e("imei",imei);
+                     Log.e("root",root+"");
+                     Log.e("sim",sim+"");
+                     Log.e("network",network+"");
+                     Log.e("time",time+"");
+                     Log.e("sign",s);
+                     Log.e("compare",compareTo);
                      RxHttp.postForm(MyApp.Url.baseUrl+"token")
                              .add(map)
                              .asParser(new SimpleParser<TokenBean>(){})

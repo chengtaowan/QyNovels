@@ -48,17 +48,34 @@ public class ICaptchaPresenterImpl implements IPersonalPresenter {
         Log.e("time",time+"");
         Log.e("tel",tel);
         Log.e("sign",sign);
-        RxHttp.postForm(MyApp.Url.baseUrl+"captcha")
-                .add(map)
-                .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                .asParser(new SimpleParser<CaptchaBean>(){})
-                .subscribe(captchaBean->{
-                    if(captchaBean.getCode()==200&&captchaBean.getMsg().equals("验证码发送成功")){
-                        iCaptchaView.onCaptchaSuccess(captchaBean);
-                    }
-                },throwable->{
-                    iCaptchaView.onCaptchaError(throwable.getMessage());
-                });
+        if(token!=null){
+            RxHttp.postForm(MyApp.Url.baseUrl+"captcha")
+                    .addHeader("token",token)
+                    .add(map)
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asParser(new SimpleParser<CaptchaBean>(){})
+                    .subscribe(captchaBean->{
+                        if(captchaBean.getCode()==200&&captchaBean.getMsg().equals("验证码发送成功")){
+                            iCaptchaView.onCaptchaSuccess(captchaBean);
+                        }
+                    },throwable->{
+                        iCaptchaView.onCaptchaError(throwable.getMessage());
+                    });
+        }
+        else{
+            RxHttp.postForm(MyApp.Url.baseUrl+"captcha")
+                    .add(map)
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asParser(new SimpleParser<CaptchaBean>(){})
+                    .subscribe(captchaBean->{
+                        if(captchaBean.getCode()==200&&captchaBean.getMsg().equals("验证码发送成功")){
+                            iCaptchaView.onCaptchaSuccess(captchaBean);
+                        }
+                    },throwable->{
+                        iCaptchaView.onCaptchaError(throwable.getMessage());
+                    });
+        }
+
     }
 
 

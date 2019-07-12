@@ -39,6 +39,7 @@ public class ILoginPresenterImpl implements ILoginPresenter {
 
     @Override
     public void loadData() {
+
         getInfo();
         Map<String,String> map=new HashMap<>();
         map.put("tel",phone);

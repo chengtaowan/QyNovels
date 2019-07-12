@@ -56,7 +56,7 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_shop, container, false);
-        modulePresenter=new IModulePresenterImpl(this,getContext());
+        modulePresenter=new IModulePresenterImpl(this,getContext(),10);
         modulePresenter.loadData();
         init(view);
         Intent intent=getActivity().getIntent();

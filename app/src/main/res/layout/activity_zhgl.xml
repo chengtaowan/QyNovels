@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.ZhglActivity"
     android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#fff"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="44dp"
@@ -16,7 +20,7 @@
             android:src="@mipmap/back_h"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:id="@+id/zl_back"/>
+            android:id="@+id/zh_back"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="25dp"
