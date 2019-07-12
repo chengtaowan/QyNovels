@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.bookshop.RankContentBean;
+import com.jdhd.qynovels.ui.activity.XqActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +65,11 @@ public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onItemClick.onClick(position);
+                Intent intent=new Intent(context, XqActivity.class);
+                intent.putExtra("fragment_flag", 2);
+                intent.putExtra("xq",3);
+                intent.putExtra("id",list.get(position).getId());
+                context.startActivity(intent);
             }
         });
     }

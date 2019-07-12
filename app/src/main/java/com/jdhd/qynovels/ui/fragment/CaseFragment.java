@@ -108,8 +108,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
             public void run() {
                 jz.setVisibility(View.GONE);
                 list=caseBean.getData().getList();
-                adapter.refreshlist(caseBean.getData().getList());
-                adapter.refreshhot(caseBean.getData().getHot());
+                adapter.refreshdata(caseBean.getData());
                 hotid=caseBean.getData().getHot().getBookId();
             }
         });

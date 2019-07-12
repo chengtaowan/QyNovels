@@ -34,11 +34,9 @@ import com.jdhd.qynovels.view.bookshop.IModuleView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WjjpActivity extends AppCompatActivity implements View.OnClickListener,WjjpAdapter.onItemClick, IModuleView,TabLayout.OnTabSelectedListener {
+public class WjjpActivity extends AppCompatActivity implements View.OnClickListener, IModuleView,TabLayout.OnTabSelectedListener {
     private ImageView back;
-    private RecyclerView rv;
     private IModulePresenterImpl modulePresenter;
-    private WjjpAdapter adapter;
     private TabLayout tab;
     private List<Fragment> fragmentList=new ArrayList<>();
     private ManWjFragment manWjFragment=new ManWjFragment();
@@ -76,13 +74,6 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    @Override
-    public void onMoreClick(int index) {
-        Intent intent=new Intent(WjjpActivity.this,MorePhbActivity.class);
-        intent.putExtra("more",2);
-        intent.putExtra("more",2);
-        startActivity(intent);
-    }
 
     @Override
     public void onBackPressed() {

@@ -43,5 +43,5 @@
         android:id="@+id/phb_vp"
         android:background="#fff"
         android:layout_below="@+id/line"></androidx.viewpager.widget.ViewPager>
-    <!--<include layout="@layout/item_jz"/>-->
+    <include layout="@layout/item_jz"/>
 </RelativeLayout>

@@ -118,10 +118,7 @@ public class MphbFragment extends Fragment implements Fl_Title_Adapter.onTitleCl
 
     @Override
     public void onClick(int index) {
-        Intent intent=new Intent(getContext(), XqActivity.class);
-        intent.putExtra("fragment_flag", 2);
-        intent.putExtra("xq",3);
-        startActivity(intent);
+
     }
 
     public static String changeData(String time){

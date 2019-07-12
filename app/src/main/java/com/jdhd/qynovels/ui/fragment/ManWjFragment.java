@@ -2,6 +2,7 @@ package com.jdhd.qynovels.ui.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -17,12 +18,14 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.WjjpAdapter;
 import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IJxPresenterImpl;
+import com.jdhd.qynovels.ui.activity.MorePhbActivity;
+import com.jdhd.qynovels.ui.activity.WjjpActivity;
 import com.jdhd.qynovels.view.bookshop.IJxView;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ManWjFragment extends Fragment implements IJxView {
+public class ManWjFragment extends Fragment implements IJxView,WjjpAdapter.onItemClick {
 
     private RecyclerView rv;
     private IJxPresenterImpl jxPresenter;
@@ -48,6 +51,7 @@ public class ManWjFragment extends Fragment implements IJxView {
         LinearLayoutManager manager=new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
         adapter=new WjjpAdapter(getContext());
+        adapter.setOnItemClick(this);
         rv.setAdapter(adapter);
     }
 
@@ -72,5 +76,12 @@ public class ManWjFragment extends Fragment implements IJxView {
         if(jxPresenter!=null){
             jxPresenter.destoryView();
         }
+    }
+
+    @Override
+    public void onMoreClick(int index) {
+        Intent intent=new Intent(getContext(), MorePhbActivity.class);
+        intent.putExtra("more",2);
+        startActivity(intent);
     }
 }

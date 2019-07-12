@@ -23,7 +23,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Main"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.BindMobileActivity"></activity>
+        <activity android:name=".ui.activity.ReadActivity"></activity>
+        <activity android:name=".ui.activity.BindMobileActivity" />
         <activity android:name=".ui.activity.MuluActivity" />
         <activity android:name=".ui.activity.TxjlActivity" />
         <activity android:name=".ui.activity.QdActivity" />

@@ -56,7 +56,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, final int position) {
         if(list.size()==0){
-           return;
+            return;
         }
         if(position==list.size()){
             holder.book.setImageResource(R.mipmap.sj_tj);
@@ -82,7 +82,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
                 public void onClick(View view) {
                     Intent intent=new Intent(context, XqActivity.class);
                     intent.putExtra("xq",2);
-                    intent.putExtra("id",list.get(position).getId());
+                    intent.putExtra("id",list.get(position).getBookId());
                     context.startActivity(intent);
                 }
             });
@@ -101,12 +101,18 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
     @Override
     public int getItemCount() {
-        if(list.size()==0){
+        if(list==null){
             return 0;
         }
         else{
-            return list.size()+1;
+            if(list.size()==0){
+                return 1;
+            }
+            else{
+                return list.size()+1;
+            }
         }
+
 
     }
 

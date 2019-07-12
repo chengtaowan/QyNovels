@@ -75,7 +75,8 @@ public class MyApp extends Application {
                     kSectionTypeBlockbusterRecommended = 80,// 重磅推荐
                     kSectionTypeFinishedGoodBook = 90,      // 完结好书
                     kSectionTypeHotBookUpdate = 100,        // 热书更新 （今日更新顶部）
-                    kSectionTypeClassifyShow = 110;         // 分类展示
+                    kSectionTypeClassifyShow = 110,         // 分类展示
+                    kSectionTypeHotBookUpdateList = 120;        // 热书更新 （今日更新顶部）
 
     }
 

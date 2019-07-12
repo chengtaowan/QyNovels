@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/simple_reader"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="10dp"
+        android:text="SimpleReader"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/normal_reader"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="NormalReader"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toBottomOf="@+id/simple_reader" />
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/extend_reader"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="ExtendReader"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toBottomOf="@+id/normal_reader" />
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/custom_reader"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="CustomReader"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toBottomOf="@+id/extend_reader" />
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/paper_reader"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="挑选你喜欢的纸张效果"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toBottomOf="@+id/custom_reader" />
+
+
+</android.support.constraint.ConstraintLayout>

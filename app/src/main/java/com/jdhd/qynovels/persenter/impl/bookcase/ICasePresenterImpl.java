@@ -2,6 +2,7 @@ package com.jdhd.qynovels.persenter.impl.bookcase;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
@@ -26,6 +27,7 @@ public class ICasePresenterImpl implements ICasePresenter {
     public void loadData() {
         SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
+        Log.e("token",token);
         RxHttp.get(MyApp.Url.baseUrl+"bookrack")
                 .addHeader("token",token)
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制

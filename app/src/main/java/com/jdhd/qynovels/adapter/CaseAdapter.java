@@ -2,6 +2,7 @@ package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,19 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ListAdapter.onItemClick {
-    private List<CaseBean.DataBean.ListBean> list=new ArrayList<>();
-    private CaseBean.DataBean.HotBean hotbean=new CaseBean.DataBean.HotBean();
+    private CaseBean.DataBean dataBean=new CaseBean.DataBean();
     private Context context;
     private FragmentActivity activity;
     public static final int TYPE_TITLE=0;
     public static final int TYPE_LIST=1;
     private onItemClick onItemClick;
-    public void refreshlist(List<CaseBean.DataBean.ListBean> list){
-        this.list=list;
-        notifyDataSetChanged();
-    }
-    public void refreshhot(CaseBean.DataBean.HotBean hotbean){
-        this.hotbean=hotbean;
+    public void refreshdata(CaseBean.DataBean dataBean){
+        this.dataBean=dataBean;
         notifyDataSetChanged();
     }
     public void setOnItemClick(CaseAdapter.onItemClick onItemClick) {
@@ -64,26 +60,32 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             View view= LayoutInflater.from(context).inflate(R.layout.item_caselist,null,false);
             viewHolder=new ListViewHolder(view);
         }
-
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+        if(dataBean==null){
+           return;
+        }
         if(holder instanceof TitleViewHolder){
             TitleViewHolder viewHolder= (TitleViewHolder) holder;
-            viewHolder.des.setText(hotbean.getIntro());
-            Glide.with(context).load(hotbean.getImage()).into(viewHolder.book);
-            viewHolder.name.setText(hotbean.getName());
+            if(dataBean.getHot()==null){
+                return;
+            }
+            viewHolder.des.setText(dataBean.getHot().getIntro());
+            Glide.with(context).load(dataBean.getHot().getImage()).into(viewHolder.book);
+            viewHolder.name.setText(dataBean.getHot().getName());
             viewHolder.ll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onItemClick.onClick(position);
+                    Intent intent=new Intent(context, XqActivity.class);
+                    intent.putExtra("id",dataBean.getHot().getBookId());
+                    context.startActivity(intent);
                 }
             });
         }
         else if(holder instanceof ListViewHolder){
-
             ListViewHolder viewHolder= (ListViewHolder) holder;
             LinearLayoutManager layoutManager = new LinearLayoutManager(context) {
                 @Override
@@ -94,7 +96,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             };
             viewHolder.rv.setLayoutManager(layoutManager);
             ListAdapter adapter=new ListAdapter(context);
-            adapter.refresh(list);
+            adapter.refresh(dataBean.getList());
             viewHolder.rv.setAdapter(adapter);
         }
 
@@ -120,8 +122,9 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public void onlistClick(int index) {
+        Log.e("index",index+"---");
         Intent intent=new Intent(context, XqActivity.class);
-        intent.putExtra("id",list.get(index).getBookId());
+        intent.putExtra("id",dataBean.getList().get(index).getBookId());
         context.startActivity(intent);
     }
 

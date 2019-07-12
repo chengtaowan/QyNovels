@@ -66,6 +66,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
         jrsj=findViewById(R.id.xq_jrsj);
         jrsj.setOnClickListener(this);
         yd=findViewById(R.id.xq_yd);
+        yd.setOnClickListener(this);
         jz=findViewById(R.id.jz);
         gif=findViewById(R.id.case_gif);
         Glide.with(this).load(R.mipmap.re).into(gif);
@@ -93,7 +94,8 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
          addBookRankPresenter.loadData();
        }
        else if(R.id.xq_yd==view.getId()){
-
+         Intent intent=new Intent(XqActivity.this,ReadActivity.class);
+         startActivity(intent);
        }
 
     }
