@@ -3,14 +3,84 @@ package com.jdhd.qynovels.ui.activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.WindowManager;
 
+import com.bifan.txtreaderlib.main.TxtReaderView;
+
+import com.glong.reader.entry.ChapterContentBean;
+import com.glong.reader.entry.ChapterItemBean;
+import com.glong.reader.localtest.LocalServer;
+import com.glong.reader.util.Request;
+import com.glong.reader.widget.ReaderView;
 import com.jdhd.qynovels.R;
 
-public class ReadActivity extends AppCompatActivity {
+import com.jdhd.qynovels.utils.StatusBarUtil;
 
+import java.util.List;
+
+public class ReadActivity extends AppCompatActivity {
+    private ReaderView readview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read);
+        StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        // 隐藏状态栏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        init();
     }
+
+    private void init() {
+        readview=findViewById(R.id.readview);
+        ReaderView.ReaderManager manager=new ReaderView.ReaderManager();
+        readview.setReaderManager(manager);
+        readview.setAdapter(adapter);
+        /*
+         * 获取章节列表
+         */
+        LocalServer.getChapterList("123", new LocalServer.OnResponseCallback() {
+            @Override
+            public void onSuccess(List<ChapterItemBean> chapters) {
+               adapter .setChapterList(chapters);
+               adapter. notifyDataSetChanged();
+            }
+               @Override
+            public void onError(Exception e) {
+            }
+        });
+    }
+    public ReaderView.Adapter adapter=new ReaderView.Adapter<ChapterItemBean, ChapterContentBean>(){
+        @Override
+        public String obtainCacheKey(ChapterItemBean chapterItemBean) {
+            return chapterItemBean.getChapterId();
+        }
+        @Override
+        public String obtainChapterName(ChapterItemBean chapterItemBean) {
+            return chapterItemBean.getChapterName();
+        }
+        @Override
+        public String obtainChapterContent(ChapterContentBean contentBean) {
+            return contentBean.getChapterContent();
+        }
+        /**
+         * 这个方法运行在子线程中，同步返回章节内容
+         */
+        @Override
+        public ChapterContentBean downLoad(ChapterItemBean chapterItemBean) {
+            return null;
+        }
+        @Override
+        public Request requestParams(ChapterItemBean chapterItemBean) {
+            return new Request.Builder()
+                    .baseUrl("http://15492b50l3.51mypc.cn:37652/api.php/v1/")
+                    .addHeader("token", "userToken")
+                    .addUrlParams("bookId", "123")
+                    .addUrlParams("bookName", "123")
+                    .addBody("chapterId", chapterItemBean.getChapterId())
+                    .post()
+                    .build();
+        }
+
+    };
 }

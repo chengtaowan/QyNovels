@@ -1,1 +1,1 @@
-include ':app', ':Reader-master'
+include ':app', ':reader'

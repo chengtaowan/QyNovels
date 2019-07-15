@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.glong.reader.activities.ExtendReaderActivity;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.XqymAdapter;
 import com.jdhd.qynovels.module.bookcase.AddBookBean;
@@ -94,7 +95,8 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
          addBookRankPresenter.loadData();
        }
        else if(R.id.xq_yd==view.getId()){
-         Intent intent=new Intent(XqActivity.this,ReadActivity.class);
+         Intent intent=new Intent(XqActivity.this, ExtendReaderActivity.class);
+         intent.putExtra("id",id);
          startActivity(intent);
        }
 
