@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.glong.reader.activities.ExtendReaderActivity;
+import com.glong.reader.activities.NormalReaderActivity;
+import com.glong.reader.activities.SimpleReaderActivity;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.XqymAdapter;
 import com.jdhd.qynovels.module.bookcase.AddBookBean;
@@ -96,6 +98,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
        }
        else if(R.id.xq_yd==view.getId()){
          Intent intent=new Intent(XqActivity.this, ExtendReaderActivity.class);
+
          intent.putExtra("id",id);
          startActivity(intent);
        }

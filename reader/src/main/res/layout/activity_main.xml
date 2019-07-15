@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="com.glong.reader.MainActivity">
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/simple_reader"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/normal_reader"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
         android:textAllCaps="false"
         app:layout_constraintTop_toBottomOf="@+id/simple_reader" />
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/extend_reader"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
         android:textAllCaps="false"
         app:layout_constraintTop_toBottomOf="@+id/normal_reader" />
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/custom_reader"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
@@ -50,7 +50,7 @@
         android:textAllCaps="false"
         app:layout_constraintTop_toBottomOf="@+id/extend_reader" />
 
-    <android.support.design.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/paper_reader"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"

@@ -37,6 +37,6 @@ public class MyReaderAdapter extends ReaderView.Adapter<ChapterItemBean, Chapter
     public Request requestParams(ChapterItemBean chapterItemBean) {
         return new Request.Builder().baseUrl(MyApp.Url.baseUrl)
                 .addUrlParams("id", chapterItemBean.getChapterId())
-                .get().build();
+                .post().build();
     }
 }

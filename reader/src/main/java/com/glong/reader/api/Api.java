@@ -30,7 +30,7 @@ public class Api {
     }
 
     private void initRetrofit() {
-        retrofit = new Retrofit.Builder().baseUrl("http://apis.juhe.cn")
+        retrofit = new Retrofit.Builder().baseUrl("http://15492b50l3.51mypc.cn:37652/api.php/v1/")
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

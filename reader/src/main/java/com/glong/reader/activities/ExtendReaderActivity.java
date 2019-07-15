@@ -26,12 +26,17 @@ import com.glong.reader.adpater.CatalogueAdapter;
 import com.glong.reader.adpater.MyReaderAdapter;
 import com.glong.reader.api.Api;
 import com.glong.reader.api.Service;
+import com.glong.reader.entry.BookContentBean;
 import com.glong.reader.entry.BookListBean;
 import com.glong.reader.entry.ChapterContent2Bean;
+import com.glong.reader.entry.ChapterContentBean;
 import com.glong.reader.entry.ChapterItemBean;
 import com.glong.reader.entry.Result;
+import com.glong.reader.localtest.LocalServer;
+import com.glong.reader.presenter.IBookContentPresenterImpl;
 import com.glong.reader.presenter.IBookListPresenterImpl;
 import com.glong.reader.util.StatusBarUtil;
+import com.glong.reader.view.IBookContentView;
 import com.glong.reader.view.IBookListView;
 import com.glong.reader.view.MenuView;
 import com.glong.reader.view.SettingView;
@@ -55,13 +60,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class ExtendReaderActivity extends AppCompatActivity implements View.OnClickListener, IBookListView {
+public class ExtendReaderActivity extends AppCompatActivity implements View.OnClickListener, IBookListView, IBookContentView {
 
     private static final String TAG = ExtendReaderActivity.class.getSimpleName();
 
     private ReaderView mReaderView;
     private ReaderView.ReaderManager mReaderManager;
-    private ReaderView.Adapter<ChapterItemBean, ChapterContent2Bean> mAdapter;
+    private ReaderView.Adapter<ChapterItemBean, ChapterContentBean> mAdapter;
 
     private MenuView mMenuView;// 菜单View
     private SettingView mSettingView;// 设置View
@@ -74,6 +79,8 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 
     private IBookListPresenterImpl bookListPresenter;
     private int id;
+    private IBookContentPresenterImpl bookContentPresenter;
+    private String content="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +92,11 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         bookListPresenter=new IBookListPresenterImpl(this);
         bookListPresenter.setId(id);
         bookListPresenter.loadData();
+        bookContentPresenter=new IBookContentPresenterImpl(this);
         initReader();
         initView();
         initToolbar();
-        initData();
+        //initData();
     }
 
     private void initView() {
@@ -234,10 +242,10 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private void initReader() {
         mReaderView = findViewById(R.id.extend_reader);
         mReaderManager = new ReaderView.ReaderManager();
-        mAdapter = new MyReaderAdapter();
+        //mAdapter = new MyReaderAdapter();
 
         mReaderView.setReaderManager(mReaderManager);
-        mReaderView.setAdapter(mAdapter);
+        //mReaderView.setAdapter(mAdapter);
 
         mReaderView.setPageChangedCallback(new PageChangedCallback() {
             @Override
@@ -284,6 +292,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 
                     @Override
                     public void onError(Throwable e) {
+
                     }
 
                     @Override
@@ -416,6 +425,10 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                    list.add(itemBean);
                }
                mCatalogueAdapter.refresh(list);
+//               mAdapter.setChapterList(list);
+//               mAdapter.notifyDataSetChanged();
+               bookContentPresenter.setId(bookListBean.getData().getList().get(0).getId());
+               bookContentPresenter.loadData();
            }
        });
     }
@@ -423,5 +436,44 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onError(String error) {
        Log.e("zjerror",error);
+    }
+
+    @Override
+    public void onBookSuccess(BookContentBean bookContentBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                content=bookContentBean.getData().getContent();
+                Log.e("content",content);
+                mAdapter = new ReaderView.Adapter<ChapterItemBean, ChapterContentBean>() {
+                    @Override
+                    public String obtainCacheKey(ChapterItemBean chapterItemBean) {
+                        return chapterItemBean.getChapterId() + "custom";
+                    }
+
+                    @Override
+                    public String obtainChapterName(ChapterItemBean chapterItemBean) {
+                        return "111";//chapterItemBean.getChapterName();
+                    }
+
+                    @Override
+                    public String obtainChapterContent(ChapterContentBean chapterContentBean) {
+                        Log.e("nr",content);
+                        return content;
+                    }
+
+                    @Override
+                    public ChapterContentBean downLoad(ChapterItemBean chapterItemBean) {
+                        return LocalServer.syncDownloadContent(chapterItemBean);
+                    }
+                };
+                mReaderView.setAdapter(mAdapter);
+            }
+        });
+    }
+
+    @Override
+    public void onBookError(String error) {
+
     }
 }
