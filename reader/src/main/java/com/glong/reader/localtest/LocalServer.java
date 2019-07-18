@@ -1,7 +1,10 @@
 package com.glong.reader.localtest;
 
+import com.glong.reader.entry.BookContentBean;
 import com.glong.reader.entry.ChapterContentBean;
 import com.glong.reader.entry.ChapterItemBean;
+import com.glong.reader.presenter.IBookContentPresenterImpl;
+import com.glong.reader.view.IBookContentView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +13,10 @@ import java.util.List;
  * Created by Garrett on 2018/11/23.
  * contact me krouky@outlook.com
  */
-public class LocalServer {
-
-    /**
+public class LocalServer implements IBookContentView {
+     public IBookContentPresenterImpl bookContentPresenter=new IBookContentPresenterImpl(this);
+     public static BookContentBean bookContent=new BookContentBean();
+     /**
      * 模拟网络请求
      *
      * @param bookId 书ID
@@ -56,6 +60,41 @@ public class LocalServer {
         }
         chapterContentBean.setChapterContent(contentBuilder.toString());
         return chapterContentBean;
+    }
+
+
+    /**
+     * 模拟网络同步下载
+     *
+     * @return 章节内容
+     */
+    public BookContentBean syncgetContent(int id) {
+
+        bookContentPresenter.setId(id);
+        bookContentPresenter.loadData();
+        if(bookContent!=null){
+            ChapterContentBean chapterContentBean = new ChapterContentBean();
+            chapterContentBean.setChapterId(bookContent.getData().getId()+"");
+            chapterContentBean.setChapterName("111");
+            StringBuilder contentBuilder = new StringBuilder();
+            while (contentBuilder.length() < 1000) {
+                contentBuilder.append(bookContent.getData().getContent());
+
+            }
+            chapterContentBean.setChapterContent(contentBuilder.toString());
+        }
+
+        return bookContent;
+    }
+
+    @Override
+    public void onBookSuccess(BookContentBean bookContentBean) {
+        bookContent=bookContentBean;
+    }
+
+    @Override
+    public void onBookError(String error) {
+
     }
 
     public interface OnResponseCallback {

@@ -37,7 +37,13 @@ public class ICasePresenterImpl implements ICasePresenter {
                         iCaseView.onSuccess(caseBean);
                     }
                 },throwable->{
-                    iCaseView.onError(throwable.getMessage());
+                    if(throwable!=null){
+                        iCaseView.onError(throwable.getMessage());
+                    }
+                    else{
+                        return;
+                    }
+
                 });
     }
 

@@ -60,7 +60,7 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
                 public void onClick(View view) {
                     Intent intent=new Intent(context, XqActivity.class);
                     intent.putExtra("xq",2);
-                    intent.putExtra("id",list.get(position).getId());
+                    intent.putExtra("id",list.get(position).getBookId());
                     context.startActivity(intent);
                 }
             });
@@ -74,7 +74,7 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
                 public void onClick(View view) {
                     Intent intent=new Intent(context, XqActivity.class);
                     intent.putExtra("xq",2);
-                    intent.putExtra("id",list.get(position+1).getId());
+                    intent.putExtra("id",list.get(position+1).getBookId());
                     context.startActivity(intent);
                 }
             });

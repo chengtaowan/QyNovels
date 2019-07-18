@@ -74,7 +74,10 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onItemClick.onGfclick(position);
+                    Intent intent=new Intent(context, XqActivity.class);
+                    intent.putExtra("xq",2);
+                    intent.putExtra("id",list.get(position).getBookId());
+                    context.startActivity(intent);
                 }
             });
         }
@@ -93,7 +96,7 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
                 public void onClick(View view) {
                     Intent intent=new Intent(context, XqActivity.class);
                     intent.putExtra("xq",2);
-                    intent.putExtra("id",list.get(position).getId());
+                    intent.putExtra("id",list.get(position).getBookId());
                     context.startActivity(intent);
                 }
             });

@@ -9,7 +9,7 @@
     android:background="#fff">
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="105dp"
+        android:layout_height="150dp"
         android:layout_marginTop="-40dp"
         android:background="@mipmap/sj_bg">
     </ImageView>
@@ -43,11 +43,19 @@
         android:layout_marginRight="15dp"
         android:layout_marginTop="38dp"
         android:id="@+id/sj_ss"/>
-
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/sr"
+        android:layout_marginTop="64dp">
+    <com.jdhd.qynovels.widget.MRefreshHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/case_header"></com.jdhd.qynovels.widget.MRefreshHeader>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="64dp"
         android:id="@+id/sj_rv"></androidx.recyclerview.widget.RecyclerView>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
     <include layout="@layout/item_jz"/>
 </RelativeLayout>

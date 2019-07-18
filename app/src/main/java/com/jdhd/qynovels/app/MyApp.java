@@ -60,6 +60,7 @@ public class MyApp extends Application {
     public class Url{
         @DefaultDomain()
         public static final String baseUrl = "http://15492b50l3.51mypc.cn:37652/api.php/v1/";
+        public static final String webbaseUrl="http://192.168.1.127:8848/";
     }
 
     public class ModuleType{

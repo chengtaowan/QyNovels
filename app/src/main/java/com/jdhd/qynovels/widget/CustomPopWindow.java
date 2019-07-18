@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,8 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.personal.WithDrawBean;
+import com.jdhd.qynovels.persenter.impl.personal.IWithDrawrPresenterImpl;
+import com.jdhd.qynovels.view.personal.IWithDrawView;
 
-public class CustomPopWindow extends PopupWindow {
+public class CustomPopWindow extends PopupWindow implements IWithDrawView {
     private Activity context;
     private View.OnClickListener itemClick;
     private View view;
@@ -23,7 +27,12 @@ public class CustomPopWindow extends PopupWindow {
     private TextView pop_num,pop_wx,ksdz,ptdz,kxsp,gzdz;
     private LinearLayout pop_ks,pop_pt;
     private RelativeLayout pop_close;
-    public CustomPopWindow(Activity context, View.OnClickListener itemClick) {
+    private String wxname;
+    private int num;
+    private int gold;
+    private int yue;
+    private IWithDrawrPresenterImpl withDrawrPresenter;
+    public CustomPopWindow(Activity context, View.OnClickListener itemClick,String wxname,int num,int gold,int yue) {
         super(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = inflater.inflate(R.layout.widget_popupwindow, null);//alt+ctrl+f
@@ -31,11 +40,16 @@ public class CustomPopWindow extends PopupWindow {
 //        rl.getBackground().setAlpha(153);
         this.itemClick = itemClick;
         this.context = context;
+        this.wxname=wxname;
+        this.num=num;
+        this.gold=gold;
+        this.yue=yue;
         initView();
         initPopWindow();
     }
 
     private void initPopWindow() {
+        withDrawrPresenter=new IWithDrawrPresenterImpl(this,context);
         this.setContentView(view);
         // 设置弹出窗体的宽
         this.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
@@ -69,6 +83,8 @@ public class CustomPopWindow extends PopupWindow {
         kxsp=view.findViewById(R.id.kxsp);
         ptdz=view.findViewById(R.id.ptdz);
         gzdz=view.findViewById(R.id.gzdz);
+        pop_wx.setText("微信昵称："+wxname);
+        pop_num.setText(num+"");
         pop_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,7 +100,15 @@ public class CustomPopWindow extends PopupWindow {
                 pop_pt.setBackgroundResource(R.drawable.shape_pt);
                 ptdz.setTextColor(Color.parseColor("#E8564E"));
                 gzdz.setTextColor(Color.parseColor("#E8564E"));
-                Toast.makeText(context,"去看小视频",Toast.LENGTH_SHORT).show();
+                if(yue<num*10000){
+                    Toast.makeText(context,"金币还不够呦",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    withDrawrPresenter.setGold(gold);
+                    withDrawrPresenter.setRapid(10);
+                    withDrawrPresenter.loadData();
+                }
+
                 //dismiss();
             }
         });
@@ -97,11 +121,33 @@ public class CustomPopWindow extends PopupWindow {
                 pop_pt.setBackgroundResource(R.drawable.shape_pt_on);
                 ptdz.setTextColor(Color.parseColor("#E8564E"));
                 gzdz.setTextColor(Color.parseColor("#E8564E"));
-                Toast.makeText(context,"普通提现",Toast.LENGTH_SHORT).show();
+                if(yue<num*10000){
+                    Toast.makeText(context,"金币还不够呦",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    withDrawrPresenter.setGold(gold);
+                    withDrawrPresenter.setRapid(20);
+                    withDrawrPresenter.loadData();
+                }
+
                 //dismiss();
             }
         });
     }
 
 
+    @Override
+    public void onWithSuccess(WithDrawBean withDrawBean) {
+       context.runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               Toast.makeText(context,withDrawBean.getMsg(),Toast.LENGTH_SHORT).show();
+           }
+       });
+    }
+
+    @Override
+    public void onWithError(String error) {
+        Log.e("txerror",error);
+    }
 }

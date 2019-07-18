@@ -15,8 +15,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.glong.reader.activities.CustomReaderActivity;
 import com.glong.reader.activities.ExtendReaderActivity;
 import com.glong.reader.activities.NormalReaderActivity;
 import com.glong.reader.activities.SimpleReaderActivity;
@@ -92,9 +94,9 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View view) {
        if(R.id.xq_jrsj==view.getId()){
-           Log.e("asd","点击加入"+id);
            addBookRankPresenter.setId(id);
          addBookRankPresenter.loadData();
+           Toast.makeText(XqActivity.this,"加入书架",Toast.LENGTH_SHORT).show();
        }
        else if(R.id.xq_yd==view.getId()){
          Intent intent=new Intent(XqActivity.this, ExtendReaderActivity.class);

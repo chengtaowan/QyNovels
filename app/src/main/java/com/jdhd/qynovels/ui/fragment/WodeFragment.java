@@ -30,6 +30,7 @@ import com.jdhd.qynovels.ui.activity.LoginActivity;
 import com.jdhd.qynovels.ui.activity.LsActivity;
 import com.jdhd.qynovels.ui.activity.SzActivity;
 import com.jdhd.qynovels.ui.activity.TxActivity;
+import com.jdhd.qynovels.ui.activity.XxActivity;
 import com.jdhd.qynovels.view.personal.IPersonalView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -65,7 +66,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_wode, container, false);
-        EventBus.getDefault().register(this);
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+
         personalPresenter=new IPersonalPresenterImpl(this,getContext());
         personalPresenter.loadData();
         init(view);
@@ -122,6 +126,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wd_fk.setOnClickListener(this);
         wd_sz.setOnClickListener(this);
         wd_toux.setOnClickListener(this);
+        wd_xx.setOnClickListener(this);
         //Glide.with(getContext()).load(R.mipmap.re).into(gif);
         if(user.getData()!=null){
             avatar=user.getData().getAvatar();
@@ -193,7 +198,12 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             intent.putExtra("money",user.getData().getMoney());
             intent.putExtra("today",user.getData().getToday_gold());
             intent.putExtra("total",user.getData().getTotal_gold());
+            intent.putExtra("wxname",wxname);
             startActivity(intent);
+        }
+        else if(R.id.wd_xx==view.getId()){
+           Intent intent=new Intent(getContext(), XxActivity.class);
+           startActivity(intent);
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -8,7 +8,7 @@ public class CaseBean {
     /**
      * code : 200
      * msg : success
-     * data : {"list":[{"id":365,"name":"阴阳合神","image":"http://www.hxtk.com/cover/0/376.jpg","author":"昊天之恋","readContent":"天下是天下人的天下，是老百姓的天下","readStatus":10,"bookStatus":20,"bookId":256,"pageNum":3}],"hot":{"bookId":617,"name":"风云少年","image":"http://cdn.taxiaoshuo.com/FoAeDznDs-PtrYPU9rqJ7p3pA_8I.jpg","intro":"龙跃飞是一个灵力大陆上的少年，在过去的时候曾经也是一个风云的人物，但是因为个人的放荡不羁，得罪了一些更加有实力的人，被人差不多打成了废物\u2026\u2026 自那以后，他开始研究了医药学，却也从此开始了一个新的人生\u2026\u2026","author":"星辰"}}
+     * data : {"list":[{"id":365,"name":"阴阳合神","image":"http://www.hxtk.com/cover/0/376.jpg","author":"昊天之恋","readContent":"天下是天下人的天下，是老百姓的天下","readStatus":10,"bookStatus":20,"bookId":256,"backlistPercent":3,"lastTime":14425154521,"backlistId":123}],"hot":{"bookId":617,"name":"风云少年","image":"http://cdn.taxiaoshuo.com/FoAeDznDs-PtrYPU9rqJ7p3pA_8I.jpg","intro":"龙跃飞是一个灵力大陆上的少年，在过去的时候曾经也是一个风云的人物，但是因为个人的放荡不羁，得罪了一些更加有实力的人，被人差不多打成了废物\u2026\u2026 自那以后，他开始研究了医药学，却也从此开始了一个新的人生\u2026\u2026","author":"星辰"}}
      */
 
     private int code;
@@ -41,7 +41,7 @@ public class CaseBean {
 
     public static class DataBean {
         /**
-         * list : [{"id":365,"name":"阴阳合神","image":"http://www.hxtk.com/cover/0/376.jpg","author":"昊天之恋","readContent":"天下是天下人的天下，是老百姓的天下","readStatus":10,"bookStatus":20,"bookId":256,"pageNum":3}]
+         * list : [{"id":365,"name":"阴阳合神","image":"http://www.hxtk.com/cover/0/376.jpg","author":"昊天之恋","readContent":"天下是天下人的天下，是老百姓的天下","readStatus":10,"bookStatus":20,"bookId":256,"backlistPercent":3,"lastTime":14425154521,"backlistId":123}]
          * hot : {"bookId":617,"name":"风云少年","image":"http://cdn.taxiaoshuo.com/FoAeDznDs-PtrYPU9rqJ7p3pA_8I.jpg","intro":"龙跃飞是一个灵力大陆上的少年，在过去的时候曾经也是一个风云的人物，但是因为个人的放荡不羁，得罪了一些更加有实力的人，被人差不多打成了废物\u2026\u2026 自那以后，他开始研究了医药学，却也从此开始了一个新的人生\u2026\u2026","author":"星辰"}
          */
 
@@ -130,7 +130,9 @@ public class CaseBean {
              * readStatus : 10
              * bookStatus : 20
              * bookId : 256
-             * pageNum : 3
+             * backlistPercent : 3
+             * lastTime : 14425154521
+             * backlistId : 123
              */
 
             private int id;
@@ -141,7 +143,9 @@ public class CaseBean {
             private int readStatus;
             private int bookStatus;
             private int bookId;
-            private int pageNum;
+            private int backlistPercent;
+            private long lastTime;
+            private int backlistId;
 
             public int getId() {
                 return id;
@@ -207,12 +211,28 @@ public class CaseBean {
                 this.bookId = bookId;
             }
 
-            public int getPageNum() {
-                return pageNum;
+            public int getBacklistPercent() {
+                return backlistPercent;
             }
 
-            public void setPageNum(int pageNum) {
-                this.pageNum = pageNum;
+            public void setBacklistPercent(int backlistPercent) {
+                this.backlistPercent = backlistPercent;
+            }
+
+            public long getLastTime() {
+                return lastTime;
+            }
+
+            public void setLastTime(long lastTime) {
+                this.lastTime = lastTime;
+            }
+
+            public int getBacklistId() {
+                return backlistId;
+            }
+
+            public void setBacklistId(int backlistId) {
+                this.backlistId = backlistId;
             }
         }
     }

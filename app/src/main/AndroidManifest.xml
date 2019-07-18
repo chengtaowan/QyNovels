@@ -11,7 +11,6 @@
     <uses-permission android:name="android.hardware.autofocus" /> <!-- 读取手机IMEI的设备权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- for mta statistics, not necessary -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -23,7 +22,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Main"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.ReadActivity"></activity>
+        <activity android:name=".ui.activity.XxActivity"></activity>
+        <activity android:name=".ui.activity.ReadActivity" />
         <activity android:name=".ui.activity.BindMobileActivity" />
         <activity android:name=".ui.activity.MuluActivity" />
         <activity android:name=".ui.activity.TxjlActivity" />

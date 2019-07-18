@@ -80,7 +80,7 @@ public class UserBean {
         private int read_time;
         private int message_count;
         private Object invite_id;
-        private int money;
+        private float money;
         private int bind_show;
         private int bind_wx;
         private String wx_name;
@@ -205,11 +205,11 @@ public class UserBean {
             this.invite_id = invite_id;
         }
 
-        public int getMoney() {
+        public float getMoney() {
             return money;
         }
 
-        public void setMoney(int money) {
+        public void setMoney(float money) {
             this.money = money;
         }
 

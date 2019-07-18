@@ -29,8 +29,8 @@ import rxhttp.wrapper.parse.SimpleParser;
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IPersonalView {
     private IWXAPI api;
     private static final String APP_ID = "wxf2f9d368f73b6719";
-    private String brand,model,sv,imei;
-    private int os,root,sim,network,time;
+    private String brand,model,sv,imei,sim;
+    private int os,root,network,time;
     public static String token="";
     private IPersonalPresenterImpl personalPresenter;
 
@@ -130,6 +130,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
 
     @Override
     public void onError(String error) {
-
+       Log.e("usererror",error);
     }
 }

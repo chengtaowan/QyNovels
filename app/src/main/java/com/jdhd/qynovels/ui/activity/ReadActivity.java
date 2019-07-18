@@ -73,12 +73,12 @@ public class ReadActivity extends AppCompatActivity {
         @Override
         public Request requestParams(ChapterItemBean chapterItemBean) {
             return new Request.Builder()
-                    .baseUrl("http://15492b50l3.51mypc.cn:37652/api.php/v1/")
+                    .baseUrl("111")
                     .addHeader("token", "userToken")
                     .addUrlParams("bookId", "123")
                     .addUrlParams("bookName", "123")
                     .addBody("chapterId", chapterItemBean.getChapterId())
-                    .post()
+                    .get()
                     .build();
         }
 

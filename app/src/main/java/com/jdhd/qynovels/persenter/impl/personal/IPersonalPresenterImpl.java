@@ -38,6 +38,8 @@ public class IPersonalPresenterImpl implements IPersonalPresenter {
         map.put("token",token);
         String sign=DeviceInfoUtils.md5(DeviceInfoUtils.getCompareTo(map));
         map.put("sign",sign);
+        Log.e("time",time+"");
+        Log.e("sign",sign);
         RxHttp.get(MyApp.Url.baseUrl+"personal")
                 .addHeader("token",token)
                 .add(map)

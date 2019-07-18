@@ -67,7 +67,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="18,880"
                 android:textColor="#ffffffff"
                 android:textSize="23sp"
                 android:layout_marginLeft="15dp"
@@ -79,7 +78,6 @@
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@+id/ye"
                 android:layout_marginTop="10dp"
-                android:text="约1.88元"
                 android:id="@+id/money"
                 android:gravity="center"
                 android:textColor="#FFFFFF"
@@ -108,7 +106,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现10元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
@@ -117,7 +114,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需10000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
@@ -135,7 +131,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现15元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
@@ -144,7 +139,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需15000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
@@ -170,7 +164,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现20元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
@@ -179,7 +172,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需20000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
@@ -197,7 +189,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现25元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
@@ -206,7 +197,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需25000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
@@ -232,7 +222,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现30元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
@@ -241,7 +230,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需30000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"
@@ -259,7 +247,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提现50元"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:layout_gravity="center"
@@ -268,7 +255,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需50000金币"
                 android:textColor="#ff828486"
                 android:textSize="12sp"
                 android:layout_gravity="center"

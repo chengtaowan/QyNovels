@@ -25,8 +25,8 @@ import static android.content.Context.MODE_PRIVATE;
 public class ILoginPresenterImpl implements ILoginPresenter {
     private ILoginView iLoginView;
     private Context context;
-    private String brand,model,sv,imei;
-    private int os,root,sim,network,time;
+    private String brand,model,sv,imei,sim;
+    private int os,root,network,time;
     private String phone,yzm;
     private String token;
 
@@ -63,7 +63,7 @@ public class ILoginPresenterImpl implements ILoginPresenter {
 //        Log.e("os",os+"");
 //        Log.e("imei",imei);
 //        Log.e("root",root+"");
-//        Log.e("sim",sim+"");
+        Log.e("sim",sim+"");
 //        Log.e("network",network+"");
 //        Log.e("time",time+"");
 //        Log.e("sign",s);

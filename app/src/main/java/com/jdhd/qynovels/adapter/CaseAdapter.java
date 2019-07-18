@@ -1,5 +1,6 @@
 package com.jdhd.qynovels.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -16,8 +17,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.glong.reader.activities.ExtendReaderActivity;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
 import com.jdhd.qynovels.ui.activity.MainActivity;
@@ -28,15 +31,20 @@ import com.yanzhenjie.recyclerview.SwipeRecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ListAdapter.onItemClick {
-    private CaseBean.DataBean dataBean=new CaseBean.DataBean();
+public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+    private CaseBean.DataBean.HotBean hotBean=new CaseBean.DataBean.HotBean();
+    private List<CaseBean.DataBean.ListBean> listBean=new ArrayList<>();
     private Context context;
     private FragmentActivity activity;
     public static final int TYPE_TITLE=0;
     public static final int TYPE_LIST=1;
     private onItemClick onItemClick;
-    public void refreshdata(CaseBean.DataBean dataBean){
-        this.dataBean=dataBean;
+    public void refreshhot(CaseBean.DataBean.HotBean hotBean){
+        this.hotBean=hotBean;
+        notifyDataSetChanged();
+    }
+    public void refreshlist(List<CaseBean.DataBean.ListBean> listBean){
+        this.listBean=listBean;
         notifyDataSetChanged();
     }
     public void setOnItemClick(CaseAdapter.onItemClick onItemClick) {
@@ -65,22 +73,19 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-        if(dataBean==null){
-           return;
-        }
         if(holder instanceof TitleViewHolder){
             TitleViewHolder viewHolder= (TitleViewHolder) holder;
-            if(dataBean.getHot()==null){
+            if(hotBean==null){
                 return;
             }
-            viewHolder.des.setText(dataBean.getHot().getIntro());
-            Glide.with(context).load(dataBean.getHot().getImage()).into(viewHolder.book);
-            viewHolder.name.setText(dataBean.getHot().getName());
+            viewHolder.des.setText(hotBean.getIntro());
+            Glide.with(context).load(hotBean.getImage()).into(viewHolder.book);
+            viewHolder.name.setText(hotBean.getName());
             viewHolder.ll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent=new Intent(context, XqActivity.class);
-                    intent.putExtra("id",dataBean.getHot().getBookId());
+                    Intent intent=new Intent(context, ExtendReaderActivity.class);
+                    intent.putExtra("id",hotBean.getBookId());
                     context.startActivity(intent);
                 }
             });
@@ -95,8 +100,8 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 }
             };
             viewHolder.rv.setLayoutManager(layoutManager);
-            ListAdapter adapter=new ListAdapter(context);
-            adapter.refresh(dataBean.getList());
+            CaseContentAdapter adapter=new CaseContentAdapter(context,activity);
+            adapter.refresh(listBean);
             viewHolder.rv.setAdapter(adapter);
         }
 
@@ -118,23 +123,6 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             return TYPE_LIST;
         }
         return -1;
-    }
-
-    @Override
-    public void onlistClick(int index) {
-        Log.e("index",index+"---");
-        Intent intent=new Intent(context, XqActivity.class);
-        intent.putExtra("id",dataBean.getList().get(index).getBookId());
-        context.startActivity(intent);
-    }
-
-    @Override
-    public void onxhClick(int index) {
-        FragmentManager manager=activity.getSupportFragmentManager();
-        FragmentTransaction transaction=manager.beginTransaction();
-        transaction.replace(R.id.ll,new ShopFragment());
-        MainActivity.rb_shop.setChecked(true);
-        transaction.commit();
     }
 
     class TitleViewHolder extends RecyclerView.ViewHolder{
@@ -159,5 +147,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public interface onItemClick{
         void onClick(int index);
     }
+
+
 
 }

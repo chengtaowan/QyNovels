@@ -36,10 +36,11 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
     private TextView ye,money;
     private List<TextView> xjlist=new ArrayList<>();
     private List<TextView> jblist=new ArrayList<>();
-    private String yue;
-    private double mone;
+    private String yue,wxname;
+    private float mone;
     private RecyclerView rv;
     private TxAdapter adapter;
+    private int totle;
     private IDrawSetPresenterImpl drawSetPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,9 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
         yue=intent.getStringExtra("jb");
-        mone=intent.getDoubleExtra("money",0);
+        mone=intent.getFloatExtra("money",0f);
+        wxname=intent.getStringExtra("wxname");
+        totle=intent.getIntExtra("totle",0);
         drawSetPresenter=new IDrawSetPresenterImpl(this,this);
         drawSetPresenter.loadData();
         init();
@@ -155,7 +158,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
     public void onClick(View view) {
         if(R.id.tx_back==view.getId()){
             Intent intent=new Intent(TxActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 4);
+            intent.putExtra("page",3);
             startActivity(intent);
         }
         else if(R.id.txjl==view.getId()){
@@ -163,7 +166,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             startActivity(intent);
         }
         else if(R.id.tx10==view.getId()){
-            showPopWindow(img);
+            showPopWindow(img,1,10000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==0){
                    linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -179,7 +182,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
 
         }
         else if(R.id.tx15==view.getId()){
-            showPopWindow(img);
+            showPopWindow(img,10,100000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==1){
                     linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -194,7 +197,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             }
         }
         else if(R.id.tx20==view.getId()){
-            showPopWindow(img);
+            showPopWindow(img,15,150000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==2){
                     linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -209,7 +212,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             }
         }
         else if(R.id.tx25==view.getId()){
-            showPopWindow(img);
+            showPopWindow(img,20,200000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==3){
                     linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -224,7 +227,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             }
         }
         else if(R.id.tx30==view.getId()){
-            showPopWindow(img);
+            showPopWindow(img,25,250000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==4){
                     linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -239,7 +242,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             }
         }
         else if(R.id.tx50==view.getId()){
-            showPopWindow(img);
+            showPopWindow(img,30,300000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==5){
                     linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -266,10 +269,10 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             TextView ptdz=view.findViewById(R.id.ptdz);
             TextView gzdz=view.findViewById(R.id.gzdz);
            if(R.id.pop_ks==view.getId()){
-               showPopWindow(view);
+               //showPopWindow(view,);
            }
            else if(R.id.pop_pt==view.getId()){
-               showPopWindow(view);
+               //showPopWindow(view);
                ks.setBackgroundResource(R.drawable.shape_pt);
                ksdz.setTextColor(Color.parseColor("#E8564E"));
                kxsp.setTextColor(Color.parseColor("#E8564E"));
@@ -279,8 +282,8 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
            }
         }
     };
-    private void showPopWindow(View v){
-        final CustomPopWindow customPopWindow=new CustomPopWindow(TxActivity.this,itemclick);
+    private void showPopWindow(View v,int num,int gold){
+        final CustomPopWindow customPopWindow=new CustomPopWindow(TxActivity.this,itemclick,wxname,num,gold,totle);
         customPopWindow.showAtLocation(v,
                 Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
         customPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {

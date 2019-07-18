@@ -29,7 +29,7 @@ public class IAddBookRankPresenterImpl implements IBookInfoPresenter {
         RxHttp.postForm(MyApp.Url.baseUrl+"addBookrack")
                 .add("bookId",id)
                 .add("backlistId",0)
-                .add("pageNum",0)
+                .add("backlistPercent",0)
                 .add("readStatus",10)
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                 .asParser(new SimpleParser<AddBookBean>(){})

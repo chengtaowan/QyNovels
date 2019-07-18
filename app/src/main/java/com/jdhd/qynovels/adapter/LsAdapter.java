@@ -36,8 +36,8 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull final LsViewHolder holder, final int position) {
-        holder.name.setText(list.get(position).name);
-        holder.zj.setText(list.get(position).des);
+        holder.name.setText(list.get(position).getName());
+        holder.zj.setText(list.get(position).getDes());
        holder.del.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {

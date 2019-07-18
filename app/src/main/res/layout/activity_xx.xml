@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.XxActivity"
+    android:background="#fff">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#fff"
+        android:id="@+id/tex"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#fff"
+        android:layout_below="@+id/tex"
+        android:id="@+id/xx">
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25sp"
+            android:src="@mipmap/back_h"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/xx_back"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:text="我的消息"
+            android:textColor="#2F3236"
+            android:textSize="18sp"
+            android:layout_centerInParent="true"
+            android:textStyle="bold"/>
+    </RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/xx"
+        android:id="@+id/xx_rv"></androidx.recyclerview.widget.RecyclerView>
+    <include layout="@layout/item_wsj"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/xx"
+        />
+</RelativeLayout>

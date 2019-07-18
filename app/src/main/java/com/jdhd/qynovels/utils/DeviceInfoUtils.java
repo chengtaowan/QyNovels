@@ -64,6 +64,16 @@ public class DeviceInfoUtils {
             return deviceId;
         }
     }
+    public static String getSIM(Context context) {
+        TelephonyManager tm = (TelephonyManager) context
+                .getSystemService(Context.TELEPHONY_SERVICE);
+        @SuppressLint("MissingPermission") String deviceId = tm.getSubscriberId();
+        if (deviceId == null) {
+            return "UnKnown";
+        } else {
+            return deviceId;
+        }
+    }
 
     /**
      * 是否越狱
@@ -110,23 +120,9 @@ public class DeviceInfoUtils {
     /**
      * 获取运营商
      */
-    public static int getSim(Context context) {
-        int type = 0;
-        String imei = getIMEI(context);
-        if (imei.startsWith("46000") || imei.startsWith("46002")) {
-            type=10;
-        } else if (imei.startsWith("46001")) {
-             type=20;
-        } else if (imei.startsWith("46003")) {
-              type=30;
-        }
-        else if(imei==null||imei.length()<=0){
-            type=0;
-        }
-        else{
-            type=90;
-        }
-        return type;
+    public static String getSim(Context context) {
+        String imsi = getSIM(context);
+        return imsi.substring(0,5);
     }
 
     /**
@@ -219,6 +215,19 @@ public class DeviceInfoUtils {
         BigDecimal bg = new BigDecimal(newnum);
         double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         return f1;
+    }
+    /**
+     * 判断是否有网络
+     */
+    public static boolean hasNetWork(Context context){
+        ConnectivityManager cwjManager= (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = cwjManager.getActiveNetworkInfo();
+        if(activeNetworkInfo==null){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
 }

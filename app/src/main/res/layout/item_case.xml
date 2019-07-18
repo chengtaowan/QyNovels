@@ -19,7 +19,6 @@
                 android:layout_height="75dp"
                 android:src="@mipmap/book_100"
                 android:scaleType="fitXY"
-
                 android:id="@+id/case_book"/>
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -41,19 +40,6 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="15dp"
                     android:id="@+id/case_zj"/>
-                <TextView
-                    android:layout_width="60dp"
-                    android:layout_height="20dp"
-                    android:text="继续阅读>"
-                    android:textColor="#EF8E44"
-                    android:textSize="10sp"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="15dp"
-                    android:gravity="center"
-                    android:background="@drawable/shape_yd"
-                    android:id="@+id/case_yd"
-                    android:visibility="gone"/>
                 <TextView
                     android:layout_width="60dp"
                     android:layout_height="20dp"

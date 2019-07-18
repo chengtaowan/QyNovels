@@ -28,7 +28,7 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
     private TextView ye,money,today_gold,total_gold;
     private int yue,today,total;
     private float mone;
-    private String s;
+    private String s,wxname;
     private double v;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,7 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
         mone=intent.getFloatExtra("money",0f);
         today=intent.getIntExtra("today",0);
         total=intent.getIntExtra("total",0);
+        wxname=intent.getStringExtra("wxname");
         goldListPresenter=new IGoldListPresenterImpl(this,JbActivity.this);
         goldListPresenter.loadData();
         init();
@@ -53,7 +54,7 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
         s = DeviceInfoUtils.NumtFormat(yue);
         v = DeviceInfoUtils.NumtoMoney(yue);
         ye.setText(s);
-        money.setText("约"+v+"元");
+        money.setText("约"+mone+"元");
         total_gold.setText(total+"");
         today_gold.setText(today+"");
         back=findViewById(R.id.jb_back);
@@ -71,13 +72,15 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
     public void onClick(View view) {
         if(R.id.jb_back==view.getId()){
             Intent intent=new Intent(JbActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 4);
+            intent.putExtra("page", 3);
             startActivity(intent);
         }
         else if(R.id.jb_tx==view.getId()){
             Intent intent=new Intent(JbActivity.this,TxActivity.class);
             intent.putExtra("jb",s);
-            intent.putExtra("money",v);
+            intent.putExtra("money",mone);
+            intent.putExtra("wxname",wxname);
+            intent.putExtra("totle",total);
             startActivity(intent);
         }
     }

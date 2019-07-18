@@ -1,14 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.FuLiFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    tools:context=".ui.fragment.FuLiFragment"
+    android:fitsSystemWindows="true"
+    android:clipToPadding="true"
+    android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#fff"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#fff">
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@mipmap/back_h"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/fl_back"
+            android:visibility="gone"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="福利中心"
+            android:textColor="#ff2f3236"
+            android:textSize="18sp"
+            android:layout_centerInParent="true"
+            android:id="@+id/fl_title"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="福利" />
+        android:id="@+id/webview"
+        android:orientation="vertical"></LinearLayout>
 
-</FrameLayout>
+</LinearLayout>

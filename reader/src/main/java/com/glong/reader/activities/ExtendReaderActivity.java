@@ -3,6 +3,8 @@ package com.glong.reader.activities;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,8 +61,11 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.CacheControl;
+import rxhttp.wrapper.param.RxHttp;
+import rxhttp.wrapper.parse.SimpleParser;
 
-public class ExtendReaderActivity extends AppCompatActivity implements View.OnClickListener, IBookListView, IBookContentView {
+public class ExtendReaderActivity extends AppCompatActivity implements View.OnClickListener, IBookListView {
 
     private static final String TAG = ExtendReaderActivity.class.getSimpleName();
 
@@ -81,6 +86,39 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private int id;
     private IBookContentPresenterImpl bookContentPresenter;
     private String content="";
+    private int count=0;
+    private BookListBean bookList=new BookListBean();
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            content= (String) msg.obj;
+            mAdapter = new ReaderView.Adapter<ChapterItemBean, ChapterContentBean>() {
+                @Override
+                public String obtainCacheKey(ChapterItemBean chapterItemBean) {
+                    return chapterItemBean.getChapterId() + "custom";
+                }
+
+                @Override
+                public String obtainChapterName(ChapterItemBean chapterItemBean) {
+                    return chapterItemBean.getChapterName();//chapterItemBean.getChapterName();
+                }
+
+                @Override
+                public String obtainChapterContent(ChapterContentBean chapterContentBean) {
+                    Log.e("nr",content);
+                    return content;
+                }
+
+                @Override
+                public ChapterContentBean downLoad(ChapterItemBean chapterItemBean) {
+                    return LocalServer.syncDownloadContent(chapterItemBean);
+                }
+            };
+            mReaderView.setAdapter(mAdapter);
+            initData();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,11 +130,11 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         bookListPresenter=new IBookListPresenterImpl(this);
         bookListPresenter.setId(id);
         bookListPresenter.loadData();
-        bookContentPresenter=new IBookContentPresenterImpl(this);
+
         initReader();
         initView();
         initToolbar();
-        //initData();
+
     }
 
     private void initView() {
@@ -252,7 +290,26 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             public TurnStatus toPrevPage() {
                 TurnStatus turnStatus = mReaderManager.toPrevPage();
                 if (turnStatus == TurnStatus.NO_PREV_CHAPTER) {
-                    Toast.makeText(ExtendReaderActivity.this, "没有上一页啦", Toast.LENGTH_SHORT).show();
+                    count--;
+                    if(count<0){
+                        Toast.makeText(ExtendReaderActivity.this, "没有上一页啦", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                                .add("id",bookList.getData().getList().get(count).getId())
+                                .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                                .asParser(new SimpleParser<BookContentBean>(){})
+                                .subscribe(bookContentBean->{
+                                    if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                                        Message message=handler.obtainMessage();
+                                        message.obj=bookContentBean.getData().getContent();
+                                        handler.sendMessage(message);
+                                    }
+                                },throwable->{
+                                    Log.e("zjerror",throwable.getMessage());
+                                });
+                    }
+
                 }
                 return turnStatus;
             }
@@ -261,7 +318,27 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             public TurnStatus toNextPage() {
                 TurnStatus turnStatus = mReaderManager.toNextPage();
                 if (turnStatus == TurnStatus.NO_NEXT_CHAPTER) {
-                    Toast.makeText(ExtendReaderActivity.this, "没有下一页啦", Toast.LENGTH_SHORT).show();
+                    count++;
+                    if(count>=bookList.getData().getList().size()){
+                        Toast.makeText(ExtendReaderActivity.this, "没有下一页啦", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                                .add("id",bookList.getData().getList().get(count).getId())
+                                .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                                .asParser(new SimpleParser<BookContentBean>(){})
+                                .subscribe(bookContentBean->{
+                                    if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                                        Message message=handler.obtainMessage();
+                                        message.obj=bookContentBean.getData().getContent();
+                                        handler.sendMessage(message);
+                                    }
+                                },throwable->{
+                                    Log.e("zjerror",throwable.getMessage());
+                                });
+                    }
+
+
                 }
                 return turnStatus;
             }
@@ -271,36 +348,26 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private Disposable mDisposable;
 
     private void initData() {
-        Api.getInstance().getService(Service.class).catalog(Api.KEY)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Result<List<ChapterItemBean>>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        mDisposable = d;
-                    }
+        LocalServer.getChapterList(id+"", new LocalServer.OnResponseCallback() {
+            @Override
+            public void onSuccess(List<ChapterItemBean> chapters) {
+                List<ChapterItemBean> list=new ArrayList<>();
+                for(int i=0;i<bookList.getData().getList().size();i++){
+                   ChapterItemBean chapterItemBean=new ChapterItemBean();
+                   chapterItemBean.setChapterId(bookList.getData().getList().get(i).getId()+"");
+                   chapterItemBean.setChapterName(bookList.getData().getList().get(i).getName());
+                    list.add(chapterItemBean);
+                }
+                mAdapter.setChapterList(list);
+                mAdapter.notifyDataSetChanged();
+            }
 
-                    @Override
-                    public void onNext(Result<List<ChapterItemBean>> listResult) {
-                        List<ChapterItemBean> chapters = listResult.getResult();
-                        if (chapters != null) {
-                            mAdapter.setChapterList(chapters);
-                            mAdapter.notifyDataSetChanged();
-                            mChapterSeekBar.setMax(chapters.size() - 1);
-                            //mCatalogueAdapter.refresh(chapters);
-                        }
-                    }
+            @Override
+            public void onError(Exception e) {
 
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                    }
-                });
+            }
+        });
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -414,23 +481,43 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onSuccess(BookListBean bookListBean) {
+        List<ChapterItemBean> list=new ArrayList<>();
+        bookList=bookListBean;
        runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               List<ChapterItemBean> list=new ArrayList<>();
                for(int i=0;i<bookListBean.getData().getList().size();i++){
                    ChapterItemBean itemBean=new ChapterItemBean();
                    itemBean.setChapterId(bookListBean.getData().getList().get(i).getId()+"");
                    itemBean.setChapterName(bookListBean.getData().getList().get(i).getName());
                    list.add(itemBean);
                }
-               mCatalogueAdapter.refresh(list);
-//               mAdapter.setChapterList(list);
-//               mAdapter.notifyDataSetChanged();
-               bookContentPresenter.setId(bookListBean.getData().getList().get(0).getId());
-               bookContentPresenter.loadData();
+               if(list!=null){
+                   mCatalogueAdapter.refresh(list);
+//                   mAdapter.setChapterList(list);
+//                   mAdapter.notifyDataSetChanged();
+               }
+
            }
        });
+
+            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                    .add("id",bookListBean.getData().getList().get(0).getId())
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asParser(new SimpleParser<BookContentBean>(){})
+                    .subscribe(bookContentBean->{
+                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                            Message message=handler.obtainMessage();
+                            message.obj=bookContentBean.getData().getContent();
+                            handler.sendMessage(message);
+                        }
+                    },throwable->{
+                        Log.e("zjerror",throwable.getMessage());
+                    });
+
+
+
+
     }
 
     @Override
@@ -438,42 +525,6 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
        Log.e("zjerror",error);
     }
 
-    @Override
-    public void onBookSuccess(BookContentBean bookContentBean) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                content=bookContentBean.getData().getContent();
-                Log.e("content",content);
-                mAdapter = new ReaderView.Adapter<ChapterItemBean, ChapterContentBean>() {
-                    @Override
-                    public String obtainCacheKey(ChapterItemBean chapterItemBean) {
-                        return chapterItemBean.getChapterId() + "custom";
-                    }
 
-                    @Override
-                    public String obtainChapterName(ChapterItemBean chapterItemBean) {
-                        return "111";//chapterItemBean.getChapterName();
-                    }
 
-                    @Override
-                    public String obtainChapterContent(ChapterContentBean chapterContentBean) {
-                        Log.e("nr",content);
-                        return content;
-                    }
-
-                    @Override
-                    public ChapterContentBean downLoad(ChapterItemBean chapterItemBean) {
-                        return LocalServer.syncDownloadContent(chapterItemBean);
-                    }
-                };
-                mReaderView.setAdapter(mAdapter);
-            }
-        });
-    }
-
-    @Override
-    public void onBookError(String error) {
-
-    }
 }

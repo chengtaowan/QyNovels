@@ -94,25 +94,25 @@ public class CustomReaderActivity extends AppCompatActivity {
         };
 
         mReaderView.setAdapter(mAdapter);
-        readerManager.setCustomReaderResolve(new MyReaderResolve());
+        //readerManager.setCustomReaderResolve(new MyReaderResolve());
         mReaderView.setLineSpace(50);
 
-        View firstPageView = LayoutInflater.from(this).inflate(R.layout.first_page_view_layout, null);
-        firstPageView.findViewById(R.id.imageView).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(CustomReaderActivity.this, "You clicked ImageView!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mReaderView.addView(firstPageView, ReaderView.ChildInPage.FIRST_PAGE);
-
-        View lastPageView = LayoutInflater.from(this).inflate(R.layout.last_page_view_layout, null);
-        lastPageView.findViewById(R.id.imageView2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(CustomReaderActivity.this, WebViewActivity.class));
-            }
-        });
-        mReaderView.addView(lastPageView, ReaderView.ChildInPage.LAST_PAGE);
+//        View firstPageView = LayoutInflater.from(this).inflate(R.layout.first_page_view_layout, null);
+//        firstPageView.findViewById(R.id.imageView).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(CustomReaderActivity.this, "You clicked ImageView!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        mReaderView.addView(firstPageView, ReaderView.ChildInPage.FIRST_PAGE);
+//
+//        View lastPageView = LayoutInflater.from(this).inflate(R.layout.last_page_view_layout, null);
+//        lastPageView.findViewById(R.id.imageView2).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(CustomReaderActivity.this, WebViewActivity.class));
+//            }
+//        });
+//        mReaderView.addView(lastPageView, ReaderView.ChildInPage.LAST_PAGE);
     }
 }

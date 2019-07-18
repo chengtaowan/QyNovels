@@ -30,7 +30,7 @@ import com.youth.banner.loader.ImageLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener,KdAdapter.onItemClick,SsAdapter.onItemClick,XsAdapter.onItemClick,GfAdapter.onItemClick{
+public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener{
     public static final int TYPE_BANNER=MyApp.ModuleType.kSectionTypeBanner;
     public static final int TYPE_TYPE=MyApp.ModuleType.kSectionTypeFunction;
     public static final int TYPE_RS=MyApp.ModuleType.kSectionTypeTodayHotSearch;
@@ -144,7 +144,6 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            KdAdapter adapter=new KdAdapter(context);
            adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
-           adapter.setOnItemClick(this);
        }
        else if(holder instanceof SsViewHolder){
            SsViewHolder viewHolder= (SsViewHolder) holder;
@@ -156,7 +155,6 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            SsAdapter adapter= new SsAdapter(context,1);
            adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
-           adapter.setOnItemClick(this);
        }
        else if(holder instanceof XsViewHolder){
            XsViewHolder viewHolder= (XsViewHolder) holder;
@@ -168,7 +166,6 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            XsAdapter adapter=new XsAdapter(context);
            adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
-           adapter.setOnItemClick(this);
        }
        else if(holder instanceof GfViewHolder){
            GfViewHolder viewHolder= (GfViewHolder) holder;
@@ -180,7 +177,6 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            GfAdapter adapter=new GfAdapter(context,0,0);
            adapter.refresh(list.get(position).getList());
            viewHolder.rv.setAdapter(adapter);
-           adapter.setOnItemClick(this);
        }
     }
 
@@ -233,34 +229,6 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            Intent intent=new Intent(context, XssdActivity.class);
            context.startActivity(intent);
        }
-    }
-
-    @Override
-    public void onGfclick(int index) {
-        Intent intent=new Intent(context, XqActivity.class);
-        intent.putExtra("xq",2);
-        context.startActivity(intent);
-    }
-
-    @Override
-    public void onKdclick(int index) {
-        Intent intent=new Intent(context, XqActivity.class);
-        intent.putExtra("xq",2);
-        context.startActivity(intent);
-    }
-
-    @Override
-    public void onSsclick(int index) {
-        Intent intent=new Intent(context, XqActivity.class);
-        intent.putExtra("xq",2);
-        context.startActivity(intent);
-    }
-
-    @Override
-    public void onXsclick(int index) {
-        Intent intent=new Intent(context, XqActivity.class);
-        intent.putExtra("xq",2);
-        context.startActivity(intent);
     }
 
     /**

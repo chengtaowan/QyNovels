@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -19,21 +20,28 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.adapter.ShopAdapter;
 import com.jdhd.qynovels.ui.fragment.CaseFragment;
 import com.jdhd.qynovels.ui.fragment.FuLiFragment;
 import com.jdhd.qynovels.ui.fragment.ShopFragment;
 import com.jdhd.qynovels.ui.fragment.WodeFragment;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.jdhd.qynovels.widget.NoScrollViewPager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener{
-    private RadioGroup rg;
+    public static RadioGroup rg;
     public static RadioButton rb_case,rb_shop,rb_fl,rb_wd;
-    public static LinearLayout ll;
-    private Fragment currentFragment=new Fragment();
+    public static NoScrollViewPager vp;
     private CaseFragment caseFragment=new CaseFragment();
     private ShopFragment shopFragment=new ShopFragment();
     private FuLiFragment fuLiFragment=new FuLiFragment();
     private WodeFragment wodeFragment=new WodeFragment();
+    private List<Fragment> list=new ArrayList<>();
+    private List<RadioButton> rblist=new ArrayList<>();
+    private int page;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,93 +49,68 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         setContentView(R.layout.activity_main);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
-        changeFragment();
+        Intent intent=getIntent();
+        if(intent!=null){
+          page=intent.getIntExtra("page",0);
+          vp.setCurrentItem(page);
+          rblist.get(page).setChecked(true);
+        }
+    }
+    public interface Fragment2Fragment{
+        public void gotoFragment(ViewPager viewPager);
+    }
+    private  Fragment2Fragment fragment2Fragment;
+    public void setFragment2Fragment(Fragment2Fragment fragment2Fragment){
+        this.fragment2Fragment = fragment2Fragment;
+    }
+
+    public void forSkip(){
+        if(fragment2Fragment!=null){
+            fragment2Fragment.gotoFragment(vp);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
     }
-
-    private void changeFragment(){
-        Intent intent=getIntent();
-        int fragmentFlag=intent.getIntExtra("fragment_flag",1);
-        Log.e("asd",fragmentFlag+"");
-        FragmentManager manager=getSupportFragmentManager();
-        FragmentTransaction transaction=manager.beginTransaction();
-        switch (fragmentFlag){
-            case 1:
-                switchContent(caseFragment);
-                rb_case.setChecked(true);
-                break;
-            case 2:
-                switchContent(shopFragment);
-                rb_shop.setChecked(true);
-                break;
-            case 3:
-                switchContent(fuLiFragment);
-                rb_fl.setChecked(true);
-                break;
-            case 4:
-                switchContent(wodeFragment);
-                rb_wd.setChecked(true);
-                break;
-        }
-        transaction.commit();
-    }
-
-    public void switchContent(Fragment to) {
-        FragmentManager mFragmentManager=getSupportFragmentManager();
-        if (currentFragment != to) {
-            FragmentTransaction transaction = mFragmentManager.beginTransaction().setCustomAnimations(
-                    android.R.anim.fade_in, android.R.anim.fade_out);
-            // 先判断是否被add过
-            if (!to.isAdded()) {
-                // 隐藏当前的fragment
-                transaction.hide(currentFragment).add(R.id.ll, to).commit();
-            } else {
-                transaction.hide(currentFragment).show(to).commit();
-                //提交
-            }
-            currentFragment = to;
-          }
-        }
-
-
-            private void init() {
-                ll=findViewById(R.id.ll);
-                rg=findViewById(R.id.rg);
-                rb_case=findViewById(R.id.rb_case);
-                rb_shop=findViewById(R.id.rb_shop);
-                rb_fl=findViewById(R.id.rb_fl);
-                rb_wd=findViewById(R.id.rb_wd);
-                rg.setOnCheckedChangeListener(this);
-
-                FragmentManager manager=getSupportFragmentManager();
-                FragmentTransaction transaction=manager.beginTransaction();
-                transaction.replace(R.id.ll,caseFragment).addToBackStack(null);
-                transaction.commit();
-                currentFragment=caseFragment;
+    private void init() {
+       vp=findViewById(R.id.vp);
+       rg=findViewById(R.id.rg);
+       rb_case=findViewById(R.id.rb_case);
+       rb_shop=findViewById(R.id.rb_shop);
+       rb_fl=findViewById(R.id.rb_fl);
+       rb_wd=findViewById(R.id.rb_wd);
+       rg.setOnCheckedChangeListener(this);
+       list.add(caseFragment);
+       list.add(shopFragment);
+       list.add(fuLiFragment);
+       list.add(wodeFragment);
+       rblist.add(rb_case);
+       rblist.add(rb_shop);
+       rblist.add(rb_fl);
+       rblist.add(rb_wd);
+       ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager(),list);
+       vp.setAdapter(adapter);
+       vp.setCurrentItem(0);
+       rb_case.setChecked(true);
             }
 
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                FragmentManager manager=getSupportFragmentManager();
-                FragmentTransaction transaction=manager.beginTransaction();
                 if(radioGroup.getCheckedRadioButtonId()==R.id.rb_case){
-                    transaction.replace(R.id.ll,new CaseFragment(),"case").addToBackStack("case");
+                    vp.setCurrentItem(0);
                 }
                 else if(radioGroup.getCheckedRadioButtonId()==R.id.rb_shop){
-                    transaction.replace(R.id.ll,new ShopFragment(),"shop").addToBackStack("shop");
+                    vp.setCurrentItem(1);
                 }
                 else if(radioGroup.getCheckedRadioButtonId()==R.id.rb_fl){
-                    transaction.replace(R.id.ll,new FuLiFragment(),"fuli").addToBackStack("fuli");
+                    vp.setCurrentItem(2);
                 }
                 else if(radioGroup.getCheckedRadioButtonId()==R.id.rb_wd){
-                    transaction.replace(R.id.ll,new WodeFragment(),"wode").addToBackStack("wode");
+                    vp.setCurrentItem(3);
                 }
-                transaction.commit();
+
             }
 
             @Override
@@ -167,16 +150,9 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
                 // 判断当前按键是返回键
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    // 获取当前回退栈中的Fragment个数
-                    int backStackEntryCount = fragmentManager.getBackStackEntryCount();
-                    // 回退栈中至少有多个fragment,栈底部是首页
-                    if (backStackEntryCount > 1) {
-                        // 如果回退栈中Fragment个数大于一.一直退出
-                        while (fragmentManager.getBackStackEntryCount() > 1) {
-                            fragmentManager.popBackStackImmediate();
-                            //选中第一个界面
-                            rb_case.setChecked(true);
-                        }
+                    if(vp.getCurrentItem()!=0){
+                        vp.setCurrentItem(0);
+                        rb_case.setChecked(true);
                     } else {
                         finish();
                     }
@@ -212,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                         home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         home.addCategory(Intent.CATEGORY_HOME);
                         startActivity(home);
+                        System.exit(0);
 
                     }
                 }

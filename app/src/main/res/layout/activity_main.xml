@@ -8,12 +8,12 @@
     android:orientation="vertical"
 
     android:background="#fff">
-    <LinearLayout
+    <com.jdhd.qynovels.widget.NoScrollViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/ll"
+        android:id="@+id/vp"
         android:layout_weight="7"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical"></com.jdhd.qynovels.widget.NoScrollViewPager>
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -92,7 +92,7 @@ public class RsAdapter extends RecyclerView.Adapter<RsAdapter.RsViewHolder>{
                public void onClick(View view) {
                   Intent intent=new Intent(context, XqActivity.class);
                   intent.putExtra("xq",2);
-                  intent.putExtra("id",list.get(position).getId());
+                  intent.putExtra("id",list.get(position).getBookId());
                   context.startActivity(intent);
                }
            });

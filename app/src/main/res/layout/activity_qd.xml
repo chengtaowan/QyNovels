@@ -32,7 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/qd_lx"
-        android:text="2"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="#EEAC36"
@@ -58,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -68,123 +67,186 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1天"
+                    android:layout_centerHorizontal="true"
                     android:textColor="#7F8184"
+                    android:id="@+id/day1"
                     android:layout_gravity="center_horizontal"/>
                 <ImageView
+                    android:layout_centerHorizontal="true"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@mipmap/qd_jb_wc"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"/>
-            </LinearLayout>
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@+id/day1"
+                    android:id="@+id/qd1"/>
 
-            <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="33dp"
+                    android:id="@+id/jb1"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#fff"
+                    android:textSize="10sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:layout_marginTop="30dp">
                 <TextView
+                    android:layout_centerHorizontal="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2天"
+                    android:id="@+id/day2"
                     android:textColor="#7F8184"
                     android:layout_gravity="center_horizontal"/>
+
                 <ImageView
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/qd2"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@mipmap/qd_jb"
+                    android:layout_below="@+id/day2"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="33dp"
+                    android:id="@+id/jb2"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#fff"
+                    android:textSize="10sp" />
+            </RelativeLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:layout_marginTop="30dp">
                 <TextView
+                    android:layout_centerHorizontal="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="3天"
+                    android:id="@+id/day3"
                     android:textColor="#7F8184"
                     android:layout_gravity="center_horizontal"/>
                 <ImageView
+                    android:layout_below="@+id/day3"
+                    android:layout_centerHorizontal="true"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@mipmap/qd_jb_on"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/qd3"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="33dp"
+                    android:id="@+id/jb3"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#fff"
+                    android:textSize="10sp" />
+            </RelativeLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:layout_marginTop="30dp">
                 <TextView
+                    android:layout_centerHorizontal="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="4天"
+                    android:id="@+id/day4"
                     android:textColor="#7F8184"
                     android:layout_gravity="center_horizontal"/>
                 <ImageView
+                    android:layout_below="@+id/day4"
+                    android:layout_centerHorizontal="true"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@mipmap/qd_jb_on"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/qd4"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="33dp"
+                    android:id="@+id/jb4"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#fff"
+                    android:textSize="10sp" />
+            </RelativeLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:layout_marginTop="30dp">
                 <TextView
+                    android:layout_centerHorizontal="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5天"
+                    android:id="@+id/day5"
                     android:textColor="#7F8184"
                     android:layout_gravity="center_horizontal"/>
                 <ImageView
+                    android:layout_below="@+id/day5"
+                    android:layout_centerHorizontal="true"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@mipmap/qd_jb_on"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/qd5"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="33dp"
+                    android:id="@+id/jb5"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#fff"
+                    android:textSize="10sp" />
+            </RelativeLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:layout_marginTop="30dp">
                 <TextView
+                    android:layout_centerHorizontal="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="6天"
+                    android:id="@+id/day6"
                     android:textColor="#7F8184"
                     android:layout_gravity="center_horizontal"/>
                 <ImageView
+                    android:layout_below="@+id/day6"
+                    android:layout_centerHorizontal="true"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@mipmap/qd_jb_on"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/qd6"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="33dp"
+                    android:id="@+id/jb6"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#fff"
+                    android:textSize="10sp" />
+            </RelativeLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -192,18 +254,29 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginRight="18dp">
                 <TextView
+                    android:layout_centerHorizontal="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="7天"
+                    android:id="@+id/day7"
                     android:textColor="#7F8184"
                     android:layout_gravity="center_horizontal"/>
                 <ImageView
+                    android:layout_below="@+id/day7"
+                    android:layout_centerHorizontal="true"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@mipmap/qd_jb_on"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"/>
-            </LinearLayout>
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/qd7"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="33dp"
+                    android:id="@+id/jb7"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#fff"
+                    android:textSize="10sp" />
+            </RelativeLayout>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -253,25 +326,13 @@
         android:layout_marginTop="30dp"
         android:layout_marginLeft="15dp"
         android:id="@+id/qd_gz"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1.提现"
-        android:textColor="#ff828486"
-        android:textSize="12sp"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/qd_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/qd_gz"
-        android:id="@+id/qd_tx"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="15dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2.提现"
-        android:textColor="#ff828486"
-        android:textSize="12sp"
-        android:layout_below="@+id/qd_tx"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="15dp"/>
+        android:layout_marginTop="9dp"></androidx.recyclerview.widget.RecyclerView>
     <ImageView
         android:layout_width="41dp"
         android:layout_height="57dp"
