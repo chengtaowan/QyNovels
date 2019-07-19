@@ -44,7 +44,7 @@ public class Ss_NrFragment extends Fragment implements Ss_NrAdapter.onItemClick,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_ss__nr, container, false);
-        searchContentPresenter=new ISearchContentPresenterImpl(this);
+        searchContentPresenter=new ISearchContentPresenterImpl(this,getContext());
         searchContentPresenter.setContent(content);
         searchContentPresenter.loadData();
         init(view);

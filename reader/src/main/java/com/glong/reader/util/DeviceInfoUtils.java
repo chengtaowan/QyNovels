@@ -1,4 +1,4 @@
-package com.jdhd.qynovels.utils;
+package com.glong.reader.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,11 +13,9 @@ import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -232,17 +230,6 @@ public class DeviceInfoUtils {
         else{
             return true;
         }
-    }
-
-    public static String changeData(String time){
-        SimpleDateFormat sdr = new SimpleDateFormat("yyyy年MM月dd日HH时mm分ss秒");
-        @SuppressWarnings("unused")
-        long lcc = Long.valueOf(time);
-        int i = Integer.parseInt(time);
-        String times = sdr.format(new Date(i * 1000L));
-        String[] strs = times.split("年");
-        String[] str = strs[1].split("日");
-        return str[0];
     }
 
 }

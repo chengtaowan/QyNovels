@@ -1,5 +1,7 @@
 package com.glong.reader.localtest;
 
+import android.content.Context;
+
 import com.glong.reader.entry.BookContentBean;
 import com.glong.reader.entry.ChapterContentBean;
 import com.glong.reader.entry.ChapterItemBean;
@@ -14,6 +16,7 @@ import java.util.List;
  * contact me krouky@outlook.com
  */
 public class LocalServer implements IBookContentView {
+
      public IBookContentPresenterImpl bookContentPresenter=new IBookContentPresenterImpl(this);
      public static BookContentBean bookContent=new BookContentBean();
      /**
@@ -68,8 +71,8 @@ public class LocalServer implements IBookContentView {
      *
      * @return 章节内容
      */
-    public BookContentBean syncgetContent(int id) {
-
+    public BookContentBean syncgetContent(int id, Context context) {
+        bookContentPresenter.setContext(context);
         bookContentPresenter.setId(id);
         bookContentPresenter.loadData();
         if(bookContent!=null){

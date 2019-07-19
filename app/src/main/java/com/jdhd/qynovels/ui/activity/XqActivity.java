@@ -5,8 +5,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -26,13 +28,21 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.XqymAdapter;
 import com.jdhd.qynovels.module.bookcase.AddBookBean;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
+import com.jdhd.qynovels.module.bookcase.BookListBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.IAddBookRankPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookInfoPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.bookcase.IBookListPresenterImpl;
+import com.jdhd.qynovels.utils.DbUtils;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.bookcase.IAddBookRankView;
 import com.jdhd.qynovels.view.bookcase.IBookInfoView;
+import com.jdhd.qynovels.view.bookcase.IBookListView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
-public class XqActivity extends AppCompatActivity implements View.OnClickListener , IBookInfoView, IAddBookRankView {
+public class XqActivity extends AppCompatActivity implements View.OnClickListener , IBookInfoView, IAddBookRankView, IBookListView {
     private RecyclerView rv;
     private static int type;
     private int sc_type;
@@ -47,22 +57,32 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     private TextView yd;
     private IAddBookRankPresenterImpl addBookRankPresenter;
     private int id;
-
+    private DbUtils dbUtils;
+    private SQLiteDatabase database;
+    private String token;
+    private BookInfoBean bookBean=new BookInfoBean();
+    private IBookListPresenterImpl bookListPresenter;
+    private BookListBean listBean=new BookListBean();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xqym);
+        dbUtils=new DbUtils(this);
+        SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);
+        token = preferences.getString("token", "");
         Intent intent=getIntent();
         type=intent.getIntExtra("xq",1);
         sc_type=intent.getIntExtra("lx",1);
         id=intent.getIntExtra("id",0);
         Log.e("id",id+"---");
-        bookInfoPresenter=new IBookInfoPresenterImpl(this);
+        bookInfoPresenter=new IBookInfoPresenterImpl(this,this);
         bookInfoPresenter.setId(id);
         bookInfoPresenter.loadData();
-        addBookRankPresenter=new IAddBookRankPresenterImpl(this);
-
+        addBookRankPresenter=new IAddBookRankPresenterImpl(this,this);
+        bookListPresenter=new IBookListPresenterImpl(this,this);
+        bookListPresenter.setId(id);
+        bookListPresenter.loadData();
         init();
     }
 
@@ -95,14 +115,38 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     public void onClick(View view) {
        if(R.id.xq_jrsj==view.getId()){
            addBookRankPresenter.setId(id);
-         addBookRankPresenter.loadData();
+           addBookRankPresenter.loadData();
            Toast.makeText(XqActivity.this,"加入书架",Toast.LENGTH_SHORT).show();
        }
        else if(R.id.xq_yd==view.getId()){
+          String time= DeviceInfoUtils.getTime()+"";
          Intent intent=new Intent(XqActivity.this, ExtendReaderActivity.class);
-
          intent.putExtra("id",id);
          startActivity(intent);
+         database=dbUtils.getWritableDatabase();
+         if(token!=null){
+             database.execSQL("delete from readhistory where user='user'and name='"+bookBean.getData().getBook().getName()+"'");
+             database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                     "values('user'," +
+                     "'"+bookBean.getData().getBook().getName()+"'," +
+                     "'"+bookBean.getData().getBook().getImage()+"'," +
+                     "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                     "'"+listBean.getData().getList().get(0).getName()+"'," +
+                     "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
+                     "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"')");
+         }
+         else{
+             database.execSQL("delete from readhistory where user='visitor'and name='"+bookBean.getData().getBook().getName()+"'");
+             database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                     "values('visitor'," +
+                     "'"+bookBean.getData().getBook().getName()+"'," +
+                     "'"+bookBean.getData().getBook().getImage()+"'," +
+                     "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                     "'"+listBean.getData().getList().get(0).getName()+"'," +
+                     "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
+                     "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"',)");
+         }
+
        }
 
     }
@@ -112,6 +156,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
        runOnUiThread(new Runnable() {
            @Override
            public void run() {
+               bookBean=bookInfoBean;
                jz.setVisibility(View.GONE);
                adapter.refresh(bookInfoBean.getData());
            }
@@ -123,7 +168,28 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.e("asd",addBookBean.getMsg());
+                database=dbUtils.getWritableDatabase();
+                if(!token.equals("")){
+                    database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
+                            "values('user'," +
+                            "'"+bookBean.getData().getBook().getName()+"'," +
+                            "'"+bookBean.getData().getBook().getImage()+"'," +
+                            "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                            "'"+listBean.getData().getList().get(0).getName()+"'," +
+                            "10+10+'"+bookBean.getData().getBook().getBookId()+"'," +
+                            "0,''+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                }
+                else{
+                    database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
+                            "values('visitor'," +
+                            "'"+bookBean.getData().getBook().getName()+"'," +
+                            "'"+bookBean.getData().getBook().getImage()+"'," +
+                            "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                            "'"+listBean.getData().getList().get(0).getName()+"'," +
+                            "10+10+'"+bookBean.getData().getBook().getBookId()+"'," +
+                            "0,''+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                }
+
             }
         });
     }
@@ -131,6 +197,11 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onAddError(String error) {
         Log.e("adderror",error);
+    }
+
+    @Override
+    public void onSuccess(BookListBean bookListBean) {
+       listBean=bookListBean;
     }
 
     @Override

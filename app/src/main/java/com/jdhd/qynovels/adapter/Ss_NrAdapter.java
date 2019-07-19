@@ -61,7 +61,13 @@ public class Ss_NrAdapter extends RecyclerView.Adapter<Ss_NrAdapter.Ss_NrViewHol
             holder.name.setText(list.get(position).getName());
             holder.grade.setText(list.get(position).getGrade()+"");
             holder.des.setText(list.get(position).getIntro());
-            holder.wj.setText(list.get(position).getFinishStatus()+"");
+            if(list.get(position).getFinishStatus()==10){
+                holder.wj.setText("连载");
+            }
+            else{
+                holder.wj.setText("完结");
+            }
+
             holder.name.setText(list.get(position).getName());
             holder.num.setText(list.get(position).getNumber()+"字");
         }

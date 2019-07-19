@@ -30,7 +30,7 @@ public class MuluActivity extends AppCompatActivity implements IBookListView , V
         Intent intent=getIntent();
         int id=intent.getIntExtra("id",0);
         bookname=intent.getStringExtra("name");
-        bookListPresenter=new IBookListPresenterImpl(this);
+        bookListPresenter=new IBookListPresenterImpl(this,this);
         bookListPresenter.setId(id);
         bookListPresenter.loadData();
         init();

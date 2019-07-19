@@ -5,40 +5,40 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.jdhd.qynovels.app.MyApp;
-import com.jdhd.qynovels.persenter.inter.personal.IDrawPresenter;
-import com.jdhd.qynovels.persenter.inter.personal.IPrizePresenter;
+import com.jdhd.qynovels.module.personal.AvatarBean;
+import com.jdhd.qynovels.module.personal.ShareListBean;
+import com.jdhd.qynovels.persenter.inter.personal.IAvatarPresenter;
+import com.jdhd.qynovels.persenter.inter.personal.IShareImgPresenter;
+import com.jdhd.qynovels.persenter.inter.personal.IShareListPresenter;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
-import com.jdhd.qynovels.view.personal.IDrawView;
-import com.jdhd.qynovels.view.personal.IPrizesView;
+import com.jdhd.qynovels.view.personal.IAvatarView;
+import com.jdhd.qynovels.view.personal.IShareImgView;
+import com.jdhd.qynovels.view.personal.IShareListView;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.CacheControl;
 import rxhttp.wrapper.param.RxHttp;
+import rxhttp.wrapper.parse.SimpleParser;
 
-public class IDrawPresenterImpl implements IDrawPresenter {
-    private IDrawView iDrawView;
+public class IShareListPresenterImpl implements IShareListPresenter {
+    private IShareListView iShareListView;
     private Context context;
     private String token;
-    private String game_name;
-    private String datapath;
-    private String game_num;
+    private String page;
+    private String limit;
 
-    public void setGame_num(String game_num) {
-        this.game_num = game_num;
+    public void setPage(String page) {
+        this.page = page;
     }
 
-    public void setDatapath(String datapath) {
-        this.datapath = datapath;
+    public void setLimit(String limit) {
+        this.limit = limit;
     }
 
-    public void setGame_name(String game_name) {
-        this.game_name = game_name;
-    }
-
-    public IDrawPresenterImpl(IDrawView iDrawView, Context context) {
-        this.iDrawView = iDrawView;
+    public IShareListPresenterImpl(IShareListView iShareListView, Context context) {
+        this.iShareListView = iShareListView;
         this.context = context;
 
     }
@@ -53,32 +53,30 @@ public class IDrawPresenterImpl implements IDrawPresenter {
         if(token!=null){
             map.put("token",token);
         }
-        map.put("game_name",game_name);
-        map.put("game_num",game_num);
+        map.put("page",page+"");
+        map.put("limit",limit+"");
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
-        Log.e("token",token);
         Log.e("time",time+"");
         Log.e("sign",sign);
-        Log.e("game_name",game_name);
-        RxHttp.postForm(MyApp.Url.baseUrl+datapath)
+        RxHttp.postForm(MyApp.Url.baseUrl+"shareList")
                 .addHeader("token",token)
                 .add(map)
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                 .asString()
-                .subscribe(avatarBean->{
-                    iDrawView.onDrawSuccess(avatarBean);
+                .subscribe(shareListBean->{
+                   iShareListView.onShareListSuccess(shareListBean);
                 },throwable->{
-                    iDrawView.onDrawError(throwable.getMessage());
+                    iShareListView.onShareListError(throwable.getMessage());
                 });
     }
 
 
     @Override
     public void destoryView() {
-        if(iDrawView!=null){
-            iDrawView=null;
+        if(iShareListView!=null){
+            iShareListView=null;
         }
     }
 

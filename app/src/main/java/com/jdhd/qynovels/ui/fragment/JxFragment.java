@@ -16,13 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.JxAdapter;
 import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IJxPresenterImpl;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.bookshop.IJxView;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,6 +44,8 @@ public class JxFragment extends Fragment implements IJxView {
     private JxAdapter adapter;
     private RelativeLayout jz;
     private ImageView gif;
+    private SmartRefreshLayout sr;
+    private boolean hasNetWork;
 
     public void setType(int type) {
         this.type = type;
@@ -54,13 +61,15 @@ public class JxFragment extends Fragment implements IJxView {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_jx, container, false);
-        jxPresenter=new IJxPresenterImpl(this,1);
+        jxPresenter=new IJxPresenterImpl(this,1,getContext());
         jxPresenter.loadData();
+        hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
         init(view);
         return view;
     }
 
     private void init(View view) {
+        sr=view.findViewById(R.id.sr);
         jz=view.findViewById(R.id.jz);
         gif=view.findViewById(R.id.case_gif);
         Glide.with(getContext()).load(R.mipmap.re).into(gif);
@@ -78,18 +87,30 @@ public class JxFragment extends Fragment implements IJxView {
                 }
             }
         });
+        sr.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                if(!hasNetWork){
+                    Toast.makeText(getContext(),"网络连接不可用",Toast.LENGTH_SHORT).show();
+                    sr.finishRefresh();
+                }
+                else{
+                    jxPresenter.loadData();
+                }
+            }
+        });
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getPositionAndOffset();
+        //getPositionAndOffset();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        scrollToPosition();
+        //scrollToPosition();
     }
     private void scrollToPosition() {
 
@@ -145,6 +166,7 @@ public class JxFragment extends Fragment implements IJxView {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                sr.finishRefresh();
                 jz.setVisibility(View.GONE);
                adapter.refresh(shopBean.getData().getList());
             }

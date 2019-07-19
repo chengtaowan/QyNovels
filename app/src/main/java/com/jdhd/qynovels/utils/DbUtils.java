@@ -22,7 +22,8 @@ public class DbUtils extends SQLiteOpenHelper {
         /**
          * 阅读历史数据库
          */
-       //sqLiteDatabase.execSQL("create table if not exists readhistory(_id integer primary key autoincrement,avatar text,bookname text,readback text,time integer)");
+        sqLiteDatabase.execSQL("create table if not exists readhistory(_id integer primary key autoincrement,user text,name text,image text,author text,readContent text,readStatus integer,bookStatus integer,bookid integer,backlistPercent integer,lastTime text,backlistId integer)");
+
     }
 
     @Override

@@ -1,9 +1,16 @@
 package com.jdhd.qynovels.persenter.impl.bookcase;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.BookListBean;
 import com.jdhd.qynovels.persenter.inter.bookcase.IBookInfoPresenter;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.bookcase.IBookListView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.CacheControl;
 import rxhttp.wrapper.param.RxHttp;
@@ -11,9 +18,12 @@ import rxhttp.wrapper.parse.SimpleParser;
 
 public class IBookListPresenterImpl implements IBookInfoPresenter {
     private IBookListView iBookListView;
+    private Context context;
+    private String token;
 
-    public IBookListPresenterImpl(IBookListView iBookListView) {
+    public IBookListPresenterImpl(IBookListView iBookListView, Context context) {
         this.iBookListView = iBookListView;
+        this.context = context;
     }
 
     private int id;
@@ -24,17 +34,46 @@ public class IBookListPresenterImpl implements IBookInfoPresenter {
 
     @Override
     public void loadData() {
-        RxHttp.postForm(MyApp.Url.baseUrl+"backlist")
-                .add("id",id)
-                .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                .asParser(new SimpleParser<BookListBean>(){})
-                .subscribe(bookListBean->{
-                    if(bookListBean.getCode()==200&&bookListBean.getMsg().equals("请求成功")){
-                        iBookListView.onSuccess(bookListBean);
-                    }
-                },throwable->{
-                    iBookListView.onError(throwable.getMessage());
-                });
+        SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
+        token = preferences.getString("token", "");
+        int time= DeviceInfoUtils.getTime();
+        Map<String,String> map=new HashMap<>();
+        map.put("time",time+"");
+        if(token!=null){
+            map.put("token",token);
+        }
+        map.put("id",id+"");
+        String compareTo = DeviceInfoUtils.getCompareTo(map);
+        String sign=DeviceInfoUtils.md5(compareTo);
+        map.put("sign",sign);
+        if(token!=null){
+            RxHttp.postForm(MyApp.Url.baseUrl+"backlist")
+                    .addHeader("token",token)
+                    .add(map)
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asParser(new SimpleParser<BookListBean>(){})
+                    .subscribe(bookListBean->{
+                        if(bookListBean.getCode()==200&&bookListBean.getMsg().equals("请求成功")){
+                            iBookListView.onSuccess(bookListBean);
+                        }
+                    },throwable->{
+                        iBookListView.onError(throwable.getMessage());
+                    });
+        }
+        else{
+            RxHttp.postForm(MyApp.Url.baseUrl+"backlist")
+                    .add(map)
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asParser(new SimpleParser<BookListBean>(){})
+                    .subscribe(bookListBean->{
+                        if(bookListBean.getCode()==200&&bookListBean.getMsg().equals("请求成功")){
+                            iBookListView.onSuccess(bookListBean);
+                        }
+                    },throwable->{
+                        iBookListView.onError(throwable.getMessage());
+                    });
+        }
+
     }
 
     @Override

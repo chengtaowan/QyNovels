@@ -44,7 +44,7 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phb);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
-        rankPresenter=new IRankPresenterImpl(this);
+        rankPresenter=new IRankPresenterImpl(this,this);
         rankPresenter.loadData();
         init();
     }

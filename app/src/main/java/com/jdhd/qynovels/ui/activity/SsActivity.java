@@ -56,12 +56,12 @@ public class SsActivity extends AppCompatActivity implements View.OnClickListene
         if(R.id.ss_back==view.getId()){
             if(type==1){
                 Intent intent=new Intent(SsActivity.this,MainActivity.class);
-                intent.putExtra("fragment_flag", 1);
+                intent.putExtra("page", 0);
                 startActivity(intent);
             }
             else if(type==2){
                 Intent intent=new Intent(SsActivity.this,MainActivity.class);
-                intent.putExtra("fragment_flag", 2);
+                intent.putExtra("page", 1);
                 startActivity(intent);
             }
             else if(type==3){
@@ -111,10 +111,10 @@ public class SsActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         if(charSequence.length()>0){
-            FragmentManager manager=getSupportFragmentManager();
-            FragmentTransaction transaction=manager.beginTransaction();
-            transaction.replace(R.id.ss_ll,new Ss_LxFragment());
-            transaction.commit();
+//            FragmentManager manager=getSupportFragmentManager();
+//            FragmentTransaction transaction=manager.beginTransaction();
+//            transaction.replace(R.id.ss_ll,new Ss_LxFragment());
+//            transaction.commit();
         }
         else{
             FragmentManager manager=getSupportFragmentManager();

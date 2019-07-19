@@ -35,7 +35,7 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fl);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
-        classPresenter=new IClassPresenterImpl(this);
+        classPresenter=new IClassPresenterImpl(this,this);
         classPresenter.loadData();
         init();
     }

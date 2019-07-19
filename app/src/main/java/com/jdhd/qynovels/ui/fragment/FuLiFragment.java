@@ -20,6 +20,7 @@ import android.webkit.ValueCallback;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jdhd.qynovels.R;
@@ -29,23 +30,29 @@ import com.jdhd.qynovels.module.personal.FunctionBean;
 import com.jdhd.qynovels.persenter.impl.personal.IDrawPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IPrizePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IShareImgPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.IShareListPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IWelfarePresenterImpl;
 
 import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.activity.QdActivity;
 
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.personal.IDrawView;
 import com.jdhd.qynovels.view.personal.IPrizesView;
 import com.jdhd.qynovels.view.personal.IShareImgView;
+import com.jdhd.qynovels.view.personal.IShareListView;
 import com.jdhd.qynovels.view.personal.IWelfareView;
 import com.just.agentweb.AgentWeb;
 
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.mm.opensdk.utils.Log;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FuLiFragment extends Fragment implements IWelfareView , IShareImgView, IPrizesView , IDrawView {
+public class FuLiFragment extends Fragment implements IWelfareView , IShareImgView, IPrizesView , IDrawView, IShareListView {
 
     private AgentWeb web;
     private LinearLayout webView;
@@ -56,7 +63,9 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
     private IShareImgPresenterImpl shareImgPresenter;
     private IPrizePresenterImpl prizePresenter;
     private IDrawPresenterImpl drawPresenter;
-
+    private IShareListPresenterImpl shareListPresenter;
+    private SmartRefreshLayout sr;
+    private boolean hasNetWork;
     private ShopFragment shopFragment=new ShopFragment();
 
     private Handler handler=new Handler(){
@@ -78,6 +87,7 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
                                 web.getWebCreator().getWebView().goBack();
                                 back.setVisibility(View.GONE);// 后退
                                 MainActivity.rg.setVisibility(View.VISIBLE);
+                                welfarePresenter.loadData();
                                 // webview.goForward();//前进
                             }
                         }
@@ -97,12 +107,36 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
                                 web.getWebCreator().getWebView().goBack(); // 后退
                                 back.setVisibility(View.GONE);
                                 MainActivity.rg.setVisibility(View.VISIBLE);
+                                welfarePresenter.loadData();
+                                title.setText("福利中心");
                                 // webview.goForward();//前进
                             }
                         }
                     });
                     MainActivity.rg.setVisibility(View.GONE);
                     break;
+                case 3:
+                    shareListPresenter.setPage(functionBean.getReqParameter().getPage());
+                    shareListPresenter.setLimit(functionBean.getReqParameter().getLimit());
+                    shareListPresenter.loadData();
+                    web.getWebCreator().getWebView().loadUrl(MyApp.Url.webbaseUrl+functionBean.getPath());
+                    title.setText(functionBean.getTitle());
+                    back.setVisibility(View.VISIBLE);
+                    back.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if ( web.getWebCreator().getWebView().canGoBack()) { // 表示按返回键时的操作
+                                web.getWebCreator().getWebView().goBack();
+                                web.getWebCreator().getWebView().goBack(); // 后退
+                                back.setVisibility(View.GONE);
+                                MainActivity.rg.setVisibility(View.VISIBLE);
+                                title.setText("福利中心");
+                                welfarePresenter.loadData();
+                                // webview.goForward();//前进
+                            }
+                        }
+                    });
+                    MainActivity.rg.setVisibility(View.GONE);
 
             }
         }
@@ -122,11 +156,14 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
         shareImgPresenter=new IShareImgPresenterImpl(this,getContext());
         prizePresenter=new IPrizePresenterImpl(this,getContext());
         drawPresenter=new IDrawPresenterImpl(this,getContext());
+        shareListPresenter=new IShareListPresenterImpl(this,getContext());
+        hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
         init(view);
         return view;
     }
 
     private void init(View view) {
+        sr=view.findViewById(R.id.sr);
         back=view.findViewById(R.id.fl_back);
         title=view.findViewById(R.id.fl_title);
         webView=view.findViewById(R.id.webview);
@@ -164,7 +201,20 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
 //        webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
 //        webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
         web.getJsInterfaceHolder().addJavaObject("android", new AndroidInterface(web, getContext()));
+        sr.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
+                if(!hasNetWork){
+                    Toast.makeText(getContext(),"网络连接不可用",Toast.LENGTH_SHORT).show();
+                    sr.finishRefresh();
+                }
+                else{
+                    welfarePresenter.loadData();
+                }
 
+            }
+        });
 
     }
 
@@ -173,6 +223,7 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                sr.finishRefresh();
                 Log.e("string",string);
                 web.getJsAccessEntrace().quickCallJs("welfare", new ValueCallback<String>() {
                     @Override
@@ -269,6 +320,26 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
        Log.e("drawerror",error);
     }
 
+    @Override
+    public void onShareListSuccess(String str) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                web.getJsAccessEntrace().quickCallJs("shareList", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String s) {
+                        Log.e("data",s);
+                    }
+                },str);
+            }
+        });
+    }
+
+    @Override
+    public void onShareListError(String error) {
+       Log.e("sharelisterror",error);
+    }
+
     public class AndroidInterface {
         private AgentWeb agent;
         private Context context;
@@ -285,6 +356,7 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
             FunctionBean functionBean = gson.fromJson(str, FunctionBean.class);
             if(functionBean.getReqName()!=null){
                 if(functionBean.getReqName().equals("draw")){
+                    drawPresenter.setGame_num(functionBean.getReqParameter().getGame_num());
                     drawPresenter.setDatapath(functionBean.getDataPath());
                     drawPresenter.setGame_name(functionBean.getReqParameter().getGame_name());
                     drawPresenter.loadData();
@@ -317,7 +389,10 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
                         break;
                     case "dailyShare":
                         break;
-                    case "draw":
+                    case "shareList":
+                        Message message3=handler.obtainMessage(3);
+                        message3.obj=functionBean;
+                        handler.sendMessage(message3);
                         break;
 
                 }

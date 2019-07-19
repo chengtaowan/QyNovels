@@ -39,6 +39,7 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
     public static final int TYPE_XS=MyApp.ModuleType.kSectionTypeNewBookFresh;
     public static final int TYPE_GF=MyApp.ModuleType.kSectionTypeHighMarks;
     private Context context;
+    private int count=0;
     private List<ShopBean.DataBean.ListBeanX> list=new ArrayList();
     private List<ShopBean.DataBean.ListBeanX.ListBean> listBeans=new ArrayList<>();
     public void refresh(List<ShopBean.DataBean.ListBeanX> list){
@@ -127,7 +128,10 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
               viewHolder.tex.setText(list.get(position).getName());
            }
            GridLayoutManager manager=new GridLayoutManager(context, 3);
-           viewHolder.rv.addItemDecoration(new SpaceItemDecoration(20));
+           if(count==0){
+               viewHolder.rv.addItemDecoration(new SpaceItemDecoration(20));
+           }
+           count=1;
            viewHolder.rv.setLayoutManager(manager);
            RsAdapter adapter=new RsAdapter(context);
            adapter.refresh(list.get(position).getList());

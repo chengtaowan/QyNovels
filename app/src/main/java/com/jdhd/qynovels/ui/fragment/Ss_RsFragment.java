@@ -38,7 +38,7 @@ public class Ss_RsFragment extends Fragment implements Ss_RsAdapter.onItemClick,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_ss__rs, container, false);
-        hotSearchPresenter=new IHotSearchPresenterImpl(this);
+        hotSearchPresenter=new IHotSearchPresenterImpl(this,getContext());
         hotSearchPresenter.loadData();
         init(view);
         return view;

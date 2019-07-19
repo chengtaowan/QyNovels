@@ -1,6 +1,8 @@
 package com.glong.reader.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.os.Handler;
@@ -37,6 +39,7 @@ import com.glong.reader.entry.Result;
 import com.glong.reader.localtest.LocalServer;
 import com.glong.reader.presenter.IBookContentPresenterImpl;
 import com.glong.reader.presenter.IBookListPresenterImpl;
+import com.glong.reader.util.DeviceInfoUtils;
 import com.glong.reader.util.StatusBarUtil;
 import com.glong.reader.view.IBookContentView;
 import com.glong.reader.view.IBookListView;
@@ -55,7 +58,9 @@ import com.google.android.material.navigation.NavigationView;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -88,6 +93,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private String content="";
     private int count=0;
     private BookListBean bookList=new BookListBean();
+    private String token;
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -127,7 +133,8 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
         id=intent.getIntExtra("id",0);
-        bookListPresenter=new IBookListPresenterImpl(this);
+        Log.e("bookid1",id+"");
+        bookListPresenter=new IBookListPresenterImpl(this,this);
         bookListPresenter.setId(id);
         bookListPresenter.loadData();
 
@@ -295,19 +302,50 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                         Toast.makeText(ExtendReaderActivity.this, "没有上一页啦", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
-                                .add("id",bookList.getData().getList().get(count).getId())
-                                .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                                .asParser(new SimpleParser<BookContentBean>(){})
-                                .subscribe(bookContentBean->{
-                                    if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
-                                        Message message=handler.obtainMessage();
-                                        message.obj=bookContentBean.getData().getContent();
-                                        handler.sendMessage(message);
-                                    }
-                                },throwable->{
-                                    Log.e("zjerror",throwable.getMessage());
-                                });
+                        SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);
+                        token = preferences.getString("token", "");
+                        int time= DeviceInfoUtils.getTime();
+                        Map<String,String> map=new HashMap<>();
+                        map.put("time",time+"");
+                        if(token!=null){
+                            map.put("token",token);
+                        }
+                        map.put("id",bookList.getData().getList().get(count).getId()+"");
+                        String compareTo = DeviceInfoUtils.getCompareTo(map);
+                        String sign=DeviceInfoUtils.md5(compareTo);
+                        map.put("sign",sign);
+                        if(token!=null){
+                            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                                    .addHeader("token",token)
+                                    .add(map)
+                                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                                    .asParser(new SimpleParser<BookContentBean>(){})
+                                    .subscribe(bookContentBean->{
+                                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                                            Message message=handler.obtainMessage();
+                                            message.obj=bookContentBean.getData().getContent();
+                                            handler.sendMessage(message);
+                                        }
+                                    },throwable->{
+                                        Log.e("zjerror",throwable.getMessage());
+                                    });
+                        }
+                        else{
+                            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                                    .add(map)
+                                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                                    .asParser(new SimpleParser<BookContentBean>(){})
+                                    .subscribe(bookContentBean->{
+                                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                                            Message message=handler.obtainMessage();
+                                            message.obj=bookContentBean.getData().getContent();
+                                            handler.sendMessage(message);
+                                        }
+                                    },throwable->{
+                                        Log.e("zjerror",throwable.getMessage());
+                                    });
+                        }
+
                     }
 
                 }
@@ -323,19 +361,50 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                         Toast.makeText(ExtendReaderActivity.this, "没有下一页啦", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
-                                .add("id",bookList.getData().getList().get(count).getId())
-                                .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                                .asParser(new SimpleParser<BookContentBean>(){})
-                                .subscribe(bookContentBean->{
-                                    if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
-                                        Message message=handler.obtainMessage();
-                                        message.obj=bookContentBean.getData().getContent();
-                                        handler.sendMessage(message);
-                                    }
-                                },throwable->{
-                                    Log.e("zjerror",throwable.getMessage());
-                                });
+                        SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);
+                        token = preferences.getString("token", "");
+                        int time= DeviceInfoUtils.getTime();
+                        Map<String,String> map=new HashMap<>();
+                        map.put("time",time+"");
+                        if(token!=null){
+                            map.put("token",token);
+                        }
+                        map.put("id",bookList.getData().getList().get(count).getId()+"");
+                        String compareTo = DeviceInfoUtils.getCompareTo(map);
+                        String sign=DeviceInfoUtils.md5(compareTo);
+                        map.put("sign",sign);
+                        if(token!=null){
+                            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                                    .addHeader("token",token)
+                                    .add(map)
+                                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                                    .asParser(new SimpleParser<BookContentBean>(){})
+                                    .subscribe(bookContentBean->{
+                                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                                            Message message=handler.obtainMessage();
+                                            message.obj=bookContentBean.getData().getContent();
+                                            handler.sendMessage(message);
+                                        }
+                                    },throwable->{
+                                        Log.e("zjerror",throwable.getMessage());
+                                    });
+                        }
+                        else{
+                            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                                    .add(map)
+                                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                                    .asParser(new SimpleParser<BookContentBean>(){})
+                                    .subscribe(bookContentBean->{
+                                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                                            Message message=handler.obtainMessage();
+                                            message.obj=bookContentBean.getData().getContent();
+                                            handler.sendMessage(message);
+                                        }
+                                    },throwable->{
+                                        Log.e("zjerror",throwable.getMessage());
+                                    });
+                        }
+
                     }
 
 
@@ -500,9 +569,23 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 
            }
        });
-
+            Log.e("bookidzj",bookListBean.getData().getList().get(0).getId()+"");
+        SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);
+        token = preferences.getString("token", "");
+        int time= DeviceInfoUtils.getTime();
+        Map<String,String> map=new HashMap<>();
+        map.put("time",time+"");
+        if(token!=null){
+            map.put("token",token);
+        }
+        map.put("id",bookList.getData().getList().get(count).getId()+"");
+        String compareTo = DeviceInfoUtils.getCompareTo(map);
+        String sign=DeviceInfoUtils.md5(compareTo);
+        map.put("sign",sign);
+        if(token!=null){
             RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
-                    .add("id",bookListBean.getData().getList().get(0).getId())
+                    .addHeader("token",token)
+                    .add(map)
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<BookContentBean>(){})
                     .subscribe(bookContentBean->{
@@ -514,6 +597,23 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                     },throwable->{
                         Log.e("zjerror",throwable.getMessage());
                     });
+        }
+        else{
+            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                    .add(map)
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asParser(new SimpleParser<BookContentBean>(){})
+                    .subscribe(bookContentBean->{
+                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                            Message message=handler.obtainMessage();
+                            message.obj=bookContentBean.getData().getContent();
+                            handler.sendMessage(message);
+                        }
+                    },throwable->{
+                        Log.e("zjerror",throwable.getMessage());
+                    });
+        }
+
 
 
 

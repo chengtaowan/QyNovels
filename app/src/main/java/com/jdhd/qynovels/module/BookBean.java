@@ -1,16 +1,17 @@
 package com.jdhd.qynovels.module;
 
 public class BookBean {
-    private int a;
+    private String img;
     private String name;
     private String des;
+    private String time;
 
-    public int getA() {
-        return a;
+    public String getImg() {
+        return img;
     }
 
-    public void setA(int a) {
-        this.a = a;
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public String getName() {
@@ -29,6 +30,11 @@ public class BookBean {
         this.des = des;
     }
 
-    public BookBean(int a, String s, String s1) {
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

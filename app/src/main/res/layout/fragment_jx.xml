@@ -5,10 +5,22 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.JxFragment"
     android:background="#fff">
-
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/sr">
+    <com.jdhd.qynovels.widget.MRefreshHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/jx_header"></com.jdhd.qynovels.widget.MRefreshHeader>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/jx_rv"></androidx.recyclerview.widget.RecyclerView>
+        <com.jdhd.qynovels.widget.MyRefreshFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/jx_footer"></com.jdhd.qynovels.widget.MyRefreshFooter>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
     <include layout="@layout/item_jz"/>
 </RelativeLayout>

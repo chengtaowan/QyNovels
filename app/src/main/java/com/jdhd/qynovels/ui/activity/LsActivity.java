@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +19,7 @@ import android.widget.ImageView;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.LsAdapter;
 import com.jdhd.qynovels.module.BookBean;
+import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 
 import java.util.ArrayList;
@@ -25,21 +29,45 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
     private ImageView back;
     private RecyclerView rv;
     private List<BookBean> list=new ArrayList<>();
+    private List<BookBean> mlist=new ArrayList<>();
     private int type;
+    private DbUtils dbUtils;
+    private SQLiteDatabase database;
+    private Cursor cursor;
+    private String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ls);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        dbUtils=new DbUtils(this);
+        SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);
+        token = preferences.getString("token", "");
+        initData();
         init();
         Intent intent=getIntent();
         type=intent.getIntExtra("ls",1);
     }
 
-    private void init() {
-        for(int i=0;i<10;i++){
-            list.add(new BookBean(R.mipmap.a,"冰与火之歌"+i,"读到：第一章：标题名"));
+    private void initData() {
+        database=dbUtils.getReadableDatabase();
+        if(!token.equals("")){
+            cursor=database.rawQuery("select * from readhistory where user='user'",new String[]{});
+            while(cursor.moveToNext()){
+                BookBean bookBean=new BookBean();
+                bookBean.setName(cursor.getString(cursor.getColumnIndex("name")));
+                bookBean.setImg(cursor.getString(cursor.getColumnIndex("image")));
+                bookBean.setDes("读到："+cursor.getString(cursor.getColumnIndex("readContent")));
+                bookBean.setTime(cursor.getString(cursor.getColumnIndex("lastTime")));
+                list.add(bookBean);
+            }
         }
+        for(int i=list.size()-1;i>=0;i--){
+            mlist.add(list.get(i));
+        }
+    }
+
+    private void init() {
         back=findViewById(R.id.ls_back);
         back.setOnClickListener(this);
         rv=findViewById(R.id.ls_rv);
@@ -49,7 +77,7 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
         did.setDrawable(drawable);
         rv.addItemDecoration(did);
         rv.setLayoutManager(manager);
-        LsAdapter adapter=new LsAdapter(this,list);
+        LsAdapter adapter=new LsAdapter(this,mlist);
         rv.setAdapter(adapter);
     }
 

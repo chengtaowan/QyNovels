@@ -77,7 +77,7 @@ public class BookInfoBean {
 
         public static class BookBean {
             /**
-             * id : 5
+             * bookId : 5
              * name : 网游之浮华虚都
              * image : http://www.hxtk.com/cover/0/948.jpg
              * intro : 娱乐无极限。 YY没有界限。 游戏与现实，孰真孰假？ 本书读者群：109252585
@@ -98,7 +98,7 @@ public class BookInfoBean {
              * ranking : []
              */
 
-            private int id;
+            private int bookId;
             private String name;
             private String image;
             private String intro;
@@ -118,12 +118,12 @@ public class BookInfoBean {
             private int backlistNum;
             private List<?> ranking;
 
-            public int getId() {
-                return id;
+            public int getBookId() {
+                return bookId;
             }
 
-            public void setId(int id) {
-                this.id = id;
+            public void setBookId(int bookId) {
+                this.bookId = bookId;
             }
 
             public String getName() {
@@ -273,7 +273,7 @@ public class BookInfoBean {
 
         public static class ListBean {
             /**
-             * id : 459
+             * bookId : 459
              * name : 重生灰天使
              * image : http://www.hxtk.com/cover/81/81292.jpg
              * intro : 我叫罗灰，在一个无限小于零的奇迹中被父亲复活，复活的我却变成了凭着肉身就可以在宇宙里存活的怪物，我不愿意当怪物，我要恢复成人类，为了她，也为了他。
@@ -281,7 +281,7 @@ public class BookInfoBean {
              * class : 科幻游戏
              */
 
-            private int id;
+            private int bookId;
             private String name;
             private String image;
             private String intro;
@@ -289,12 +289,12 @@ public class BookInfoBean {
             @SerializedName("class")
             private String classX;
 
-            public int getId() {
-                return id;
+            public int getBookId() {
+                return bookId;
             }
 
-            public void setId(int id) {
-                this.id = id;
+            public void setBookId(int bookId) {
+                this.bookId = bookId;
             }
 
             public String getName() {

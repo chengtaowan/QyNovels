@@ -58,6 +58,33 @@ public class FunctionBean {
 
     public class reqParameter{
         String game_name;
+        String game_num;
+        String page;
+        String limit;
+
+        public String getPage() {
+            return page;
+        }
+
+        public void setPage(String page) {
+            this.page = page;
+        }
+
+        public String getLimit() {
+            return limit;
+        }
+
+        public void setLimit(String limit) {
+            this.limit = limit;
+        }
+
+        public String getGame_num() {
+            return game_num;
+        }
+
+        public void setGame_num(String game_num) {
+            this.game_num = game_num;
+        }
 
         public String getGame_name() {
             return game_name;

@@ -3,6 +3,8 @@ package com.jdhd.qynovels.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +24,15 @@ import androidx.viewpager.widget.ViewPager;
 import com.bumptech.glide.Glide;
 import com.glong.reader.activities.ExtendReaderActivity;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.bookcase.BookListBean;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
+import com.jdhd.qynovels.persenter.impl.bookcase.IBookListPresenterImpl;
 import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.ui.fragment.ShopFragment;
+import com.jdhd.qynovels.utils.DbUtils;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
+import com.jdhd.qynovels.view.bookcase.IBookListView;
 import com.yanzhenjie.recyclerview.SwipeRecyclerView;
 
 import java.util.ArrayList;
@@ -39,6 +46,12 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     public static final int TYPE_TITLE=0;
     public static final int TYPE_LIST=1;
     private onItemClick onItemClick;
+    private String token;
+    private DbUtils dbUtils;
+    private SQLiteDatabase database;
+    private String time;
+    private IBookListPresenterImpl bookListPresenter;
+    private BookListBean bookBean=new BookListBean();
     public void refreshhot(CaseBean.DataBean.HotBean hotBean){
         this.hotBean=hotBean;
         notifyDataSetChanged();
@@ -59,6 +72,10 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        dbUtils=new DbUtils(context);
+        time= DeviceInfoUtils.getTime()+"";
+        SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
+        token = preferences.getString("token", "");
         RecyclerView.ViewHolder viewHolder=null;
         if(viewType==TYPE_TITLE){
             View view= LayoutInflater.from(context).inflate(R.layout.item_casetitle,parent,false);
@@ -84,6 +101,48 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
             viewHolder.ll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    bookListPresenter=new IBookListPresenterImpl(new IBookListView() {
+                        @Override
+                        public void onSuccess(BookListBean bookListBean) {
+                            bookBean=bookListBean;
+                            database=dbUtils.getWritableDatabase();
+                            if(token!=null){
+                                if(bookBean!=null){
+                                    database.execSQL("delete from readhistory where user='user'and name='"+hotBean.getName()+"'");
+                                    database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                                            "values('user'," +
+                                            "'"+hotBean.getName()+"'," +
+                                            "'"+hotBean.getImage()+"'," +
+                                            "'"+hotBean.getAuthor()+"'," +
+                                            "'"+bookBean.getData().getList().get(0).getName()+"'," +
+                                            "10," + "10," + "'"+hotBean.getBookId()+"'," +
+                                            "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'')");
+                                }
+
+                            }
+                            else{
+                                if(bookBean!=null){
+                                    database.execSQL("delete from readhistory where user='visitor'and name='"+hotBean.getName()+"'");
+                                    database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                                            "values('visitor'," +
+                                            "'"+hotBean.getName()+"'," +
+                                            "'"+hotBean.getImage()+"'," +
+                                            "'"+hotBean.getAuthor()+"'," +
+                                            "'"+bookBean.getData().getList().get(0).getName()+"'," +
+                                            "10," + "10," + "'"+hotBean.getBookId()+"'," +
+                                            "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'',)");
+                                }
+
+                            }
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                           Log.e("booklisterror",error);
+                        }
+                    }, context);
+                    bookListPresenter.setId(hotBean.getBookId());
+                    bookListPresenter.loadData();
                     Intent intent=new Intent(context, ExtendReaderActivity.class);
                     intent.putExtra("id",hotBean.getBookId());
                     context.startActivity(intent);
@@ -124,6 +183,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
         }
         return -1;
     }
+
 
     class TitleViewHolder extends RecyclerView.ViewHolder{
         private LinearLayout ll;

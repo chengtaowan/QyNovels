@@ -87,26 +87,51 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                hotBean.setImage(hotcursor.getString(hotcursor.getColumnIndex("image")));
                hotBean.setAuthor(hotcursor.getString(hotcursor.getColumnIndex("author")));
                hotBean.setIntro(hotcursor.getString(hotcursor.getColumnIndex("intro")));
+               Log.e("hotbean",hotBean.toString());
                adapter.refreshhot(hotBean);
            }
-            List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
-           listcursor=database.rawQuery("select * from usercase",new String[]{});
-           while(listcursor.moveToNext()){
-               CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
-               listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
-               listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
-               listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
-               listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
-               listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
-               listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
-               listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
-               listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
-               listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
-               listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
-               list.add(listBean);
+           Log.e("casetoken",token+"---");
+           if(!token.equals("")){
+               List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
+               listcursor=database.rawQuery("select * from usercase where user='user'",new String[]{});
+               while(listcursor.moveToNext()){
+                   CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                   listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                   listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                   listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                   listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                   listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                   listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                   listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                   listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                   listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                   listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                   list.add(listBean);
+               }
+               adapter.refreshlist(list);
            }
-           adapter.refreshlist(list);
+           else{
+               List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
+               listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
+               while(listcursor.moveToNext()){
+                   CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                   listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                   listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                   listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                   listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                   listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                   listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                   listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                   listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                   listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                   listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                   list.add(listBean);
+               }
+               adapter.refreshlist(list);
+           }
+
         }
+
         return  view;
     }
 
@@ -162,8 +187,14 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
             startActivity(intent);
         }
         else if(R.id.sj_qd==view.getId()){
-            Intent intent=new Intent(getActivity(), QdActivity.class);
-            startActivity(intent);
+            if(!token.equals("")){
+                Intent intent=new Intent(getActivity(), QdActivity.class);
+                startActivity(intent);
+            }
+            else{
+                Toast.makeText(getContext(),"请先登录",Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 
@@ -231,7 +262,15 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     @Override
     public void onDestroy() {
         super.onDestroy();
-        casePresenter.destoryView();
+        if(casePresenter!=null){
+            casePresenter.destoryView();
+        }
+        if(hotcursor!=null){
+            hotcursor.close();
+        }
+        if(listcursor!=null){
+            listcursor.close();
+        }
     }
 
     @Override

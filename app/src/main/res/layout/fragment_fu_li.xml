@@ -32,10 +32,19 @@
             android:layout_centerInParent="true"
             android:id="@+id/fl_title"/>
     </RelativeLayout>
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/sr"
+        >
+    <com.jdhd.qynovels.widget.MRefreshHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/case_header"></com.jdhd.qynovels.widget.MRefreshHeader>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/webview"
         android:orientation="vertical"></LinearLayout>
-
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

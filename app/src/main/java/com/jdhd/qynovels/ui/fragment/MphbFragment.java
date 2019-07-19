@@ -57,7 +57,7 @@ public class MphbFragment extends Fragment implements Fl_Title_Adapter.onTitleCl
         if(bundle!=null){
             list = bundle.getParcelableArrayList("data");
         }
-        rankContentPresenter=new IRankContentPresenterImpl(this);
+        rankContentPresenter=new IRankContentPresenterImpl(this,getContext());
         rankContentPresenter.setId(list.get(0).getId());
         rankContentPresenter.loadData();
         init(view);

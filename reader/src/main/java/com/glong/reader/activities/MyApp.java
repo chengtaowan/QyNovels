@@ -33,7 +33,7 @@ public class MyApp extends Application {
 
     public class Url{
         @DefaultDomain
-        public static final String baseUrl = "http://15492b50l3.51mypc.cn:37652/api.php/v1/";
+        public static final String baseUrl="http://api.damobi.cn/v1/";
     }
 
     public class ModuleType{

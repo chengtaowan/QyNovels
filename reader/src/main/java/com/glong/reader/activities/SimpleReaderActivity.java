@@ -31,7 +31,7 @@ public class SimpleReaderActivity extends AppCompatActivity implements IBookList
         setContentView(R.layout.activity_simple_reader);
         Intent intent=getIntent();
         int id=intent.getIntExtra("id",0);
-        bookListPresenter=new IBookListPresenterImpl(this) ;
+        bookListPresenter=new IBookListPresenterImpl(this,this) ;
         bookListPresenter.setId(id);
         bookListPresenter.loadData();
         initReader();
@@ -51,7 +51,7 @@ public class SimpleReaderActivity extends AppCompatActivity implements IBookList
             @Override
             public BookContentBean downLoad(BookListBean.DataBean.ListBean listBean) {
                 LocalServer localServer=new LocalServer();
-                return localServer.syncgetContent(listBean.getId());
+                return localServer.syncgetContent(listBean.getId(),SimpleReaderActivity.this);
             }
 
             @Override

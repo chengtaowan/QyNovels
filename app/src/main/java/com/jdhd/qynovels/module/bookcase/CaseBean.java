@@ -118,6 +118,17 @@ public class CaseBean {
             public void setAuthor(String author) {
                 this.author = author;
             }
+
+            @Override
+            public String toString() {
+                return "HotBean{" +
+                        "bookId=" + bookId +
+                        ", name='" + name + '\'' +
+                        ", image='" + image + '\'' +
+                        ", intro='" + intro + '\'' +
+                        ", author='" + author + '\'' +
+                        '}';
+            }
         }
 
         public static class ListBean {

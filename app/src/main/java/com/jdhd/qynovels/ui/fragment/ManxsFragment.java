@@ -40,7 +40,7 @@ public class ManxsFragment extends Fragment implements IJxView {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_wmanxs, container, false);
-        jxPresenter=new IJxPresenterImpl(this,6);
+        jxPresenter=new IJxPresenterImpl(this,6,getContext());
         jxPresenter.loadData();
         init(view);
         return view;

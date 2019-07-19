@@ -14,10 +14,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
+import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.activity.MuluActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.utils.FastBlurUtil;
@@ -105,6 +107,14 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
            else if(ys==1){
                viewHolder.start.setSelectedNumber(Float.parseFloat(zs+0.5+""));
            }
+           viewHolder.back.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   Intent intent=new Intent(context,MainActivity.class);
+                   intent.putExtra("page",1);
+                   context.startActivity(intent);
+               }
+           });
        }
        else if(holder instanceof TopViewHolder){
            TopViewHolder viewHolder= (TopViewHolder) holder;
@@ -125,7 +135,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                @Override
                public void onClick(View view) {
                    Intent intent=new Intent(context, MuluActivity.class);
-                   intent.putExtra("id",dataBean.getBook().getId());
+                   intent.putExtra("id",dataBean.getBook().getBookId());
                    intent.putExtra("name",dataBean.getBook().getName());
                    context.startActivity(intent);
                }
@@ -159,7 +169,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                        @Override
                        public void onGfclick(int index) {
                            Intent intent=new Intent(context, XqActivity.class);
-                           intent.putExtra("id",xlist.get(index).getId());
+                           intent.putExtra("id",xlist.get(index).getBookId());
                            context.startActivity(intent);
                        }
                    });
@@ -196,7 +206,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     @Override
     public void onGfclick(int index) {
         Intent intent=new Intent(context, XqActivity.class);
-        intent.putExtra("id",xlist.get(index).getId());
+        intent.putExtra("id",xlist.get(index).getBookId());
         context.startActivity(intent);
     }
 

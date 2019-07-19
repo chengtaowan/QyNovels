@@ -14,7 +14,7 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 
 public class ZhglActivity extends AppCompatActivity implements View.OnClickListener {
-    private String mobile,wxname;
+    private String mobile="",wxname;
     private int uid;
     private ImageView back;
     private TextView zh,sj,wx;

@@ -38,7 +38,7 @@ public class WmanWjFragment extends Fragment implements IJxView ,WjjpAdapter.onI
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_man_wj, container, false);
-        jxPresenter=new IJxPresenterImpl(this,5);
+        jxPresenter=new IJxPresenterImpl(this,5,getContext());
         jxPresenter.loadData();
         init(view);
         return view;
