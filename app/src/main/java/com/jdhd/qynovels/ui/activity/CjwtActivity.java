@@ -38,7 +38,7 @@ public class CjwtActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Intent intent=new Intent(CjwtActivity.this,MainActivity.class);
-        intent.putExtra("fragment_flag", 4);
+        intent.putExtra("page", 3);
         startActivity(intent);
     }
 }

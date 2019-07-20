@@ -98,5 +98,6 @@ public class Fl_biaoti_Adapter extends RecyclerView.Adapter<Fl_biaoti_Adapter.Fl
     }
     public interface onTitleClick{
         void onclick(int index);
+
     }
 }

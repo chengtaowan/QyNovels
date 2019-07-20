@@ -3,9 +3,12 @@ package com.jdhd.qynovels.ui.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -13,26 +16,42 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.ui.fragment.GxFragment;
-import com.jdhd.qynovels.ui.fragment.RdFragment;
+import com.jdhd.qynovels.adapter.MoreAdapter;
+import com.jdhd.qynovels.module.bookshop.ClassContentBean;
+import com.jdhd.qynovels.persenter.impl.bookshop.IClassContentPresenterImpl;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.jdhd.qynovels.view.bookshop.IClassContentView;
 
-public class MorePhbActivity extends AppCompatActivity implements View.OnClickListener ,RadioGroup.OnCheckedChangeListener{
+public class MorePhbActivity extends AppCompatActivity implements View.OnClickListener ,RadioGroup.OnCheckedChangeListener, IClassContentView {
     private ImageView back,search;
-    private RadioGroup rg;
-    private RadioButton rd,gx;
+    private RadioGroup rg,rg1;
+    private RadioButton rd,gx,qb,lz,wj;
     private TextView type;
-    private RdFragment rdFragment;
-    private GxFragment gxFragment;
     private int ptype;
+    private String title;
+    private RecyclerView rv;
+    private int page=1;
+    private int searchType=0;
+    private int sortType=10;
+    private int id;
+    private MoreAdapter adapter;
+    private IClassContentPresenterImpl classContentPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_phb);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
-        init();
         Intent intent=getIntent();
         ptype=intent.getIntExtra("more",1);
+        title=intent.getStringExtra("title");
+        id=intent.getIntExtra("id",1);
+        classContentPresenter=new IClassContentPresenterImpl(this,this);
+        classContentPresenter.setPage(page);
+        classContentPresenter.setSearchType(searchType);
+        classContentPresenter.setSortType(sortType);
+        classContentPresenter.setId(id);
+        classContentPresenter.loadData();
+        init();
     }
 
     private void init() {
@@ -44,19 +63,20 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
         rd=findViewById(R.id.more_rd);
         gx=findViewById(R.id.more_gx);
         type=findViewById(R.id.more_type);
+        rg1=findViewById(R.id.more_rg1);
+        qb=findViewById(R.id.more_qb);
+        lz=findViewById(R.id.more_lz);
+        wj=findViewById(R.id.more_wj);
+        rv=findViewById(R.id.more_rv);
         rd.setChecked(true);
-        FragmentManager manager=getSupportFragmentManager();
-        FragmentTransaction transaction=manager.beginTransaction();
-        if(rdFragment==null){
-            rdFragment=new RdFragment();
-            transaction.replace(R.id.more_ll,rdFragment);
-        }
-        else{
-            transaction.replace(R.id.more_ll,rdFragment);
-            transaction.addToBackStack(null);
-        }
-        transaction.commit();
+        qb.setChecked(true);
+        type.setText(title);
+        LinearLayoutManager manager=new LinearLayoutManager(this);
+        rv.setLayoutManager(manager);
+        adapter=new MoreAdapter(this,1);
+        rv.setAdapter(adapter);
         rg.setOnCheckedChangeListener(this);
+        rg1.setOnCheckedChangeListener(this);
     }
 
     @Override
@@ -80,30 +100,47 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int i) {
-        FragmentManager manager=getSupportFragmentManager();
-        FragmentTransaction transaction=manager.beginTransaction();
         if(radioGroup.getCheckedRadioButtonId()==R.id.more_rd){
-            if(rdFragment==null){
-                rdFragment=new RdFragment();
-                transaction.replace(R.id.more_ll,rdFragment);
-            }
-            else{
-                transaction.replace(R.id.more_ll,rdFragment);
-                transaction.addToBackStack(null);
-            }
-
+           sortType=10;
+            classContentPresenter.setPage(page);
+            classContentPresenter.setSearchType(searchType);
+            classContentPresenter.setSortType(sortType);
+            classContentPresenter.setId(id);
+            classContentPresenter.loadData();
         }
         else if(radioGroup.getCheckedRadioButtonId()==R.id.more_gx){
-            if(gxFragment==null){
-                gxFragment=new GxFragment();
-                transaction.replace(R.id.more_ll,gxFragment);
-            }
-            else{
-                transaction.replace(R.id.more_ll,gxFragment);
-                transaction.addToBackStack(null);
-            }
+           sortType=20;
+            classContentPresenter.setPage(page);
+            classContentPresenter.setSearchType(searchType);
+            classContentPresenter.setSortType(sortType);
+            classContentPresenter.setId(id);
+            classContentPresenter.loadData();
         }
-        transaction.commit();
+        else if(radioGroup.getCheckedRadioButtonId()==R.id.more_qb){
+            searchType=0;
+            classContentPresenter.setPage(page);
+            classContentPresenter.setSearchType(searchType);
+            classContentPresenter.setSortType(sortType);
+            classContentPresenter.setId(id);
+            classContentPresenter.loadData();
+        }
+        else if(radioGroup.getCheckedRadioButtonId()==R.id.more_lz){
+            searchType=10;
+            classContentPresenter.setPage(page);
+            classContentPresenter.setSearchType(searchType);
+            classContentPresenter.setSortType(sortType);
+            classContentPresenter.setId(id);
+            classContentPresenter.loadData();
+        }
+        else if(radioGroup.getCheckedRadioButtonId()==R.id.more_wj){
+            searchType=20;
+            classContentPresenter.setPage(page);
+            classContentPresenter.setSearchType(searchType);
+            classContentPresenter.setSortType(sortType);
+            classContentPresenter.setId(id);
+            classContentPresenter.loadData();
+        }
+
     }
 
     @Override
@@ -121,7 +158,29 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
+
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(classContentPresenter!=null){
+           classContentPresenter.destoryView();
+        }
+    }
+
+    @Override
+    public void onSuccess(ClassContentBean classContentBean) {
+       runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+              adapter.refresh(classContentBean.getData().getList());
+           }
+       });
+    }
+
+    @Override
+    public void onError(String error) {
+       Log.e("moreerror",error);
+    }
 }

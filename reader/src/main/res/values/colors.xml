@@ -5,10 +5,11 @@
     <color name="colorAccent">#2196F3</color>536DFE
 
     <!--reader-->
-    <color name="reader_bg_0">#f7f3ef</color>
-    <color name="reader_bg_1">#d8c9aa</color>
-    <color name="reader_bg_2">#cce8cf</color>
-    <color name="reader_bg_3">#b69b94</color>
+    <color name="reader_bg_0">#F7F7F7</color>
+    <color name="reader_bg_1">#E3D6C1</color>
+    <color name="reader_bg_2">#D6E6D6</color>
+    <color name="reader_bg_3">#494744</color>
+    <color name="reader_bg_4">#3A434D</color>
 
     <color name="bg_reader_setting">#FE282828</color>
     <color name="setting_color">#ffffff</color>

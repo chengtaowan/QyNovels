@@ -4,6 +4,7 @@ package com.jdhd.qynovels.ui.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -84,6 +85,24 @@ public class WphbFragment extends Fragment implements Fl_Title_Adapter.onTitleCl
         adapter1.refresh(list);
         rv.setAdapter(adapter1);
         adapter1.setOnTitleClick(this);
+        datarv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int firstCompletelyVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition();
+                if(firstCompletelyVisibleItemPosition==0){
+                   adapter.setCount(0);
+                   adapter.notifyDataSetChanged();
+                }
+
+            }
+        });
     }
     @Override
     public void onclick(int index) {

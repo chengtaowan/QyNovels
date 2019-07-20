@@ -83,6 +83,13 @@ public class BindMobileActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onCaptchaSuccess(CaptchaBean captchaBean) {
+
+        //yzm.setText(captchaBean.getData().getCode()+"");
+    }
+
+    @Override
+    public void onCaptchaError(String error) {
+        Log.e("bindyzmerror",error);
         yy.setClickable(false);
         TimerTask task = new TimerTask() {
             @Override
@@ -102,12 +109,6 @@ public class BindMobileActivity extends AppCompatActivity implements View.OnClic
             }
         };
         timer.schedule(task, 1000, 1000);
-        yzm.setText(captchaBean.getData().getCode()+"");
-    }
-
-    @Override
-    public void onCaptchaError(String error) {
-        Log.e("bindyzmerror",error);
     }
 
     @Override

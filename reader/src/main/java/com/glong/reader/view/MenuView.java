@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +30,7 @@ public class MenuView extends FrameLayout {
     private static final int ANIMATION_DURATION = 200;
 
     private Toolbar mToolbar;
-    private FrameLayout mBottomMenu;
+    private LinearLayout mBottomMenu;
 
     public MenuView(@NonNull Context context) {
         this(context, null);

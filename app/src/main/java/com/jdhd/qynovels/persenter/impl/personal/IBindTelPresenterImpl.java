@@ -48,7 +48,7 @@ public class IBindTelPresenterImpl implements IBindTelPresenter {
         String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
         Log.e("time",time+"");
-        Log.e("captcha",captcha+"");
+        Log.e("captcha",captcha+"--");
         Log.e("sign",sign);
         Log.e("tel",tel+"");
         RxHttp.postForm(MyApp.Url.baseUrl+"bindTel")
@@ -57,6 +57,7 @@ public class IBindTelPresenterImpl implements IBindTelPresenter {
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                 .asParser(new SimpleParser<BindTelBean>(){})
                 .subscribe(bindTelBean->{
+                    Log.e("code",bindTelBean.getCode()+""+bindTelBean.getMsg());
                     if(bindTelBean.getCode()==200&&bindTelBean.getMsg().equals("绑定成功")){
                         iBindTelView.onBindtelSuccess(bindTelBean);
                     }

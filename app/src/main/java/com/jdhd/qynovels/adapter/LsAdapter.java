@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.BookBean;
+import com.jdhd.qynovels.utils.DbUtils;
 import com.mcxtzhang.swipemenulib.SwipeMenuLayout;
 
 import java.util.List;
@@ -21,6 +23,8 @@ import java.util.List;
 public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
     private Context context;
     private List<BookBean> list;
+    private DbUtils dbUtils;
+    private SQLiteDatabase database;
 
     public LsAdapter(Context context, List<BookBean> list) {
         this.context = context;
@@ -30,6 +34,7 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
     @NonNull
     @Override
     public LsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        dbUtils=new DbUtils(context);
         View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ls, parent, false);
         LsViewHolder viewHolder=new LsViewHolder(view);
         return viewHolder;
@@ -44,9 +49,12 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
        holder.del.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
+               database=dbUtils.getWritableDatabase();
+               database.execSQL("delete from readhistory where name='"+list.get(position).getName()+"'");
                list.remove(position);
                notifyDataSetChanged();
                holder.sml.quickClose();
+
            }
        });
     }

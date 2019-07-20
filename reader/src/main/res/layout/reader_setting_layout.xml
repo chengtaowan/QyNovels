@@ -6,80 +6,154 @@
     <LinearLayout
         android:id="@+id/setting_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/qb_px_770"
+        android:layout_height="200dp"
         android:layout_gravity="bottom"
         android:background="@color/bg_reader_setting"
         android:clickable="true"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/qb_px_120"
-            android:layout_marginTop="@dimen/qb_px_25"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="@dimen/qb_px_185"
-                android:layout_height="match_parent"
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:gravity="center"
-                android:text="亮度"
-                android:textColor="@color/setting_color"
-                android:textSize="@dimen/qb_px_55" />
+                android:src="@mipmap/yuedu_ta"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:id="@+id/dim"/>
 
             <SeekBar
                 android:id="@+id/light_seek_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginTop="25dp"
+                android:layout_toRightOf="@+id/dim"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/light"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:gravity="center"
+                android:src="@mipmap/yuedu_tl"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="20dp"
+                android:id="@+id/light"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7"
+                android:layout_centerInParent="true"
+                android:textColor="#fffafafa"
+                android:textSize="14sp"
+                android:id="@+id/zh"/>
+            <TextView
+                android:id="@+id/sm"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:text="A-"
+                android:textSize="14sp"
+                android:textColor="#FAFAFA"
+                android:layout_marginLeft="15dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/zh"
+                android:layout_marginRight="24dp"
+                android:gravity="center"
+                android:background="@drawable/item_zh"
+                />
 
-        </LinearLayout>
-
+            <TextView
+                android:id="@+id/big"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:text="A+"
+                android:textSize="14sp"
+                android:textColor="#FAFAFA"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/zh"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="20dp"
+                android:gravity="center"
+                android:background="@drawable/item_zh"/>
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/qb_px_120"
-            android:layout_marginTop="@dimen/qb_px_25"
+            android:layout_marginTop="30dp"
             android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="@dimen/qb_px_185"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="背景"
-                android:textColor="@color/setting_color"
-                android:textSize="@dimen/qb_px_55" />
-
-            <TextView
-                android:id="@+id/reader_bg_0"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/qb_px_10"
                 android:layout_weight="1"
-                android:background="@color/reader_bg_0" />
-
-            <TextView
-                android:id="@+id/reader_bg_1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/reader_bg_0"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/item_readbj1_on" />
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/qb_px_10"
                 android:layout_weight="1"
-                android:background="@color/reader_bg_1" />
-
-            <TextView
-                android:id="@+id/reader_bg_2"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/reader_bg_1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/item_readbj2" />
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/qb_px_10"
                 android:layout_weight="1"
-                android:background="@color/reader_bg_2" />
-
-            <TextView
-                android:id="@+id/reader_bg_3"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/reader_bg_2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/item_readbj3" />
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/qb_px_10"
                 android:layout_weight="1"
-                android:background="@color/reader_bg_3" />
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/reader_bg_3"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/item_readbj4" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/reader_bg_4"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/item_readbj5" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -104,92 +178,92 @@
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/qb_px_120"
-            android:layout_marginTop="@dimen/qb_px_25"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/qb_px_120"-->
+            <!--android:layout_marginTop="@dimen/qb_px_25"-->
+            <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:layout_width="@dimen/qb_px_185"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="间距"
-                android:textColor="@color/setting_color"
-                android:textSize="@dimen/qb_px_55" />
+            <!--<TextView-->
+                <!--android:layout_width="@dimen/qb_px_185"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:gravity="center"-->
+                <!--android:text="间距"-->
+                <!--android:textColor="@color/setting_color"-->
+                <!--android:textSize="@dimen/qb_px_55" />-->
 
-            <SeekBar
-                android:id="@+id/text_space_seek_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-        </LinearLayout>
+            <!--<SeekBar-->
+                <!--android:id="@+id/text_space_seek_bar"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />-->
+        <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/qb_px_120"
-            android:layout_marginTop="@dimen/qb_px_25"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/qb_px_120"-->
+            <!--android:layout_marginTop="@dimen/qb_px_25"-->
+            <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:layout_width="@dimen/qb_px_185"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="翻页"
-                android:textColor="@color/setting_color"
-                android:textSize="@dimen/qb_px_55" />
+            <!--<TextView-->
+                <!--android:layout_width="@dimen/qb_px_185"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:gravity="center"-->
+                <!--android:text="翻页"-->
+                <!--android:textColor="@color/setting_color"-->
+                <!--android:textSize="@dimen/qb_px_55" />-->
 
-            <TextView
-                android:id="@+id/effect_real_one_way"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/qb_px_10"
-                android:layout_weight="1"
-                android:background="@drawable/text_background"
-                android:gravity="center"
-                android:text="仿真1" />
+            <!--<TextView-->
+                <!--android:id="@+id/effect_real_one_way"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_margin="@dimen/qb_px_10"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@drawable/text_background"-->
+                <!--android:gravity="center"-->
+                <!--android:text="仿真1" />-->
 
-            <TextView
-                android:id="@+id/effect_real_both_way"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/qb_px_10"
-                android:layout_weight="1"
-                android:background="@drawable/text_background"
-                android:gravity="center"
-                android:text="仿真2" />
+            <!--<TextView-->
+                <!--android:id="@+id/effect_real_both_way"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_margin="@dimen/qb_px_10"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@drawable/text_background"-->
+                <!--android:gravity="center"-->
+                <!--android:text="仿真2" />-->
 
-            <TextView
-                android:id="@+id/effect_cover"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/qb_px_10"
-                android:layout_weight="1"
-                android:background="@drawable/text_background"
-                android:gravity="center"
-                android:text="覆盖" />
+            <!--<TextView-->
+                <!--android:id="@+id/effect_cover"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_margin="@dimen/qb_px_10"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@drawable/text_background"-->
+                <!--android:gravity="center"-->
+                <!--android:text="覆盖" />-->
 
-            <TextView
-                android:id="@+id/effect_slide"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/qb_px_10"
-                android:layout_weight="1"
-                android:background="@drawable/text_background"
-                android:gravity="center"
-                android:text="滑动" />
+            <!--<TextView-->
+                <!--android:id="@+id/effect_slide"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_margin="@dimen/qb_px_10"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@drawable/text_background"-->
+                <!--android:gravity="center"-->
+                <!--android:text="滑动" />-->
 
-            <TextView
-                android:id="@+id/effect_non"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/qb_px_10"
-                android:layout_weight="1"
-                android:background="@drawable/text_background"
-                android:gravity="center"
-                android:text="无" />
-        </LinearLayout>
+            <!--<TextView-->
+                <!--android:id="@+id/effect_non"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_margin="@dimen/qb_px_10"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@drawable/text_background"-->
+                <!--android:gravity="center"-->
+                <!--android:text="无" />-->
+        <!--</LinearLayout>-->
 
     </LinearLayout>
 

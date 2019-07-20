@@ -92,8 +92,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
                             public void onSuccess(BookListBean bookListBean) {
                                 bookBean=bookListBean;
                                 database=dbUtils.getWritableDatabase();
-                                if(token!=null){
-
+                                if(!token.equals("")){
                                         database.execSQL("delete from readhistory where user='user'and name='"+list.get(position).getName()+"'");
                                         database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
                                                 "values('user'," +
@@ -104,10 +103,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
                                                 "10," + "10," + "'"+list.get(position).getBookId()+"'," +
                                                 "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'')");
 
-
                                 }
                                 else{
-
                                         database.execSQL("delete from readhistory where user='visitor'and name='"+list.get(position).getName()+"'");
                                         database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
                                                 "values('visitor'," +
@@ -125,6 +122,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
                                 Log.e("booklisterror",error);
                             }
                         }, context);
+                        bookListPresenter.setId(list.get(position).getBookId());
+                        bookListPresenter.loadData();
                         Intent intent=new Intent(context, ExtendReaderActivity.class);
                         Log.e("bookid",list.get(position).getBookId()+"");
                         intent.putExtra("id",list.get(position).getBookId());
@@ -141,8 +140,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
                         list.remove(position);
                         notifyDataSetChanged();
                         holder.sml.quickClose();
-
-
                     }
                 });
             }

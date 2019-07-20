@@ -24,6 +24,12 @@ import java.util.List;
 public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
     private Context context;
     private onItemClick onItemClick;
+    private int count=0;
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     private List<RankContentBean.DataBean.ListBean> list=new ArrayList<>();
     public void refresh(List<RankContentBean.DataBean.ListBean> list){
         this.list=list;
@@ -53,20 +59,26 @@ public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
         Glide.with(context).load(list.get(position).getImage()).into(holder.img);
         holder.name.setText(list.get(position).getName());
         holder.type.setText(list.get(position).getAuthor());
-        if(position==0){
-            holder.num.setTextColor(Color.parseColor("#E8564E"));
+        if(count<5){
+            if(position==0){
+                holder.num.setTextColor(Color.parseColor("#E8564E"));
+            }
+            else if(position==1){
+                holder.num.setTextColor(Color.parseColor("#EF8E44"));
+            }
+            else if(position==2){
+                holder.num.setTextColor(Color.parseColor("#F2C63F"));
+            }
         }
-        else if(position==1){
-            holder.num.setTextColor(Color.parseColor("#EF8E44"));
+        else {
+            holder.num.setTextColor(Color.parseColor("#2F3236"));
         }
-        else if(position==2){
-            holder.num.setTextColor(Color.parseColor("#F2C63F"));
-        }
+        count++;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(context, XqActivity.class);
-                intent.putExtra("fragment_flag", 2);
+                intent.putExtra("page", 2);
                 intent.putExtra("xq",3);
                 intent.putExtra("id",list.get(position).getId());
                 context.startActivity(intent);

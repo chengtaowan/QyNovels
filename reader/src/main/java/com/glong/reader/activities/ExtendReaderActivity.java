@@ -13,7 +13,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.WindowManager;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -94,6 +96,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private int count=0;
     private BookListBean bookList=new BookListBean();
     private String token;
+    private TextView bj1,bj2,bj3,bj4,bj5;
+    private TextView big,zh;
+    private SeekBar lightSeekBar;
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -131,6 +136,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_extend_reader);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Intent intent=getIntent();
         id=intent.getIntExtra("id",0);
         Log.e("bookid1",id+"");
@@ -145,15 +151,28 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initView() {
+
+        bj1=findViewById(R.id.reader_bg_0);
+        bj2=findViewById(R.id.reader_bg_1);
+        bj3=findViewById(R.id.reader_bg_2);
+        bj4=findViewById(R.id.reader_bg_3);
+        bj5=findViewById(R.id.reader_bg_4);
+        big=findViewById(R.id.big);
+        zh=findViewById(R.id.zh);
+        zh.setText(mReaderView.getTextSize()+"");
+        findViewById(R.id.sm).setOnClickListener(this);
+        big.setOnClickListener(this);
+        findViewById(R.id.dim).setOnClickListener(this);
+        findViewById(R.id.light).setOnClickListener(this);
         mMenuView = findViewById(R.id.menu_view);
         mSettingView = findViewById(R.id.setting_view);
         mChapterSeekBar = findViewById(R.id.chapter_seek_bar);
         // 调节亮度的SeekBar
-        SeekBar lightSeekBar = findViewById(R.id.light_seek_bar);
+        lightSeekBar = findViewById(R.id.light_seek_bar);
         //调节字号的SeekBar
-        SeekBar textSizeSeekBar = findViewById(R.id.text_size_seek_bar);
+        //SeekBar textSizeSeekBar = findViewById(R.id.text_size_seek_bar);
         // 调节文字间距的SeekBar
-        SeekBar textSpaceSeekBar = findViewById(R.id.text_space_seek_bar);
+        //SeekBar textSpaceSeekBar = findViewById(R.id.text_space_seek_bar);
 
         mDrawerLayout = findViewById(R.id.drawerLayout);
         mNavigationView = findViewById(R.id.navigation);
@@ -165,16 +184,17 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         findViewById(R.id.text_next_chapter).setOnClickListener(this);//下一章
         findViewById(R.id.reader_catalogue).setOnClickListener(this);//目录
         // 切换背景
-        findViewById(R.id.reader_bg_0).setOnClickListener(this);
-        findViewById(R.id.reader_bg_1).setOnClickListener(this);
-        findViewById(R.id.reader_bg_2).setOnClickListener(this);
-        findViewById(R.id.reader_bg_3).setOnClickListener(this);
+        bj1.setOnClickListener(this);
+        bj2.setOnClickListener(this);
+        bj3.setOnClickListener(this);
+        bj4.setOnClickListener(this);
+        bj5.setOnClickListener(this);
         // 切换翻页效果
-        findViewById(R.id.effect_real_one_way).setOnClickListener(this);
-        findViewById(R.id.effect_real_both_way).setOnClickListener(this);
-        findViewById(R.id.effect_cover).setOnClickListener(this);
-        findViewById(R.id.effect_slide).setOnClickListener(this);
-        findViewById(R.id.effect_non).setOnClickListener(this);
+//        findViewById(R.id.effect_real_one_way).setOnClickListener(this);
+//        findViewById(R.id.effect_real_both_way).setOnClickListener(this);
+//        findViewById(R.id.effect_cover).setOnClickListener(this);
+//        findViewById(R.id.effect_slide).setOnClickListener(this);
+//        findViewById(R.id.effect_non).setOnClickListener(this);
 
         mChapterSeekBar.setOnSeekBarChangeListener(new SimpleOnSeekBarChangeListener() {
             @Override
@@ -192,29 +212,29 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
-        textSizeSeekBar.setOnSeekBarChangeListener(new SimpleOnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mReaderView.setTextSize(progress + 20);//文字大小限制最小20
-            }
-        });
+//        textSizeSeekBar.setOnSeekBarChangeListener(new SimpleOnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                mReaderView.setTextSize(progress + 20);//文字大小限制最小20
+//            }
+//        });
 
-        textSpaceSeekBar.setOnSeekBarChangeListener(new SimpleOnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mReaderView.setLineSpace(progress);
-            }
-        });
+//        textSpaceSeekBar.setOnSeekBarChangeListener(new SimpleOnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                mReaderView.setLineSpace(progress);
+//            }
+//        });
 
         lightSeekBar.setMax(255);
-        textSizeSeekBar.setMax(100);
-        textSpaceSeekBar.setMax(200);
+//        textSizeSeekBar.setMax(100);
+//        textSpaceSeekBar.setMax(200);
 
         // 初始化SeekBar位置
         mChapterSeekBar.setProgress(0);// 如果需要历史纪录的话，可以在这里实现
         lightSeekBar.setProgress(ScreenUtils.getSystemBrightness(this));
-        textSizeSeekBar.setProgress(mReaderView.getTextSize() - 20);
-        textSpaceSeekBar.setProgress(mReaderView.getLineSpace());
+//        textSizeSeekBar.setProgress(mReaderView.getTextSize() - 20);
+//        textSpaceSeekBar.setProgress(mReaderView.getLineSpace());
     }
 
     private void initRecyclerViewAndDrawerLayout() {
@@ -509,15 +529,59 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             mMenuView.dismiss();
             // 切换背景
         } else if (i == R.id.reader_bg_0) {
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1_on));
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
         } else if (i == R.id.reader_bg_1) {
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2_on));
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_1));
         } else if (i == R.id.reader_bg_2) {
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3_on));
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_2));
         } else if (i == R.id.reader_bg_3) {
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4_on));
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_3));
+        } else if (i == R.id.reader_bg_4) {
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5_on));
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
+            mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
             //切换翻页效果
-        } else if (i == R.id.effect_real_one_way) {
+        }
+        else if(i==R.id.sm){
+            zh.setText(mReaderView.getTextSize()-1+"");
+            mReaderView.setTextSize(Integer.parseInt(zh.getText().toString()));
+        }
+        else if(i==R.id.big){
+            zh.setText(mReaderView.getTextSize()+1+"");
+            mReaderView.setTextSize(Integer.parseInt(zh.getText().toString()));
+        }
+        else if(i==R.id.dim){
+            ScreenUtils.changeAppBrightness(ExtendReaderActivity.this, lightSeekBar.getProgress()-1);
+            lightSeekBar.setProgress(lightSeekBar.getProgress()-1);
+        }
+        else if(i==R.id.light){
+            ScreenUtils.changeAppBrightness(ExtendReaderActivity.this, lightSeekBar.getProgress()+1);
+            lightSeekBar.setProgress(lightSeekBar.getProgress()+1);
+        }
+        else if (i == R.id.effect_real_one_way) {
             mReaderView.setEffect(new EffectOfRealOneWay(this));
         } else if (i == R.id.effect_real_both_way) {
             mReaderView.setEffect(new EffectOfRealBothWay(this));

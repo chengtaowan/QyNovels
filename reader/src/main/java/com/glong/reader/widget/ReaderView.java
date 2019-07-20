@@ -103,12 +103,12 @@ public class ReaderView extends FrameLayout {
     private Paint mPaperPaint = new Paint();
 
     private void initPaper() {
-        Bitmap noiseReg = BitmapFactory.decodeResource(getResources(), R.drawable.paper);
-        BitmapShader shader = new BitmapShader(noiseReg, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+//        Bitmap noiseReg = BitmapFactory.decodeResource(getResources(), R.drawable.paper);
+//        BitmapShader shader = new BitmapShader(noiseReg, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         Matrix matrix = new Matrix();
 
-        shader.setLocalMatrix(matrix);
-        mPaperPaint.setShader(shader);
+//        shader.setLocalMatrix(matrix);
+//        mPaperPaint.setShader(shader);
         mPaperPaint.setAlpha(120);
         mPaperPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SCREEN));
     }

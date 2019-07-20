@@ -55,6 +55,7 @@ public class ICaptchaPresenterImpl implements IPersonalPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<CaptchaBean>(){})
                     .subscribe(captchaBean->{
+                        Log.e("capcode",captchaBean.getCode()+""+captchaBean.getMsg());
                         if(captchaBean.getCode()==200&&captchaBean.getMsg().equals("验证码发送成功")){
                             iCaptchaView.onCaptchaSuccess(captchaBean);
                         }

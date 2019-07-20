@@ -19,6 +19,7 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView back;
     private TextView zh,sj,wx;
     private RelativeLayout zh_zh,zh_sj,zh_wx;
+    private int type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +29,7 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
         uid=intent.getIntExtra("uid",0);
         mobile=intent.getStringExtra("mobile");
         wxname=intent.getStringExtra("wxname");
+        type=intent.getIntExtra("type",1);
         Intent bindintent=getIntent();
         String action = bindintent.getAction();
         if(bindintent!=null&&action!=null){
@@ -73,7 +75,15 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
        if(R.id.zh_back==view.getId()){
-           finish();
+           if(type==1){
+              Intent intent=new Intent(ZhglActivity.this,GrzlActivity.class);
+
+              startActivity(intent);
+           }
+           else{
+               Intent intent=new Intent(ZhglActivity.this,SzActivity.class);
+               startActivity(intent);
+           }
        }
        else if(R.id.zh_sj==view.getId()){
            if(sj.getText().equals("未绑定")){

@@ -70,7 +70,7 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Intent intent=new Intent(WjjpActivity.this,MainActivity.class);
-        intent.putExtra("fragment_flag", 2);
+        intent.putExtra("page", 1);
         startActivity(intent);
     }
 
@@ -79,7 +79,7 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent=new Intent(WjjpActivity.this,MainActivity.class);
-        intent.putExtra("fragment_flag", 2);
+        intent.putExtra("page", 1);
         startActivity(intent);
     }
 

@@ -31,6 +31,7 @@ import com.jdhd.qynovels.ui.activity.LsActivity;
 import com.jdhd.qynovels.ui.activity.SzActivity;
 import com.jdhd.qynovels.ui.activity.TxActivity;
 import com.jdhd.qynovels.ui.activity.XxActivity;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.personal.IPersonalView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -171,6 +172,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         }
         else if(R.id.wd_tx==view.getId()){
             Intent intent=new Intent(getContext(), TxActivity.class);
+            intent.putExtra("money",user.getData().getMoney());
+            intent.putExtra("wxname",wxname);
+            intent.putExtra("totle",user.getData().getTotal_gold());
+            intent.putExtra("jb", DeviceInfoUtils.NumtFormat(user.getData().getBalance()));
             startActivity(intent);
         }
         else if(R.id.wd_fk==view.getId()){
@@ -179,6 +184,14 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         }
         else if(R.id.wd_sz==view.getId()){
             Intent intent=new Intent(getContext(), SzActivity.class);
+            intent.putExtra("name",nickname);
+            intent.putExtra("avatar",avatar);
+            intent.putExtra("sex",sex);
+            intent.putExtra("uid",uid);
+            intent.putExtra("mobile",mobel+"");
+            intent.putExtra("bindwx",bindwx);
+            intent.putExtra("wxname",wxname);
+
             startActivity(intent);
         }
         else if(R.id.wd_toux==view.getId()){
@@ -190,6 +203,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             intent.putExtra("mobile",mobel+"");
             intent.putExtra("bindwx",bindwx);
             intent.putExtra("wxname",wxname);
+            intent.putExtra("type",1);
             startActivity(intent);
         }
         else if(R.id.wd_wdjb==view.getId()){

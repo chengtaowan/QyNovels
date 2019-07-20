@@ -85,12 +85,12 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
     public void onClick(View view) {
         if(type==1){
             Intent intent=new Intent(LsActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 1);
+            intent.putExtra("page", 0);
             startActivity(intent);
         }
         else if(type==4){
             Intent intent=new Intent(LsActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 4);
+            intent.putExtra("page", 3);
             startActivity(intent);
         }
     }
@@ -100,18 +100,17 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
         super.onBackPressed();
         if(type==1){
             Intent intent=new Intent(LsActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 1);
+            intent.putExtra("page", 0);
             startActivity(intent);
         }
         else if(type==4){
             Intent intent=new Intent(LsActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 4);
+            intent.putExtra("page", 3);
             startActivity(intent);
         }
     }
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
     }
 }

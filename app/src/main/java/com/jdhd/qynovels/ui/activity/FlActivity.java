@@ -28,6 +28,7 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
      private IClassPresenterImpl classPresenter;
      private Fl_biaoti_Adapter adapter;
      private FlAdapter fladapter;
+     private String name="男生";
      private List<ClassBean.DataBean.ListBean> list=new ArrayList<>();
      int count=0;
     @Override
@@ -68,6 +69,7 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
         classPresenter.loadData();
         for(int i=0;i<list.size();i++){
             if(i==index){
+                name=list.get(index).getName();
                 fladapter.refresh(list.get(index).getChild());
             }
         }
@@ -78,7 +80,7 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
     public void onClick(View view) {
         if(R.id.fl_back==view.getId()){
             Intent intent=new Intent(FlActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 2);
+            intent.putExtra("page", 1);
             startActivity(intent);
         }
         else if(R.id.fl_ss==view.getId()){
@@ -126,6 +128,15 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
     public void onFlClick(int index) {
         Intent intent=new Intent(this, MorePhbActivity.class);
         intent.putExtra("more",1);
+        if(name.equals(list.get(0).getName())){
+            intent.putExtra("title",list.get(0).getChild().get(index).getName());
+            intent.putExtra("id",list.get(0).getChild().get(index).getId());
+        }
+        else{
+            intent.putExtra("title",list.get(1).getChild().get(index).getName());
+            intent.putExtra("id",list.get(1).getChild().get(index).getId());
+        }
+
         startActivity(intent);
     }
 }

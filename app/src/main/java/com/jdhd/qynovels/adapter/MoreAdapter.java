@@ -11,12 +11,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.bookshop.ClassContentBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.MoreViewHolder>{
     private Context context;
     private int type;
     private onItemClick onItemClick;
+    private List<ClassContentBean.DataBean.ListBean> list=new ArrayList<>();
+    public void refresh(List<ClassContentBean.DataBean.ListBean> list){
+        this.list=list;
+        notifyDataSetChanged();
+    }
 
     public void setOnItemClick(MoreAdapter.onItemClick onItemClick) {
         this.onItemClick = onItemClick;
@@ -38,20 +48,19 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.MoreViewHolder
     @Override
     public void onBindViewHolder(@NonNull MoreViewHolder holder, final int position) {
         holder.grade.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Oswald-Bold.otf"));
-        if(position==9){
-           holder.di.setVisibility(View.VISIBLE);
-           holder.book.setVisibility(View.GONE);
-           holder.name.setVisibility(View.GONE);
-           holder.grade.setVisibility(View.GONE);
-           holder.fen.setVisibility(View.GONE);
-           holder.des.setVisibility(View.GONE);
-           holder.wj.setVisibility(View.GONE);
-           holder.num.setVisibility(View.GONE);
-           holder.type.setVisibility(View.GONE);
-       }
-       else{
-           holder.type.setVisibility(View.VISIBLE);
-       }
+        holder.type.setVisibility(View.VISIBLE);
+        Glide.with(context).load(list.get(position).getImage()).into(holder.book);
+        holder.name.setText(list.get(position).getName());
+        holder.grade.setText(list.get(position).getGrade()+"");
+        holder.des.setText(list.get(position).getIntro());
+        if(list.get(position).getFinishStatus()==10){
+            holder.wj.setText("连载");
+        }
+        else{
+            holder.wj.setText("完结");
+        }
+        holder.num.setText(list.get(position).getNumber()+"字");
+        holder.type.setText(list.get(position).getClassName());
        holder.itemView.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
@@ -62,12 +71,12 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.MoreViewHolder
 
     @Override
     public int getItemCount() {
-        return 10;
+        return list.size();
     }
 
     class MoreViewHolder extends RecyclerView.ViewHolder{
         private ImageView book;
-        private TextView name,grade,fen,des,wj,num,type,di;
+        private TextView name,grade,fen,des,wj,num,type;
         public MoreViewHolder(@NonNull View itemView) {
             super(itemView);
             book=itemView.findViewById(R.id.gf_book);
@@ -78,7 +87,6 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.MoreViewHolder
             wj=itemView.findViewById(R.id.gf_wj);
             num=itemView.findViewById(R.id.gf_num);
             type=itemView.findViewById(R.id.gf_type);
-            di=itemView.findViewById(R.id.gf_di);
         }
     }
     public interface onItemClick{

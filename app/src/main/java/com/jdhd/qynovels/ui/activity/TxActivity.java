@@ -52,6 +52,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
         mone=intent.getFloatExtra("money",0f);
         wxname=intent.getStringExtra("wxname");
         totle=intent.getIntExtra("totle",0);
+        Log.e("totle",totle+"");
         drawSetPresenter=new IDrawSetPresenterImpl(this,this);
         drawSetPresenter.loadData();
         init();
@@ -145,7 +146,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent=new Intent(TxActivity.this,MainActivity.class);
-        intent.putExtra("fragment_flag", 4);
+        intent.putExtra("page", 3);
         startActivity(intent);
     }
     @Override

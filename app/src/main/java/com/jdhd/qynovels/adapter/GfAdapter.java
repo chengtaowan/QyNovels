@@ -76,7 +76,7 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
                 public void onClick(View view) {
                     Intent intent=new Intent(context, XqActivity.class);
                     intent.putExtra("xq",2);
-                    intent.putExtra("id",list.get(position).getBookId());
+                    intent.putExtra("id",listBeanList.get(position).getBookId());
                     context.startActivity(intent);
                 }
             });
@@ -89,8 +89,14 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             holder.name.setText(list.get(position).getName());
             holder.grade.setText(list.get(position).getGrade()+"");
             holder.des.setText(list.get(position).getIntro());
-            holder.type.setText(list.get(position).getFinishStatus()+"");
+            holder.type.setText(list.get(position).getClassName()+"");
             holder.num.setText(list.get(position).getNumber()+"字");
+            if(list.get(position).getFinishStatus()==10){
+                holder.wj.setText("完结");
+            }
+            else{
+                holder.wj.setText("连载");
+            }
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -118,7 +124,7 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
 
     class GfViewHolder extends RecyclerView.ViewHolder{
         private ImageView book;
-        private TextView name,grade,des,num,type;
+        private TextView name,grade,des,num,type,wj;
         public GfViewHolder(@NonNull View itemView) {
             super(itemView);
             book=itemView.findViewById(R.id.gf_book);
@@ -127,6 +133,7 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             des=itemView.findViewById(R.id.gf_des);
             num=itemView.findViewById(R.id.gf_num);
             type=itemView.findViewById(R.id.gf_type);
+            wj=itemView.findViewById(R.id.gf_wj);
         }
     }
     public interface onItemClick{

@@ -16,14 +16,15 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/bottom_menu"
         android:layout_width="match_parent"
         android:layout_height="@dimen/qb_px_300"
         android:layout_gravity="bottom"
         android:background="@color/bg_reader_setting"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -61,61 +62,42 @@
                 android:textSize="@dimen/qb_px_50" />
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/qb_px_20">
-
-            <TextView
+            android:layout_gravity="bottom">
+            <ImageView
                 android:id="@+id/reader_catalogue"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/ic_read_categue_night"
-                android:drawablePadding="@dimen/qb_px_10"
-                android:gravity="center"
-                android:text="@string/catalogue"
-                android:textColor="@color/setting_color"
-                android:textSize="@dimen/qb_px_45" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/ic_read_night"
-                android:drawablePadding="@dimen/qb_px_10"
-                android:gravity="center"
-                android:text="@string/day_night"
-                android:textColor="@color/setting_color"
-                android:textSize="@dimen/qb_px_45" />
-
-            <TextView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginBottom="21dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="24dp"
+                android:src="@mipmap/yuedu_ml"
+                />
+            <ImageView
+                android:id="@+id/daynight"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="21dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="24dp"
+                android:src="@mipmap/yuedu_yj"
+                />
+            <ImageView
                 android:id="@+id/setting"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/ic_read_setting_night"
-                android:drawablePadding="@dimen/qb_px_10"
-                android:gravity="center"
-                android:text="@string/setting"
-                android:textColor="@color/setting_color"
-                android:textSize="@dimen/qb_px_45" />
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="24dp"
+                android:layout_marginBottom="21dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="24dp"
+                android:src="@mipmap/yuedu_zt"
+                />
+        </RelativeLayout>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/ic_read_comment_night"
-                android:drawablePadding="@dimen/qb_px_10"
-                android:gravity="center"
-                android:text="@string/comment"
-                android:textColor="@color/setting_color"
-                android:textSize="@dimen/qb_px_45" />
-
-        </LinearLayout>
-
-    </FrameLayout>
+    </LinearLayout>
 
 </merge>

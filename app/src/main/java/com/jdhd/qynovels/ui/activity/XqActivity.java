@@ -233,12 +233,12 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     public void change(){
         if(type==1){
             Intent intent=new Intent(XqActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 1);
+            intent.putExtra("page", 0);
             startActivity(intent);
         }
         else if(type==2){
             Intent intent=new Intent(XqActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 2);
+            intent.putExtra("page", 1);
             intent.putExtra("lx",sc_type);
             startActivity(intent);
         }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,7 +13,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:background="#fff">
+        android:background="#fff"
+        android:id="@+id/rl">
         <ImageView
             android:layout_width="25dp"
             android:layout_height="25sp"
@@ -27,10 +28,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="玄幻"
             android:textColor="#2F3236"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            />
         <ImageView
             android:layout_width="25dp"
             android:layout_height="25sp"
@@ -40,44 +41,115 @@
             android:layout_marginRight="15dp"
             android:id="@+id/more_ss"/>
     </RelativeLayout>
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="43dp"
-        android:orientation="horizontal"
-        android:layout_marginLeft="16dp"
-        android:id="@+id/more_rg">
-        <RadioButton
-            android:layout_width="55dp"
-            android:layout_height="23dp"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/select_more"
-            android:button="@null"
-            android:text="按热度"
-            android:textColor="@drawable/select_moretext"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:layout_marginRight="15dp"
-            android:id="@+id/more_rd"/>
-        <RadioButton
-            android:layout_width="55dp"
-            android:layout_height="23dp"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/select_more"
-            android:button="@null"
-            android:text="按更新"
-            android:textColor="@drawable/select_moretext"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:layout_marginRight="15dp"
-            android:id="@+id/more_gx"/>
-    </RadioGroup>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#FAFAFA"/>
-    <LinearLayout
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/more_ll"></LinearLayout>
-</LinearLayout>
+        android:id="@+id/sr"
+        android:layout_below="@+id/rl">
+    <com.jdhd.qynovels.widget.MRefreshHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/jx_header"
+        ></com.jdhd.qynovels.widget.MRefreshHeader>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:descendantFocusability="blocksDescendants">
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="43dp"
+                android:orientation="horizontal"
+                android:layout_marginLeft="16dp"
+                android:id="@+id/more_rg1">
+                <RadioButton
+                    android:layout_width="55dp"
+                    android:layout_height="23dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/select_more"
+                    android:button="@null"
+                    android:text="全部"
+                    android:textColor="@drawable/select_moretext"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:layout_marginRight="15dp"
+                    android:id="@+id/more_qb"/>
+                <RadioButton
+                    android:layout_width="55dp"
+                    android:layout_height="23dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/select_more"
+                    android:button="@null"
+                    android:text="完结"
+                    android:textColor="@drawable/select_moretext"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:layout_marginRight="15dp"
+                    android:id="@+id/more_lz"/>
+                <RadioButton
+                    android:layout_width="55dp"
+                    android:layout_height="23dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/select_more"
+                    android:button="@null"
+                    android:text="连载"
+                    android:textColor="@drawable/select_moretext"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:layout_marginRight="15dp"
+                    android:id="@+id/more_wj"/>
+            </RadioGroup>
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="43dp"
+                android:orientation="horizontal"
+                android:layout_marginLeft="16dp"
+                android:id="@+id/more_rg"
+                android:layout_below="@+id/more_rg1">
+                <RadioButton
+                    android:layout_width="55dp"
+                    android:layout_height="23dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/select_more"
+                    android:button="@null"
+                    android:text="按热度"
+                    android:textColor="@drawable/select_moretext"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:layout_marginRight="15dp"
+                    android:id="@+id/more_rd"/>
+                <RadioButton
+                    android:layout_width="55dp"
+                    android:layout_height="23dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/select_more"
+                    android:button="@null"
+                    android:text="按更新"
+                    android:textColor="@drawable/select_moretext"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:layout_marginRight="15dp"
+                    android:id="@+id/more_gx"/>
+            </RadioGroup>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#FAFAFA"
+                android:layout_below="@+id/more_rg"
+                android:id="@+id/line"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/more_rv"
+                android:layout_below="@+id/line"></androidx.recyclerview.widget.RecyclerView>
+        </RelativeLayout>
+    </ScrollView>
+        <com.jdhd.qynovels.widget.MyRefreshFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/jx_footer"></com.jdhd.qynovels.widget.MyRefreshFooter>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</RelativeLayout>

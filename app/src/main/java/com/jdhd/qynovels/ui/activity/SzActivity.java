@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -14,11 +15,22 @@ import com.jdhd.qynovels.utils.StatusBarUtil;
 public class SzActivity extends AppCompatActivity implements View.OnClickListener {
     private RelativeLayout sz,zh,gy;
     private ImageView back;
+    private String avatar,nickname,sex,mobile,wxname;
+    private int uid,bindwx;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sz);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        Intent perintent=getIntent();
+            nickname=perintent.getStringExtra("name");
+            mobile=perintent.getStringExtra("mobile");
+            avatar=perintent.getStringExtra("avatar");
+            sex=perintent.getStringExtra("sex");
+            uid=perintent.getIntExtra("uid",0);
+            bindwx=perintent.getIntExtra("bindwx",0);
+            wxname=perintent.getStringExtra("wxname");
+
         init();
     }
 
@@ -37,7 +49,7 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent=new Intent(SzActivity.this,MainActivity.class);
-        intent.putExtra("fragment_flag", 4);
+        intent.putExtra("page", 3);
         startActivity(intent);
     }
     @Override
@@ -49,10 +61,23 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View view) {
         if(R.id.sz_sz==view.getId()){
-
+           Intent intent=new Intent(SzActivity.this,GrzlActivity.class);
+            intent.putExtra("name",nickname);
+            intent.putExtra("avatar",avatar);
+            intent.putExtra("sex",sex);
+            intent.putExtra("uid",uid);
+            intent.putExtra("mobile",mobile+"");
+            intent.putExtra("bindwx",bindwx);
+            intent.putExtra("wxname",wxname);
+            intent.putExtra("type",2);
+           startActivity(intent);
         }
         else if(R.id.sz_zh==view.getId()){
            Intent intent=new Intent(SzActivity.this,ZhglActivity.class);
+            intent.putExtra("uid",uid);
+            intent.putExtra("mobile",mobile+"");
+            intent.putExtra("wxname",wxname);
+            intent.putExtra("type",2);
            startActivity(intent);
         }
         else if(R.id.sz_gy==view.getId()){
@@ -61,7 +86,7 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
         }
         else if(R.id.sz_back==view.getId()){
             Intent intent=new Intent(SzActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag",4);
+            intent.putExtra("page",3);
             startActivity(intent);
         }
     }

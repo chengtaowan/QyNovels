@@ -1,14 +1,17 @@
 package com.jdhd.qynovels.ui.fragment;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
 import android.os.Message;
@@ -66,7 +69,6 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
     private IShareListPresenterImpl shareListPresenter;
     private SmartRefreshLayout sr;
     private boolean hasNetWork;
-    private ShopFragment shopFragment=new ShopFragment();
 
     private Handler handler=new Handler(){
         @Override
@@ -141,10 +143,10 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
             }
         }
     };
-    public FuLiFragment() {
-        // Required empty public constructor
-    }
 
+    public FuLiFragment() {
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -368,10 +370,22 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
                         startActivity(intent);
                         break;
                     case "reading30s":
-                        MainActivity.vp.setCurrentItem(1);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                toFragment(1);
+                                MainActivity.rb_shop.setChecked(true);
+                            }
+                        });
                         break;
                     case "dailyReading":
-                        MainActivity.vp.setCurrentItem(1);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                toFragment(1);
+                                MainActivity.rb_shop.setChecked(true);
+                            }
+                        });
                         break;
                     case "inviteFriend":
                         Log.e("path",functionBean.getPath());
@@ -399,5 +413,15 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
         }
     }
 
-
+    private void toFragment(final int i) {
+        final MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.setFragment2Fragment(new MainActivity.Fragment2Fragment() {
+            @Override
+            public void gotoFragment(ViewPager viewPager) {
+                viewPager.setCurrentItem(i);
+                Log.e("asd","跳转");
+            }
+        });
+        mainActivity.forSkip();
+    }
 }

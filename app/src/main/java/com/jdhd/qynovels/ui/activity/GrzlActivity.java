@@ -66,6 +66,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     private String xgname;
     private IAvatarPresenterImpl avatarPresenter;
     private String imgurl;
+    private int type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +82,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         uid=perintent.getIntExtra("uid",0);
         bindwx=perintent.getIntExtra("bindwx",0);
         wxname=perintent.getStringExtra("wxname");
+        type=perintent.getIntExtra("type",1);
         init();
         xgnc.setText(nickname);
         Intent intent=getIntent();
@@ -140,9 +142,23 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if(R.id.zl_back==view.getId()){
-            Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
-            intent.putExtra("fragment_flag", 4);
-            startActivity(intent);
+            if(type==1){
+                Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
+                intent.putExtra("page", 3);
+                startActivity(intent);
+            }
+            else{
+                Intent intent=new Intent(GrzlActivity.this,SzActivity.class);
+                intent.putExtra("name",nickname);
+                intent.putExtra("avatar",avatar);
+                intent.putExtra("sex",sex);
+                intent.putExtra("uid",uid);
+                intent.putExtra("mobile",mobile+"");
+                intent.putExtra("bindwx",bindwx);
+                intent.putExtra("wxname",wxname);
+                startActivity(intent);
+            }
+
         }
         else if(R.id.xg_tx==view.getId()){
             mPhotoPopupWindow = new PhotoPopupWindow(GrzlActivity.this, new View.OnClickListener() {
@@ -181,6 +197,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
            intent.putExtra("uid",uid);
            intent.putExtra("mobile",mobile);
            intent.putExtra("wxname",wxname);
+           intent.putExtra("type",1);
            startActivity(intent);
         }
     }
