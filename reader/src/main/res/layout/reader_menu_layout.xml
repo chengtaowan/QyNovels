@@ -83,7 +83,7 @@
                 android:layout_marginBottom="21dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="24dp"
-                android:src="@mipmap/yuedu_yj"
+                android:src="@drawable/yuedu_yj"
                 />
             <ImageView
                 android:id="@+id/setting"

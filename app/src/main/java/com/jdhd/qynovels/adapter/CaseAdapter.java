@@ -46,7 +46,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     public static final int TYPE_TITLE=0;
     public static final int TYPE_LIST=1;
     private onItemClick onItemClick;
-    private String token;
+    private String token="";
     private DbUtils dbUtils;
     private SQLiteDatabase database;
     private String time;
@@ -145,6 +145,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
                     bookListPresenter.loadData();
                     Intent intent=new Intent(context, ExtendReaderActivity.class);
                     intent.putExtra("id",hotBean.getBookId());
+                    intent.putExtra("token",token);
                     context.startActivity(intent);
                 }
             });

@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +21,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.bytedance.sdk.openadsdk.AdSlot;
+import com.bytedance.sdk.openadsdk.TTAdDislike;
+import com.bytedance.sdk.openadsdk.TTAdNative;
+import com.bytedance.sdk.openadsdk.TTAdSdk;
+import com.bytedance.sdk.openadsdk.TTAppDownloadListener;
+import com.bytedance.sdk.openadsdk.TTBannerAd;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
 import com.jdhd.qynovels.ui.activity.MainActivity;
@@ -37,6 +47,8 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private static final int TYEP_BOTTOM=3;
     private Context context;
     private Activity activity;
+    private TTAdNative mTTAdNative;
+    private TTAdDislike mTTAdDislike;
 
     public XqymAdapter(Context context, Activity activity) {
         this.context = context;
@@ -52,6 +64,8 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        //step2:创建TTAdNative对象，createAdNative(Context context) banner广告context需要传入Activity对象
+        mTTAdNative = TTAdSdk.getAdManager().createAdNative(context);
         RecyclerView.ViewHolder viewHolder=null;
         if(viewType==TYEP_BOOK){
             View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_xq, parent, false);
@@ -118,6 +132,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
        }
        else if(holder instanceof TopViewHolder){
            TopViewHolder viewHolder= (TopViewHolder) holder;
+           loadBannerAd(viewHolder.img,viewHolder.gg);
            if(dataBean.getBook()==null){
                return;
            }
@@ -125,12 +140,6 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
            viewHolder.zd.setText(dataBean.getBook().getReading()+"");
            viewHolder.bookdes.setText(dataBean.getBook().getIntro());
            viewHolder.classname.setText(dataBean.getBook().getClassName());
-           viewHolder.close.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                   viewHolder.gg.setVisibility(View.GONE);
-               }
-           });
            viewHolder.ml.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
@@ -179,6 +188,93 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
        else if(holder instanceof BottomViewHolder){
            BottomViewHolder viewHolder= (BottomViewHolder) holder;
        }
+    }
+
+    private void loadBannerAd(FrameLayout mBannerContainer,RelativeLayout relativeLayout) {
+        //step4:创建广告请求参数AdSlot,具体参数含义参考文档
+        AdSlot adSlot = new AdSlot.Builder()
+                .setCodeId("901121895") //广告位id
+                .setSupportDeepLink(true)
+                .setImageAcceptedSize(300, 110)
+                .build();
+        //step5:请求广告，对请求回调的广告作渲染处理
+        mTTAdNative.loadBannerAd(adSlot, new TTAdNative.BannerAdListener() {
+
+            @Override
+            public void onError(int code, String message) {
+                Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
+                mBannerContainer.removeAllViews();
+            }
+
+            @Override
+            public void onBannerAdLoad(final TTBannerAd ad) {
+                if (ad == null) {
+                    return;
+                }
+                View bannerView = ad.getBannerView();
+                if (bannerView == null) {
+                    return;
+                }
+                //设置轮播的时间间隔  间隔在30s到120秒之间的值，不设置默认不轮播
+                //ad.setSlideIntervalTime(30 * 1000);
+                mBannerContainer.removeAllViews();
+                mBannerContainer.addView(bannerView);
+                //设置广告互动监听回调
+                ad.setBannerInteractionListener(new TTBannerAd.AdInteractionListener() {
+                    @Override
+                    public void onAdClicked(View view, int type) {
+                        //Toast.makeText(context,"广告被点击",Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onAdShow(View view, int type) {
+                        //Toast.makeText(context,"广告展示",Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+                //（可选）设置下载类广告的下载监听
+                bindDownloadListener(ad);
+                //在banner中显示网盟提供的dislike icon，有助于广告投放精准度提升
+                ad.setShowDislikeIcon(new TTAdDislike.DislikeInteractionCallback() {
+                    @Override
+                    public void onSelected(int position, String value) {
+                        //Toast.makeText(context,"点击"+value,Toast.LENGTH_SHORT).show();
+
+                        //用户选择不喜欢原因后，移除广告展示
+                        mBannerContainer.removeAllViews();
+                        relativeLayout.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        //Toast.makeText(context,"点击取消",Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+                //获取网盟dislike dialog，您可以在您应用中本身自定义的dislike icon 按钮中设置 mTTAdDislike.showDislikeDialog();
+                /*mTTAdDislike = ad.getDislikeDialog(new TTAdDislike.DislikeInteractionCallback() {
+                        @Override
+                        public void onSelected(int position, String value) {
+                            TToast.show(mContext, "点击 " + value);
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            TToast.show(mContext, "点击取消 ");
+                        }
+                    });
+                if (mTTAdDislike != null) {
+                    XXX.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mTTAdDislike.showDislikeDialog();
+                        }
+                    });
+                } */
+
+            }
+        });
     }
 
     @Override
@@ -234,7 +330,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         private TextView rq,zd,classname;
         private ExpandTextView bookdes;
         private RelativeLayout ml;
-        private ImageView img,close;
+        private FrameLayout img;
         private RelativeLayout gg;
         public TopViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -244,7 +340,6 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             classname=itemView.findViewById(R.id.xq_type);
             ml=itemView.findViewById(R.id.ml);
             img=itemView.findViewById(R.id.xq_img);
-            close=itemView.findViewById(R.id.xq_close);
             gg=itemView.findViewById(R.id.xq_gg);
         }
     }
@@ -318,4 +413,43 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         return result;
     }
 
+    private boolean mHasShowDownloadActive = false;
+
+    private void bindDownloadListener(TTBannerAd ad) {
+        ad.setDownloadListener(new TTAppDownloadListener() {
+            @Override
+            public void onIdle() {
+                Toast.makeText(context, "点击图片开始下载", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onDownloadActive(long totalBytes, long currBytes, String fileName, String appName) {
+                if (!mHasShowDownloadActive) {
+                    mHasShowDownloadActive = true;
+                    //Toast.makeText(context, "下载中，点击图片暂停", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onDownloadPaused(long totalBytes, long currBytes, String fileName, String appName) {
+                Toast.makeText(context, "下载暂停，点击图片继续", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onDownloadFailed(long totalBytes, long currBytes, String fileName, String appName) {
+                //Toast.makeText(context, "下载失败，点击图片重新下载", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onInstalled(String fileName, String appName) {
+                Toast.makeText(context, "安装完成，点击图片打开", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onDownloadFinished(long totalBytes, String fileName, String appName) {
+                Toast.makeText(context, "点击图片安装", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

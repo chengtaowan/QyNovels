@@ -153,7 +153,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 editor.putString("login","success");
                 editor.commit();
                 Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                intent.putExtra("fragment_flag", 4);
+                intent.putExtra("page", 3);
                 intent.putExtra("action",0);
                 startActivity(intent);
             }

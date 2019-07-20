@@ -66,6 +66,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     private String xgname;
     private IAvatarPresenterImpl avatarPresenter;
     private String imgurl;
+    private TextView bd;
     private int type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
+        bd=findViewById(R.id.zh);
         back=findViewById(R.id.zl_back);
         tx=findViewById(R.id.xg_tx);
         nc=findViewById(R.id.zl_nc);
@@ -122,6 +124,9 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if(sex.equals("女")){
             chosesex=30;
+        }
+        if(uid!=0&&!mobile.equals("")&&!wxname.equals("")){
+            bd.setText("已绑定");
         }
     }
 

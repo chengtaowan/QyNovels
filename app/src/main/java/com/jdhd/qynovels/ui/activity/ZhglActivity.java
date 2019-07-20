@@ -9,12 +9,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 
 public class ZhglActivity extends AppCompatActivity implements View.OnClickListener {
-    private String mobile="",wxname;
+    private String mobile="",wxname="";
     private int uid;
     private ImageView back;
     private TextView zh,sj,wx;
@@ -59,7 +60,14 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
             sj.setText(mobile);
         }
         if(wxname.equals("")){
-            wx.setText("未绑定");
+            if(wx.getText().toString().equals("")){
+                wx.setText("未绑定");
+            }
+            else{
+                wxname=wx.getText().toString();
+                wx.setText(wxname);
+            }
+
         }
         else{
             wx.setText(wxname);
@@ -92,6 +100,7 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
            }
            else{
                zh_sj.setClickable(false);
+               Toast.makeText(ZhglActivity.this,"您已绑定手机号",Toast.LENGTH_SHORT).show();
            }
        }
        else if(R.id.zh_wx==view.getId()){
@@ -100,6 +109,7 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
            }
            else{
                zh_wx.setClickable(false);
+               Toast.makeText(ZhglActivity.this,"您已绑定微信",Toast.LENGTH_SHORT).show();
            }
        }
     }

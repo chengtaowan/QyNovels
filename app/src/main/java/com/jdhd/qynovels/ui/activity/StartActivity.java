@@ -3,6 +3,7 @@ package com.jdhd.qynovels.ui.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,17 +16,23 @@ import android.os.Message;
 import android.provider.SyncStateContract;
 import android.transition.Fade;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.bytedance.sdk.openadsdk.TTAdManager;
+import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.RefreshTokenBean;
 import com.jdhd.qynovels.persenter.impl.personal.IRefreshTokenPresenterImpl;
+import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IRefreshTokenView;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-public class StartActivity extends AppCompatActivity implements IRefreshTokenView {
+import pub.devrel.easypermissions.EasyPermissions;
 
+public class StartActivity extends AppCompatActivity implements IRefreshTokenView {
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -41,6 +48,8 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        TTAdSdk.getAdManager().requestPermissionIfNecessary(MyApp.getAppContext());
         refreshTokenPresenter=new IRefreshTokenPresenterImpl(this,StartActivity.this);
         //refreshTokenPresenter.loadData();
         final Message message=handler.obtainMessage();

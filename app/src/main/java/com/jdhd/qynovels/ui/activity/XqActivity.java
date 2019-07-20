@@ -122,6 +122,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
           String time= DeviceInfoUtils.getTime()+"";
          Intent intent=new Intent(XqActivity.this, ExtendReaderActivity.class);
          intent.putExtra("id",id);
+         intent.putExtra("token",token);
          startActivity(intent);
          database=dbUtils.getWritableDatabase();
          if(token!=null){

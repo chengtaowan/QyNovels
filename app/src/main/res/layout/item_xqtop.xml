@@ -158,22 +158,13 @@
         android:layout_marginTop="23dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:id="@+id/xq_gg">
-        <ImageView
+        android:id="@+id/xq_gg"
+        android:background="#fff">
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="110dp"
-            android:src="@mipmap/a"
-            android:scaleType="fitXY"
             android:id="@+id/xq_img"
             android:background="@drawable/shape_yj"/>
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_alignParentRight="true"
-            android:src="@mipmap/gg_gb"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="6dp"
-            android:id="@+id/xq_close"/>
         <ImageView
             android:layout_width="30dp"
             android:layout_height="15dp"

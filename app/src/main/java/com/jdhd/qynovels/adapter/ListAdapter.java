@@ -45,7 +45,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     private DbUtils dbUtils;
     private SQLiteDatabase database;
     private IBookListPresenterImpl bookListPresenter;
-    private String token;
+    private String token="";
     private String time;
     private BookListBean bookBean=new BookListBean();
 
@@ -125,7 +125,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
                         bookListPresenter.setId(list.get(position).getBookId());
                         bookListPresenter.loadData();
                         Intent intent=new Intent(context, ExtendReaderActivity.class);
-                        Log.e("bookid",list.get(position).getBookId()+"");
+                        intent.putExtra("token",token);
                         intent.putExtra("id",list.get(position).getBookId());
                         context.startActivity(intent);
                     }

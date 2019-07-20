@@ -11,16 +11,23 @@
         android:layout_height="215dp"
         android:src="@mipmap/my_bg"
         android:scaleType="fitXY"/>
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/sr"
-        >
-    <com.jdhd.qynovels.widget.MRefreshHeader
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/case_header"></com.jdhd.qynovels.widget.MRefreshHeader>
-   <include layout="@layout/item_wd"/>
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/sr"
+            >
+            <com.jdhd.qynovels.widget.MRefreshHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/case_header"></com.jdhd.qynovels.widget.MRefreshHeader>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <include layout="@layout/item_wd"/>
+            </ScrollView>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+
 
 </RelativeLayout>

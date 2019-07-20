@@ -23,6 +23,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.personal.UserBean;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
+import com.jdhd.qynovels.ui.activity.BindCodeActivity;
 import com.jdhd.qynovels.ui.activity.CjwtActivity;
 import com.jdhd.qynovels.ui.activity.GrzlActivity;
 import com.jdhd.qynovels.ui.activity.JbActivity;
@@ -82,7 +83,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         if(action==0|| type.equals("success")){
             wd_lb.setVisibility(View.GONE);
             wd_yq.setVisibility(View.GONE);
-            wd_xj.setVisibility(View.GONE);
+            //wd_xj.setVisibility(View.GONE);
             wo_dl.setVisibility(View.GONE);
             wd_name.setVisibility(View.VISIBLE);
             wd_hbm.setVisibility(View.VISIBLE);
@@ -128,6 +129,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wd_sz.setOnClickListener(this);
         wd_toux.setOnClickListener(this);
         wd_xx.setOnClickListener(this);
+        wd_xj.setOnClickListener(this);
         //Glide.with(getContext()).load(R.mipmap.re).into(gif);
         if(user.getData()!=null){
             avatar=user.getData().getAvatar();
@@ -147,7 +149,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             wd_hbm.setText("红包码："+user.getData().getRed_code());
             wd_jb.setText(user.getData().getTotal_gold()+"");
             wd_jrjb.setText(user.getData().getToday_gold()+"");
-            wd_ydsj.setText(user.getData().getRead_time()+"");
+            wd_ydsj.setText(user.getData().getRead_time()/60+"");
             if(user.getData().getMessage_count()>0){
                 wd_xx.setImageResource(R.mipmap.my_xx_on);
             }
@@ -219,6 +221,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
            Intent intent=new Intent(getContext(), XxActivity.class);
            startActivity(intent);
         }
+        else if(R.id.wd_xj==view.getId()){
+          Intent intent=new Intent(getContext(),BindCodeActivity.class);
+          startActivity(intent);
+        }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void changeavatar(String url){
@@ -227,37 +233,54 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void notifyData(UserBean userBean){
-        wd_lb.setVisibility(View.GONE);
-        wd_yq.setVisibility(View.GONE);
-        wd_xj.setVisibility(View.GONE);
-        wo_dl.setVisibility(View.GONE);
-        wd_name.setVisibility(View.VISIBLE);
-        wd_hbm.setVisibility(View.VISIBLE);
-        if(userBean.getData()!=null) {
-            avatar=user.getData().getAvatar();
-            sex=user.getData().getSex();
-            nickname=user.getData().getNickname();
-            uid=user.getData().getUid();
-            mobel=user.getData().getMobile();
-            bindwx=user.getData().getBind_wx();
-            wxname=user.getData().getNickname();
-            if (!userBean.getData().getAvatar().equals("")) {
-                Glide.with(getContext())
-                        .load(userBean.getData().getAvatar())
-                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(wd_toux);
+        if(userBean.getCode()==401){
+            wd_lb.setVisibility(View.VISIBLE);
+            wd_yq.setVisibility(View.VISIBLE);
+            wd_xj.setVisibility(View.VISIBLE);
+            wo_dl.setVisibility(View.VISIBLE);
+            wd_name.setVisibility(View.GONE);
+            wd_hbm.setVisibility(View.GONE);
+        }
+        else{
+            Log.e("bindshow1",userBean.getData().getBind_show()+"");
+            if(userBean.getData().getBind_show()==0){
+                wd_xj.setVisibility(View.GONE);
             }
+            else{
+                wd_xj.setVisibility(View.VISIBLE);
+            }
+            wd_yq.setVisibility(View.GONE);
+            wd_lb.setVisibility(View.GONE);
+            wo_dl.setVisibility(View.GONE);
+            wd_name.setVisibility(View.VISIBLE);
+            wd_hbm.setVisibility(View.VISIBLE);
+            if(userBean.getData()!=null) {
+                avatar=user.getData().getAvatar();
+                sex=user.getData().getSex();
+                nickname=user.getData().getNickname();
+                uid=user.getData().getUid();
+                mobel=user.getData().getMobile();
+                bindwx=user.getData().getBind_wx();
+                wxname=user.getData().getNickname();
+                if (!userBean.getData().getAvatar().equals("")) {
+                    Glide.with(getContext())
+                            .load(userBean.getData().getAvatar())
+                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                            .into(wd_toux);
+                }
 
-            wd_name.setText(userBean.getData().getNickname());
-            wd_hbm.setText("红包码：" + userBean.getData().getRed_code());
-            wd_jb.setText(userBean.getData().getTotal_gold() + "");
-            wd_jrjb.setText(userBean.getData().getToday_gold() + "");
-            wd_ydsj.setText(userBean.getData().getRead_time() + "");
-            if (userBean.getData().getMessage_count() > 0) {
-                wd_xx.setImageResource(R.mipmap.my_xx_on);
-            } else {
-                wd_xx.setImageResource(R.mipmap.my_xx);
-            }
+                wd_name.setText(userBean.getData().getNickname());
+                wd_hbm.setText("红包码：" + userBean.getData().getRed_code());
+                wd_jb.setText(userBean.getData().getTotal_gold() + "");
+                wd_jrjb.setText(userBean.getData().getToday_gold() + "");
+                wd_ydsj.setText(userBean.getData().getRead_time()/60 + "");
+                if (userBean.getData().getMessage_count() > 0) {
+                    wd_xx.setImageResource(R.mipmap.my_xx_on);
+                } else {
+                    wd_xx.setImageResource(R.mipmap.my_xx);
+                }
+        }
+
         }
 
     }
@@ -278,34 +301,58 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                 if(userBean==null){
                     return;
                 }
-                user=userBean;
-                if(user.getData()!=null) {
-                    avatar=user.getData().getAvatar();
-                    sex=user.getData().getSex();
-                    nickname=user.getData().getNickname();
-                    uid=user.getData().getUid();
-                    mobel=user.getData().getMobile();
-                    bindwx=user.getData().getBind_wx();
-                    wxname=user.getData().getNickname();
-                    if (!user.getData().getAvatar() .equals("")) {
-                        Glide.with(getContext())
-                                .load(user.getData().getAvatar())
-                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                                .into(wd_toux);
-                    }
-
-                wd_name.setText(user.getData().getNickname());
-                wd_hbm.setText("红包码："+user.getData().getRed_code());
-                wd_jb.setText(user.getData().getBalance()+"");
-                wd_jrjb.setText(user.getData().getToday_gold()+"");
-                wd_ydsj.setText(user.getData().getRead_time()+"");
-                if(user.getData().getMessage_count()>0){
-                    wd_xx.setImageResource(R.mipmap.my_xx_on);
+                if(userBean.getCode()==401){
+                    wd_lb.setVisibility(View.VISIBLE);
+                    wd_yq.setVisibility(View.VISIBLE);
+                    wd_xj.setVisibility(View.VISIBLE);
+                    wo_dl.setVisibility(View.VISIBLE);
+                    wd_name.setVisibility(View.GONE);
+                    wd_hbm.setVisibility(View.GONE);
+                    return;
                 }
                 else{
-                    wd_xx.setImageResource(R.mipmap.my_xx);
+                    user=userBean;
+                    Log.e("bindshow2",userBean.getData().getBind_show()+"");
+                    if(userBean.getData().getBind_show()==0){
+                        wd_xj.setVisibility(View.GONE);
+                    }
+                    else{
+                        wd_xj.setVisibility(View.VISIBLE);
+                    }
+                    wd_yq.setVisibility(View.GONE);
+                    wd_lb.setVisibility(View.GONE);
+                    wo_dl.setVisibility(View.GONE);
+                    wd_name.setVisibility(View.VISIBLE);
+                    wd_hbm.setVisibility(View.VISIBLE);
+                    if(user.getData()!=null) {
+                        avatar=user.getData().getAvatar();
+                        sex=user.getData().getSex();
+                        nickname=user.getData().getNickname();
+                        uid=user.getData().getUid();
+                        mobel=user.getData().getMobile();
+                        bindwx=user.getData().getBind_wx();
+                        wxname=user.getData().getNickname();
+                        if (!user.getData().getAvatar() .equals("")) {
+                            Glide.with(getContext())
+                                    .load(user.getData().getAvatar())
+                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                    .into(wd_toux);
+                        }
+
+                        wd_name.setText(user.getData().getNickname());
+                        wd_hbm.setText("红包码："+user.getData().getRed_code());
+                        wd_jb.setText(user.getData().getBalance()+"");
+                        wd_jrjb.setText(user.getData().getToday_gold()+"");
+                        wd_ydsj.setText(user.getData().getRead_time()/60+"");
+                        if(user.getData().getMessage_count()>0){
+                            wd_xx.setImageResource(R.mipmap.my_xx_on);
+                        }
+                        else{
+                            wd_xx.setImageResource(R.mipmap.my_xx);
+                        }
+                    }
                 }
-            }
+
             }
         });
     }
