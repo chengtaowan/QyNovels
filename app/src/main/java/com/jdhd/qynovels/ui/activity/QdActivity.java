@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.QdAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.SignBean;
 import com.jdhd.qynovels.module.personal.SignSetingBean;
 import com.jdhd.qynovels.persenter.impl.personal.ISignPresenterImpl;
@@ -45,6 +46,7 @@ public class QdActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qd);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         signSetingPresenter=new ISignSetingPresenterImpl(this,this);
         signSetingPresenter.loadData();

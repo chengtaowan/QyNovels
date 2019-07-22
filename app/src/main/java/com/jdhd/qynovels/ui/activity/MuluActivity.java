@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.MuluAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.BookListBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookListPresenterImpl;
 import com.jdhd.qynovels.view.bookcase.IBookListView;
@@ -27,6 +28,7 @@ public class MuluActivity extends AppCompatActivity implements IBookListView , V
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mulu);
+        MyApp.addActivity(this);
         Intent intent=getIntent();
         int id=intent.getIntExtra("id",0);
         bookname=intent.getStringExtra("name");

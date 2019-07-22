@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.TxAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.DrawSetBean;
 import com.jdhd.qynovels.persenter.impl.personal.IDrawSetPresenterImpl;
 import com.jdhd.qynovels.utils.StatusBarUtil;
@@ -46,6 +47,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tx);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
         yue=intent.getStringExtra("jb");

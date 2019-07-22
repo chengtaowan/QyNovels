@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.ShopAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.ui.fragment.CaseFragment;
 import com.jdhd.qynovels.ui.fragment.FuLiFragment;
 import com.jdhd.qynovels.ui.fragment.ShopFragment;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
 
         init();
@@ -91,7 +93,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
        rblist.add(rb_shop);
        rblist.add(rb_fl);
        rblist.add(rb_wd);
-       ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager(),list);
+       ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager());
+       adapter.refresh(list);
        vp.setAdapter(adapter);
        vp.setCurrentItem(0);
        rb_case.setChecked(true);
@@ -117,38 +120,13 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             @Override
             public void onBackPressed() {
                 super.onBackPressed();
-                SharedPreferences  sharedPreferencesjx= getSharedPreferences("jx", Activity.MODE_PRIVATE);
-                SharedPreferences.Editor editorjx =sharedPreferencesjx.edit();
-                editorjx.putInt("lastOffset",0);
-                editorjx.putInt("lastPosition",0);
-                editorjx.commit();
 
-                SharedPreferences  sharedPreferencesman= getSharedPreferences("man", Activity.MODE_PRIVATE);
-                SharedPreferences.Editor editorman =sharedPreferencesman.edit();
-                editorman.putInt("lastOffset",0);
-                editorman.putInt("lastPosition",0);
-                editorman.commit();
-
-                SharedPreferences  sharedPreferenceswm= getSharedPreferences("wm", Activity.MODE_PRIVATE);
-                SharedPreferences.Editor editorwm =sharedPreferenceswm.edit();
-                editorwm.putInt("lastOffset",0);
-                editorwm.putInt("lastPosition",0);
-                editorwm.commit();
-
-                SharedPreferences  sharedPreferencesbook= getSharedPreferences("book", Activity.MODE_PRIVATE);
-                SharedPreferences.Editor editorbook =sharedPreferencesbook.edit();
-                editorbook.putInt("lastOffset",0);
-                editorbook.putInt("lastPosition",0);
-                editorbook.commit();
-                System.exit(0);
+                //System.exit(0);
             }
 
             private long exitTime = 0;
             @Override
             public boolean onKeyDown(int keyCode, KeyEvent event) {
-                FragmentManager fragmentManager=getSupportFragmentManager();
-                // 判断当前按键是返回键
-
                 // 判断当前按键是返回键
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     if(vp.getCurrentItem()!=0){
@@ -162,62 +140,17 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                         Toast.makeText(MainActivity.this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
                         exitTime = System.currentTimeMillis();
                     } else {
-                        SharedPreferences  sharedPreferencesjx= getSharedPreferences("jx", Activity.MODE_PRIVATE);
-                        SharedPreferences.Editor editorjx =sharedPreferencesjx.edit();
-                        editorjx.putInt("lastOffset",0);
-                        editorjx.putInt("lastPosition",0);
-                        editorjx.commit();
-
-                        SharedPreferences  sharedPreferencesman= getSharedPreferences("man", Activity.MODE_PRIVATE);
-                        SharedPreferences.Editor editorman =sharedPreferencesman.edit();
-                        editorman.putInt("lastOffset",0);
-                        editorman.putInt("lastPosition",0);
-                        editorman.commit();
-
-                        SharedPreferences  sharedPreferenceswm= getSharedPreferences("wm", Activity.MODE_PRIVATE);
-                        SharedPreferences.Editor editorwm =sharedPreferenceswm.edit();
-                        editorwm.putInt("lastOffset",0);
-                        editorwm.putInt("lastPosition",0);
-                        editorwm.commit();
-
-                        SharedPreferences  sharedPreferencesbook= getSharedPreferences("book", Activity.MODE_PRIVATE);
-                        SharedPreferences.Editor editorbook =sharedPreferencesbook.edit();
-                        editorbook.putInt("lastOffset",0);
-                        editorbook.putInt("lastPosition",0);
-                        editorbook.commit();
+                        MyApp.removeallActivity();
                         Intent home = new Intent(Intent.ACTION_MAIN);
                         home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         home.addCategory(Intent.CATEGORY_HOME);
                         startActivity(home);
-                        System.exit(0);
+                       // System.exit(0);
 
                     }
                 }
                 else if(keyCode==KeyEvent.KEYCODE_MENU){
-                    System.exit(0);
-                    SharedPreferences  sharedPreferencesjx= getSharedPreferences("jx", Activity.MODE_PRIVATE);
-                    SharedPreferences.Editor editorjx =sharedPreferencesjx.edit();
-                    editorjx.putInt("lastOffset",0);
-                    editorjx.putInt("lastPosition",0);
-                    editorjx.commit();
-
-                    SharedPreferences  sharedPreferencesman= getSharedPreferences("man", Activity.MODE_PRIVATE);
-                    SharedPreferences.Editor editorman =sharedPreferencesman.edit();
-                    editorman.putInt("lastOffset",0);
-                    editorman.putInt("lastPosition",0);
-                    editorman.commit();
-
-                    SharedPreferences  sharedPreferenceswm= getSharedPreferences("wm", Activity.MODE_PRIVATE);
-                    SharedPreferences.Editor editorwm =sharedPreferenceswm.edit();
-                    editorwm.putInt("lastOffset",0);
-                    editorwm.putInt("lastPosition",0);
-                    editorwm.commit();
-
-                    SharedPreferences  sharedPreferencesbook= getSharedPreferences("book", Activity.MODE_PRIVATE);
-                    SharedPreferences.Editor editorbook =sharedPreferencesbook.edit();
-                    editorbook.putInt("lastOffset",0);
-                    editorbook.putInt("lastPosition",0);
-                    editorbook.commit();
+                    //System.exit(0);
                 }
                 return true;
 

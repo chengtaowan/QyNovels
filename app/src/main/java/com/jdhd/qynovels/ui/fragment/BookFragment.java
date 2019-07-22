@@ -53,7 +53,7 @@ public class BookFragment extends Fragment {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(recyclerView.getLayoutManager() !=null) {
-                    getPositionAndOffset();
+                    //getPositionAndOffset();
                 }
             }
         });
@@ -62,13 +62,13 @@ public class BookFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        getPositionAndOffset();
+        //getPositionAndOffset();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        scrollToPosition();
+        //scrollToPosition();
     }
 
     private void scrollToPosition() {

@@ -26,6 +26,7 @@ import com.glong.reader.activities.NormalReaderActivity;
 import com.glong.reader.activities.SimpleReaderActivity;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.XqymAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.AddBookBean;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
 import com.jdhd.qynovels.module.bookcase.BookListBean;
@@ -68,6 +69,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xqym);
+        MyApp.addActivity(this);
         dbUtils=new DbUtils(this);
         SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");

@@ -18,6 +18,7 @@ import android.widget.ImageView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.LsAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.BookBean;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
@@ -39,6 +40,7 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ls);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         dbUtils=new DbUtils(this);
         SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);

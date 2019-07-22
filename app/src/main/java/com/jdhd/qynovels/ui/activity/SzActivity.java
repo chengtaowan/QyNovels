@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 
 public class SzActivity extends AppCompatActivity implements View.OnClickListener {
@@ -21,6 +22,7 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sz);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent perintent=getIntent();
             nickname=perintent.getStringExtra("name");

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Ss_NrAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.ui.fragment.Ss_LxFragment;
 import com.jdhd.qynovels.ui.fragment.Ss_NrFragment;
 import com.jdhd.qynovels.ui.fragment.Ss_RsFragment;
@@ -32,6 +33,7 @@ public class SsActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ss);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
         Intent intent=getIntent();

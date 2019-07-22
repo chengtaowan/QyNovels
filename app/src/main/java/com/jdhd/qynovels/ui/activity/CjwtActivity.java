@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.CjwtAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 
 public class CjwtActivity extends AppCompatActivity implements View.OnClickListener {
@@ -20,6 +21,7 @@ public class CjwtActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cjwt);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
 
         init();

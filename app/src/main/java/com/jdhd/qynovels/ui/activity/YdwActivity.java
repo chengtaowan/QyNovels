@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.GfAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.widget.RatingBar;
 
@@ -26,6 +27,7 @@ public class YdwActivity extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ydw);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
     }

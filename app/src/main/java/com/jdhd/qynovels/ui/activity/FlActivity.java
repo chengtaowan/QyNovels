@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.FlAdapter;
 import com.jdhd.qynovels.adapter.Fl_biaoti_Adapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ClassBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IClassPresenterImpl;
 import com.jdhd.qynovels.utils.StatusBarUtil;
@@ -35,6 +36,7 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fl);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         classPresenter=new IClassPresenterImpl(this,this);
         classPresenter.loadData();

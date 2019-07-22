@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.XxAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.MessageBean;
 import com.jdhd.qynovels.persenter.impl.personal.IMessagePresenterImpl;
 import com.jdhd.qynovels.utils.StatusBarUtil;
@@ -28,6 +29,7 @@ public class XxActivity extends AppCompatActivity implements IMessageView,View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xx);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         messagePresenter=new IMessagePresenterImpl(this,this);
         messagePresenter.loadData();

@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.MoreAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ClassContentBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IClassContentPresenterImpl;
 import com.jdhd.qynovels.utils.StatusBarUtil;
@@ -40,6 +41,7 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_phb);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
         ptype=intent.getIntExtra("more",1);

@@ -706,6 +706,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                     .asParser(new SimpleParser<BookContentBean>(){})
                     .subscribe(bookContentBean->{
                         if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                            //mAdapter.setChapterList();
                             Message message=handler.obtainMessage();
                             message.obj=bookContentBean.getData().getContent();
                             handler.sendMessage(message);
@@ -768,7 +769,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId("901121895") //广告位id
                 .setSupportDeepLink(true)
-                .setImageAcceptedSize(300, 110)
+                .setImageAcceptedSize(300, 200)
                 .build();
         //step5:请求广告，对请求回调的广告作渲染处理
         mTTAdNative.loadBannerAd(adSlot, new TTAdNative.BannerAdListener() {

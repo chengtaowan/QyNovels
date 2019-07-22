@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.JbAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.GoldListBean;
 import com.jdhd.qynovels.persenter.impl.personal.IGoldListPresenterImpl;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
@@ -34,6 +35,7 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jb);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
         yue=intent.getIntExtra("ye",0);

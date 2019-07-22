@@ -14,6 +14,7 @@ import com.glong.reader.util.Request;
 import com.glong.reader.widget.ReaderView;
 import com.jdhd.qynovels.R;
 
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class ReadActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         // 隐藏状态栏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.BindCodeBean;
 import com.jdhd.qynovels.persenter.impl.personal.IBindCodePresenterImpl;
 import com.jdhd.qynovels.utils.StatusBarUtil;
@@ -25,6 +26,7 @@ public class BindCodeActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bind_code);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
     }

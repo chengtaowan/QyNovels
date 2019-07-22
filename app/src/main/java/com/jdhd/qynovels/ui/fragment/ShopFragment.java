@@ -68,6 +68,9 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
         gif=view.findViewById(R.id.case_gif);
         tab=view.findViewById(R.id.tab);
         tab.setSelectedTabIndicatorHeight(0);
+        tab.addTab(tab.newTab().setText("精选"));
+        tab.addTab(tab.newTab().setText("男生"));
+        tab.addTab(tab.newTab().setText("女生"));
         tab.addOnTabSelectedListener(this);
         search=view.findViewById(R.id.search);
         search.setOnClickListener(this);
@@ -75,9 +78,11 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
         list.add(jxFragment);
         list.add(manFragment);
         list.add(wmanFragment);
-        ShopAdapter adapter=new ShopAdapter(getChildFragmentManager(),list);
+        ShopAdapter adapter=new ShopAdapter(getChildFragmentManager());
+        adapter.refresh(list);
         home_vp.setAdapter(adapter);
-
+        tab.getTabAt(0).select();
+        home_vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
     }
 
     @Override
@@ -97,7 +102,7 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        home_vp.setCurrentItem(tab.getPosition());
+        //home_vp.setCurrentItem(tab.getPosition());
         View view=LayoutInflater.from(getContext()).inflate(R.layout.item_tabtex,null);
         TextView textView = view.findViewById(R.id.tabtex);
         float selectedSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 19, getResources().getDisplayMetrics());
@@ -130,15 +135,14 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                jxFragment.setType(moduleBean.getData().getList().get(0).getId());
-                manFragment.setType(moduleBean.getData().getList().get(1).getId());
-                wmanFragment.setType(moduleBean.getData().getList().get(2).getId());
+//                jxFragment.setType(moduleBean.getData().getList().get(0).getId());
+//                manFragment.setType(moduleBean.getData().getList().get(1).getId());
+//                wmanFragment.setType(moduleBean.getData().getList().get(2).getId());
                 jz.setVisibility(View.GONE);
-                for(int i=0;i<moduleBean.getData().getList().size();i++){
-                    tab.addTab(tab.newTab().setText(moduleBean.getData().getList().get(i).getModuleName()));
-                }
-                tab.getTabAt(0).select();
-                home_vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
+//                for(int i=0;i<moduleBean.getData().getList().size();i++){
+//                    tab.addTab(tab.newTab().setText(moduleBean.getData().getList().get(i).getModuleName()));
+//                }
+
             }
         });
     }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.NickNameBean;
 import com.jdhd.qynovels.persenter.impl.personal.INickNamePresenterImpl;
 import com.jdhd.qynovels.utils.StatusBarUtil;
@@ -28,6 +29,7 @@ public class XgncActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xgnc);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
     }

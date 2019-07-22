@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -228,6 +229,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
                     @Override
                     public void onAdShow(View view, int type) {
+                        Log.e("bannergg","广告展示");
                         //Toast.makeText(context,"广告展示",Toast.LENGTH_SHORT).show();
 
                     }

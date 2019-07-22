@@ -21,6 +21,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.MoreAdapter;
 import com.jdhd.qynovels.adapter.ShopAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ModuleBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IModulePresenterImpl;
 import com.jdhd.qynovels.ui.fragment.ManxsFragment;
@@ -43,6 +44,7 @@ public class XssdActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xssd);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         modulePresenter=new IModulePresenterImpl(this,this,30);
         modulePresenter.loadData();
@@ -120,7 +122,8 @@ public class XssdActivity extends AppCompatActivity implements View.OnClickListe
                 vp.setOffscreenPageLimit(0);
                 fragmentList.add(wmanxsFragment);
                 fragmentList.add(manxsFragment);
-                ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager(),fragmentList);
+                ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager());
+                adapter.refresh(fragmentList);
                 vp.setAdapter(adapter);
                 vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
             }

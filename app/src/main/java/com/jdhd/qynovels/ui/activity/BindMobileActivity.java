@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.BindTelBean;
 import com.jdhd.qynovels.module.personal.CaptchaBean;
 import com.jdhd.qynovels.persenter.impl.personal.IBindTelPresenterImpl;
@@ -38,6 +39,7 @@ public class BindMobileActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bind_mobile);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
     }

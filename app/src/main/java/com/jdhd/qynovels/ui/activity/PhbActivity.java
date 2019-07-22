@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.ShopAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.RankBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IRankPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.MphbFragment;
@@ -43,6 +44,7 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phb);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         rankPresenter=new IRankPresenterImpl(this,this);
         rankPresenter.loadData();
@@ -81,7 +83,8 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
                vp.setOffscreenPageLimit(0);
                fragmentList.add(mphbFragment);
                fragmentList.add(wphbFragment);
-               ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager(),fragmentList);
+               ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager());
+               adapter.refresh(fragmentList);
                vp.setAdapter(adapter);
                vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
            }

@@ -78,15 +78,15 @@ public class JxFragment extends Fragment implements IJxView {
         rv.setLayoutManager(manager);
         adapter=new JxAdapter(getContext());
         rv.setAdapter(adapter);
-        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if(recyclerView.getLayoutManager() !=null) {
-                    getPositionAndOffset();
-                }
-            }
-        });
+//        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                if(recyclerView.getLayoutManager() !=null) {
+//                    //getPositionAndOffset();
+//                }
+//            }
+//        });
         sr.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
@@ -181,6 +181,6 @@ public class JxFragment extends Fragment implements IJxView {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        jxPresenter.destoryView();
+        //jxPresenter.destoryView();
     }
 }

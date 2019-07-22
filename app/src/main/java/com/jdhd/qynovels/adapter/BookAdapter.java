@@ -98,7 +98,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 public void onClick(View view) {
                     Intent intent=new Intent(context, XqActivity.class);
                     intent.putExtra("xq",2);
-                    intent.putExtra("id",list.get(position).getList().get(0).getId());
+                    intent.putExtra("id",list.get(position).getList().get(0).getBookId());
                     if(type==1){
                         intent.putExtra("lx",2);
                     }

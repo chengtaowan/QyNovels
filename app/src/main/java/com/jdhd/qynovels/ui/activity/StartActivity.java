@@ -48,6 +48,7 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         TTAdSdk.getAdManager().requestPermissionIfNecessary(MyApp.getAppContext());
         refreshTokenPresenter=new IRefreshTokenPresenterImpl(this,StartActivity.this);

@@ -21,6 +21,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.ShopAdapter;
 import com.jdhd.qynovels.adapter.WjjpAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ModuleBean;
 import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IJxPresenterImpl;
@@ -46,6 +47,7 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wjjp);
+        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         modulePresenter=new IModulePresenterImpl(this,this,20);
         modulePresenter.loadData();
@@ -105,7 +107,8 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
                vp.setOffscreenPageLimit(0);
                fragmentList.add(manWjFragment);
                fragmentList.add(wmanWjFragment);
-               ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager(),fragmentList);
+               ShopAdapter adapter=new ShopAdapter(getSupportFragmentManager());
+               adapter.refresh(fragmentList);
                vp.setAdapter(adapter);
                vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
            }

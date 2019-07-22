@@ -32,6 +32,7 @@ import com.jdhd.qynovels.module.personal.FunctionBean;
 
 import com.jdhd.qynovels.persenter.impl.personal.IDrawPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IPrizePresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.IPrizeRecodePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IShareImgPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IShareListPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IWelfarePresenterImpl;
@@ -41,6 +42,7 @@ import com.jdhd.qynovels.ui.activity.QdActivity;
 
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.personal.IDrawView;
+import com.jdhd.qynovels.view.personal.IPrizeRecodeView;
 import com.jdhd.qynovels.view.personal.IPrizesView;
 import com.jdhd.qynovels.view.personal.IShareImgView;
 import com.jdhd.qynovels.view.personal.IShareListView;
@@ -55,7 +57,7 @@ import com.tencent.mm.opensdk.utils.Log;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FuLiFragment extends Fragment implements IWelfareView , IShareImgView, IPrizesView , IDrawView, IShareListView {
+public class FuLiFragment extends Fragment implements IWelfareView , IShareImgView, IPrizesView , IDrawView, IShareListView, IPrizeRecodeView {
 
     private AgentWeb web;
     private LinearLayout webView;
@@ -69,6 +71,7 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
     private IShareListPresenterImpl shareListPresenter;
     private SmartRefreshLayout sr;
     private boolean hasNetWork;
+    private IPrizeRecodePresenterImpl prizeRecodePresenter;
 
     private Handler handler=new Handler(){
         @Override
@@ -139,7 +142,31 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
                         }
                     });
                     MainActivity.rg.setVisibility(View.GONE);
-
+                    break;
+                case 4:
+                    Log.e("page",functionBean.getReqParameter().getPage()+"---"+functionBean.getReqParameter().getLimit());
+                    prizeRecodePresenter.setPage(functionBean.getReqParameter().getPage());
+                    prizeRecodePresenter.setLimit(functionBean.getReqParameter().getLimit());
+                    prizeRecodePresenter.loadData();
+                    web.getWebCreator().getWebView().loadUrl(MyApp.Url.webbaseUrl+functionBean.getPath());
+                    title.setText(functionBean.getTitle());
+                    back.setVisibility(View.VISIBLE);
+                    back.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if ( web.getWebCreator().getWebView().canGoBack()) { // 表示按返回键时的操作
+                                web.getWebCreator().getWebView().goBack();
+                                web.getWebCreator().getWebView().goBack(); // 后退
+                                back.setVisibility(View.GONE);
+                                MainActivity.rg.setVisibility(View.VISIBLE);
+                                title.setText("福利中心");
+                                welfarePresenter.loadData();
+                                // webview.goForward();//前进
+                            }
+                        }
+                    });
+                    MainActivity.rg.setVisibility(View.GONE);
+                    break;
             }
         }
     };
@@ -159,6 +186,7 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
         prizePresenter=new IPrizePresenterImpl(this,getContext());
         drawPresenter=new IDrawPresenterImpl(this,getContext());
         shareListPresenter=new IShareListPresenterImpl(this,getContext());
+        prizeRecodePresenter=new IPrizeRecodePresenterImpl(this,getContext());
         hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
         init(view);
         return view;
@@ -342,6 +370,27 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
        Log.e("sharelisterror",error);
     }
 
+    @Override
+    public void onRecodeSuccess(String str) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.e("recodestr",str);
+                web.getJsAccessEntrace().quickCallJs("prizeRecode", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String s) {
+                        Log.e("data",s);
+                    }
+                },str);
+            }
+        });
+    }
+
+    @Override
+    public void onRecodeError(String error) {
+       Log.e("prizerecodeerror",error);
+    }
+
     public class AndroidInterface {
         private AgentWeb agent;
         private Context context;
@@ -408,6 +457,11 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
                         message3.obj=functionBean;
                         handler.sendMessage(message3);
                         break;
+                    case "drawDetails":
+                        Message message4=handler.obtainMessage(4);
+                        message4.obj=functionBean;
+                        handler.sendMessage(message4);
+                        break;
 
                 }
         }
@@ -424,4 +478,5 @@ public class FuLiFragment extends Fragment implements IWelfareView , IShareImgVi
         });
         mainActivity.forSkip();
     }
+
 }
