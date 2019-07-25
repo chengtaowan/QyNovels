@@ -67,10 +67,17 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             }
             Glide.with(context).load(listBeanList.get(position).getImage()).into(holder.book);
             holder.name.setText(listBeanList.get(position).getName());
-            //holder.grade.setText(listBeanList.get(position).getGrade()+"");
+            holder.grade.setText(listBeanList.get(position).getGrade());
             holder.des.setText(listBeanList.get(position).getIntro());
             holder.type.setText(listBeanList.get(position).getClassX());
             //holder.num.setText(listBeanList.get(position).+"万字");
+            if(listBeanList.get(position).getFinishStatus()==0){
+                holder.wj.setText("完结");
+            }
+            else{
+                holder.wj.setText("连载");
+            }
+            holder.num.setVisibility(View.GONE);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -124,7 +131,7 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
 
     class GfViewHolder extends RecyclerView.ViewHolder{
         private ImageView book;
-        private TextView name,grade,des,num,type,wj;
+        private TextView name,grade,des,num,type,wj,fen;
         public GfViewHolder(@NonNull View itemView) {
             super(itemView);
             book=itemView.findViewById(R.id.gf_book);
@@ -134,6 +141,7 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             num=itemView.findViewById(R.id.gf_num);
             type=itemView.findViewById(R.id.gf_type);
             wj=itemView.findViewById(R.id.gf_wj);
+            fen=itemView.findViewById(R.id.gf_fen);
         }
     }
     public interface onItemClick{

@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.ui.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,10 +10,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -35,10 +40,14 @@ import com.jdhd.qynovels.persenter.impl.bookcase.IBookInfoPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookListPresenterImpl;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
+import com.jdhd.qynovels.utils.FastBlurUtil;
+import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.bookcase.IAddBookRankView;
 import com.jdhd.qynovels.view.bookcase.IBookInfoView;
 import com.jdhd.qynovels.view.bookcase.IBookListView;
+import com.jdhd.qynovels.widget.RatingBar;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -64,6 +73,9 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     private BookInfoBean bookBean=new BookInfoBean();
     private IBookListPresenterImpl bookListPresenter;
     private BookListBean listBean=new BookListBean();
+    private ImageView back;
+    private Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +102,9 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
 
 
     private void init() {
+        toolbar=findViewById(R.id.toolbar);
+        back=findViewById(R.id.xq_back);
+        back.setOnClickListener(this);
         jrsj=findViewById(R.id.xq_jrsj);
         jrsj.setOnClickListener(this);
         yd=findViewById(R.id.xq_yd);
@@ -105,12 +120,25 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
         rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                StatusBarUtil.setStatusBarMode(XqActivity.this, true, R.color.c_ffffff);
                 super.onScrollStateChanged(recyclerView, newState);
-                if(recyclerView.getLayoutManager() !=null) {
-                    getPositionAndOffset();
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                StatusBarUtil.setStatusBarMode(XqActivity.this, true, R.color.c_ffffff);
+                Log.e("juli",dy+"---");
+                if(dy>0){
+                   toolbar.setBackgroundColor(Color.WHITE);
+
                 }
+                else if(dy<0){
+                    toolbar.setBackgroundColor(Color.parseColor("#7effffff"));
+                }
+                super.onScrolled(recyclerView, dx, dy);
             }
         });
+
     }
 
     @Override
@@ -120,6 +148,11 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
            addBookRankPresenter.loadData();
            Toast.makeText(XqActivity.this,"加入书架",Toast.LENGTH_SHORT).show();
        }
+       else if(R.id.xq_back==view.getId()){
+           Intent intent=new Intent(XqActivity.this,MainActivity.class);
+           intent.putExtra("page",1);
+           startActivity(intent);
+       }
        else if(R.id.xq_yd==view.getId()){
           String time= DeviceInfoUtils.getTime()+"";
          Intent intent=new Intent(XqActivity.this, ExtendReaderActivity.class);
@@ -127,7 +160,8 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
          intent.putExtra("token",token);
          startActivity(intent);
          database=dbUtils.getWritableDatabase();
-         if(token!=null){
+         Log.e("token--",token+"===");
+         if(!token.equals("")){
              database.execSQL("delete from readhistory where user='user'and name='"+bookBean.getData().getBook().getName()+"'");
              database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
                      "values('user'," +
@@ -147,7 +181,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                      "'"+bookBean.getData().getBook().getAuthor()+"'," +
                      "'"+listBean.getData().getList().get(0).getName()+"'," +
                      "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
-                     "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"',)");
+                     "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"')");
          }
 
        }
@@ -162,8 +196,31 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                bookBean=bookInfoBean;
                jz.setVisibility(View.GONE);
                adapter.refresh(bookInfoBean.getData());
+
            }
        });
+    }
+    public class MyThread extends Thread{
+        private String url;
+        private ImageView bj;
+
+        public MyThread(String url, ImageView bj) {
+            this.url = url;
+            this.bj = bj;
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            final Bitmap blurBitmap2 = FastBlurUtil.GetUrlBitmap(url, 2);
+            // 刷新ui必须在主线程中执行
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    bj.setImageBitmap(blurBitmap2);
+                }
+            });
+        }
     }
 
     @Override
@@ -224,13 +281,13 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onPause() {
         super.onPause();
-        getPositionAndOffset();
+        //getPositionAndOffset();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        scrollToPosition();
+        //scrollToPosition();
     }
 
     public void change(){

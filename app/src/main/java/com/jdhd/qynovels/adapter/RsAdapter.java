@@ -48,76 +48,33 @@ public class RsAdapter extends RecyclerView.Adapter<RsAdapter.RsViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull RsViewHolder holder, final int position) {
-        Glide.with(context).load(list.get(position).getImage()).into(holder.book);
-        holder.name.setText(list.get(position).getName());
-        holder.num.setText(list.get(position).getHot()+"");
-        if(position==0){
-            holder.rs.setImageResource(R.mipmap.home_rs_1);
-        }
-       else if(position==1){
-         holder.rs.setImageResource(R.mipmap.home_rs_2);
-       }
-       else if(position==2){
-           holder.rs.setImageResource(R.mipmap.home_rs_3);
-       }
-       else if(position==3){
-           holder.rs.setImageResource(R.mipmap.home_rs_4);
-       }
-       else if(position==4){
-           holder.rs.setImageResource(R.mipmap.home_rs_5);
-       }
-       else if(position==list.size()-1){
-           holder.rs.setVisibility(View.GONE);
-           holder.name.setVisibility(View.GONE);
-           holder.book.setVisibility(View.GONE);
-           holder.num.setVisibility(View.GONE);
-           holder.rd.setVisibility(View.GONE);
-           holder.more.setVisibility(View.VISIBLE);
-       }
-       else{
-           holder.rs.setVisibility(View.GONE);
-       }
-       if(position==list.size()-1){
-           holder.itemView.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                   Intent intent=new Intent(context, PhbActivity.class);
-                   context.startActivity(intent);
-               }
-           });
-       }
-       else{
+        Glide.with(context).load(list.get(position+1).getImage()).into(holder.book);
+        holder.name.setText(list.get(position+1).getName());
+        holder.num.setText(list.get(position+1).getHot()+"");
            holder.itemView.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
                   Intent intent=new Intent(context, XqActivity.class);
                   intent.putExtra("xq",2);
-                  intent.putExtra("id",list.get(position).getBookId());
+                  intent.putExtra("id",list.get(position+1).getBookId());
                   context.startActivity(intent);
                }
            });
-       }
-
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list.size()-1;
     }
 
     class RsViewHolder extends RecyclerView.ViewHolder{
-        private ImageView book,rs;
-        private TextView name,rd,num,more;
-        private RelativeLayout rl;
+        private ImageView book;
+        private TextView name,num;
         public RsViewHolder(@NonNull View itemView) {
             super(itemView);
-            book=itemView.findViewById(R.id.rs_book);
-            rs=itemView.findViewById(R.id.rs);
-            name=itemView.findViewById(R.id.rs_name);
-            rd=itemView.findViewById(R.id.rs_rd);
-            num=itemView.findViewById(R.id.rs_num);
-            more=itemView.findViewById(R.id.rs_more);
-            rl=itemView.findViewById(R.id.rs_rl);
+            book=itemView.findViewById(R.id.kd_book);
+            name=itemView.findViewById(R.id.kd_name);
+            num=itemView.findViewById(R.id.kd_num);
         }
     }
     public interface onItemClick{

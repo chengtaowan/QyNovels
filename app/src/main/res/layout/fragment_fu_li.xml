@@ -31,6 +31,16 @@
             android:textSize="18sp"
             android:layout_centerInParent="true"
             android:id="@+id/fl_title"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:text="邀请明细"
+            android:id="@+id/mx"
+            android:textColor="#000"
+            android:visibility="gone"/>
     </RelativeLayout>
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:layout_width="match_parent"

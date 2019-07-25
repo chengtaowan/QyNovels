@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="c_ffffff">#00ffffff</color>
+    <color name="white">#fff</color>
 
     <!--read-->
     <color name="nb.read.bg_1">#CEC29C</color>

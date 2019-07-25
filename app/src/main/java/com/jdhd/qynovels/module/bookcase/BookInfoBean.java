@@ -117,6 +117,15 @@ public class BookInfoBean {
             private String label;
             private int backlistNum;
             private List<?> ranking;
+            private int updateTime;
+
+            public int getUpdateTime() {
+                return updateTime;
+            }
+
+            public void setUpdateTime(int updateTime) {
+                this.updateTime = updateTime;
+            }
 
             public int getBookId() {
                 return bookId;
@@ -288,6 +297,24 @@ public class BookInfoBean {
             private String author;
             @SerializedName("class")
             private String classX;
+            private String grade;
+            private int finishStatus;
+
+            public int getFinishStatus() {
+                return finishStatus;
+            }
+
+            public void setFinishStatus(int finishStatus) {
+                this.finishStatus = finishStatus;
+            }
+
+            public String getGrade() {
+                return grade;
+            }
+
+            public void setGrade(String grade) {
+                this.grade = grade;
+            }
 
             public int getBookId() {
                 return bookId;

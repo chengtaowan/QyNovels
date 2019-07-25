@@ -54,7 +54,8 @@
                 android:text="分"
                 android:textSize="9sp"
                 android:textColor="#EF8E44"
-                android:id="@+id/gf_fen"/>
+                android:id="@+id/gf_fen"
+                />
         </LinearLayout>
 
         <TextView

@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -64,6 +65,18 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
                 list.add(bookBean);
             }
         }
+        else{
+            cursor=database.rawQuery("select * from readhistory where user='visitor'",new String[]{});
+            while(cursor.moveToNext()){
+                BookBean bookBean=new BookBean();
+                bookBean.setName(cursor.getString(cursor.getColumnIndex("name")));
+                bookBean.setImg(cursor.getString(cursor.getColumnIndex("image")));
+                bookBean.setDes("读到："+cursor.getString(cursor.getColumnIndex("readContent")));
+                bookBean.setTime(cursor.getString(cursor.getColumnIndex("lastTime")));
+                list.add(bookBean);
+            }
+        }
+        Log.e("listsize",list.size()+"---");
         for(int i=list.size()-1;i>=0;i--){
             mlist.add(list.get(i));
         }

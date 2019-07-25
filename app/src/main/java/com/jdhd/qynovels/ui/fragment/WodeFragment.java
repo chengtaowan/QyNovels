@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -79,6 +80,13 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         action=intent.getIntExtra("action",1);
         SharedPreferences preferences=getActivity().getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
+        if(token.equals("")){
+            Glide.with(getContext()).clear(wd_toux);
+            wd_toux.setImageResource(R.mipmap.my_touxiang);
+            wd_jb.setText("0");
+            wd_jrjb.setText("0");
+            wd_ydsj.setText("0");
+        }
         String type=preferences.getString("login","");
         if(action==0|| type.equals("success")){
             wd_lb.setVisibility(View.GONE);
@@ -112,6 +120,8 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wd_lb=view.findViewById(R.id.wd_lb);
         wd_yq=view.findViewById(R.id.wd_yq);
         wd_xj=view.findViewById(R.id.wd_xj);
+        wd_lb.setOnClickListener(this);
+        wd_yq.setOnClickListener(this);
 //        jz=view.findViewById(R.id.jz);
 //        gif=view.findViewById(R.id.case_gif);
         wd_toux=view.findViewById(R.id.wd_toux);
@@ -139,11 +149,14 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             mobel=user.getData().getMobile();
             bindwx=user.getData().getBind_wx();
             wxname=user.getData().getNickname();
-            if(!user.getData().getAvatar().equals("")){
+            if(!user.getData().getAvatar().equals("http://api.damobi.cn")){
                 Glide.with(getContext())
                         .load(user.getData().getAvatar())
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(wd_toux);
+            }
+            else{
+                wd_toux.setImageResource(R.mipmap.my_touxiang);
             }
             wd_name.setText(user.getData().getNickname());
             wd_hbm.setText("红包码："+user.getData().getRed_code());
@@ -173,57 +186,94 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             startActivity(intent);
         }
         else if(R.id.wd_tx==view.getId()){
-            Intent intent=new Intent(getContext(), TxActivity.class);
-            intent.putExtra("money",user.getData().getMoney());
-            intent.putExtra("wxname",wxname);
-            intent.putExtra("totle",user.getData().getTotal_gold());
-            intent.putExtra("jb", DeviceInfoUtils.NumtFormat(user.getData().getBalance()));
-            startActivity(intent);
+            if(user.getData()!=null){
+                Intent intent=new Intent(getContext(), TxActivity.class);
+                intent.putExtra("money",user.getData().getMoney());
+                intent.putExtra("wxname",wxname);
+                intent.putExtra("totle",user.getData().getTotal_gold());
+                intent.putExtra("jb", DeviceInfoUtils.NumtFormat(user.getData().getBalance()));
+                startActivity(intent);
+            }
+            else{
+                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+
+            }
+
         }
         else if(R.id.wd_fk==view.getId()){
             Intent intent=new Intent(getContext(), CjwtActivity.class);
             startActivity(intent);
         }
         else if(R.id.wd_sz==view.getId()){
-            Intent intent=new Intent(getContext(), SzActivity.class);
-            intent.putExtra("name",nickname);
-            intent.putExtra("avatar",avatar);
-            intent.putExtra("sex",sex);
-            intent.putExtra("uid",uid);
-            intent.putExtra("mobile",mobel+"");
-            intent.putExtra("bindwx",bindwx);
-            intent.putExtra("wxname",wxname);
+            if(user.getData()!=null){
+                Intent intent=new Intent(getContext(), SzActivity.class);
+                intent.putExtra("name",nickname);
+                intent.putExtra("avatar",avatar);
+                intent.putExtra("sex",sex);
+                intent.putExtra("uid",uid);
+                intent.putExtra("mobile",mobel+"");
+                intent.putExtra("bindwx",bindwx);
+                intent.putExtra("wxname",wxname);
+                startActivity(intent);
+            }
+            else{
+                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
 
-            startActivity(intent);
+            }
         }
         else if(R.id.wd_toux==view.getId()){
-            Intent intent=new Intent(getContext(), GrzlActivity.class);
-            intent.putExtra("name",nickname);
-            intent.putExtra("avatar",avatar);
-            intent.putExtra("sex",sex);
-            intent.putExtra("uid",uid);
-            intent.putExtra("mobile",mobel+"");
-            intent.putExtra("bindwx",bindwx);
-            intent.putExtra("wxname",wxname);
-            intent.putExtra("type",1);
-            startActivity(intent);
+            if(user.getData()!=null){
+                Intent intent=new Intent(getContext(), GrzlActivity.class);
+                intent.putExtra("name",nickname);
+                intent.putExtra("avatar",avatar);
+                intent.putExtra("sex",sex);
+                intent.putExtra("uid",uid);
+                intent.putExtra("mobile",mobel+"");
+                intent.putExtra("bindwx",bindwx);
+                intent.putExtra("wxname",wxname);
+                intent.putExtra("type",1);
+                startActivity(intent);
+            }
+            else{
+                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+
+            }
+
         }
         else if(R.id.wd_wdjb==view.getId()){
             Intent intent=new Intent(getContext(), JbActivity.class);
-            intent.putExtra("ye",user.getData().getBalance());
-            intent.putExtra("money",user.getData().getMoney());
-            intent.putExtra("today",user.getData().getToday_gold());
-            intent.putExtra("total",user.getData().getTotal_gold());
-            intent.putExtra("wxname",wxname);
-            startActivity(intent);
+            if(user.getData()!=null){
+                intent.putExtra("ye",user.getData().getBalance());
+                intent.putExtra("money",user.getData().getMoney());
+                intent.putExtra("today",user.getData().getToday_gold());
+                intent.putExtra("total",user.getData().getTotal_gold());
+                intent.putExtra("wxname",wxname);
+                startActivity(intent);
+            }
+            else{
+                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+            }
+
         }
         else if(R.id.wd_xx==view.getId()){
            Intent intent=new Intent(getContext(), XxActivity.class);
            startActivity(intent);
         }
         else if(R.id.wd_xj==view.getId()){
-          Intent intent=new Intent(getContext(),BindCodeActivity.class);
-          startActivity(intent);
+            if(user.getData()!=null){
+                Intent intent=new Intent(getContext(),BindCodeActivity.class);
+                startActivity(intent);
+            }
+            else{
+                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        else if(R.id.wd_lb==view.getId()){
+            Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+        }
+        else if(R.id.wd_yq==view.getId()){
+            Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -242,7 +292,6 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             wd_hbm.setVisibility(View.GONE);
         }
         else{
-            Log.e("bindshow1",userBean.getData().getBind_show()+"");
             if(userBean.getData().getBind_show()==0){
                 wd_xj.setVisibility(View.GONE);
             }
@@ -262,11 +311,14 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                 mobel=user.getData().getMobile();
                 bindwx=user.getData().getBind_wx();
                 wxname=user.getData().getNickname();
-                if (!userBean.getData().getAvatar().equals("")) {
+                if (!userBean.getData().getAvatar().equals("http://api.damobi.cn")) {
                     Glide.with(getContext())
                             .load(userBean.getData().getAvatar())
                             .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                             .into(wd_toux);
+                }
+                else{
+                    wd_toux.setImageResource(R.mipmap.my_touxiang);
                 }
 
                 wd_name.setText(userBean.getData().getNickname());
@@ -332,11 +384,14 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                         mobel=user.getData().getMobile();
                         bindwx=user.getData().getBind_wx();
                         wxname=user.getData().getNickname();
-                        if (!user.getData().getAvatar() .equals("")) {
+                        if (!user.getData().getAvatar() .equals("http://api.damobi.cn")) {
                             Glide.with(getContext())
                                     .load(user.getData().getAvatar())
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                                     .into(wd_toux);
+                        }
+                        else{
+                            wd_toux.setImageResource(R.mipmap.my_touxiang);
                         }
 
                         wd_name.setText(user.getData().getNickname());

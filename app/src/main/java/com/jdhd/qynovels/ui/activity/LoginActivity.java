@@ -2,6 +2,7 @@ package com.jdhd.qynovels.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.ICaptchaView;
 import com.jdhd.qynovels.view.personal.ILoginView;
 import com.jdhd.qynovels.view.personal.IPersonalView;
+import com.tbruyelle.rxpermissions.RxPermissions;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
@@ -39,6 +41,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import rx.functions.Action1;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener , ICaptchaView, ILoginView {
     private ImageView gb,wx;
@@ -56,6 +60,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        //同时请求多个权限
+        RxPermissions.getInstance(LoginActivity.this)
+                .request(Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.ACCESS_WIFI_STATE,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.ACCESS_NETWORK_STATE)//多个权限用","隔开
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean aBoolean) {
+                        if (aBoolean) {
+                            //当所有权限都允许之后，返回true
+                            Log.i("permissions", "btn_more_sametime：" + aBoolean);
+                        } else {
+                            //只要有一个权限禁止，返回false，
+                            //下一次申请只申请没通过申请的权限
+                            Log.i("permissions", "btn_more_sametime：" + aBoolean);
+                        }
+                    }
+                });
         init();
     }
 
@@ -103,6 +127,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else if(R.id.dl_but==view.getId()){
             String tel=phone.getText().toString();
             String y=yzm.getText().toString();
+
             loginPresenter=new ILoginPresenterImpl(this,this,tel,y);
             loginPresenter.loadData();
 
@@ -115,26 +140,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onCaptchaSuccess(CaptchaBean captchaBean) {
-        yy.setClickable(false);
-        TimerTask task = new TimerTask() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                runOnUiThread(new Runnable() {
-                    // UI thread
+                Log.e("yzm",captchaBean.getData().getCode()+"");
+                yy.setClickable(false);
+                TimerTask task = new TimerTask() {
                     @Override
                     public void run() {
-                        recLen--;
-                        yy.setText("已发送  "+recLen+"s");
-                        if(recLen <=0){
-                            yy.setText("获取语音验证码");
-                            yy.setClickable(true);
-                        }
+                        runOnUiThread(new Runnable() {
+                            // UI thread
+                            @Override
+                            public void run() {
+                                recLen--;
+                                yy.setText("已发送  "+recLen+"s");
+                                if(recLen <=0){
+                                    yy.setText("获取语音验证码");
+                                    yy.setClickable(true);
+                                    timer.cancel();
+                                }
+                            }
+                        });
                     }
-                });
+                };
+                timer.schedule(task, 1000, 1000);
+                yzm.setText(captchaBean.getData().getCode()+"");
             }
-        };
-        timer.schedule(task, 1000, 1000);
-        yzm.setText(captchaBean.getData().getCode()+"");
+        });
+
     }
 
     @Override

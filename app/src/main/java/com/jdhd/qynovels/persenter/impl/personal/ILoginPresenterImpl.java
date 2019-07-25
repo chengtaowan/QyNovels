@@ -55,18 +55,18 @@ public class ILoginPresenterImpl implements ILoginPresenter {
         map.put("time",time+"");
         String s = DeviceInfoUtils.md5(DeviceInfoUtils.getCompareTo(map));
         map.put("sign",s);
-//        Log.e("tel",phone);
-//        Log.e("yzm",yzm);
-//        Log.e("brand",brand);
-//        Log.e("model",model);
-//        Log.e("sv",sv);
-//        Log.e("os",os+"");
-//        Log.e("imei",imei);
-//        Log.e("root",root+"");
+        Log.e("tel",phone);
+        Log.e("yzm",yzm);
+        Log.e("brand",brand);
+        Log.e("model",model);
+        Log.e("sv",sv);
+        Log.e("os",os+"");
+        Log.e("imei",imei);
+        Log.e("root",root+"");
         Log.e("sim",sim+"");
-//        Log.e("network",network+"");
-//        Log.e("time",time+"");
-//        Log.e("sign",s);
+        Log.e("network",network+"");
+        Log.e("time",time+"");
+        Log.e("sign",s);
         RxHttp.postForm(MyApp.Url.baseUrl+"token")
                 .add(map)
                 .asParser(new SimpleParser<TokenBean>(){})
@@ -95,8 +95,9 @@ public class ILoginPresenterImpl implements ILoginPresenter {
         sv=DeviceInfoUtils.getDeviceAndroidVersion();
         os=DeviceInfoUtils.getOs();
         imei=DeviceInfoUtils.getIMEI(context);
-        root=DeviceInfoUtils.getRootAhth();
-        sim=DeviceInfoUtils.getSim(context);
+        //root=DeviceInfoUtils.getRootAhth();
+        root=10;
+        sim=DeviceInfoUtils.getSIM(context);
         network=DeviceInfoUtils.getNetWork(context);
         time=DeviceInfoUtils.getTime();
     }

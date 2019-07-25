@@ -6,7 +6,43 @@ public class FunctionBean {
     String title;
     String dataPath;
     String reqName;
+    String code;
+    String type;
+    String scene;
+    String share_img;
     reqParameter reqParameter;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getScene() {
+        return scene;
+    }
+
+    public void setScene(String scene) {
+        this.scene = scene;
+    }
+
+    public String getShare_img() {
+        return share_img;
+    }
+
+    public void setShare_img(String share_img) {
+        this.share_img = share_img;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getReqName() {
         return reqName;

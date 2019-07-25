@@ -113,7 +113,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
                                                 "'"+list.get(position).getAuthor()+"'," +
                                                 "'"+bookListBean.getData().getList().get(0).getName()+"'," +
                                                 "10," + "10," + "'"+list.get(position).getBookId()+"'," +
-                                                "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'',)");
+                                                "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'')");
                                 }
                             }
 

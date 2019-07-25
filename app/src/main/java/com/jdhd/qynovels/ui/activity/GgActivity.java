@@ -119,7 +119,7 @@ public class GgActivity extends AppCompatActivity implements View.OnClickListene
             @MainThread
             public void onTimeout() {
                 mHasLoaded = true;
-                Toast.makeText(GgActivity.this,"开屏广告加载超时",Toast.LENGTH_SHORT).show();
+               // Toast.makeText(GgActivity.this,"开屏广告加载超时",Toast.LENGTH_SHORT).show();
                 goToMainActivity();
             }
 
@@ -127,7 +127,7 @@ public class GgActivity extends AppCompatActivity implements View.OnClickListene
             @MainThread
             public void onSplashAdLoad(TTSplashAd ad) {
                 Log.d(TAG, "开屏广告请求成功");
-                Toast.makeText(GgActivity.this,"开屏广告加载超时",Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(GgActivity.this,"开屏广告加载超时",Toast.LENGTH_SHORT).show();
 
                 mHasLoaded = true;
                 mHandler.removeCallbacksAndMessages(null);
@@ -147,21 +147,21 @@ public class GgActivity extends AppCompatActivity implements View.OnClickListene
                     @Override
                     public void onAdClicked(View view, int type) {
                         Log.d(TAG, "onAdClicked");
-                        Toast.makeText(GgActivity.this,"开屏广告点击",Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(GgActivity.this,"开屏广告点击",Toast.LENGTH_SHORT).show();
 
                     }
 
                     @Override
                     public void onAdShow(View view, int type) {
                         Log.d(TAG, "onAdShow");
-                        Toast.makeText(GgActivity.this,"开屏广告展示",Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(GgActivity.this,"开屏广告展示",Toast.LENGTH_SHORT).show();
 
                     }
 
                     @Override
                     public void onAdSkip() {
                         Log.d(TAG, "onAdSkip");
-                        Toast.makeText(GgActivity.this,"开屏广告跳过",Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(GgActivity.this,"开屏广告跳过",Toast.LENGTH_SHORT).show();
 
                         goToMainActivity();
 
@@ -170,8 +170,7 @@ public class GgActivity extends AppCompatActivity implements View.OnClickListene
                     @Override
                     public void onAdTimeOver() {
                         Log.d(TAG, "onAdTimeOver");
-                        Toast.makeText(GgActivity.this,"开屏广告倒计时结束",Toast.LENGTH_SHORT).show();
-
+                       // Toast.makeText(GgActivity.this,"开屏广告倒计时结束",Toast.LENGTH_SHORT).show();
                         goToMainActivity();
                     }
                 });

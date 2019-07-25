@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="190dp">
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="190dp"
@@ -122,11 +122,4 @@
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
-    <ImageView
-        android:id="@+id/xq_back"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="30dp"
-        android:src="@mipmap/back_b" />
 </RelativeLayout>

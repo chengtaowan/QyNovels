@@ -3,73 +3,54 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="135dp"
-        android:background="#FAFAFA"
-        android:id="@+id/rs_rl"
-        android:layout_weight="1">
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="20dp"
-            android:src="@mipmap/home_rs_1"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="7dp"
-            android:id="@+id/rs"/>
-        <ImageView
-            android:layout_width="36dp"
-            android:layout_height="50dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
-            android:src="@mipmap/a"
-            android:id="@+id/rs_book"
-            android:scaleType="fitXY"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/rs_book"
-            android:layout_centerHorizontal="true"
-            android:text="战国策"
-            android:textSize="14sp"
-            android:textColor="#2F3236"
-            android:textStyle="bold"
-            android:layout_marginTop="7dp"
-            android:id="@+id/rs_name"
-            android:gravity="center"/>
-        <LinearLayout
+        <ImageView
+            android:layout_width="43dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="16dp"
+            android:src="@mipmap/a"
+            android:id="@+id/kd_book"
+            android:scaleType="fitXY"/>
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="7dp"
-            android:orientation="horizontal">
-            <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="热度："
-            android:textColor="#828486"
-            android:textSize="11sp"
-            android:layout_marginLeft="22dp"
-            android:id="@+id/rs_rd"/>
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="7dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:textSize="12sp"
+                android:textColor="#2F3236"
+                android:text="冰与火之歌"
+                android:textStyle="bold"
+                android:layout_below="@+id/kd_top"
+                android:id="@+id/kd_name"/>
+
+            <TextView
+                android:id="@+id/kd_rd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="热度："
+                android:textColor="#828486"
+                android:textSize="11sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/kd_rd"
                 android:text="123456"
                 android:textColor="#E8564E"
                 android:textSize="11sp"
-                android:id="@+id/rs_num"/>
-        </LinearLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="更多排行榜"
-            android:layout_centerInParent="true"
-            android:textColor="#828486"
-            android:textSize="12sp"
-            android:id="@+id/rs_more"
-            android:visibility="gone"/>
-
-    </RelativeLayout>
+                android:id="@+id/kd_num"/>
+        </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

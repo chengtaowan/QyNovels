@@ -4,6 +4,7 @@ import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.os.Handler;
@@ -42,6 +43,7 @@ import com.glong.reader.adpater.CatalogueAdapter;
 import com.glong.reader.adpater.MyReaderAdapter;
 import com.glong.reader.api.Api;
 import com.glong.reader.api.Service;
+import com.glong.reader.config.ColorsConfig;
 import com.glong.reader.entry.BookContentBean;
 import com.glong.reader.entry.BookListBean;
 import com.glong.reader.entry.ChapterContent2Bean;
@@ -358,9 +360,12 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private void initReader() {
         mReaderView = findViewById(R.id.extend_reader);
         mReaderManager = new ReaderView.ReaderManager();
+
         //mAdapter = new MyReaderAdapter();
 
         mReaderView.setReaderManager(mReaderManager);
+        mReaderView.setLineSpace((int) (mReaderView.getTextSize()*0.5));
+        //mReaderView.setSretract("111111");
         //mReaderView.setAdapter(mAdapter);
 
         mReaderView.setPageChangedCallback(new PageChangedCallback() {
@@ -582,6 +587,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
+            ColorsConfig colorsConfig=new ColorsConfig();
+            colorsConfig.setTextColor(Color.parseColor("#5B5956"));
+            mReaderView.setColorsConfig(colorsConfig);
         } else if (i == R.id.reader_bg_1) {
             bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2_on));
             bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
@@ -589,6 +597,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_1));
+            ColorsConfig colorsConfig=new ColorsConfig();
+            colorsConfig.setTextColor(Color.parseColor("#4E402A"));
+            mReaderView.setColorsConfig(colorsConfig);
         } else if (i == R.id.reader_bg_2) {
             bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3_on));
             bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
@@ -596,6 +607,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_2));
+            ColorsConfig colorsConfig=new ColorsConfig();
+            colorsConfig.setTextColor(Color.parseColor("#5F665F"));
+            mReaderView.setColorsConfig(colorsConfig);
         } else if (i == R.id.reader_bg_3) {
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4_on));
             bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
@@ -603,6 +617,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_3));
+            ColorsConfig colorsConfig=new ColorsConfig();
+            colorsConfig.setTextColor(Color.parseColor("#928E8C"));
+            mReaderView.setColorsConfig(colorsConfig);
         } else if (i == R.id.reader_bg_4) {
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5_on));
             bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
@@ -610,23 +627,34 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
+            ColorsConfig colorsConfig=new ColorsConfig();
+            colorsConfig.setTextColor(Color.parseColor("#8A8D90"));
+            mReaderView.setColorsConfig(colorsConfig);
             //切换翻页效果
         }
         else if(i==R.id.sm){
             zh.setText(mReaderView.getTextSize()-1+"");
             mReaderView.setTextSize(Integer.parseInt(zh.getText().toString()));
+            mReaderView.setLineSpace((int) (mReaderView.getTextSize()*0.5));
+            Log.e("textsize",mReaderView.getTextSize()+"");
+            Log.e("line",mReaderView.getLineSpace()+"");
         }
         else if(i==R.id.big){
             zh.setText(mReaderView.getTextSize()+1+"");
             mReaderView.setTextSize(Integer.parseInt(zh.getText().toString()));
+            mReaderView.setLineSpace((int) (mReaderView.getTextSize()*0.5));
+            Log.e("textsize",mReaderView.getTextSize()+"");
+            Log.e("line",mReaderView.getLineSpace()+"");
         }
         else if(i==R.id.dim){
             ScreenUtils.changeAppBrightness(ExtendReaderActivity.this, lightSeekBar.getProgress()-1);
             lightSeekBar.setProgress(lightSeekBar.getProgress()-1);
+
         }
         else if(i==R.id.light){
             ScreenUtils.changeAppBrightness(ExtendReaderActivity.this, lightSeekBar.getProgress()+1);
             lightSeekBar.setProgress(lightSeekBar.getProgress()+1);
+
         }
         else if (i == R.id.effect_real_one_way) {
             mReaderView.setEffect(new EffectOfRealOneWay(this));

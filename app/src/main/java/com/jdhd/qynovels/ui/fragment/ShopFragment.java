@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,7 +36,6 @@ import java.util.List;
  */
 public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedListener,View.OnClickListener, IModuleView {
 
-    private TabLayout tab;
     private ImageView search;
     private ViewPager home_vp;
     private List<Fragment> list=new ArrayList<>();
@@ -46,6 +47,9 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
     private JxFragment jxFragment=new JxFragment();
     private ManFragment manFragment=new ManFragment();
     private WmanFragment wmanFragment=new WmanFragment();
+
+    private TabLayout tab;
+    private List<RadioButton> rblist=new ArrayList<>();
     public ShopFragment() {
 
     }
@@ -64,25 +68,31 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
         return view;
     }
     private void init(View view) {
+        if(jxFragment!=null){
+            jxFragment=new JxFragment();
+        }
+        if(manFragment!=null){
+            manFragment=new ManFragment();
+
+        }
+        if(wmanFragment!=null){
+            wmanFragment=new WmanFragment();
+        }
         jz=view.findViewById(R.id.jz);
         gif=view.findViewById(R.id.case_gif);
-        tab=view.findViewById(R.id.tab);
-        tab.setSelectedTabIndicatorHeight(0);
-        tab.addTab(tab.newTab().setText("精选"));
-        tab.addTab(tab.newTab().setText("男生"));
-        tab.addTab(tab.newTab().setText("女生"));
-        tab.addOnTabSelectedListener(this);
         search=view.findViewById(R.id.search);
         search.setOnClickListener(this);
+        tab=view.findViewById(R.id.tab);
+        tab.setSelectedTabIndicatorHeight(0);
+        tab.addOnTabSelectedListener(this);
         home_vp=view.findViewById(R.id.home_vp);
+        list.clear();
         list.add(jxFragment);
         list.add(manFragment);
         list.add(wmanFragment);
         ShopAdapter adapter=new ShopAdapter(getChildFragmentManager());
         adapter.refresh(list);
         home_vp.setAdapter(adapter);
-        tab.getTabAt(0).select();
-        home_vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
     }
 
     @Override
@@ -102,7 +112,7 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        //home_vp.setCurrentItem(tab.getPosition());
+        home_vp.setCurrentItem(tab.getPosition());
         View view=LayoutInflater.from(getContext()).inflate(R.layout.item_tabtex,null);
         TextView textView = view.findViewById(R.id.tabtex);
         float selectedSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 19, getResources().getDisplayMetrics());
@@ -135,14 +145,15 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-//                jxFragment.setType(moduleBean.getData().getList().get(0).getId());
-//                manFragment.setType(moduleBean.getData().getList().get(1).getId());
-//                wmanFragment.setType(moduleBean.getData().getList().get(2).getId());
+                jxFragment.setType(moduleBean.getData().getList().get(0).getId());
+                manFragment.setType(moduleBean.getData().getList().get(1).getId());
+                wmanFragment.setType(moduleBean.getData().getList().get(2).getId());
                 jz.setVisibility(View.GONE);
-//                for(int i=0;i<moduleBean.getData().getList().size();i++){
-//                    tab.addTab(tab.newTab().setText(moduleBean.getData().getList().get(i).getModuleName()));
-//                }
-
+                for(int i=0;i<moduleBean.getData().getList().size();i++){
+                    tab.addTab(tab.newTab().setText(moduleBean.getData().getList().get(i).getModuleName()));
+                }
+                tab.getTabAt(0).select();
+                home_vp.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
             }
         });
     }

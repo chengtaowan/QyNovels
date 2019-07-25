@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -64,7 +65,7 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
             viewHolder=new TypeViewHolder(view);
         }
         else if(viewType==TYPE_RS){
-            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_base, parent, false);
+            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_jrrs, parent, false);
             viewHolder=new RsViewHolder(view);
         }
         else if(viewType==TYPE_KD){
@@ -126,16 +127,33 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            RsViewHolder viewHolder= (RsViewHolder) holder;
            if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeTodayHotSearch){
               viewHolder.tex.setText(list.get(position).getName());
+               Glide.with(context).load(list.get(position).getList().get(0).getImage()).into(viewHolder.book);
+               viewHolder.name.setText(list.get(position).getList().get(0).getName());
+               viewHolder.des.setText(list.get(position).getList().get(0).getIntro());
+               viewHolder.num.setText(list.get(position).getList().get(0).getHot()+"");
+               GridLayoutManager manager=new GridLayoutManager(context, 2);
+               viewHolder.rv.setLayoutManager(manager);
+               RsAdapter adapter=new RsAdapter(context);
+               adapter.refresh(list.get(position).getList());
+               viewHolder.rv.setAdapter(adapter);
+               viewHolder.more.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View view) {
+                       Intent intent=new Intent(context,PhbActivity.class);
+                       context.startActivity(intent);
+                   }
+               });
+               viewHolder.rl.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View view) {
+                       Intent intent=new Intent(context, XqActivity.class);
+                       intent.putExtra("xq",2);
+                       intent.putExtra("id",list.get(position).getList().get(0).getBookId());
+                       context.startActivity(intent);
+                   }
+               });
            }
-           GridLayoutManager manager=new GridLayoutManager(context, 3);
-           if(count==0){
-               viewHolder.rv.addItemDecoration(new SpaceItemDecoration(20));
-           }
-           count=1;
-           viewHolder.rv.setLayoutManager(manager);
-           RsAdapter adapter=new RsAdapter(context);
-           adapter.refresh(list.get(position).getList());
-           viewHolder.rv.setAdapter(adapter);
+
        }
        else if(holder instanceof KdViewHolder){
            KdViewHolder viewHolder= (KdViewHolder) holder;
@@ -270,11 +288,20 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
 
     class RsViewHolder extends RecyclerView.ViewHolder{
         private TextView tex;
+        private ImageView book;
+        private TextView more,name,des,num;
         private RecyclerView rv;
+        private RelativeLayout rl;
         public RsViewHolder(@NonNull View itemView) {
             super(itemView);
             tex=itemView.findViewById(R.id.home_tex);
             rv=itemView.findViewById(R.id.home_rv);
+            book=itemView.findViewById(R.id.gf_book);
+            more=itemView.findViewById(R.id.more);
+            name=itemView.findViewById(R.id.gf_name);
+            des=itemView.findViewById(R.id.gf_des);
+            num=itemView.findViewById(R.id.gf_num);
+            rl=itemView.findViewById(R.id.rl);
         }
     }
     class KdViewHolder extends RecyclerView.ViewHolder{

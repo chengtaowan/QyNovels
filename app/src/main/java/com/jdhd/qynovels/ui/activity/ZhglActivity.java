@@ -2,10 +2,14 @@ package com.jdhd.qynovels.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,6 +26,7 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
     private TextView zh,sj,wx;
     private RelativeLayout zh_zh,zh_sj,zh_wx;
     private int type;
+    private Button tc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +49,8 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init() {
+        tc=findViewById(R.id.zh_tc);
+        tc.setOnClickListener(this);
         back=findViewById(R.id.zh_back);
         zh=findViewById(R.id.zh);
         sj=findViewById(R.id.sj);
@@ -113,6 +120,16 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
                zh_wx.setClickable(false);
                Toast.makeText(ZhglActivity.this,"您已绑定微信",Toast.LENGTH_SHORT).show();
            }
+       }
+       else if(R.id.zh_tc==view.getId()){
+           SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);
+           SharedPreferences.Editor editor=preferences.edit();
+           editor.clear();
+           editor.commit();
+           Intent intent=new Intent(ZhglActivity.this,MainActivity.class);
+           intent.putExtra("page",3);
+           intent.setAction("exit");
+           startActivity(intent);
        }
     }
 }

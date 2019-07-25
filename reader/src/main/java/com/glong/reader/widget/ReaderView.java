@@ -496,6 +496,7 @@ public class ReaderView extends FrameLayout {
         TextBreakUtils.sParagraph.add(paragraph);
     }
 
+
     public boolean isOpenPaperEffect() {
         return isOpenPaperEffect;
     }

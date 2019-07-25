@@ -33,6 +33,7 @@ import com.jdhd.qynovels.module.bookcase.BookInfoBean;
 import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.activity.MuluActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.utils.FastBlurUtil;
 import com.jdhd.qynovels.widget.ExpandTextView;
 import com.jdhd.qynovels.widget.RatingBar;
@@ -50,6 +51,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private Activity activity;
     private TTAdNative mTTAdNative;
     private TTAdDislike mTTAdDislike;
+
 
     public XqymAdapter(Context context, Activity activity) {
         this.context = context;
@@ -122,14 +124,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
            else if(ys==1){
                viewHolder.start.setSelectedNumber(Float.parseFloat(zs+0.5+""));
            }
-           viewHolder.back.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                   Intent intent=new Intent(context,MainActivity.class);
-                   intent.putExtra("page",1);
-                   context.startActivity(intent);
-               }
-           });
+
        }
        else if(holder instanceof TopViewHolder){
            TopViewHolder viewHolder= (TopViewHolder) holder;
@@ -141,6 +136,8 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
            viewHolder.zd.setText(dataBean.getBook().getReading()+"");
            viewHolder.bookdes.setText(dataBean.getBook().getIntro());
            viewHolder.classname.setText(dataBean.getBook().getClassName());
+           String data = DeviceInfoUtils.changeData(dataBean.getBook().getUpdateTime() + "");
+           viewHolder.time.setText(data);
            viewHolder.ml.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
@@ -334,8 +331,10 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         private RelativeLayout ml;
         private FrameLayout img;
         private RelativeLayout gg;
+        private TextView time;
         public TopViewHolder(@NonNull View itemView) {
             super(itemView);
+            time=itemView.findViewById(R.id.xq_time);
             rq=itemView.findViewById(R.id.xq_rq);
             zd=itemView.findViewById(R.id.xq_zd);
             bookdes=itemView.findViewById(R.id.xq_bookdes);

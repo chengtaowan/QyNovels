@@ -99,7 +99,7 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View view) {
         Intent intent=new Intent(PhbActivity.this,MainActivity.class);
-        intent.putExtra("fragment_flag", 2);
+        intent.putExtra("page", 1);
         startActivity(intent);
     }
 

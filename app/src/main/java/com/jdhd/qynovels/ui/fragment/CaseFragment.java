@@ -281,12 +281,4 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         startActivity(intent);
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(casePresenter!=null){
-            casePresenter.loadData();
-        }
-
-    }
 }

@@ -59,7 +59,7 @@ public class DeviceInfoUtils {
                 .getSystemService(Context.TELEPHONY_SERVICE);
         @SuppressLint("MissingPermission") String deviceId = tm.getDeviceId();
         if (deviceId == null) {
-            return "UnKnown";
+            return "";
         } else {
             return deviceId;
         }
@@ -69,7 +69,7 @@ public class DeviceInfoUtils {
                 .getSystemService(Context.TELEPHONY_SERVICE);
         @SuppressLint("MissingPermission") String deviceId = tm.getSubscriberId();
         if (deviceId == null) {
-            return "UnKnown";
+            return "";
         } else {
             return deviceId;
         }
@@ -122,7 +122,7 @@ public class DeviceInfoUtils {
      */
     public static String getSim(Context context) {
         String imsi = getSIM(context);
-        return imsi.substring(0,5);
+        return imsi;
     }
 
     /**

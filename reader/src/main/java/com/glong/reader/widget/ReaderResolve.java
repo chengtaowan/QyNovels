@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 
 import androidx.annotation.NonNull;
@@ -408,7 +409,7 @@ public class ReaderResolve {
             int charSum = showChars.size();
             float start = x;
 
-            int retractCharNum = 0;// 缩进符数量
+            int retractCharNum =0;// 缩进符数量
             String lineData = showLine.getLineData();
             // 遍历计算缩进符数量
             String tempData = showLine.getLineData();
@@ -418,6 +419,7 @@ public class ReaderResolve {
                     tempData = tempData.substring(retractCharNum);
                 }
             }
+            Log.e("sRetract","缩进符数量"+retractCharNum);
 
             Rect bounds = new Rect();
             mMainBodyPaint.getTextBounds(lineData, 0, retractCharNum, bounds);
@@ -427,7 +429,7 @@ public class ReaderResolve {
                     * 1f / (charSum - retractCharNum - 1);
 
             if (retractCharNum > 0) {
-//                canvas.drawText(lineData.substring(0, retractCharNum - 1), x, y, mMainBodyPaint);
+                canvas.drawText(lineData.substring(0, retractCharNum - 1), x, y, mMainBodyPaint);
                 start += retractsWidth;
             }
             for (int i = retractCharNum; i < showChars.size(); i++) {
@@ -436,7 +438,8 @@ public class ReaderResolve {
                 showChar.rectF = new RectF(start, topPosition, start + showChar.charWidth, bottomPosition);
                 start += landscapeSpace;
             }
-        } else {
+        }
+        else {
             canvas.drawText(showLine.getLineData(), x, y, mMainBodyPaint);
 
             // 计算每个字符的位置

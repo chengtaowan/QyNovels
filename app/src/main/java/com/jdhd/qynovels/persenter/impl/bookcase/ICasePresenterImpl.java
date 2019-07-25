@@ -48,6 +48,7 @@ public class ICasePresenterImpl implements ICasePresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<CaseBean>(){})
                     .subscribe(caseBean->{
+                        Log.e("case",caseBean.getCode()+"--"+caseBean.getMsg());
                         if(caseBean.getCode()==200&&caseBean.getMsg().equals("请求成功")){
                             iCaseView.onSuccess(caseBean);
                         }

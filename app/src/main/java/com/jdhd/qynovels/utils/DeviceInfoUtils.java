@@ -59,9 +59,10 @@ public class DeviceInfoUtils {
     public static String getIMEI(Context context) {
         TelephonyManager tm = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
-        @SuppressLint("MissingPermission") String deviceId = tm.getDeviceId();
+        @SuppressLint("MissingPermission")
+        String deviceId = tm.getDeviceId();
         if (deviceId == null) {
-            return "UnKnown";
+            return "";
         } else {
             return deviceId;
         }
@@ -69,9 +70,10 @@ public class DeviceInfoUtils {
     public static String getSIM(Context context) {
         TelephonyManager tm = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
-        @SuppressLint("MissingPermission") String deviceId = tm.getSubscriberId();
+        @SuppressLint("MissingPermission")
+        String deviceId = tm.getSubscriberId();
         if (deviceId == null) {
-            return "UnKnown";
+            return "00000";
         } else {
             return deviceId;
         }
@@ -240,8 +242,7 @@ public class DeviceInfoUtils {
         long lcc = Long.valueOf(time);
         int i = Integer.parseInt(time);
         String times = sdr.format(new Date(i * 1000L));
-        String[] strs = times.split("年");
-        String[] str = strs[1].split("日");
+        String[] str = times.split("日");
         return str[0];
     }
 

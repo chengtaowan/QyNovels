@@ -17,12 +17,12 @@ public class TextBreakUtils {
 
     static {
         sParagraph.add("<br><br>");
-        sParagraph.add("<br>");
-        sParagraph.add("</p>");
+        sParagraph.add("\r\n");
+        sParagraph.add("\r");
         sParagraph.add("\n");
 
-        sRetract.add("　");// 这个类似空格但并不是空格的缩进符，长度刚好是一个汉字的长度（推荐使用这个作为缩进符）
-        sRetract.add(" ");// 以空格为段开头
+        sRetract.add("\t\t");// 这个类似空格但并不是空格的缩进符，长度刚好是一个汉字的长度（推荐使用这个作为缩进符）
+        sRetract.add("       ");// 以空格为段开头
     }
 
     public static boolean isStartWithRetract(String src) {

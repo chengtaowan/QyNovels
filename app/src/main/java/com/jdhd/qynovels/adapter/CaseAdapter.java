@@ -106,7 +106,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
                         public void onSuccess(BookListBean bookListBean) {
                             bookBean=bookListBean;
                             database=dbUtils.getWritableDatabase();
-                            if(token!=null){
+                            if(!token.equals("")){
                                 if(bookBean!=null){
                                     database.execSQL("delete from readhistory where user='user'and name='"+hotBean.getName()+"'");
                                     database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
@@ -130,7 +130,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
                                             "'"+hotBean.getAuthor()+"'," +
                                             "'"+bookBean.getData().getList().get(0).getName()+"'," +
                                             "10," + "10," + "'"+hotBean.getBookId()+"'," +
-                                            "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'',)");
+                                            "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'')");
                                 }
 
                             }

@@ -56,9 +56,9 @@ public class ICaptchaPresenterImpl implements IPersonalPresenter {
                     .asParser(new SimpleParser<CaptchaBean>(){})
                     .subscribe(captchaBean->{
                         Log.e("capcode",captchaBean.getCode()+""+captchaBean.getMsg());
-                        if(captchaBean.getCode()==200&&captchaBean.getMsg().equals("验证码发送成功")){
+                        //if(captchaBean.getCode()==200&&captchaBean.getMsg().equals("验证码发送成功")){
                             iCaptchaView.onCaptchaSuccess(captchaBean);
-                        }
+                        //}
                     },throwable->{
                         iCaptchaView.onCaptchaError(throwable.getMessage());
                     });

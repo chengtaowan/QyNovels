@@ -13,7 +13,7 @@ import com.jdhd.qynovels.ui.fragment.WmanFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShopAdapter extends FragmentPagerAdapter {
+public class ShopAdapter extends FragmentStatePagerAdapter {
     private List<Fragment> list=new ArrayList<>();
 
     public void refresh(List<Fragment> list){
