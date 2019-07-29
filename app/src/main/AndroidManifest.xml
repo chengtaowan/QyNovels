@@ -21,6 +21,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="true"
         android:name=".app.MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/icon"
@@ -28,8 +30,12 @@
         android:roundIcon="@mipmap/iconyj"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Main"
-        android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.FriendListActivity"></activity>
+        >
+        <activity android:name=".ui.activity.PrizeListActivity"></activity>
+        <activity android:name=".ui.activity.ZpActivity" />
+        <activity android:name=".ui.activity.YqActivity" />
+        <activity android:name=".ui.activity.XyActivity" />
+        <activity android:name=".ui.activity.FriendListActivity" />
 
         <meta-data
             android:name="design_width_in_dp"
@@ -58,8 +64,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.ShareActivity" />
-        <activity android:name=".ui.activity.YdwActivity" />
+        <activity android:name=".ui.activity.ShareActivity" >
+
+        </activity>
+        <activity android:name=".ui.activity.YdwActivity" >
+
+        </activity>
         <activity android:name=".ui.activity.JbActivity" />
         <activity android:name=".ui.activity.CjwtActivity" />
         <activity android:name=".ui.activity.GywmActivity" />

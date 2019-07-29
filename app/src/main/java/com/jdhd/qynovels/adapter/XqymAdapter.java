@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdDislike;
 import com.bytedance.sdk.openadsdk.TTAdNative;
@@ -29,6 +31,7 @@ import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTAppDownloadListener;
 import com.bytedance.sdk.openadsdk.TTBannerAd;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
 import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.activity.MuluActivity;
@@ -93,11 +96,15 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
        if(holder instanceof BookViewHolder){
            BookViewHolder viewHolder= (BookViewHolder) holder;
+           Log.e("databean",(dataBean.getBook()==null)+"");
            if(dataBean.getBook()==null){
                return;
            }
+           else {
+              Log.e("bookbean",dataBean.getBook().toString());
+           }
            new MyThread(dataBean.getBook().getImage(),viewHolder.bj).start();
-           Glide.with(context).load(dataBean.getBook().getImage()).into(viewHolder.book);
+           Glide.with(context).load(dataBean.getBook().getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(viewHolder.book);
            //Glide.with(XqActivity.this).load(bookInfoBean.getData().getBook().getImage()).into(bj);
            //       scaledBitmap为目标图像，10是缩放的倍数（越大模糊效果越高）
            if(dataBean.getBook().getFinishStatus()==10){
@@ -200,7 +207,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
             @Override
             public void onError(int code, String message) {
-                Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,message+"--"+code,Toast.LENGTH_SHORT).show();
                 mBannerContainer.removeAllViews();
             }
 
@@ -420,7 +427,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         ad.setDownloadListener(new TTAppDownloadListener() {
             @Override
             public void onIdle() {
-                Toast.makeText(context, "点击图片开始下载", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(context, "点击图片开始下载", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -434,7 +441,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
             @Override
             public void onDownloadPaused(long totalBytes, long currBytes, String fileName, String appName) {
-                Toast.makeText(context, "下载暂停，点击图片继续", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(context, "下载暂停，点击图片继续", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -444,12 +451,12 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
             @Override
             public void onInstalled(String fileName, String appName) {
-                Toast.makeText(context, "安装完成，点击图片打开", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "安装完成，点击图片打开", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onDownloadFinished(long totalBytes, String fileName, String appName) {
-                Toast.makeText(context, "点击图片安装", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(context, "点击图片安装", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -2,6 +2,7 @@ package com.jdhd.qynovels.ui.fragment;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -46,6 +47,8 @@ public class JxFragment extends Fragment implements IJxView {
     private ImageView gif;
     private SmartRefreshLayout sr;
     private boolean hasNetWork;
+    private String sex;
+    private int psex=20;
 
     public void setType(int type) {
         this.type = type;
@@ -61,7 +64,13 @@ public class JxFragment extends Fragment implements IJxView {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_jx, container, false);
+        sharedPreferences=getContext().getSharedPreferences("sex", Context.MODE_PRIVATE);
+        sex = sharedPreferences.getString("sex", "");
+        if(sex.equals("女")){
+           psex=30;
+        }
         jxPresenter=new IJxPresenterImpl(this,1,getContext());
+        jxPresenter.setSex(psex);
         jxPresenter.loadData();
         hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
         init(view);

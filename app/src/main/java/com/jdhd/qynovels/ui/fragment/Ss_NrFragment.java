@@ -20,6 +20,9 @@ import com.jdhd.qynovels.persenter.impl.bookcase.ISearchContentPresenterImpl;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.view.bookshop.ISearchContentView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -29,6 +32,7 @@ public class Ss_NrFragment extends Fragment implements Ss_NrAdapter.onItemClick,
     private String content;
     private ISearchContentPresenterImpl searchContentPresenter;
     private Ss_NrAdapter adapter;
+    private List<SearchContentBean.DataBean.ListBean> listBean=new ArrayList<>();
 
     public void setContent(String content) {
         this.content = content;
@@ -62,8 +66,7 @@ public class Ss_NrFragment extends Fragment implements Ss_NrAdapter.onItemClick,
 
     @Override
     public void onNrClick(int index) {
-        Intent intent=new Intent(getContext(), XqActivity.class);
-        startActivity(intent);
+
     }
 
     @Override
@@ -71,6 +74,7 @@ public class Ss_NrFragment extends Fragment implements Ss_NrAdapter.onItemClick,
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                listBean=searchContentBean.getData().getList();
                adapter.refresh(searchContentBean.getData().getList());
             }
         });

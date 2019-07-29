@@ -55,7 +55,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/sj_rv"></androidx.recyclerview.widget.RecyclerView>
+        android:id="@+id/sj_rv"
+        android:descendantFocusability="blocksDescendants"></androidx.recyclerview.widget.RecyclerView>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
     <include layout="@layout/item_jz"/>
 </RelativeLayout>

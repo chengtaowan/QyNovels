@@ -20,6 +20,8 @@ import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.view.bookcase.IHotSearchView;
 import com.tencent.mm.opensdk.utils.Log;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -55,8 +57,6 @@ public class Ss_RsFragment extends Fragment implements Ss_RsAdapter.onItemClick,
 
     @Override
     public void onRsClick(int index) {
-        Intent intent=new Intent(getContext(), XqActivity.class);
-        startActivity(intent);
     }
 
     @Override

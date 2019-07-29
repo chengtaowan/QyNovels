@@ -23,10 +23,13 @@ public class IAvatarPresenterImpl implements IAvatarPresenter {
     private String token;
     private String file;
 
-    public IAvatarPresenterImpl(IAvatarView iAvatarView, Context context, String file) {
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    public IAvatarPresenterImpl(IAvatarView iAvatarView, Context context) {
         this.iAvatarView = iAvatarView;
         this.context = context;
-        this.file = file;
     }
 
     @Override
@@ -51,6 +54,7 @@ public class IAvatarPresenterImpl implements IAvatarPresenter {
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                 .asParser(new SimpleParser<AvatarBean>(){})
                 .subscribe(avatarBean->{
+                    Log.e("avatar",avatarBean.getCode()+"--"+avatarBean.getMsg());
                     if(avatarBean.getCode()==200&&avatarBean.getMsg().equals("success")){
                         iAvatarView.onAvatarSuccess(avatarBean);
                     }

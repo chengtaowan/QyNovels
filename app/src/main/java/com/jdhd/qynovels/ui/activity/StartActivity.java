@@ -50,7 +50,7 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
         setContentView(R.layout.activity_start);
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
-        TTAdSdk.getAdManager().requestPermissionIfNecessary(MyApp.getAppContext());
+
         refreshTokenPresenter=new IRefreshTokenPresenterImpl(this,StartActivity.this);
         //refreshTokenPresenter.loadData();
         final Message message=handler.obtainMessage();

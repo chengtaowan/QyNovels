@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
@@ -16,7 +17,8 @@ import com.jdhd.qynovels.utils.StatusBarUtil;
 public class SzActivity extends AppCompatActivity implements View.OnClickListener {
     private RelativeLayout sz,zh,gy;
     private ImageView back;
-    private String avatar,nickname,sex,mobile,wxname;
+    private String token;
+    private String avatar="",nickname="",sex="",mobile="",wxname;
     private int uid,bindwx;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,14 +27,19 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent perintent=getIntent();
-            nickname=perintent.getStringExtra("name");
-            mobile=perintent.getStringExtra("mobile");
-            avatar=perintent.getStringExtra("avatar");
-            sex=perintent.getStringExtra("sex");
-            uid=perintent.getIntExtra("uid",0);
-            bindwx=perintent.getIntExtra("bindwx",0);
-            wxname=perintent.getStringExtra("wxname");
-
+        int type=perintent.getIntExtra("type",0);
+        if(type==1){
+            token=perintent.getStringExtra("token");
+            if(!token.equals("")){
+                nickname=perintent.getStringExtra("name");
+                mobile=perintent.getStringExtra("mobile");
+                avatar=perintent.getStringExtra("avatar");
+                sex=perintent.getStringExtra("sex");
+                uid=perintent.getIntExtra("uid",0);
+                bindwx=perintent.getIntExtra("bindwx",0);
+                wxname=perintent.getStringExtra("wxname");
+            }
+        }
         init();
     }
 
@@ -63,24 +70,36 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View view) {
         if(R.id.sz_sz==view.getId()){
-           Intent intent=new Intent(SzActivity.this,GrzlActivity.class);
-            intent.putExtra("name",nickname);
-            intent.putExtra("avatar",avatar);
-            intent.putExtra("sex",sex);
-            intent.putExtra("uid",uid);
-            intent.putExtra("mobile",mobile+"");
-            intent.putExtra("bindwx",bindwx);
-            intent.putExtra("wxname",wxname);
-            intent.putExtra("type",2);
-           startActivity(intent);
+            if(nickname.equals("")&&avatar.equals("")&&sex.equals("")){
+                Toast.makeText(SzActivity.this,"请登录",Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Intent intent=new Intent(SzActivity.this,GrzlActivity.class);
+                intent.putExtra("name",nickname);
+                intent.putExtra("avatar",avatar);
+                intent.putExtra("sex",sex);
+                intent.putExtra("uid",uid);
+                intent.putExtra("mobile",mobile+"");
+                intent.putExtra("bindwx",bindwx);
+                intent.putExtra("wxname",wxname);
+                intent.putExtra("type",2);
+                startActivity(intent);
+            }
+
         }
         else if(R.id.sz_zh==view.getId()){
-           Intent intent=new Intent(SzActivity.this,ZhglActivity.class);
-            intent.putExtra("uid",uid);
-            intent.putExtra("mobile",mobile+"");
-            intent.putExtra("wxname",wxname);
-            intent.putExtra("type",2);
-           startActivity(intent);
+            if(nickname.equals("")&&avatar.equals("")&&sex.equals("")){
+                Toast.makeText(SzActivity.this,"请登录",Toast.LENGTH_SHORT).show();
+
+            }
+            else{
+                Intent intent=new Intent(SzActivity.this,ZhglActivity.class);
+                intent.putExtra("uid",uid);
+                intent.putExtra("mobile",mobile+"");
+                intent.putExtra("wxname",wxname);
+                intent.putExtra("type",2);
+                startActivity(intent);            }
+
         }
         else if(R.id.sz_gy==view.getId()){
             Intent intent=new Intent(SzActivity.this,GywmActivity.class);

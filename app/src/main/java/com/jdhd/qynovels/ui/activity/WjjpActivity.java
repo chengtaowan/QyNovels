@@ -117,7 +117,7 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onError(String error) {
-       Log.e("wj",error);
+       Log.e("wjerror",error);
     }
 
     @Override

@@ -7,8 +7,8 @@ public class SignSetingBean {
     /**
      * code : 200
      * msg : 请求成功
-     * time : 1562066227
-     * data : {"signNum":11,"is_sign":0,"rule":[{"rule":"规则1","sort":1},{"rule":"规则2","sort":2},{"rule":"规则3","sort":3},{"rule":"规则4","sort":4}],"signData":[{"date":"06.29","is_sign":1,"award":70},{"date":"06.30","is_sign":1,"award":70},{"date":"07.01","is_sign":1,"award":70},{"date":"今天","is_sign":0,"award":70},{"date":"07.03","is_sign":0,"award":70},{"date":"07.04","is_sign":0,"award":70},{"date":"07.05","is_sign":0,"award":70}]}
+     * time : 1564042035
+     * data : {"signNum":1,"is_sign":2,"double_award":10,"rule":[{"rule":"第一天签到给10金币,第二天签到给20金币,第三天签到给30金币,第四天签到给40金币,第五天签到给50金币,第六天签到给60金币,第七天签到给70金币,第八天签到给100金币,...........,第n天给100金币","sort":1},{"rule":"采用连续签到，如果其中一天没签，则从第一天重新开始","sort":2},{"rule":"看小视频可获得双倍奖励","sort":3}],"signData":[{"date":"今天","is_sign":2,"award":10},{"date":"07.26","is_sign":0,"award":20},{"date":"07.27","is_sign":0,"award":30},{"date":"07.28","is_sign":0,"award":40},{"date":"07.29","is_sign":0,"award":50},{"date":"07.30","is_sign":0,"award":60},{"date":"07.31","is_sign":0,"award":70}]}
      */
 
     private int code;
@@ -50,14 +50,16 @@ public class SignSetingBean {
 
     public static class DataBean {
         /**
-         * signNum : 11
-         * is_sign : 0
-         * rule : [{"rule":"规则1","sort":1},{"rule":"规则2","sort":2},{"rule":"规则3","sort":3},{"rule":"规则4","sort":4}]
-         * signData : [{"date":"06.29","is_sign":1,"award":70},{"date":"06.30","is_sign":1,"award":70},{"date":"07.01","is_sign":1,"award":70},{"date":"今天","is_sign":0,"award":70},{"date":"07.03","is_sign":0,"award":70},{"date":"07.04","is_sign":0,"award":70},{"date":"07.05","is_sign":0,"award":70}]
+         * signNum : 1
+         * is_sign : 2
+         * double_award : 10
+         * rule : [{"rule":"第一天签到给10金币,第二天签到给20金币,第三天签到给30金币,第四天签到给40金币,第五天签到给50金币,第六天签到给60金币,第七天签到给70金币,第八天签到给100金币,...........,第n天给100金币","sort":1},{"rule":"采用连续签到，如果其中一天没签，则从第一天重新开始","sort":2},{"rule":"看小视频可获得双倍奖励","sort":3}]
+         * signData : [{"date":"今天","is_sign":2,"award":10},{"date":"07.26","is_sign":0,"award":20},{"date":"07.27","is_sign":0,"award":30},{"date":"07.28","is_sign":0,"award":40},{"date":"07.29","is_sign":0,"award":50},{"date":"07.30","is_sign":0,"award":60},{"date":"07.31","is_sign":0,"award":70}]
          */
 
         private int signNum;
         private int is_sign;
+        private int double_award;
         private List<RuleBean> rule;
         private List<SignDataBean> signData;
 
@@ -75,6 +77,14 @@ public class SignSetingBean {
 
         public void setIs_sign(int is_sign) {
             this.is_sign = is_sign;
+        }
+
+        public int getDouble_award() {
+            return double_award;
+        }
+
+        public void setDouble_award(int double_award) {
+            this.double_award = double_award;
         }
 
         public List<RuleBean> getRule() {
@@ -95,7 +105,7 @@ public class SignSetingBean {
 
         public static class RuleBean {
             /**
-             * rule : 规则1
+             * rule : 第一天签到给10金币,第二天签到给20金币,第三天签到给30金币,第四天签到给40金币,第五天签到给50金币,第六天签到给60金币,第七天签到给70金币,第八天签到给100金币,...........,第n天给100金币
              * sort : 1
              */
 
@@ -121,9 +131,9 @@ public class SignSetingBean {
 
         public static class SignDataBean {
             /**
-             * date : 06.29
-             * is_sign : 1
-             * award : 70
+             * date : 今天
+             * is_sign : 2
+             * award : 10
              */
 
             private String date;

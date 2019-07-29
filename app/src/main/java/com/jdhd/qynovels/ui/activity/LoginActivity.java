@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ICaptchaPresenterImpl captchaPresenter;
     private ILoginPresenterImpl loginPresenter;
     private int recLen = 59;
+    private TextView ys,xy;
     Timer timer = new Timer();
 
     @Override
@@ -84,6 +85,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void init() {
+        ys=findViewById(R.id.ys);
+        xy=findViewById(R.id.xy);
+        ys.setOnClickListener(this);
+        xy.setOnClickListener(this);
         gb=findViewById(R.id.dl_gb);
         wx=findViewById(R.id.dl_wx);
         phone=findViewById(R.id.dl_phone);
@@ -131,6 +136,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             loginPresenter=new ILoginPresenterImpl(this,this,tel,y);
             loginPresenter.loadData();
 
+        }
+        else if(R.id.xy==view.getId()){
+            Intent intent=new Intent(LoginActivity.this,XyActivity.class);
+            intent.putExtra("title","用户协议");
+            intent.putExtra("type",1);
+            startActivity(intent);
+        }
+        else if(R.id.ys==view.getId()){
+            Intent intent=new Intent(LoginActivity.this,XyActivity.class);
+            intent.putExtra("title","隐私协议");
+            intent.putExtra("type",2);
+            startActivity(intent);
         }
     }
     @Override

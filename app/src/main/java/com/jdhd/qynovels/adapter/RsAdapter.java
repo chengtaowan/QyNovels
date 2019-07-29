@@ -13,10 +13,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.ui.activity.PhbActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +53,11 @@ public class RsAdapter extends RecyclerView.Adapter<RsAdapter.RsViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull RsViewHolder holder, final int position) {
-        Glide.with(context).load(list.get(position+1).getImage()).into(holder.book);
+        if(list.get(position+1).getImage()!=null){
+            GlideUrl url = DeviceInfoUtils.getUrl(list.get(position+1).getImage());
+            Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+
+        }
         holder.name.setText(list.get(position+1).getName());
         holder.num.setText(list.get(position+1).getHot()+"");
            holder.itemView.setOnClickListener(new View.OnClickListener() {

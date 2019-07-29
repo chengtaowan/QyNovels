@@ -795,7 +795,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private void loadBannerAd(LinearLayout mBannerContainer) {
         //step4:创建广告请求参数AdSlot,具体参数含义参考文档
         AdSlot adSlot = new AdSlot.Builder()
-                .setCodeId("901121895") //广告位id
+                .setCodeId("924212868") //广告位id
                 .setSupportDeepLink(true)
                 .setImageAcceptedSize(300, 200)
                 .build();

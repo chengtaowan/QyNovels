@@ -137,4 +137,20 @@ public class FunctionBean {
     public FunctionBean(String functionName) {
         this.functionName = functionName;
     }
+
+    @Override
+    public String toString() {
+        return "FunctionBean{" +
+                "functionName='" + functionName + '\'' +
+                ", path='" + path + '\'' +
+                ", title='" + title + '\'' +
+                ", dataPath='" + dataPath + '\'' +
+                ", reqName='" + reqName + '\'' +
+                ", code='" + code + '\'' +
+                ", type='" + type + '\'' +
+                ", scene='" + scene + '\'' +
+                ", share_img='" + share_img + '\'' +
+                ", reqParameter=" + reqParameter +
+                '}';
+    }
 }

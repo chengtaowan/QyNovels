@@ -74,7 +74,7 @@ public class SearchContentBean {
              * hot : 12081
              */
 
-            private int id;
+            private int bookId;
             private String name;
             private String image;
             private String intro;
@@ -86,12 +86,12 @@ public class SearchContentBean {
             private int attention;
             private int hot;
 
-            public int getId() {
-                return id;
+            public int getBookId() {
+                return bookId;
             }
 
-            public void setId(int id) {
-                this.id = id;
+            public void setBookId(int bookId) {
+                this.bookId = bookId;
             }
 
             public String getName() {

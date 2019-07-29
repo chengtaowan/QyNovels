@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,8 +23,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.bytedance.sdk.openadsdk.TTFeedAd;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.glong.reader.activities.ExtendReaderActivity;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.BookListBean;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookListPresenterImpl;
@@ -52,6 +62,11 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     private String time;
     private IBookListPresenterImpl bookListPresenter;
     private BookListBean bookBean=new BookListBean();
+    private List<TTFeedAd> feedlist=new ArrayList<>();
+    public void refreshfeed(List<TTFeedAd> feedlist){
+        this.feedlist=feedlist;
+        notifyDataSetChanged();
+    }
     public void refreshhot(CaseBean.DataBean.HotBean hotBean){
         this.hotBean=hotBean;
         notifyDataSetChanged();
@@ -96,7 +111,14 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
                 return;
             }
             viewHolder.des.setText(hotBean.getIntro());
-            Glide.with(context).load(hotBean.getImage()).into(viewHolder.book);
+            Log.e("img",hotBean.getImage()+"---");
+            if(hotBean.getImage()!=null){
+                GlideUrl url = DeviceInfoUtils.getUrl(hotBean.getImage());
+                Glide.with(context)
+                        .load(url)
+                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
+                        .into(viewHolder.book);
+            }
             viewHolder.name.setText(hotBean.getName());
             viewHolder.ll.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -162,6 +184,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
             viewHolder.rv.setLayoutManager(layoutManager);
             CaseContentAdapter adapter=new CaseContentAdapter(context,activity);
             adapter.refresh(listBean);
+            adapter.refreshfeed(feedlist);
             viewHolder.rv.setAdapter(adapter);
         }
 

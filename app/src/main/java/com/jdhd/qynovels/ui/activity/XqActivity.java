@@ -2,6 +2,7 @@ package com.jdhd.qynovels.ui.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,9 +13,12 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -75,6 +79,13 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     private BookListBean listBean=new BookListBean();
     private ImageView back;
     private Toolbar toolbar;
+    private TextView title;
+    private View.OnTouchListener onTouchListener= new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return findViewById(R.id.rl).dispatchTouchEvent(event);
+        }
+    };;
 
 
     @Override
@@ -103,6 +114,8 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
 
     private void init() {
         toolbar=findViewById(R.id.toolbar);
+        title=findViewById(R.id.tex);
+        title.setVisibility(View.GONE);
         back=findViewById(R.id.xq_back);
         back.setOnClickListener(this);
         jrsj=findViewById(R.id.xq_jrsj);
@@ -113,11 +126,13 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
         gif=findViewById(R.id.case_gif);
         Glide.with(this).load(R.mipmap.re).into(gif);
         rv=findViewById(R.id.xq_rv);
+
         LinearLayoutManager manager=new LinearLayoutManager(this);
         rv.setLayoutManager(manager);
         adapter=new XqymAdapter(this,XqActivity.this);
         rv.setAdapter(adapter);
         rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            Drawable drawable= ContextCompat.getDrawable(XqActivity.this, R.drawable.tool_bj);
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 StatusBarUtil.setStatusBarMode(XqActivity.this, true, R.color.c_ffffff);
@@ -126,16 +141,31 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
 
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
                 StatusBarUtil.setStatusBarMode(XqActivity.this, true, R.color.c_ffffff);
                 Log.e("juli",dy+"---");
-                if(dy>0){
-                   toolbar.setBackgroundColor(Color.WHITE);
+                int toolBarHeight = toolbar.getMeasuredHeight();
+                if ((recyclerView.computeVerticalScrollOffset()) >= (toolBarHeight * 2.5)) { // >=Toolbar高度的2.5倍时全显背景图
+                    drawable.setAlpha(255);
+                    toolbar.setBackground(drawable);
+                    back.setImageResource(R.mipmap.back_h);
+                    title.setVisibility(View.VISIBLE);
+                    title.setText(bookBean.getData().getBook().getName());
+                    toolbar.setOnTouchListener(null);
+                } else if((recyclerView.computeVerticalScrollOffset()) >= toolBarHeight){ // >=Toolbar高度&&<Toolbar高度的2.5倍时开始渐变背景图
+                    drawable.setAlpha((int) (255 * ((recyclerView.computeVerticalScrollOffset() - toolBarHeight)/(toolBarHeight * 1.5F))));
+                    toolbar.setBackground(drawable);
+                    title.setVisibility(View.VISIBLE);
+                    title.setText(bookBean.getData().getBook().getName());
+                    back.setImageResource(R.mipmap.back_h);
+                    toolbar.setOnTouchListener(onTouchListener);
+                } else { // 小于Toolbar高度时不设置背景图
+                    toolbar.setBackground(null);
+                    title.setVisibility(View.GONE);
+                    back.setImageResource(R.mipmap.back_b);
+                    toolbar.setOnTouchListener(onTouchListener);
+                }
 
-                }
-                else if(dy<0){
-                    toolbar.setBackgroundColor(Color.parseColor("#7effffff"));
-                }
-                super.onScrolled(recyclerView, dx, dy);
             }
         });
 
@@ -149,9 +179,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
            Toast.makeText(XqActivity.this,"加入书架",Toast.LENGTH_SHORT).show();
        }
        else if(R.id.xq_back==view.getId()){
-           Intent intent=new Intent(XqActivity.this,MainActivity.class);
-           intent.putExtra("page",1);
-           startActivity(intent);
+           change();
        }
        else if(R.id.xq_yd==view.getId()){
           String time= DeviceInfoUtils.getTime()+"";
@@ -189,17 +217,23 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     }
 
     @Override
-    public void onSuccess(BookInfoBean bookInfoBean) {
-       runOnUiThread(new Runnable() {
-           @Override
-           public void run() {
-               bookBean=bookInfoBean;
-               jz.setVisibility(View.GONE);
-               adapter.refresh(bookInfoBean.getData());
+    public void onBookinfoSuccess(BookInfoBean bookInfoBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                bookBean=bookInfoBean;
+                jz.setVisibility(View.GONE);
+                adapter.refresh(bookInfoBean.getData());
 
-           }
-       });
+            }
+        });
     }
+
+    @Override
+    public void onBookinfoError(String error) {
+       Log.e("bookinfoerror",error);
+    }
+
     public class MyThread extends Thread{
         private String url;
         private ImageView bj;
@@ -315,6 +349,14 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
             startActivity(intent);
         }
         else if(type==6){
+            Intent intent=new Intent(XqActivity.this,MorePhbActivity.class);
+            startActivity(intent);
+        }
+        else if(type==7){
+            Intent intent=new Intent(XqActivity.this,SsActivity.class);
+            startActivity(intent);
+        }
+        else if(type==8){
             Intent intent=new Intent(XqActivity.this,MorePhbActivity.class);
             startActivity(intent);
         }

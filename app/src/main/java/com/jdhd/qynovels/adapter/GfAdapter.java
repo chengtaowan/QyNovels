@@ -13,7 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
 import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.ui.activity.XqActivity;
@@ -65,11 +68,11 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             if(listBeanList.size()==0){
                 return;
             }
-            Glide.with(context).load(listBeanList.get(position).getImage()).into(holder.book);
+            Glide.with(context).load(listBeanList.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
             holder.name.setText(listBeanList.get(position).getName());
             holder.grade.setText(listBeanList.get(position).getGrade());
             holder.des.setText(listBeanList.get(position).getIntro());
-            holder.type.setText(listBeanList.get(position).getClassX());
+            holder.type.setText(listBeanList.get(position).getClassName());
             //holder.num.setText(listBeanList.get(position).+"万字");
             if(listBeanList.get(position).getFinishStatus()==0){
                 holder.wj.setText("完结");
@@ -92,7 +95,7 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             if(list.size()==0){
                 return;
             }
-            Glide.with(context).load(list.get(position).getImage()).into(holder.book);
+            Glide.with(context).load(list.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
             holder.name.setText(list.get(position).getName());
             holder.grade.setText(list.get(position).getGrade()+"");
             holder.des.setText(list.get(position).getIntro());

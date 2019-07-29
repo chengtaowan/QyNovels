@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bytedance.sdk.openadsdk.TTFeedAd;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
 import com.jdhd.qynovels.ui.activity.MainActivity;
@@ -29,6 +31,11 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.list=list;
         notifyDataSetChanged();
     }
+    private List<TTFeedAd> feedlist=new ArrayList<>();
+    public void refreshfeed(List<TTFeedAd> feedlist){
+        this.feedlist=feedlist;
+        notifyDataSetChanged();
+    }
 
     public CaseContentAdapter(Context context, FragmentActivity activity) {
         this.context = context;
@@ -40,7 +47,7 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder=null;
         if(viewType==TYPE_LIST){
-            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, parent, false);
+            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, null, false);
             viewHolder=new ListViewHolder(view);
         }
         else if(viewType==TYPE_FOOT){
@@ -57,6 +64,7 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ((ListViewHolder) holder).rv.setLayoutManager(manager);
             ListAdapter adapter=new ListAdapter(context,activity);
             adapter.refresh(list);
+            adapter.refreshfeed(feedlist);
             ((ListViewHolder) holder).rv.setAdapter(adapter);
         }
         else if(holder instanceof FootViewHolder){

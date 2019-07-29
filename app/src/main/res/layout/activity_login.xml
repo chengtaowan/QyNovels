@@ -106,6 +106,7 @@
             android:text="《用户协议》"
             android:textColor="#E8564E"
             android:textSize="12sp"
+            android:id="@+id/xy"
             android:layout_gravity="center_horizontal"/>
         <TextView
             android:layout_width="wrap_content"
@@ -120,6 +121,7 @@
             android:text="《隐私协议》"
             android:textColor="#E8564E"
             android:textSize="12sp"
+            android:id="@+id/ys"
             android:layout_gravity="center_horizontal"/>
     </LinearLayout>
     <ImageView

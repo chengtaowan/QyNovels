@@ -48,6 +48,7 @@ public class GgActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gg);
+        StatusBarUtil.setStatusBarMode(GgActivity.this, true, R.color.c_ffffff);
         MyApp.addActivity(this);
         WindowManager manager = getWindowManager();
         DisplayMetrics metrics = new DisplayMetrics();
@@ -60,7 +61,7 @@ public class GgActivity extends AppCompatActivity implements View.OnClickListene
         mTTAdNative = TTAdSdk.getAdManager().createAdNative(this);
         //在合适的时机申请权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题
         //在开屏时候申请不太合适，因为该页面倒计时结束或者请求超时会跳转，在该页面申请权限，体验不好
-        // TTAdManagerHolder.getInstance(this).requestPermissionIfNecessary(this);
+        TTAdSdk.getAdManager().requestPermissionIfNecessary(MyApp.getAppContext());
         //定时，AD_TIME_OUT时间到时执行，如果开屏广告没有加载则跳转到主页面
         mHandler.sendEmptyMessageDelayed(MSG_GO_MAIN, AD_TIME_OUT);
         //加载开屏广告

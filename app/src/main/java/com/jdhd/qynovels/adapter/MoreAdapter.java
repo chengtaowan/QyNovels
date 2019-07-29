@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ClassContentBean;
+import com.jdhd.qynovels.ui.activity.XqActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +54,7 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.MoreViewHolder
     public void onBindViewHolder(@NonNull MoreViewHolder holder, final int position) {
         holder.grade.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Oswald-Bold.otf"));
         holder.type.setVisibility(View.VISIBLE);
-        Glide.with(context).load(list.get(position).getImage()).into(holder.book);
+        Glide.with(context).load(list.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
         holder.name.setText(list.get(position).getName());
         holder.grade.setText(list.get(position).getGrade()+"");
         holder.des.setText(list.get(position).getIntro());
@@ -64,7 +69,10 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.MoreViewHolder
        holder.itemView.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               onItemClick.onClick(position);
+               Intent intent=new Intent(context, XqActivity.class);
+               intent.putExtra("id",list.get(position).getBookId());
+               intent.putExtra("xq",8);
+               context.startActivity(intent);
            }
        });
     }

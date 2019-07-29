@@ -2,6 +2,7 @@ package com.jdhd.qynovels.persenter.impl.bookcase;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
@@ -46,6 +47,10 @@ public class IBookInfoPresenterImpl implements IBookInfoPresenter {
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
+        Log.e("token",token);
+        Log.e("id",id+"");
+        Log.e("time",time+"");
+        Log.e("sign",sign);
         if(token!=null){
             RxHttp.postForm(MyApp.Url.baseUrl+"book")
                     .addHeader("token",token)
@@ -53,11 +58,12 @@ public class IBookInfoPresenterImpl implements IBookInfoPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<BookInfoBean>(){})
                     .subscribe(bookInfoBean->{
+                        Log.e("bookinfo",bookInfoBean.getCode()+"--"+bookInfoBean.getMsg());
                         if(bookInfoBean.getCode()==200&&bookInfoBean.getMsg().equals("请求成功")){
-                            iBookInfoView.onSuccess(bookInfoBean);
+                            iBookInfoView.onBookinfoSuccess(bookInfoBean);
                         }
                     },throwable->{
-                        iBookInfoView.onError(throwable.getMessage());
+                        iBookInfoView.onBookinfoError(throwable.getMessage());
                     });
         }
         else{
@@ -67,10 +73,10 @@ public class IBookInfoPresenterImpl implements IBookInfoPresenter {
                     .asParser(new SimpleParser<BookInfoBean>(){})
                     .subscribe(bookInfoBean->{
                         if(bookInfoBean.getCode()==200&&bookInfoBean.getMsg().equals("请求成功")){
-                            iBookInfoView.onSuccess(bookInfoBean);
+                            iBookInfoView.onBookinfoSuccess(bookInfoBean);
                         }
                     },throwable->{
-                        iBookInfoView.onError(throwable.getMessage());
+                        iBookInfoView.onBookinfoError(throwable.getMessage());
                     });
         }
 

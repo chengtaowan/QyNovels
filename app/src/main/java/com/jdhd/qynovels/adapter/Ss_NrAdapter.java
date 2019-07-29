@@ -1,7 +1,9 @@
 package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.bookcase.SearchContentBean;
+import com.jdhd.qynovels.ui.activity.XqActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +77,11 @@ public class Ss_NrAdapter extends RecyclerView.Adapter<Ss_NrAdapter.Ss_NrViewHol
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onItemClick.onNrClick(position);
+                Intent intent=new Intent(context, XqActivity.class);
+                intent.putExtra("id",list.get(position).getBookId());
+                Log.e("chuanid",list.get(position).getBookId()+"===");
+                intent.putExtra("xq",7);
+                context.startActivity(intent);
             }
         });
     }

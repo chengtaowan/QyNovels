@@ -18,10 +18,15 @@ import android.widget.Toast;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Ss_NrAdapter;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.bookcase.SsBean;
 import com.jdhd.qynovels.ui.fragment.Ss_LxFragment;
 import com.jdhd.qynovels.ui.fragment.Ss_NrFragment;
 import com.jdhd.qynovels.ui.fragment.Ss_RsFragment;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class SsActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
     private ImageView back;
@@ -33,6 +38,7 @@ public class SsActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ss);
+        EventBus.getDefault().register(this);
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
@@ -51,6 +57,21 @@ public class SsActivity extends AppCompatActivity implements View.OnClickListene
         transaction.replace(R.id.ss_ll,new Ss_RsFragment());
         transaction.commit();
         name.addTextChangedListener(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getStr(SsBean ssBean){
+        name.setText(ssBean.getName());
+        if(name.getText().length()>0){
+            ss_nrFragment.setContent(name.getText().toString());
+            FragmentManager manager=getSupportFragmentManager();
+            FragmentTransaction transaction=manager.beginTransaction();
+            transaction.replace(R.id.ss_ll,ss_nrFragment);
+            transaction.commit();
+        }
+        else{
+            Toast.makeText(SsActivity.this,"请输入书名",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -134,5 +155,11 @@ public class SsActivity extends AppCompatActivity implements View.OnClickListene
     protected void onPause() {
         super.onPause();
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

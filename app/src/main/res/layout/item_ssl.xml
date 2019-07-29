@@ -21,6 +21,8 @@
             android:text="挚爱梵高"
             android:textStyle="bold"
             android:gravity="center"
+            android:lines="2"
+            android:ellipsize="end"
             android:layout_below="@+id/ss_book"
             android:id="@+id/ss_name" />
 

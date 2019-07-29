@@ -21,6 +21,11 @@ public class IJxPresenterImpl implements IJxPresenter {
     private int type;
     private Context context;
     private String token;
+    private int sex;
+
+    public void setSex(int sex) {
+        this.sex = sex;
+    }
 
     public IJxPresenterImpl(IJxView iJxView, int type, Context context) {
         this.iJxView = iJxView;
@@ -38,6 +43,7 @@ public class IJxPresenterImpl implements IJxPresenter {
         if(token!=null){
             map.put("token",token);
         }
+        map.put("sex",sex+"");
         map.put("moduleId",type+"");
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign=DeviceInfoUtils.md5(compareTo);
@@ -53,7 +59,7 @@ public class IJxPresenterImpl implements IJxPresenter {
                             iJxView.onSuccess(shopBean);
                         }
                     },throwable->{
-                        iJxView.onError(throwable.getMessage());
+                        //iJxView.onError(throwable.getMessage());
                     });
         }
         else{

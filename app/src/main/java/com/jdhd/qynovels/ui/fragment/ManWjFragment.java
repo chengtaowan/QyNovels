@@ -3,6 +3,7 @@ package com.jdhd.qynovels.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -41,6 +42,9 @@ public class ManWjFragment extends Fragment implements IJxView,WjjpAdapter.onIte
     private List<ShopBean.DataBean.ListBeanX> list=new ArrayList<>();
     private SmartRefreshLayout sr;
     private boolean hasNetWork;
+    private SharedPreferences sharedPreferences;
+    private String sex;
+    private int psex=20;
     public ManWjFragment() {
         // Required empty public constructor
     }
@@ -50,8 +54,14 @@ public class ManWjFragment extends Fragment implements IJxView,WjjpAdapter.onIte
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        sharedPreferences=getContext().getSharedPreferences("sex", Context.MODE_PRIVATE);
+        sex = sharedPreferences.getString("sex", "");
+        if(sex.equals("女")){
+            psex=30;
+        }
         View view= inflater.inflate(R.layout.fragment_man_wj, container, false);
         jxPresenter=new IJxPresenterImpl(this,4,getContext());
+        jxPresenter.setSex(psex);
         jxPresenter.loadData();
         hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
         init(view);

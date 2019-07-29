@@ -7,6 +7,11 @@ import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.WebView;
+
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
+import com.jdhd.qynovels.app.MyApp;
 
 import java.io.DataOutputStream;
 import java.math.BigDecimal;
@@ -245,5 +250,19 @@ public class DeviceInfoUtils {
         String[] str = times.split("日");
         return str[0];
     }
-
+    /***
+     * 获取android默认的useragent
+     * @param context
+     * @return
+     */
+    public static String getUserAgent(Context context){
+        String useragent = new WebView(context).getSettings().getUserAgentString();
+        return useragent;
+    }
+    public static GlideUrl getUrl(String url){
+        GlideUrl imgurl = new GlideUrl(url, new LazyHeaders.Builder()
+                .addHeader("User-Agent", DeviceInfoUtils.getUserAgent(MyApp.getAppContext()))
+                .build());
+        return imgurl;
+    }
 }

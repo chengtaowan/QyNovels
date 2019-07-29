@@ -28,7 +28,7 @@ import java.util.List;
 
 public class QdActivity extends AppCompatActivity implements View.OnClickListener, ISignSetingView, ISignView {
     private LinearLayout qd;
-    private TextView ljqd,cg,sp,tian;
+    private TextView ljqd,cg,sp,tian,yqd;
     private ImageView back;
     private RecyclerView rv;
     private QdAdapter adapter;
@@ -55,6 +55,7 @@ public class QdActivity extends AppCompatActivity implements View.OnClickListene
     }
 
     private void init() {
+        yqd=findViewById(R.id.qd_yqd);
         tian=findViewById(R.id.qd_tian);
         qd=findViewById(R.id.qd_qd);
         qd.setOnClickListener(this);
@@ -131,7 +132,34 @@ public class QdActivity extends AppCompatActivity implements View.OnClickListene
                     jblist.get(i).setVisibility(View.GONE);
                 }
             }
-            Toast.makeText(QdActivity.this,"签到成功",Toast.LENGTH_SHORT).show();
+            int is_sign = signSeting.getData().getIs_sign();
+            Log.e("issign",is_sign+"---");
+            switch (is_sign){
+                case 1:
+                    sp.setText("看视频再领"+signSeting.getData().getDouble_award()+"金币");
+                    qd.setBackgroundResource(R.drawable.shape_qd_on);
+                    ljqd.setVisibility(View.GONE);
+                    cg.setVisibility(View.VISIBLE);
+                    yqd.setVisibility(View.GONE);
+                    sp.setVisibility(View.VISIBLE);
+                    qd.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                           Toast.makeText(QdActivity.this,"看小视频",Toast.LENGTH_SHORT).show();
+                           signPresenter.loadData();
+                        }
+                    });
+                    break;
+                case 2:
+                    qd.setBackgroundResource(R.drawable.shap_qd);
+                    ljqd.setVisibility(View.GONE);
+                    cg.setVisibility(View.GONE);
+                    yqd.setVisibility(View.VISIBLE);
+                    sp.setVisibility(View.GONE);
+                    Toast.makeText(QdActivity.this,"您已签到",Toast.LENGTH_SHORT).show();
+                    break;
+            }
+
         }
 
     }
@@ -142,7 +170,9 @@ public class QdActivity extends AppCompatActivity implements View.OnClickListene
             @Override
             public void run() {
                 signSeting=signSetingBean;
+                Log.e("issign",signSetingBean.getData().getIs_sign()+"+++");
                 adapter.refresh(signSetingBean.getData().getRule());
+                sp.setText("看视频再领"+signSeting.getData().getDouble_award()+"金币");
                 tian.setText(signSetingBean.getData().getSignNum()+"");
                 for(int i=0;i<signSetingBean.getData().getSignData().size();i++){
                     daylist.get(i).setText(signSetingBean.getData().getSignData().get(i).getDate());
@@ -170,7 +200,7 @@ public class QdActivity extends AppCompatActivity implements View.OnClickListene
                         jblist.get(i).setVisibility(View.GONE);
                     }
                 }
-
+              signPresenter.loadData();
             }
         });
     }

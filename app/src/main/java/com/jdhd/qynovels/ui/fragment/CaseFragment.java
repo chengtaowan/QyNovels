@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +22,13 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
+import com.bytedance.sdk.openadsdk.AdSlot;
+import com.bytedance.sdk.openadsdk.TTAdNative;
+import com.bytedance.sdk.openadsdk.TTAdSdk;
+import com.bytedance.sdk.openadsdk.TTFeedAd;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.CaseAdapter;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
@@ -41,6 +49,8 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Request;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -59,8 +69,107 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     private SmartRefreshLayout sr;
     private boolean hasNetWork;
     private String token;
+    private TTAdNative mTTAdNative;
+    private static final int LIST_ITEM_COUNT = 30;
+    private List<TTFeedAd> mData=new ArrayList<>();
+    protected boolean isCreated = false;
+    private ICaseView iCaseView;
     public CaseFragment() {
+        mTTAdNative = TTAdSdk.getAdManager().createAdNative(getContext());
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        adapter=new CaseAdapter(getContext(),getActivity());
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // 标记
+        //isCreated = true;
+//        casePresenter=new ICasePresenterImpl(new ICaseView() {
+//            @Override
+//            public void onSuccess(CaseBean caseBean) {
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        adapter.refreshlist(caseBean.getData().getList());
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, getContext());
+//        loadListAd();
+//        casePresenter.loadData();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // 标记
+        isCreated = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadListAd();
+            }
+        }).start();
+        casePresenter=new ICasePresenterImpl(new ICaseView() {
+            @Override
+            public void onSuccess(CaseBean caseBean) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        sr.finishRefresh();
+                        adapter.refreshlist(caseBean.getData().getList());
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, getContext());
+        casePresenter.loadData();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadListAd();
+            }
+        }).start();
+        casePresenter=new ICasePresenterImpl(new ICaseView() {
+            @Override
+            public void onSuccess(CaseBean caseBean) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        sr.finishRefresh();
+                        adapter.refreshlist(caseBean.getData().getList());
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        }, getContext());
+        casePresenter.loadData();
     }
 
     @Override
@@ -70,8 +179,11 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         View view= inflater.inflate(R.layout.fragment_case, container, false);
         SharedPreferences preferences=getActivity().getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
-        casePresenter=new ICasePresenterImpl(this,getContext());
-        casePresenter.loadData();
+        iCaseView=this;
+        if(iCaseView!=null){
+            casePresenter=new ICasePresenterImpl(iCaseView,getContext());
+            casePresenter.loadData();
+        }
         dbUtils=new DbUtils(getContext());
         init(view);
         hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
@@ -130,6 +242,14 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                adapter.refreshlist(list);
            }
 
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    loadListAd();
+                }
+            }).start();
+
+
         }
 
         return  view;
@@ -154,7 +274,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
             }
         };
       rv.setLayoutManager(layoutManager);
-      adapter=new CaseAdapter(getContext(),getActivity());
+
       rv.setAdapter(adapter);
       Glide.with(getContext()).load(R.mipmap.re).into(gif);
       sr.setOnRefreshListener(new OnRefreshListener() {
@@ -167,6 +287,14 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
               }
               else{
                   casePresenter.loadData();
+                  mData.clear();
+                  new Thread(new Runnable() {
+                      @Override
+                      public void run() {
+                          loadListAd();
+                      }
+                  }).start();
+                  adapter.refreshfeed(mData);
               }
 
           }
@@ -281,4 +409,76 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         startActivity(intent);
     }
 
+    private void loadListAd() {
+        //step4:创建feed广告请求类型参数AdSlot,具体参数含义参考文档
+        AdSlot adSlot = new AdSlot.Builder()
+                .setCodeId("901121737")
+                .setSupportDeepLink(true)
+                .setImageAcceptedSize(640, 320)
+                .setAdCount(3) //请求广告数量为1到3条
+                .build();
+        //step5:请求广告，调用feed广告异步请求接口，加载到广告后，拿到广告素材自定义渲染
+        mTTAdNative.loadFeedAd(adSlot, new TTAdNative.FeedAdListener() {
+            @Override
+            public void onError(int code, String message) {
+              Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFeedAdLoad(List<TTFeedAd> ads) {
+                mData=ads;
+                Log.e("data",mData.size()+"--"+mData.get(0).getTitle());
+                adapter.refreshfeed(mData);
+            }
+        });
+    }
+
+//    /**
+////     * 此方法目前仅适用于标示ViewPager中的Fragment是否真实可见
+////     */
+////    @Override
+////    public void setUserVisibleHint(boolean isVisibleToUser) {
+////        super.setUserVisibleHint(isVisibleToUser);
+////
+////        if (!isCreated) {
+////            return;
+////        }
+////
+////        if (isVisibleToUser) {
+////           loadListAd();
+////
+////        }
+////    }
+
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(!hidden){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    loadListAd();
+                }
+            }).start();
+            casePresenter=new ICasePresenterImpl(new ICaseView() {
+                @Override
+                public void onSuccess(CaseBean caseBean) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            sr.finishRefresh();
+                            adapter.refreshlist(caseBean.getData().getList());
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+
+                }
+            }, getContext());
+            casePresenter.loadData();
+        }
+    }
 }

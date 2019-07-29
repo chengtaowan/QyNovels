@@ -5,9 +5,11 @@ import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
 
+
 import com.bytedance.sdk.openadsdk.TTAdConfig;
 import com.bytedance.sdk.openadsdk.TTAdConstant;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
@@ -15,18 +17,26 @@ import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.functions.Function;
 import okhttp3.OkHttpClient;
 import rxhttp.HttpSender;
 import rxhttp.wrapper.annotation.DefaultDomain;
+import rxhttp.wrapper.annotation.Param;
+import rxhttp.wrapper.param.DeleteRequest;
+import rxhttp.wrapper.param.GetRequest;
+import rxhttp.wrapper.param.PostRequest;
+import rxhttp.wrapper.param.PutRequest;
 
 public class MyApp extends Application {
     private static Context context;
     private static IWXAPI api;
     private static final String APP_ID = "wxf2f9d368f73b6719";
     public static List<Activity> list=new ArrayList<>();
+    public static int raduis=10;
     @Override
     public void onCreate() {
         super.onCreate();
+        Fresco.initialize(this);
         MyApp.context=getApplicationContext();
         // android 7.0系统解决拍照的问题
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -81,7 +91,8 @@ public class MyApp extends Application {
     public class Url{
         @DefaultDomain()
         public static final String baseUrl = "http://api.damobi.cn/v1/";
-        public static final String webbaseUrl="http://h5.damobi.cn/";
+        //public static final String webbaseUrl="http://h5.damobi.cn/";
+        public static final String webbaseUrl="http://192.168.1.127:8848/";
     }
 
     public class ModuleType{

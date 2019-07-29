@@ -14,7 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.RankContentBean;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 
@@ -56,7 +59,7 @@ public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
     public void onBindViewHolder(@NonNull PhbViewHolder holder, final int position) {
         holder.num.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Oswald-Bold.otf"));
         holder.num.setText(position+1+"");
-        Glide.with(context).load(list.get(position).getImage()).into(holder.img);
+        Glide.with(context).load(list.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.img);
         holder.name.setText(list.get(position).getName());
         holder.type.setText(list.get(position).getAuthor());
         if(count<5){

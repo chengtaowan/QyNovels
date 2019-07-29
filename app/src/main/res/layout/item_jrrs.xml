@@ -20,16 +20,6 @@
         android:layout_marginBottom="11dp"
         android:layout_marginLeft="15dp"
         android:id="@+id/rl">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:gravity="center"
-            android:textColor="#2F3236"
-            android:textSize="10sp"
-            android:text="— 已经到底啦！—"
-            android:id="@+id/gf_di"
-            android:visibility="gone"/>
         <ImageView
             android:layout_width="72dp"
             android:layout_height="103dp"

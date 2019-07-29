@@ -3,14 +3,25 @@ package com.jdhd.qynovels.ui.activity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -32,6 +43,7 @@ import com.jdhd.qynovels.module.personal.AvatarBean;
 import com.jdhd.qynovels.module.personal.SexBean;
 import com.jdhd.qynovels.persenter.impl.personal.IAvatarPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.ISexPresenterImpl;
+import com.jdhd.qynovels.utils.ImageUtil;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.utils.getPhotoFromPhotoAlbum;
 import com.jdhd.qynovels.view.personal.IAvatarView;
@@ -42,9 +54,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -73,6 +87,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grzl);
+        getPermission();
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         EventBus.getDefault().register(this);
@@ -86,6 +101,8 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         bindwx=perintent.getIntExtra("bindwx",0);
         wxname=perintent.getStringExtra("wxname");
         type=perintent.getIntExtra("type",1);
+        Log.e("wxname",wxname);
+        avatarPresenter=new IAvatarPresenterImpl(this,GrzlActivity.this);
         init();
         xgnc.setText(nickname);
         Intent intent=getIntent();
@@ -113,8 +130,11 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         nc.setOnClickListener(this);
         xb.setOnClickListener(this);
         zh.setOnClickListener(this);
-        if(!avatar.equals("")){
+        if(!avatar.equals("http://api.damobi.cn")){
            Glide.with(this).load(avatar).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(tx);
+        }
+        else{
+            tx.setImageResource(R.mipmap.my_touxiang);
         }
 
         xgxb.setText(sex);
@@ -163,6 +183,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("mobile",mobile+"");
                 intent.putExtra("bindwx",bindwx);
                 intent.putExtra("wxname",wxname);
+                intent.putExtra("type",2);
                 startActivity(intent);
             }
 
@@ -172,7 +193,6 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onClick(View v) {
                    //相册
-                    getPermission();
                     goPhotoAlbum();
                     mPhotoPopupWindow.dismiss();
                 }
@@ -180,7 +200,6 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onClick(View v) {
                     // 拍照
-                    getPermission();
                     goCamera();
                     mPhotoPopupWindow.dismiss();
                 }
@@ -217,7 +236,9 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         if (file.exists()) {
             file.delete();
         }
+        //步骤三：获取文件Uri
         uri = Uri.fromFile(file);
+
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         GrzlActivity.this.startActivityForResult(intent, 1);
     }
@@ -266,14 +287,22 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         String photoPath;
         if(resultCode==RESULT_OK){
            if(requestCode==1){
-               File file = new File(FILE_PATH);
-               Uri uri = Uri.fromFile(file);
-               tx.setImageURI(uri);
-               Glide.with(GrzlActivity.this).load(uri)
-                       .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                       .into(tx);
-               String imageToBase64 = "data:image/png;base64,"+imageToBase64(FILE_PATH);
-               avatarPresenter=new IAvatarPresenterImpl(this,GrzlActivity.this,imageToBase64);
+
+               // 获取相机返回的数据，并转换为Bitmap图片格式，这是缩略图
+               Bitmap bitmap = null;
+               try {
+                   bitmap = getBitmapFormUri(uri);
+               } catch (FileNotFoundException e) {
+                   e.printStackTrace();
+               } catch (IOException e) {
+                   e.printStackTrace();
+               }
+               Bitmap roundedCornerBitmap = getRoundedCornerBitmap(bitmap);
+               tx.setImageBitmap(roundedCornerBitmap);
+
+               String  imageToBase64= "data:image/p" +
+                       "ng;base64,"+changeToBase64(bitmap);
+               avatarPresenter.setFile(imageToBase64);
                avatarPresenter.loadData();
 
            }
@@ -282,13 +311,118 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
                Glide.with(GrzlActivity.this).load(photoPath)
                        .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                        .into(tx);
+               ImageUtil imageUtil= ImageUtil.getIntance();
+               imageUtil.getPicTypeByUrl(photoPath);
+               Bitmap getimage = imageUtil.getimage(photoPath);
+
                String imageToBase64 = "data:image/p" +
-                       "ng;base64,"+imageToBase64(photoPath);
-               avatarPresenter=new IAvatarPresenterImpl(this,GrzlActivity.this,imageToBase64);
+                       "ng;base64,"+changeToBase64(getimage);
+               avatarPresenter.setFile(imageToBase64);
                avatarPresenter.loadData();
            }
         }
 
+    }
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float roundPx;
+        float left,top,right,bottom,dst_left,dst_top,dst_right,dst_bottom;
+        if (width <= height) {
+            roundPx = width / 2;
+            top = 0;
+            bottom = width;
+            left = 0;
+            right = width;
+            height = width;
+            dst_left = 0;
+            dst_top = 0;
+            dst_right = width;
+            dst_bottom = width;
+        } else {
+            roundPx = height / 2;
+            float clip = (width - height) / 2;
+            left = clip;
+            right = width - clip;
+            top = 0;
+            bottom = height;
+            width = height;
+            dst_left = 0;
+            dst_top = 0;
+            dst_right = height;
+            dst_bottom = height;
+        }
+        Bitmap output = Bitmap.createBitmap(width,
+                height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect src = new Rect((int)left, (int)top, (int)right, (int)bottom);
+        final Rect dst = new Rect((int)dst_left, (int)dst_top, (int)dst_right, (int)dst_bottom);
+        final RectF rectF = new RectF(dst);
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, src, dst, paint);
+        return output;
+
+    }
+    public Bitmap getBitmapFormUri(Uri uri) throws FileNotFoundException, IOException {
+        InputStream input = getContentResolver().openInputStream(uri);
+
+        //这一段代码是不加载文件到内存中也得到bitmap的真是宽高，主要是设置inJustDecodeBounds为true
+        BitmapFactory.Options onlyBoundsOptions = new BitmapFactory.Options();
+        onlyBoundsOptions.inJustDecodeBounds = true;//不加载到内存
+        onlyBoundsOptions.inDither = true;//optional
+        onlyBoundsOptions.inPreferredConfig = Bitmap.Config.RGB_565;//optional
+        BitmapFactory.decodeStream(input, null, onlyBoundsOptions);
+        input.close();
+        int originalWidth = onlyBoundsOptions.outWidth;
+        int originalHeight = onlyBoundsOptions.outHeight;
+        if ((originalWidth == -1) || (originalHeight == -1))
+            return null;
+
+        //图片分辨率以480x800为标准
+        float hh = 800f;//这里设置高度为800f
+        float ww = 480f;//这里设置宽度为480f
+        //缩放比，由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
+        int be = 1;//be=1表示不缩放
+        if (originalWidth > originalHeight && originalWidth > ww) {//如果宽度大的话根据宽度固定大小缩放
+            be = (int) (originalWidth / ww);
+        } else if (originalWidth < originalHeight && originalHeight > hh) {//如果高度高的话根据宽度固定大小缩放
+            be = (int) (originalHeight / hh);
+        }
+        if (be <= 0)
+            be = 1;
+        //比例压缩
+        BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+        bitmapOptions.inSampleSize = be;//设置缩放比例
+        bitmapOptions.inDither = true;
+        bitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+        input = getContentResolver().openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions);
+        input.close();
+
+        return compressImage(bitmap);//再进行质量压缩
+    }
+
+    public Bitmap compressImage(Bitmap image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while (baos.toByteArray().length / 1024 > 100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
+            baos.reset();//重置baos即清空baos
+            //第一个参数 ：图片格式 ，第二个参数： 图片质量，100为最高，0为最差  ，第三个参数：保存压缩后的数据的流
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options，把压缩后的数据存放到baos中
+            options -= 10;//每次都减少10
+            if (options<=0)
+                break;
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+        return bitmap;
     }
 
     @Override
@@ -330,15 +464,21 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
+                SharedPreferences sharedPreferences=getSharedPreferences("sex",MODE_PRIVATE);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
                 if(chosesex==0){
                     xgxb.setText("未知");
+                    editor.putString("sex","男");
                 }
                 else if(chosesex==20){
                     xgxb.setText("男");
+                    editor.putString("sex","男");
                 }
                 else if(chosesex==30){
                     xgxb.setText("女");
+                    editor.putString("sex","女");
                 }
+                editor.commit();
                 Toast.makeText(GrzlActivity.this,"性别修改成功",Toast.LENGTH_SHORT).show();
             }
         });
@@ -361,7 +501,14 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
        Log.e("sexerror",error);
     }
 
+    public static String changeToBase64(Bitmap bitmap){
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        //参数2：压缩率，40表示压缩掉60%; 如果不压缩是100，表示压缩率为0
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        byte[] bytes = bos.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
 
+    }
     public static String imageToBase64(String path) {
         if (TextUtils.isEmpty(path)) {
             return null;
@@ -407,6 +554,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 imgurl=avatarBean.getData().getAvatar();
+                Log.e("imgurl",imgurl);
                 EventBus.getDefault().post(imgurl);
             }
         });

@@ -19,7 +19,9 @@
                 android:layout_height="75dp"
                 android:src="@mipmap/book_100"
                 android:scaleType="fitXY"
-                android:id="@+id/case_book"/>
+                android:id="@+id/case_book"
+                android:adjustViewBounds="true"
+                android:usesCleartextTraffic="true"/>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -39,7 +41,9 @@
                     android:text=""
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="15dp"
-                    android:id="@+id/case_zj"/>
+                    android:id="@+id/case_zj"
+                    android:lines="1"
+                    android:ellipsize="end"/>
                 <TextView
                     android:layout_width="60dp"
                     android:layout_height="20dp"

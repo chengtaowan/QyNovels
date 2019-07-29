@@ -4,6 +4,7 @@ package com.jdhd.qynovels.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -40,6 +41,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -63,6 +66,12 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         // Required empty public constructor
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        personalPresenter=new IPersonalPresenterImpl(this,getContext());
+        personalPresenter.loadData();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,7 +87,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         init(view);
         Intent intent=getActivity().getIntent();
         action=intent.getIntExtra("action",1);
-        SharedPreferences preferences=getActivity().getSharedPreferences("token", Context.MODE_PRIVATE);
+        SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
         token = preferences.getString("token", "");
         if(token.equals("")){
             Glide.with(getContext()).clear(wd_toux);
@@ -148,7 +157,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             uid=user.getData().getUid();
             mobel=user.getData().getMobile();
             bindwx=user.getData().getBind_wx();
-            wxname=user.getData().getNickname();
+            wxname=user.getData().getWx_name();
             if(!user.getData().getAvatar().equals("http://api.damobi.cn")){
                 Glide.with(getContext())
                         .load(user.getData().getAvatar())
@@ -205,21 +214,17 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             startActivity(intent);
         }
         else if(R.id.wd_sz==view.getId()){
-            if(user.getData()!=null){
-                Intent intent=new Intent(getContext(), SzActivity.class);
-                intent.putExtra("name",nickname);
-                intent.putExtra("avatar",avatar);
-                intent.putExtra("sex",sex);
-                intent.putExtra("uid",uid);
-                intent.putExtra("mobile",mobel+"");
-                intent.putExtra("bindwx",bindwx);
-                intent.putExtra("wxname",wxname);
-                startActivity(intent);
-            }
-            else{
-                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
-
-            }
+            Intent intent=new Intent(getContext(), SzActivity.class);
+            intent.putExtra("name",nickname);
+            intent.putExtra("avatar",avatar);
+            intent.putExtra("sex",sex);
+            intent.putExtra("uid",uid);
+            intent.putExtra("mobile",mobel+"");
+            intent.putExtra("bindwx",bindwx);
+            intent.putExtra("wxname",wxname);
+            intent.putExtra("token",token);
+            intent.putExtra("type",1);
+            startActivity(intent);
         }
         else if(R.id.wd_toux==view.getId()){
             if(user.getData()!=null){
@@ -336,6 +341,11 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         }
 
     }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void changeAvatar(String url){
+        Log.e("url",url);
+        Glide.with(getContext()).load(url).into(wd_toux);
+    }
 
     @Override
     public void onDestroy() {
@@ -371,6 +381,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                     else{
                         wd_xj.setVisibility(View.VISIBLE);
                     }
+                    SharedPreferences preferences=getActivity().getSharedPreferences("sex",MODE_PRIVATE);
+                    SharedPreferences.Editor editor=preferences.edit();
+                    editor.putString("sex",userBean.getData().getSex());
+                    editor.commit();
                     wd_yq.setVisibility(View.GONE);
                     wd_lb.setVisibility(View.GONE);
                     wo_dl.setVisibility(View.GONE);

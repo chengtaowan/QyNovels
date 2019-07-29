@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.bookcase.HotSearchBean;
+import com.jdhd.qynovels.module.bookcase.SsBean;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +59,7 @@ public class Ss_RsAdapter extends RecyclerView.Adapter<Ss_RsAdapter.Ss_RsViewHol
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onItemClick.onRsClick(position);
+                EventBus.getDefault().post(new SsBean(list.get(position).getName()));
             }
         });
     }

@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.LsAdapter;
@@ -37,6 +38,7 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
     private SQLiteDatabase database;
     private Cursor cursor;
     private String token;
+    private RelativeLayout wsj;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +85,7 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
     }
 
     private void init() {
+        wsj=findViewById(R.id.tx_wsj);
         back=findViewById(R.id.ls_back);
         back.setOnClickListener(this);
         rv=findViewById(R.id.ls_rv);
@@ -92,6 +95,12 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
         did.setDrawable(drawable);
         rv.addItemDecoration(did);
         rv.setLayoutManager(manager);
+        if(mlist.size()==0){
+           wsj.setVisibility(View.VISIBLE);
+        }
+        else{
+            wsj.setVisibility(View.GONE);
+        }
         LsAdapter adapter=new LsAdapter(this,mlist);
         rv.setAdapter(adapter);
     }

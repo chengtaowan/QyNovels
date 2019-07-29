@@ -8,6 +8,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,12 +41,20 @@ public class XssdActivity extends AppCompatActivity implements View.OnClickListe
     private ManxsFragment manxsFragment=new ManxsFragment();
     private WmanxsFragment wmanxsFragment=new WmanxsFragment();
     private IModulePresenterImpl modulePresenter;
+    private SharedPreferences sharedPreferences;
+    private String sex;
+    private int psex=20;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xssd);
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        sharedPreferences=getSharedPreferences("sex", Context.MODE_PRIVATE);
+        sex = sharedPreferences.getString("sex", "");
+        if(sex.equals("女")){
+            psex=30;
+        }
         modulePresenter=new IModulePresenterImpl(this,this,30);
         modulePresenter.loadData();
         init();
