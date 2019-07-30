@@ -31,6 +31,11 @@ public class RatingBar extends View {
     private float mStarHeight;
     // 星星选择变化的回调
     private OnStarChangeListener mOnStarChangeListener;
+
+    public void setmOnStarChangeListener(OnStarChangeListener mOnStarChangeListener) {
+        this.mOnStarChangeListener = mOnStarChangeListener;
+    }
+
     // 是不是要画满,默认不画半个的
     private boolean isFull;
     private boolean ischeck;

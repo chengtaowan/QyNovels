@@ -11,11 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ClassBean;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +49,11 @@ public class FlAdapter extends RecyclerView.Adapter<FlAdapter.FlViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull FlViewHolder holder, final int position) {
-        Glide.with(context).load(list.get(position).getIcon()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.img);
+        if(list.get(position).getIcon()!=null){
+            GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getIcon());
+            Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.img);
+
+        }
         holder.name.setText(list.get(position).getName());
         holder.num.setText(list.get(position).getBookNum()+"本");
         holder.type.setText(list.get(position).getDes());

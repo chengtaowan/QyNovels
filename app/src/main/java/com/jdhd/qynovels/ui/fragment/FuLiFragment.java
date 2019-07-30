@@ -217,7 +217,7 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
             @Override
             public void run() {
                 Log.e("shuju",videoflBean.getData().getAward()+"");
-                Toast.makeText(getContext(),"观看完成，获取"+videoflBean.getData().getAward()+"jinbi",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),"观看完成，获取"+videoflBean.getData().getAward()+"金币",Toast.LENGTH_SHORT).show();
 
             }
         });

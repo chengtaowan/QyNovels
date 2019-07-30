@@ -7,15 +7,23 @@ import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.WebView;
+
+
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
+import com.glong.reader.activities.MyApp;
 
 import java.io.DataOutputStream;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -57,7 +65,8 @@ public class DeviceInfoUtils {
     public static String getIMEI(Context context) {
         TelephonyManager tm = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
-        @SuppressLint("MissingPermission") String deviceId = tm.getDeviceId();
+        @SuppressLint("MissingPermission")
+        String deviceId = tm.getDeviceId();
         if (deviceId == null) {
             return "";
         } else {
@@ -67,9 +76,10 @@ public class DeviceInfoUtils {
     public static String getSIM(Context context) {
         TelephonyManager tm = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
-        @SuppressLint("MissingPermission") String deviceId = tm.getSubscriberId();
+        @SuppressLint("MissingPermission")
+        String deviceId = tm.getSubscriberId();
         if (deviceId == null) {
-            return "";
+            return "00000";
         } else {
             return deviceId;
         }
@@ -122,7 +132,7 @@ public class DeviceInfoUtils {
      */
     public static String getSim(Context context) {
         String imsi = getSIM(context);
-        return imsi;
+        return imsi.substring(0,5);
     }
 
     /**
@@ -232,4 +242,28 @@ public class DeviceInfoUtils {
         }
     }
 
+    public static String changeData(String time){
+        SimpleDateFormat sdr = new SimpleDateFormat("yyyy年MM月dd日HH时mm分ss秒");
+        @SuppressWarnings("unused")
+        long lcc = Long.valueOf(time);
+        int i = Integer.parseInt(time);
+        String times = sdr.format(new Date(i * 1000L));
+        String[] str = times.split("日");
+        return str[0];
+    }
+    /***
+     * 获取android默认的useragent
+     * @param context
+     * @return
+     */
+    public static String getUserAgent(Context context){
+        String useragent = new WebView(context).getSettings().getUserAgentString();
+        return useragent;
+    }
+    public static GlideUrl getUrl(String url,Context context){
+        GlideUrl imgurl = new GlideUrl(url, new LazyHeaders.Builder()
+                .addHeader("User-Agent", DeviceInfoUtils.getUserAgent(context))
+                .build());
+        return imgurl;
+    }
 }

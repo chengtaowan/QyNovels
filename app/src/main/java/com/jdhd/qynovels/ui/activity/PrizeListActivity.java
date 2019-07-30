@@ -2,16 +2,21 @@ package com.jdhd.qynovels.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.personal.FunctionBean;
 import com.jdhd.qynovels.persenter.impl.personal.IPrizeRecodePresenterImpl;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IPrizeRecodeView;
@@ -38,6 +43,7 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
         datapath=intent.getStringExtra("datapath");
         limit=intent.getStringExtra("limit");
         prizeRecodePresenter=new IPrizeRecodePresenterImpl(this,this);
+
         init();
     }
 
@@ -47,6 +53,7 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
         tex=findViewById(R.id.title);
         webView=findViewById(R.id.ll);
         tex.setText(title);
+
         web=AgentWeb.with(this)
 
                 .setAgentWebParent(webView, new LinearLayout.LayoutParams(-1, -1))
@@ -60,6 +67,7 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
         prizeRecodePresenter.setPage(page);
         prizeRecodePresenter.setLimit(limit);
         prizeRecodePresenter.loadData();
+        web.getJsInterfaceHolder().addJavaObject("android", new AndroidInterface(web, this));
     }
 
     @Override
@@ -73,12 +81,24 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void run() {
                 Log.e("recodestr",str);
-                web.getJsAccessEntrace().quickCallJs("prizeRecode", new ValueCallback<String>() {
+                new Thread(new Runnable() {
                     @Override
-                    public void onReceiveValue(String s) {
-                        Log.e("data",s);
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                            web.getJsAccessEntrace().quickCallJs("prizeRecode", new ValueCallback<String>() {
+                                @Override
+                                public void onReceiveValue(String s) {
+                                    Log.e("data",s);
+                                }
+                            },str);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                },str);
+                }).start();
+
+
             }
         });
     }
@@ -86,5 +106,22 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onRecodeError(String error) {
       Log.e("recodeerror",error);
+    }
+
+    public class AndroidInterface {
+        private AgentWeb agent;
+        private Context context;
+
+        public AndroidInterface(AgentWeb agent, Context context) {
+            this.agent = agent;
+            this.context = context;
+        }
+
+        @JavascriptInterface
+        public void GGScriptMessageCommon(String str) {
+            Log.e("name",str);
+            Gson gson=new Gson();
+            FunctionBean functionBean = gson.fromJson(str, FunctionBean.class);
+        }
     }
 }

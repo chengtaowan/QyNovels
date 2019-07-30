@@ -20,10 +20,10 @@
         android:id="@+id/ss"
         android:layout_below="@+id/line">
         <ImageView
-            android:layout_width="25dp"
+            android:layout_width="160dp"
             android:layout_height="25dp"
             android:id="@+id/search"
-            android:src="@mipmap/home_ss"
+            android:src="@mipmap/ss"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"/>
         <com.google.android.material.tabs.TabLayout

@@ -115,7 +115,7 @@ public class ShopFragment extends Fragment implements TabLayout.OnTabSelectedLis
         home_vp.setCurrentItem(tab.getPosition());
         View view=LayoutInflater.from(getContext()).inflate(R.layout.item_tabtex,null);
         TextView textView = view.findViewById(R.id.tabtex);
-        float selectedSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 19, getResources().getDisplayMetrics());
+        float selectedSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 21, getResources().getDisplayMetrics());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,selectedSize);
         textView.setTextColor(Color.parseColor("#E8564E"));
         textView.setText(tab.getText());

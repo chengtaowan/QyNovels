@@ -21,11 +21,12 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FFF5DA" />
+            android:background="@mipmap/xz"
+            android:scaleType="fitXY"/>
         <ImageView
             android:layout_width="73dp"
             android:layout_height="20dp"
-            android:src="@mipmap/qb_logo"
+            android:src="@mipmap/fx_logo"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
             android:id="@+id/logo"/>
@@ -39,9 +40,9 @@
             <ImageView
                 android:layout_width="72dp"
                 android:layout_height="match_parent"
-                android:src="@mipmap/book_100"
                 android:layout_marginLeft="18dp"
-                android:id="@+id/fx_book"/>
+                android:id="@+id/fx_book"
+                android:src="@mipmap/fx_logo"/>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -91,6 +92,7 @@
             android:layout_below="@+id/book"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="18dp"
+            android:layout_marginRight="23dp"
             android:id="@+id/rq">
             <TextView
                 android:layout_width="wrap_content"
@@ -106,28 +108,31 @@
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginLeft="6dp"/>
+                android:layout_marginLeft="2dp"
+                android:id="@+id/fx_rq"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="万"
                 android:textColor="#ff2f3236"
                 android:textSize="12sp"
-                android:layout_marginLeft="2dp"/>
+                android:layout_marginLeft="2dp"
+                android:id="@+id/wan"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="在读"
                 android:textColor="#ff828486"
                 android:textSize="10sp"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="10dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1560"
+                android:id="@+id/zd"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
-                android:layout_marginLeft="6dp"
+                android:layout_marginLeft="2dp"
                 android:textStyle="bold"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -135,15 +140,16 @@
                 android:text="评分"
                 android:textColor="#ff828486"
                 android:textSize="10sp"
-                android:layout_marginLeft="18dp"/>
+                android:layout_marginLeft="10dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="8.5"
+                android:id="@+id/pf"
                 android:textColor="#ff2f3236"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginLeft="6dp"/>
+                android:layout_marginLeft="2dp"/>
             <com.jdhd.qynovels.widget.RatingBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -168,17 +174,6 @@
             android:layout_marginLeft="18dp"
             android:id="@+id/fx_type">
             <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="现代修真"
-            android:textColor="#828486"
-            android:textSize="12sp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:paddingRight="6dp"
-            android:paddingLeft="6dp"
-            android:background="@drawable/shape_fenx"/>
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="现代修真"
@@ -188,6 +183,7 @@
                 android:paddingBottom="4dp"
                 android:paddingRight="6dp"
                 android:paddingLeft="6dp"
+                android:id="@+id/type"
                 android:background="@drawable/shape_fenx"
                 android:layout_marginLeft="10dp"/>
         </LinearLayout>
@@ -200,8 +196,11 @@
             android:textSize="14sp"
             android:textColor="#2F3236"
             android:layout_marginTop="15dp"
+            android:lines="5"
+            android:ellipsize="end"
             android:text="主要描述了在一片虚构的中世纪世界里所发生的一系列宫廷斗争、疆场厮杀、游历冒险和魔法抗衡的故事。在内容及风格上， 《冰与火之歌》是现实生活的"
-            android:lineHeight="21dp"/>
+            android:lineHeight="21dp"
+            android:id="@+id/fx_des"/>
         <ImageView
             android:layout_width="90dp"
             android:layout_height="90dp"
@@ -237,13 +236,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/wxfx">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@mipmap/wd_on"
+                android:src="@mipmap/fx_wx"
                 android:layout_marginTop="22dp"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -259,13 +259,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/pyqfx">
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@mipmap/wd_on"
+                android:src="@mipmap/fx_pyq"
                 android:layout_marginTop="22dp"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -288,7 +289,7 @@
                 android:layout_height="30dp"
                 android:scaleType="fitXY"
                 android:layout_gravity="center"
-                android:src="@mipmap/wd_on"
+                android:src="@mipmap/fx_bc"
                 android:layout_marginTop="22dp"/>
             <TextView
                 android:layout_width="wrap_content"

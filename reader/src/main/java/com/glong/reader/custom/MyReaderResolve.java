@@ -45,7 +45,6 @@ public class MyReaderResolve extends ReaderResolve {
 
         //第0页 能展示多少行正文
         mLineNumPerPageInFirstPage = (int) ((usableWidth - mChapterTitleWidth) / (bodyWidth + mReaderConfig.getLineSpace()));
-
         //正常情况下（除第0页）一页能展示多少行
         mLineNumPerPageWithoutFirstPage = (int) (usableWidth / (bodyWidth + mReaderConfig.getLineSpace()));
 

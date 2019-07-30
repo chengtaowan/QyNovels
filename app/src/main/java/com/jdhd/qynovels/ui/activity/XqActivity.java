@@ -186,6 +186,9 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
          Intent intent=new Intent(XqActivity.this, ExtendReaderActivity.class);
          intent.putExtra("id",id);
          intent.putExtra("token",token);
+           intent.putExtra("img",bookBean.getData().getBook().getImage());
+           intent.putExtra("name",bookBean.getData().getBook().getName());
+           intent.putExtra("author",bookBean.getData().getBook().getAuthor());
          startActivity(intent);
          database=dbUtils.getWritableDatabase();
          Log.e("token--",token+"===");

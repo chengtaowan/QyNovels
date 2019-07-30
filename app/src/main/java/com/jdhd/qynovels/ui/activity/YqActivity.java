@@ -3,6 +3,8 @@ package com.jdhd.qynovels.ui.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -31,9 +33,13 @@ import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.FunctionBean;
 import com.jdhd.qynovels.persenter.impl.personal.IShareImgPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.FuLiFragment;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IShareImgView;
 import com.just.agentweb.AgentWeb;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -56,6 +62,8 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
     private String listtitle,listpath,listpage,listlimit;
     private IShareImgPresenterImpl shareImgPresenter;
     private Bitmap map;
+    private SmartRefreshLayout sr;
+    private boolean hasNetWork;
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -102,6 +110,16 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
                         });
                     }
                     break;
+                case 5:
+                    String str=functionBean.getCode();
+                    //获取剪贴板管理器：
+                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+// 创建普通字符型ClipData
+                    ClipData mClipData = ClipData.newPlainText("Label", str);
+// 将ClipData内容放到系统剪贴板里。
+                    cm.setPrimaryClip(mClipData);
+                    Toast.makeText(YqActivity.this,"复制到剪切板",Toast.LENGTH_SHORT).show();
+                    break;
             }
 
         }
@@ -113,7 +131,7 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_yq);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
-
+        hasNetWork = DeviceInfoUtils.hasNetWork(this);
         Intent intent = getIntent();
         type=intent.getIntExtra("type",0);
         title=intent.getStringExtra("title");
@@ -125,6 +143,7 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
     }
 
     private void init() {
+        sr=findViewById(R.id.sr);
         mx=findViewById(R.id.mx);
         mx.setOnClickListener(this);
         tex=findViewById(R.id.title);
@@ -143,6 +162,28 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
 
                 .go(MyApp.Url.webbaseUrl+path);
         web.getJsInterfaceHolder().addJavaObject("android", new AndroidInterface(web, this));
+        sr.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                if(!hasNetWork){
+                    Toast.makeText(YqActivity.this,"网络连接不可用",Toast.LENGTH_SHORT).show();
+                    sr.finishRefresh();
+                }
+                else{
+                    web=AgentWeb.with(YqActivity.this)
+
+                            .setAgentWebParent(webView, new LinearLayout.LayoutParams(-1, -1))
+
+                            .useDefaultIndicator()//进度条
+
+                            .createAgentWeb()
+                            .ready()
+
+                            .go(MyApp.Url.webbaseUrl+path);
+                    sr.finishRefresh();
+                }
+            }
+        });
     }
 
     @Override
@@ -201,6 +242,11 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
                     Message message6=handler.obtainMessage(6);
                     message6.obj=functionBean;
                     handler.sendMessage(message6);
+                    break;
+                case "clipboard":
+                    Message message5=handler.obtainMessage(5);
+                    message5.obj=functionBean;
+                    handler.sendMessage(message5);
                     break;
             }
         }

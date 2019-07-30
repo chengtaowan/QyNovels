@@ -156,27 +156,27 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/qb_px_120"
-            android:layout_marginTop="@dimen/qb_px_25"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/qb_px_120"-->
+            <!--android:layout_marginTop="@dimen/qb_px_25"-->
+            <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:layout_width="@dimen/qb_px_185"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="字号"
-                android:textColor="@color/setting_color"
-                android:textSize="@dimen/qb_px_55" />
+            <!--<TextView-->
+                <!--android:layout_width="@dimen/qb_px_185"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:gravity="center"-->
+                <!--android:text="字号"-->
+                <!--android:textColor="@color/setting_color"-->
+                <!--android:textSize="@dimen/qb_px_55" />-->
 
-            <SeekBar
-                android:id="@+id/text_size_seek_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-        </LinearLayout>
+            <!--<SeekBar-->
+                <!--android:id="@+id/text_size_seek_bar"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />-->
+        <!--</LinearLayout>-->
 
         <!--<LinearLayout-->
             <!--android:layout_width="match_parent"-->

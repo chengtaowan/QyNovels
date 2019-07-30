@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -30,11 +32,15 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.DownloadStatusController;
+import com.bytedance.sdk.openadsdk.FilterWord;
 import com.bytedance.sdk.openadsdk.TTAdConstant;
+import com.bytedance.sdk.openadsdk.TTAdDislike;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTAppDownloadListener;
+import com.bytedance.sdk.openadsdk.TTDislikeDialogAbstract;
 import com.bytedance.sdk.openadsdk.TTFeedAd;
+import com.bytedance.sdk.openadsdk.TTImage;
 import com.bytedance.sdk.openadsdk.TTInteractionAd;
 import com.bytedance.sdk.openadsdk.TTNativeAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
@@ -107,10 +113,10 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         else{
            shownum=1;
         }
-        if(feedlist.size()!=0){
+        if(feedlist.size()>0){
             newfeedlist.clear();
             for(int i=0;i<30;i++){
-                int num = (int) (Math.random() * (2 - 0)) + 0;
+                int num = (int) (Math.random() * (feedlist.size() - 0)) + 0;
                 newfeedlist.add(feedlist.get(num));
             }
         }
@@ -210,6 +216,9 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                             Intent intent=new Intent(context, ExtendReaderActivity.class);
                             intent.putExtra("token",token);
                             intent.putExtra("id",list.get(position).getBookId());
+                            intent.putExtra("img",list.get(position).getImage());
+                            intent.putExtra("name",list.get(position).getName());
+                            intent.putExtra("author",list.get(position).getAuthor());
                             context.startActivity(intent);
                         }
                     });
@@ -271,7 +280,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             Log.e("position",position+"--");
             FeedViewHolder viewHolder= (FeedViewHolder) holder;
             if(newfeedlist.size()!=0){
-                Log.e("newtitle",newfeedlist.get(position).getTitle());
+                //Log.e("newtitle",newfeedlist.get(position).getTitle());
                 Glide.with(context).load(newfeedlist.get(position).getImageList().get(0).getImageUrl())
                         .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
                         .into(new SimpleTarget<Drawable>() {

@@ -14,9 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.bookcase.SearchContentBean;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +62,10 @@ public class Ss_NrAdapter extends RecyclerView.Adapter<Ss_NrAdapter.Ss_NrViewHol
             holder.wj.setVisibility(View.GONE);
         }
         else{
-            Glide.with(context).load(list.get(position).getImage()).into(holder.book);
+            if(list.get(position).getImage()!=null){
+                GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
+                Glide.with(context).load(url).into(holder.book);
+            }
             holder.name.setText(list.get(position).getName());
             holder.grade.setText(list.get(position).getGrade()+"");
             holder.des.setText(list.get(position).getIntro());

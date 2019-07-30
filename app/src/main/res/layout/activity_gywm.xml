@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activity.GywmActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#fff">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="20dp"
@@ -36,7 +37,7 @@
     <ImageView
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:src="@mipmap/gywm_icon"
+        android:src="@mipmap/icon"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:layout_below="@+id/bt"
@@ -51,55 +52,55 @@
         android:layout_below="@+id/img"
         android:layout_marginTop="10dp"
         android:id="@+id/bb"/>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="49dp"
-        android:background="#fff"
-        android:layout_marginTop="30dp"
-        android:id="@+id/sz_xs"
-        android:layout_below="@+id/bb">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="趣悦小说群：487371520"
-            android:textColor="#ff2c2a35"
-            android:textSize="15sp"
-            android:layout_marginLeft="15dp"
-            android:layout_centerVertical="true"/>
-        <ImageView
-            android:layout_width="7dp"
-            android:layout_height="12dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:src="@mipmap/back_x"
-            android:id="@+id/xg_n1"/>
-    </RelativeLayout>
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="49dp"-->
+        <!--android:background="#fff"-->
+        <!--android:layout_marginTop="30dp"-->
+        <!--android:id="@+id/sz_xs"-->
+        <!--android:layout_below="@+id/bb">-->
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="趣悦小说群：487371520"-->
+            <!--android:textColor="#ff2c2a35"-->
+            <!--android:textSize="15sp"-->
+            <!--android:layout_marginLeft="15dp"-->
+            <!--android:layout_centerVertical="true"/>-->
+        <!--<ImageView-->
+            <!--android:layout_width="7dp"-->
+            <!--android:layout_height="12dp"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginRight="16dp"-->
+            <!--android:src="@mipmap/back_x"-->
+            <!--android:id="@+id/xg_n1"/>-->
+    <!--</RelativeLayout>-->
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="49dp"
-        android:background="#fff"
-        android:layout_marginTop="1dp"
-        android:id="@+id/sz_yx"
-        android:layout_below="@+id/sz_xs">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="商务邮箱：2916937193@qq.com"
-            android:textColor="#ff2c2a35"
-            android:textSize="15sp"
-            android:layout_marginLeft="15dp"
-            android:layout_centerVertical="true"/>
-        <ImageView
-            android:layout_width="7dp"
-            android:layout_height="12dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:src="@mipmap/back_x"
-            android:id="@+id/xg_n3"/>
-    </RelativeLayout>
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="49dp"-->
+        <!--android:background="#fff"-->
+        <!--android:layout_marginTop="1dp"-->
+        <!--android:id="@+id/sz_yx"-->
+        <!--android:layout_below="@+id/sz_xs">-->
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="商务邮箱：2916937193@qq.com"-->
+            <!--android:textColor="#ff2c2a35"-->
+            <!--android:textSize="15sp"-->
+            <!--android:layout_marginLeft="15dp"-->
+            <!--android:layout_centerVertical="true"/>-->
+        <!--<ImageView-->
+            <!--android:layout_width="7dp"-->
+            <!--android:layout_height="12dp"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginRight="16dp"-->
+            <!--android:src="@mipmap/back_x"-->
+            <!--android:id="@+id/xg_n3"/>-->
+    <!--</RelativeLayout>-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

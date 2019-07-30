@@ -13,12 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ClassContentBean;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +56,11 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.MoreViewHolder
     public void onBindViewHolder(@NonNull MoreViewHolder holder, final int position) {
         holder.grade.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Oswald-Bold.otf"));
         holder.type.setVisibility(View.VISIBLE);
-        Glide.with(context).load(list.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+        if(list.get(position).getImage()!=null){
+            GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
+            Glide.with(context).load(list.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+
+        }
         holder.name.setText(list.get(position).getName());
         holder.grade.setText(list.get(position).getGrade()+"");
         holder.des.setText(list.get(position).getIntro());

@@ -130,6 +130,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                     public void run() {
                         sr.finishRefresh();
                         adapter.refreshlist(caseBean.getData().getList());
+                        adapter.refreshhot(caseBean.getData().getHot());
                     }
                 });
             }
@@ -160,6 +161,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                     public void run() {
                         sr.finishRefresh();
                         adapter.refreshlist(caseBean.getData().getList());
+                        adapter.refreshhot(caseBean.getData().getHot());
                     }
                 });
             }
@@ -415,7 +417,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                 .setCodeId("901121737")
                 .setSupportDeepLink(true)
                 .setImageAcceptedSize(640, 320)
-                .setAdCount(3) //请求广告数量为1到3条
+                .setAdCount(10) //请求广告数量为1到3条
                 .build();
         //step5:请求广告，调用feed广告异步请求接口，加载到广告后，拿到广告素材自定义渲染
         mTTAdNative.loadFeedAd(adSlot, new TTAdNative.FeedAdListener() {
@@ -469,6 +471,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                         public void run() {
                             sr.finishRefresh();
                             adapter.refreshlist(caseBean.getData().getList());
+                            adapter.refreshhot(caseBean.getData().getHot());
                         }
                     });
                 }

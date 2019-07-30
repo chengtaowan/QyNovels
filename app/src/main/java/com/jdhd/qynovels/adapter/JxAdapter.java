@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
@@ -27,6 +28,7 @@ import com.jdhd.qynovels.ui.activity.XssdActivity;
 import com.jdhd.qynovels.ui.activity.PhbActivity;
 import com.jdhd.qynovels.ui.activity.WjjpActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.youth.banner.Banner;
 import com.youth.banner.loader.ImageLoader;
 
@@ -129,7 +131,11 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            RsViewHolder viewHolder= (RsViewHolder) holder;
            if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeTodayHotSearch){
               viewHolder.tex.setText(list.get(position).getName());
-               Glide.with(context).load(list.get(position).getList().get(0).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(viewHolder.book);
+              if(list.get(position).getList().get(0).getImage()!=null){
+                  GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getList().get(0).getImage());
+                  Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(viewHolder.book);
+
+              }
                viewHolder.name.setText(list.get(position).getList().get(0).getName());
                viewHolder.des.setText(list.get(position).getList().get(0).getIntro());
                viewHolder.num.setText(list.get(position).getList().get(0).getHot()+"");

@@ -12,12 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +57,10 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
             return;
         }
         if(type==1){
-            Glide.with(context).load(list.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            if(list.get(position).getImage()!=null){
+                GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
+                Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            }
             holder.name.setText(list.get(position).getName());
             holder.num.setText(list.get(position).getSearch()+"次搜索");
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +74,10 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
             });
         }
         else{
-            Glide.with(context).load(list.get(position+1).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            if(list.get(position+1).getImage()!=null){
+                GlideUrl url = DeviceInfoUtils.getUrl(list.get(position+1).getImage());
+                Glide.with(context).load(list.get(position+1).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            }
             holder.name.setText(list.get(position+1).getName());
             holder.num.setText(list.get(position+1).getSearch()+"次搜索");
             holder.itemView.setOnClickListener(new View.OnClickListener() {

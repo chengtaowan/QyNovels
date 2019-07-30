@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.bytedance.sdk.openadsdk.AdSlot;
@@ -104,7 +105,11 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
               Log.e("bookbean",dataBean.getBook().toString());
            }
            new MyThread(dataBean.getBook().getImage(),viewHolder.bj).start();
-           Glide.with(context).load(dataBean.getBook().getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(viewHolder.book);
+           if(dataBean.getBook().getImage()!=null){
+               GlideUrl url = DeviceInfoUtils.getUrl(dataBean.getBook().getImage());
+               Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(viewHolder.book);
+
+           }
            //Glide.with(XqActivity.this).load(bookInfoBean.getData().getBook().getImage()).into(bj);
            //       scaledBitmap为目标图像，10是缩放的倍数（越大模糊效果越高）
            if(dataBean.getBook().getFinishStatus()==10){

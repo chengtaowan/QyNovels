@@ -27,6 +27,7 @@ import com.jdhd.qynovels.module.personal.UserBean;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.activity.BindCodeActivity;
 import com.jdhd.qynovels.ui.activity.CjwtActivity;
+import com.jdhd.qynovels.ui.activity.FkActivity;
 import com.jdhd.qynovels.ui.activity.GrzlActivity;
 import com.jdhd.qynovels.ui.activity.JbActivity;
 import com.jdhd.qynovels.ui.activity.LoginActivity;
@@ -210,8 +211,14 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
 
         }
         else if(R.id.wd_fk==view.getId()){
-            Intent intent=new Intent(getContext(), CjwtActivity.class);
-            startActivity(intent);
+            if(token.equals("")){
+                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Intent intent=new Intent(getContext(), FkActivity.class);
+                intent.putExtra("token",token);
+                startActivity(intent);
+            }
         }
         else if(R.id.wd_sz==view.getId()){
             Intent intent=new Intent(getContext(), SzActivity.class);
@@ -316,6 +323,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                 mobel=user.getData().getMobile();
                 bindwx=user.getData().getBind_wx();
                 wxname=user.getData().getNickname();
+                SharedPreferences sharedPreferences=getContext().getSharedPreferences("nickname", MODE_PRIVATE);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
+                editor.putString("nickname",nickname);
+                editor.commit();
                 if (!userBean.getData().getAvatar().equals("http://api.damobi.cn")) {
                     Glide.with(getContext())
                             .load(userBean.getData().getAvatar())
@@ -385,6 +396,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                     SharedPreferences.Editor editor=preferences.edit();
                     editor.putString("sex",userBean.getData().getSex());
                     editor.commit();
+                    SharedPreferences sharedPreferences=getContext().getSharedPreferences("nickname", MODE_PRIVATE);
+                    SharedPreferences.Editor editor1=sharedPreferences.edit();
+                    editor1.putString("nickname",userBean.getData().getNickname());
+                    editor1.commit();
                     wd_yq.setVisibility(View.GONE);
                     wd_lb.setVisibility(View.GONE);
                     wo_dl.setVisibility(View.GONE);

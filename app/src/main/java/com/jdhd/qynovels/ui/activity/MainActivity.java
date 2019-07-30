@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private List<Fragment> list=new ArrayList<>();
     private List<RadioButton> rblist=new ArrayList<>();
     private int page;
+    public static List<String> mSelectPath=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

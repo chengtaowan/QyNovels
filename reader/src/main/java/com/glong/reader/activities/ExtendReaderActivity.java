@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -31,6 +33,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdDislike;
 import com.bytedance.sdk.openadsdk.TTAdNative;
@@ -89,10 +97,12 @@ import okhttp3.CacheControl;
 import rxhttp.wrapper.param.RxHttp;
 import rxhttp.wrapper.parse.SimpleParser;
 
+import static com.glong.reader.widget.ReaderView.ChildInPage.FIRST_PAGE;
+
 public class ExtendReaderActivity extends AppCompatActivity implements View.OnClickListener, IBookListView, IReadAwardView {
 
     private static final String TAG = ExtendReaderActivity.class.getSimpleName();
-    private UiModeManager uiModeManager ;
+    private UiModeManager uiModeManager;
     private ReaderView mReaderView;
     private ReaderView.ReaderManager mReaderManager;
     private ReaderView.Adapter<ChapterItemBean, ChapterContentBean> mAdapter;
@@ -118,11 +128,15 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private SeekBar lightSeekBar;
     private IReadAwardPresenterImpl readAwardPresenter;
     private int recLen=32;
-    private int clicknum=0;
+    private int clicknum=1;
     Timer timer = new Timer();
     private ImageView daynight;
     private LinearLayout gg;
     private TTAdNative mTTAdNative;
+    private ImageView book;
+    private TextView bookname,bookauthor;
+    private String img,name,author;
+    private View view;
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -169,6 +183,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         Intent intent=getIntent();
         id=intent.getIntExtra("id",0);
         token=intent.getStringExtra("token");
+        img=intent.getStringExtra("img");
+        name=intent.getStringExtra("name");
+        author=intent.getStringExtra("author");
         Log.e("bookid1",id+"");
         bookListPresenter=new IBookListPresenterImpl(this,this);
         bookListPresenter.setId(id);
@@ -229,6 +246,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         mNavigationView = findViewById(R.id.navigation);
         mRecyclerView = findViewById(R.id.recyclerView);
         mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_0));
+        //view.setBackground(getResources().getDrawable(R.color.reader_bg_0));
         initRecyclerViewAndDrawerLayout();
 
         findViewById(R.id.setting).setOnClickListener(this);//设置
@@ -332,6 +350,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         final Toolbar toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setTitle(name);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -349,10 +368,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
-        if (i == R.id.delete_cache) {
-            Toast.makeText(this, "删除缓存" + (mReaderManager.getCache().removeAll() ? "成功" : "失败"), Toast.LENGTH_SHORT).show();
-        } else if (i == R.id.share) {
-            Toast.makeText(this, "分享", Toast.LENGTH_SHORT).show();
+
+         if (i == R.id.share) {
+            Toast.makeText(this, "去广告", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -367,7 +385,25 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         mReaderView.setLineSpace((int) (mReaderView.getTextSize()*0.5));
         //mReaderView.setSretract("111111");
         //mReaderView.setAdapter(mAdapter);
-
+//        view= LayoutInflater.from(this).inflate(R.layout.item_first, null, false);
+//        book=view.findViewById(R.id.book_img);
+//        bookname=view.findViewById(R.id.book_name);
+//        bookauthor=view.findViewById(R.id.book_author);
+//        mReaderView.addView(view, FIRST_PAGE);
+        mReaderView.invalidateBothPage();
+//        if(img!=null){
+//            GlideUrl url = DeviceInfoUtils.getUrl(img,ExtendReaderActivity.this);
+//            Glide.with(ExtendReaderActivity.this).load(url)
+//                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(10)))
+//                    .into(new SimpleTarget<Drawable>() {
+//                        @Override
+//                        public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+//                            book.setImageDrawable(resource);
+//                        }
+//                    });
+//        }
+//        bookname.setText(name);
+//        bookauthor.setText(author);
         mReaderView.setPageChangedCallback(new PageChangedCallback() {
             @Override
             public TurnStatus toPrevPage() {
@@ -431,53 +467,59 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                 TurnStatus turnStatus = mReaderManager.toNextPage();
                 if (turnStatus == TurnStatus.NO_NEXT_CHAPTER) {
                     count++;
-                    if(count>=bookList.getData().getList().size()){
+                    if(count>1){
                         Toast.makeText(ExtendReaderActivity.this, "没有下一页啦", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+                        intent.setAction("com.jdhd.qynovels");
+                        intent.putExtra("id",id);// 通过intent隐式跳转进行跳转
+                        intent.addCategory(Intent.CATEGORY_DEFAULT);
+                        startActivity(intent);
                     }
                     else{
-                        int time= DeviceInfoUtils.getTime();
-                        Map<String,String> map=new HashMap<>();
-                        map.put("time",time+"");
-                        if(token!=null){
-                            map.put("token",token);
-                        }
-                        map.put("id",bookList.getData().getList().get(count).getId()+"");
-                        String compareTo = DeviceInfoUtils.getCompareTo(map);
-                        String sign=DeviceInfoUtils.md5(compareTo);
-                        map.put("sign",sign);
-                        if(token!=null){
-                            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
-                                    .addHeader("token",token)
-                                    .add(map)
-                                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                                    .asParser(new SimpleParser<BookContentBean>(){})
-                                    .subscribe(bookContentBean->{
-                                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
-                                            Message message=handler.obtainMessage();
-                                            message.obj=bookContentBean.getData().getContent();
-                                            handler.sendMessage(message);
-                                        }
-                                    },throwable->{
-                                        Log.e("zjerror",throwable.getMessage());
-                                    });
-                        }
-                        else{
-                            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
-                                    .add(map)
-                                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                                    .asParser(new SimpleParser<BookContentBean>(){})
-                                    .subscribe(bookContentBean->{
-                                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
-                                            Message message=handler.obtainMessage();
-                                            message.obj=bookContentBean.getData().getContent();
-                                            handler.sendMessage(message);
-                                        }
-                                    },throwable->{
-                                        Log.e("zjerror",throwable.getMessage());
-                                    });
-                        }
-
-                    }
+//                        mReaderManager.toNextChapter(0);
+//                        int time= DeviceInfoUtils.getTime();
+//                        Map<String,String> map=new HashMap<>();
+//                        map.put("time",time+"");
+//                        if(token!=null){
+//                            map.put("token",token);
+//                        }
+//                        map.put("id",bookList.getData().getList().get(count).getId()+"");
+//                        String compareTo = DeviceInfoUtils.getCompareTo(map);
+//                        String sign=DeviceInfoUtils.md5(compareTo);
+//                        map.put("sign",sign);
+//                        if(token!=null){
+//                            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+//                                    .addHeader("token",token)
+//                                    .add(map)
+//                                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+//                                    .asParser(new SimpleParser<BookContentBean>(){})
+//                                    .subscribe(bookContentBean->{
+//                                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+//                                            Message message=handler.obtainMessage();
+//                                            message.obj=bookContentBean.getData().getContent();
+//                                            handler.sendMessage(message);
+//                                        }
+//                                    },throwable->{
+//                                        Log.e("zjerror",throwable.getMessage());
+//                                    });
+//                        }
+//                        else{
+//                            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+//                                    .add(map)
+//                                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+//                                    .asParser(new SimpleParser<BookContentBean>(){})
+//                                    .subscribe(bookContentBean->{
+//                                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+//                                            Message message=handler.obtainMessage();
+//                                            message.obj=bookContentBean.getData().getContent();
+//                                            handler.sendMessage(message);
+//                                        }
+//                                    },throwable->{
+//                                        Log.e("zjerror",throwable.getMessage());
+//                                    });
+//                        }
+//
+                   }
 
 
                 }
@@ -493,7 +535,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             @Override
             public void onSuccess(List<ChapterItemBean> chapters) {
                 List<ChapterItemBean> list=new ArrayList<>();
-                for(int i=0;i<bookList.getData().getList().size();i++){
+                for(int i=0;i<1;i++){
                    ChapterItemBean chapterItemBean=new ChapterItemBean();
                    chapterItemBean.setChapterId(bookList.getData().getList().get(i).getId()+"");
                    chapterItemBean.setChapterName(bookList.getData().getList().get(i).getName());
@@ -587,6 +629,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
+           // view.setBackground(getResources().getDrawable(R.color.reader_bg_0));
             ColorsConfig colorsConfig=new ColorsConfig();
             colorsConfig.setTextColor(Color.parseColor("#5B5956"));
             mReaderView.setColorsConfig(colorsConfig);
@@ -597,6 +640,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_1));
+           // view.setBackground(getResources().getDrawable(R.color.reader_bg_1));
             ColorsConfig colorsConfig=new ColorsConfig();
             colorsConfig.setTextColor(Color.parseColor("#4E402A"));
             mReaderView.setColorsConfig(colorsConfig);
@@ -607,6 +651,8 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_2));
+            //view.setBackground(getResources().getDrawable(R.color.reader_bg_2));
+
             ColorsConfig colorsConfig=new ColorsConfig();
             colorsConfig.setTextColor(Color.parseColor("#5F665F"));
             mReaderView.setColorsConfig(colorsConfig);
@@ -617,6 +663,8 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_3));
+            //view.setBackground(getResources().getDrawable(R.color.reader_bg_3));
+
             ColorsConfig colorsConfig=new ColorsConfig();
             colorsConfig.setTextColor(Color.parseColor("#928E8C"));
             mReaderView.setColorsConfig(colorsConfig);
@@ -627,6 +675,8 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
             mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
+            //view.setBackground(getResources().getDrawable(R.color.reader_bg_4));
+
             ColorsConfig colorsConfig=new ColorsConfig();
             colorsConfig.setTextColor(Color.parseColor("#8A8D90"));
             mReaderView.setColorsConfig(colorsConfig);
@@ -655,6 +705,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             ScreenUtils.changeAppBrightness(ExtendReaderActivity.this, lightSeekBar.getProgress()+1);
             lightSeekBar.setProgress(lightSeekBar.getProgress()+1);
 
+
         }
         else if (i == R.id.effect_real_one_way) {
             mReaderView.setEffect(new EffectOfRealOneWay(this));
@@ -668,10 +719,16 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             if(clicknum%2==0){
                 mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_0));
                 daynight.setImageResource(R.mipmap.yuedu_yj);
+                ColorsConfig colorsConfig=new ColorsConfig();
+                colorsConfig.setTextColor(Color.parseColor("#5B5956"));
+                mReaderView.setColorsConfig(colorsConfig);
             }
             else{
                 mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_4));
                 daynight.setImageResource(R.mipmap.yuedu_yj_on);
+                ColorsConfig colorsConfig=new ColorsConfig();
+                colorsConfig.setTextColor(Color.parseColor("#8A8D90"));
+                mReaderView.setColorsConfig(colorsConfig);
             }
             clicknum++;
         }
@@ -795,7 +852,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private void loadBannerAd(LinearLayout mBannerContainer) {
         //step4:创建广告请求参数AdSlot,具体参数含义参考文档
         AdSlot adSlot = new AdSlot.Builder()
-                .setCodeId("924212868") //广告位id
+                .setCodeId("901121895") //广告位id
                 .setSupportDeepLink(true)
                 .setImageAcceptedSize(300, 200)
                 .build();

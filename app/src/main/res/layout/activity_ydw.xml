@@ -8,7 +8,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFF5DA"/>
+        android:background="@drawable/shape_ydwbj"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -60,10 +60,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1307"
+                        android:text=""
                         android:textColor="#ff2f3236"
                         android:textSize="12sp"
-                        />
+                        android:id="@+id/readnum"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

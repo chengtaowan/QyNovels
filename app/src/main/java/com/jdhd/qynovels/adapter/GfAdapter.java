@@ -13,13 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
+import com.jdhd.qynovels.module.bookcase.ReadEndBean;
 import com.jdhd.qynovels.module.bookshop.ShopBean;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,11 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
     private onItemClick onItemClick;
     private List<ShopBean.DataBean.ListBeanX.ListBean> list=new ArrayList<>();
     private List<BookInfoBean.DataBean.ListBean> listBeanList=new ArrayList<>();
+    private List<ReadEndBean.DataBean.ListBean> readlist=new ArrayList<>();
+    public void refreshread(List<ReadEndBean.DataBean.ListBean> readlist){
+        this.readlist=readlist;
+        notifyDataSetChanged();
+    }
     public void refresh(List<ShopBean.DataBean.ListBeanX.ListBean> list){
         this.list=list;
         notifyDataSetChanged();
@@ -68,7 +76,11 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             if(listBeanList.size()==0){
                 return;
             }
-            Glide.with(context).load(listBeanList.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            if(listBeanList.get(position).getImage()!=null){
+                GlideUrl url = DeviceInfoUtils.getUrl(listBeanList.get(position).getImage());
+                Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+
+            }
             holder.name.setText(listBeanList.get(position).getName());
             holder.grade.setText(listBeanList.get(position).getGrade());
             holder.des.setText(listBeanList.get(position).getIntro());
@@ -95,7 +107,10 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             if(list.size()==0){
                 return;
             }
-            Glide.with(context).load(list.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            if(list.get(position).getImage()!=null){
+                GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
+                Glide.with(context).load(list.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            }
             holder.name.setText(list.get(position).getName());
             holder.grade.setText(list.get(position).getGrade()+"");
             holder.des.setText(list.get(position).getIntro());
@@ -117,6 +132,37 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
                 }
             });
         }
+        else if(usetype==2){
+            if(readlist.size()==0){
+                return;
+            }
+            if(readlist.get(position).getImage()!=null){
+                GlideUrl url = DeviceInfoUtils.getUrl(readlist.get(position).getImage());
+                Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+
+            }
+            holder.name.setText(readlist.get(position).getName());
+            //holder.grade.setText(readlist.get(position).getGrade());
+            holder.des.setText(readlist.get(position).getIntro());
+            holder.type.setText(readlist.get(position).getClassName());
+            //holder.num.setText(listBeanList.get(position).+"万字");
+            if(readlist.get(position).getFinishStatus()==0){
+                holder.wj.setText("完结");
+            }
+            else{
+                holder.wj.setText("连载");
+            }
+            holder.num.setVisibility(View.GONE);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent=new Intent(context, XqActivity.class);
+                    intent.putExtra("xq",2);
+                    intent.putExtra("id",readlist.get(position).getBookId());
+                    context.startActivity(intent);
+                }
+            });
+        }
 
 
     }
@@ -128,6 +174,9 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
         }
         else if(usetype==0){
             return list.size();
+        }
+        else if(usetype==2){
+            return 3;
         }
         return 0;
     }

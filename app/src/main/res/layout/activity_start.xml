@@ -7,19 +7,17 @@
     tools:context=".ui.activity.StartActivity">
 
     <ImageView
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:src="@mipmap/icon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/qyd_bg"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="190dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="让阅读变得更有趣！"
-        android:textColor="#ff828486"
-        android:textSize="18sp"
+        android:scaleType="fitXY"/>
+    <ImageView
+        android:layout_width="125dp"
+        android:layout_height="35dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="24dp"/>
+        android:src="@mipmap/qb_logo"
+        android:layout_marginBottom="20dp"/>
 
 </RelativeLayout>

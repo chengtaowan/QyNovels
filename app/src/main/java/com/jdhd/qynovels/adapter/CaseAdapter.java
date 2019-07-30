@@ -168,6 +168,9 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
                     Intent intent=new Intent(context, ExtendReaderActivity.class);
                     intent.putExtra("id",hotBean.getBookId());
                     intent.putExtra("token",token);
+                    intent.putExtra("img",hotBean.getImage());
+                    intent.putExtra("name",hotBean.getName());
+                    intent.putExtra("author",hotBean.getAuthor());
                     context.startActivity(intent);
                 }
             });
