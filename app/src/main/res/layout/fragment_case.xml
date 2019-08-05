@@ -10,15 +10,16 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_marginTop="-40dp"
+
         android:background="@mipmap/sj_bg">
     </ImageView>
     <ImageView
-        android:layout_width="121dp"
+        android:layout_width="wrap_content"
         android:layout_height="16dp"
         android:src="@mipmap/sj_logo"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="38dp"/>
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="38dp"
+        android:id="@+id/logo"/>
     <ImageView
         android:layout_width="35dp"
         android:layout_height="20dp"
@@ -43,11 +44,42 @@
         android:layout_marginRight="15dp"
         android:layout_marginTop="38dp"
         android:id="@+id/sj_ss"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/logo"
+        android:layout_marginTop="16dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="今日阅读"
+            android:textColor="#ff6d6f72"
+            android:textSize="14sp"
+            android:layout_marginLeft="25dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="#ffef8e44"
+            android:textSize="16sp"
+            android:layout_marginLeft="8dp"
+            android:id="@+id/time"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="分钟"
+            android:layout_marginLeft="8dp"
+            android:textColor="#ff6d6f72"
+            android:textSize="14sp"
+            />
+    </LinearLayout>
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/sr"
-        android:layout_marginTop="64dp">
+        android:layout_marginTop="105dp"
+        android:background="#fff">
     <com.jdhd.qynovels.widget.MRefreshHeader
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

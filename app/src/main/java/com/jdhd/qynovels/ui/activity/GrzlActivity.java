@@ -82,7 +82,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     private IAvatarPresenterImpl avatarPresenter;
     private String imgurl;
     private TextView bd;
-    private int type;
+    private String type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +100,8 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         uid=perintent.getIntExtra("uid",0);
         bindwx=perintent.getIntExtra("bindwx",0);
         wxname=perintent.getStringExtra("wxname");
-        type=perintent.getIntExtra("type",1);
+        type=perintent.getStringExtra("type");
+        Log.e("type",type+"]]]");
         Log.e("wxname",wxname);
         avatarPresenter=new IAvatarPresenterImpl(this,GrzlActivity.this);
         init();
@@ -169,12 +170,13 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if(R.id.zl_back==view.getId()){
-            if(type==1){
+            Log.e("type",type+"---");
+            if(type.equals("wode")){
                 Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
                 intent.putExtra("page", 3);
                 startActivity(intent);
             }
-            else{
+            else if(type.equals("sz")){
                 Intent intent=new Intent(GrzlActivity.this,SzActivity.class);
                 intent.putExtra("name",nickname);
                 intent.putExtra("avatar",avatar);
@@ -270,7 +272,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     private void getPermission() {
         if (EasyPermissions.hasPermissions(this, permissions)) {
             //已经打开权限
-            Toast.makeText(this, "已经申请相关权限", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "已经申请相关权限", Toast.LENGTH_SHORT).show();
         } else {
             //没有打开相关权限、申请权限
             EasyPermissions.requestPermissions(this, "需要获取您的相册、照相使用权限", 1, permissions);
@@ -432,7 +434,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        Toast.makeText(this, "相关权限获取成功", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "相关权限获取成功", Toast.LENGTH_SHORT).show();
     }
 
     @Override

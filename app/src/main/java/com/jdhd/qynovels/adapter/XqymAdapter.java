@@ -212,7 +212,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
             @Override
             public void onError(int code, String message) {
-                Toast.makeText(context,message+"--"+code,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context,message+"--"+code,Toast.LENGTH_SHORT).show();
                 mBannerContainer.removeAllViews();
             }
 
@@ -238,7 +238,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
                     @Override
                     public void onAdShow(View view, int type) {
-                        Log.e("bannergg","广告展示");
+                        //Log.e("bannergg","广告展示");
                         //Toast.makeText(context,"广告展示",Toast.LENGTH_SHORT).show();
 
                     }

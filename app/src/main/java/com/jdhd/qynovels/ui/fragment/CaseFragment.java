@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -32,7 +34,9 @@ import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.CaseAdapter;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
+import com.jdhd.qynovels.module.personal.UserBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.activity.LsActivity;
 import com.jdhd.qynovels.ui.activity.QdActivity;
 import com.jdhd.qynovels.ui.activity.SsActivity;
@@ -40,6 +44,7 @@ import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.bookcase.ICaseView;
+import com.jdhd.qynovels.view.personal.IPersonalView;
 import com.jdhd.qynovels.widget.MRefreshHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -54,7 +59,7 @@ import okhttp3.Request;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CaseFragment extends Fragment implements View.OnClickListener, ICaseView,CaseAdapter.onItemClick {
+public class CaseFragment extends Fragment implements View.OnClickListener, ICaseView,CaseAdapter.onItemClick, IPersonalView {
     private ImageView ss,ls,qd;
     private RecyclerView rv;
     public static ICasePresenterImpl casePresenter;
@@ -74,6 +79,8 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     private List<TTFeedAd> mData=new ArrayList<>();
     protected boolean isCreated = false;
     private ICaseView iCaseView;
+    private IPersonalPresenterImpl personalPresenter;
+    private TextView time;
     public CaseFragment() {
         mTTAdNative = TTAdSdk.getAdManager().createAdNative(getContext());
         // Required empty public constructor
@@ -182,6 +189,8 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         SharedPreferences preferences=getActivity().getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
         iCaseView=this;
+        personalPresenter=new IPersonalPresenterImpl(this,getContext());
+        personalPresenter.loadData();
         if(iCaseView!=null){
             casePresenter=new ICasePresenterImpl(iCaseView,getContext());
             casePresenter.loadData();
@@ -258,6 +267,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     }
 
     private void init(View view) {
+      time=view.findViewById(R.id.time);
       sr=view.findViewById(R.id.sr);
       ss=view.findViewById(R.id.sj_ss);
       ls=view.findViewById(R.id.sj_ls);
@@ -276,6 +286,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
             }
         };
       rv.setLayoutManager(layoutManager);
+      time.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Oswald-Bold.otf"));
 
       rv.setAdapter(adapter);
       Glide.with(getContext()).load(R.mipmap.re).into(gif);
@@ -381,6 +392,16 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
             }
         });
 
+    }
+
+    @Override
+    public void onSuccess(UserBean userBean) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                time.setText(userBean.getData().getRead_time()/60+"");
+            }
+        });
     }
 
     @Override

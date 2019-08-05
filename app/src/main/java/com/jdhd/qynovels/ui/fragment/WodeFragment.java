@@ -188,6 +188,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
     public void onClick(View view) {
         if(R.id.wd_dl==view.getId()){
             Intent intent=new Intent(getContext(), LoginActivity.class);
+            intent.putExtra("type",0);
             startActivity(intent);
         }
         else if(R.id.wd_ls==view.getId()){
@@ -243,7 +244,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                 intent.putExtra("mobile",mobel+"");
                 intent.putExtra("bindwx",bindwx);
                 intent.putExtra("wxname",wxname);
-                intent.putExtra("type",1);
+                intent.putExtra("type","wode");
                 startActivity(intent);
             }
             else{
@@ -342,6 +343,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                 wd_jb.setText(userBean.getData().getTotal_gold() + "");
                 wd_jrjb.setText(userBean.getData().getToday_gold() + "");
                 wd_ydsj.setText(userBean.getData().getRead_time()/60 + "");
+                SharedPreferences sharedPreferences1=getContext().getSharedPreferences("readtime",MODE_PRIVATE);
+                SharedPreferences.Editor editor1=sharedPreferences1.edit();
+                editor1.putString("readtime",userBean.getData().getRead_time()/60+"");
+                editor1.commit();
                 if (userBean.getData().getMessage_count() > 0) {
                     wd_xx.setImageResource(R.mipmap.my_xx_on);
                 } else {
@@ -400,6 +405,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                     SharedPreferences.Editor editor1=sharedPreferences.edit();
                     editor1.putString("nickname",userBean.getData().getNickname());
                     editor1.commit();
+                    SharedPreferences sharedPreferences1=getContext().getSharedPreferences("readtime",MODE_PRIVATE);
+                    SharedPreferences.Editor editor2=sharedPreferences1.edit();
+                    editor2.putString("readtime",userBean.getData().getRead_time()/60+"");
+                    editor2.commit();
                     wd_yq.setVisibility(View.GONE);
                     wd_lb.setVisibility(View.GONE);
                     wo_dl.setVisibility(View.GONE);

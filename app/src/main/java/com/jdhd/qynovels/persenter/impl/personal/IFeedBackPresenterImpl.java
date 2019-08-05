@@ -13,6 +13,7 @@ import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.personal.IAvatarView;
 import com.jdhd.qynovels.view.personal.IFeedBackView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,11 @@ public class IFeedBackPresenterImpl implements IFeedBackPresenter {
     private String token;
     private String content,qq,wx,ali;
     private String imgjson;
+    private List<String> list=new ArrayList<>();
+
+    public void setList(List<String> list) {
+        this.list = list;
+    }
 
     public String getContent() {
         return content;
@@ -78,7 +84,7 @@ public class IFeedBackPresenterImpl implements IFeedBackPresenter {
         SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
         int time= DeviceInfoUtils.getTime();
-        Map<String,String> map=new HashMap<>();
+        Map<String,Object> map=new HashMap<>();
         map.put("time",time+"");
         if(token!=null){
             map.put("token",token);
@@ -87,16 +93,21 @@ public class IFeedBackPresenterImpl implements IFeedBackPresenter {
         map.put("qq",qq);
         map.put("wx",wx);
         map.put("ali",ali);
-        map.put("images",imgjson);
+        if(list.size()!=0){
+            String[] strs= list.toArray(new String[list.size()]);
+            map.put("images",strs);
+        }
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
+        Log.e("token",token);
         Log.e("time",time+"");
         Log.e("content",content);
         Log.e("wx",wx);
         Log.e("qq",qq);
         Log.e("ali",ali);
-        Log.e("json",imgjson);
+        Log.e("json",list.toString());
+        Log.e("sign",sign);
         RxHttp.postForm(MyApp.Url.baseUrl+"feedback")
                 .addHeader("token",token)
                 .add(map)

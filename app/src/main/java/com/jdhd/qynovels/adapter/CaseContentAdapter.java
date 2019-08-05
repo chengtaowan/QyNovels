@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -60,7 +61,7 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ListViewHolder){
-            LinearLayoutManager manager=new LinearLayoutManager(context);
+           GridLayoutManager manager=new GridLayoutManager(context, 3);
             ((ListViewHolder) holder).rv.setLayoutManager(manager);
             ListAdapter adapter=new ListAdapter(context,activity);
             adapter.refresh(list);

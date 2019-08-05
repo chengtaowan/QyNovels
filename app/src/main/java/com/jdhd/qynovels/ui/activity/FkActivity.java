@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -28,6 +29,10 @@ import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IFeedBackView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +52,7 @@ public class FkActivity extends AppCompatActivity implements View.OnClickListene
     private LinearLayout ll2;
     private String token;
     private IFeedBackPresenterImpl feedBackPresenter;
-    private List<Map<String,String>> list=new ArrayList<>();
+    private List<String> list=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -230,7 +235,11 @@ public class FkActivity extends AppCompatActivity implements View.OnClickListene
           feedBackPresenter.setQq(q);
           feedBackPresenter.setWx(w);
           feedBackPresenter.setImgjson(imgjson);
+          feedBackPresenter.setList(list);
           feedBackPresenter.loadData();
+          list.clear();
+            Toast.makeText(FkActivity.this,"感谢您的反馈",Toast.LENGTH_SHORT).show();
+            finish();
         }
         else if(R.id.fk_back==view.getId()){
            finish();
@@ -247,16 +256,27 @@ public class FkActivity extends AppCompatActivity implements View.OnClickListene
         startActivityForResult(intent,0);
     }
     private String changejson(){
-        Map<String,String> map=new HashMap<>();
         for(int i=0;i<MainActivity.mSelectPath.size();i++){
             Bitmap bt = BitmapFactory.decodeFile(MainActivity.mSelectPath.get(i).toString());
             String  imageToBase64= "data:image/p" +
                     "ng;base64,"+changeToBase64(bt);
-            map.put("image"+i,imageToBase64);
-            list.add(map);
+            list.add(imageToBase64);
         }
         Gson gson=new Gson();
         String s = gson.toJson(list);
+        File file = new File(Environment.getExternalStorageDirectory(),  "a.txt");
+        Log.e("data",Environment.getExternalStorageDirectory()+"");
+        FileOutputStream os=null;
+        try {
+            os=new FileOutputStream(file);
+            os.write(s.getBytes());
+            os.flush();
+            os.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return  s;
     }
     public static String changeToBase64(Bitmap bitmap){
@@ -264,7 +284,7 @@ public class FkActivity extends AppCompatActivity implements View.OnClickListene
         //参数2：压缩率，40表示压缩掉60%; 如果不压缩是100，表示压缩率为0
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         byte[] bytes = bos.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
+        return Base64.encodeToString(bytes, Base64.NO_WRAP);
 
     }
     @Override

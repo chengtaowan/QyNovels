@@ -14,7 +14,7 @@ public abstract class Cache {
     /**
      * 缓存章节数(默认前面3章，后面3章)
      */
-    private int mCacheAmount = 3;
+    private int mCacheAmount = 0;
 
     public Cache(File cacheDir) {
         checkIsDirectory(cacheDir);

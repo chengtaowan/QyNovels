@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/share"
-        android:title="去广告"
+        android:title=""
         app:showAsAction="withText|ifRoom">
     </item>
 

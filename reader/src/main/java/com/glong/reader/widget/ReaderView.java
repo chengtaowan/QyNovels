@@ -711,35 +711,35 @@ public class ReaderView extends FrameLayout {
             return turnStatus;
         }
 
-        @Override
-        public void startFromCache(String key, int chapterIndex, int charIndex, @NonNull String chapterName) {
-            if (mReaderView == null)
-                throw new NullPointerException("mReaderView == null,Have you already called method ReaderView#setReaderMananger()");
-            startFromCache(mCache.getCacheDir(), key, chapterIndex, charIndex, chapterName);
-        }
+//        @Override
+//        public void startFromCache(String key, int chapterIndex, int charIndex, @NonNull String chapterName) {
+//            if (mReaderView == null)
+//                throw new NullPointerException("mReaderView == null,Have you already called method ReaderView#setReaderMananger()");
+//            //startFromCache(mCache.getCacheDir(), key, chapterIndex, charIndex, chapterName);
+//        }
 
-        @Override
-        public void startFromCache(File cacheDir, String key, int chapterIndex, int charIndex, @NonNull String chapterName) {
-            if (mReaderView == null)
-                throw new NullPointerException("mReaderView == null,Have you already called method ReaderView#setReaderManger()?");
-            Adapter adapter = mReaderView.getAdapter();
-            if (adapter == null)
-                throw new NullPointerException("Have you already called method ReaderView#setAdapter()?");
-            mCache.setCacheDir(cacheDir);
-            ParameterizedType parameterizedType = (ParameterizedType) adapter.getClass().getGenericSuperclass();
-            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-            Object cache = mCache.get(key, actualTypeArguments[1]);
-            if (cache != null) {
-                mReaderResolve.setArea(mReaderView.getMeasuredWidth(), mReaderView.getMeasuredHeight());
-                mReaderResolve.setChapterSum(1);
-                setUpReaderResolve(chapterIndex, charIndex, chapterName, adapter.obtainChapterContent(cache));
-                mIsUsingCache = true;
-                ReaderManager.this.mReaderView.invalidateBothPage();
-            } else {
-                mReaderResolve.setChapterIndex(chapterIndex);
-                mReaderResolve.setCharIndex(charIndex);
-            }
-        }
+//        @Override
+//        public void startFromCache(File cacheDir, String key, int chapterIndex, int charIndex, @NonNull String chapterName) {
+//            if (mReaderView == null)
+//                throw new NullPointerException("mReaderView == null,Have you already called method ReaderView#setReaderManger()?");
+//            Adapter adapter = mReaderView.getAdapter();
+//            if (adapter == null)
+//                throw new NullPointerException("Have you already called method ReaderView#setAdapter()?");
+//            mCache.setCacheDir(cacheDir);
+//            ParameterizedType parameterizedType = (ParameterizedType) adapter.getClass().getGenericSuperclass();
+//            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+//            Object cache = mCache.get(key, actualTypeArguments[1]);
+//            if (cache != null) {
+//                mReaderResolve.setArea(mReaderView.getMeasuredWidth(), mReaderView.getMeasuredHeight());
+//                mReaderResolve.setChapterSum(1);
+//                setUpReaderResolve(chapterIndex, charIndex, chapterName, adapter.obtainChapterContent(cache));
+//                mIsUsingCache = true;
+//                ReaderManager.this.mReaderView.invalidateBothPage();
+//            } else {
+//                mReaderResolve.setChapterIndex(chapterIndex);
+//                mReaderResolve.setCharIndex(charIndex);
+//            }
+//        }
 
         void setReaderView(ReaderView readerView, @NonNull ReaderConfig readerConfig) {
             mReaderResolve = new ReaderResolve(readerConfig);
@@ -801,7 +801,7 @@ public class ReaderView extends FrameLayout {
                 mOnReaderWatcherListener.onPageChanged(mReaderResolve.getPageIndex());
             }
             //章节发生变化后，缓存前后章节（如果没有缓存的话）
-            cacheNearChapter(chapterIndex);
+            //cacheNearChapter(chapterIndex);
 //            mReaderView.invalidateCurrPage();
         }
 

@@ -54,12 +54,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private int recLen = 59;
     private TextView ys,xy;
     Timer timer = new Timer();
+    private int type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         MyApp.addActivity(this);
+        Intent intent = getIntent();
+        type=intent.getIntExtra("type",0);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         //同时请求多个权限
         RxPermissions.getInstance(LoginActivity.this)
@@ -105,7 +108,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         if(R.id.dl_gb==view.getId()){
-           finish();
+                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                intent.putExtra("page",3);
+                startActivity(intent);
+
         }
         else if(R.id.dl_wx==view.getId()){
             if(!MyApp.getApi().isWXAppInstalled()){
@@ -181,7 +187,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 };
                 timer.schedule(task, 1000, 1000);
-                yzm.setText(captchaBean.getData().getCode()+"");
+                //yzm.setText(captchaBean.getData().getCode()+"");
             }
         });
 
@@ -203,6 +209,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 editor.putString("token",tokenBean.getData().getToken());
                 editor.putString("login","success");
                 editor.commit();
+                if(type==1){
+                    Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                    intent.putExtra("page", 2);
+                    startActivity(intent);
+                }
                 Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                 intent.putExtra("page", 3);
                 intent.putExtra("action",0);

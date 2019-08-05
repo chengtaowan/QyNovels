@@ -82,7 +82,7 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
                 intent.putExtra("mobile",mobile+"");
                 intent.putExtra("bindwx",bindwx);
                 intent.putExtra("wxname",wxname);
-                intent.putExtra("type",2);
+                intent.putExtra("type","sz");
                 startActivity(intent);
             }
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,9 +12,14 @@ import android.webkit.WebView;
 
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
+import com.google.gson.Gson;
 import com.jdhd.qynovels.app.MyApp;
 
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -193,27 +199,37 @@ public class DeviceInfoUtils {
     public static String getCompareTo(Map map){
         StringBuffer buffer=new StringBuffer();
         String mkey="f1c66be34c32dcea0197f763853490f0";
-        //String key="123456789";
+        //String mkey="123456789";
         buffer.append(mkey);
         if(map.get("token")!=null){
             buffer.append(map.get("token"));
             map.remove("token");
         }
 
-        List<Map.Entry<String, String>> infoIds = new ArrayList<Map.Entry<String, String>>(map.entrySet());
+        List<Map.Entry<String, Object>> infoIds = new ArrayList<Map.Entry<String, Object>>(map.entrySet());
         // 对所有传入参数按照字段名的 ASCII 码从小到大排序（字典序）
-        Collections.sort(infoIds, new Comparator<Map.Entry<String, String>>() {
+        Collections.sort(infoIds, new Comparator<Map.Entry<String, Object>>() {
 
-            public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+            public int compare(Map.Entry<String, Object> o1, Map.Entry<String, Object> o2) {
                 return (o1.getKey()).toString().compareTo(o2.getKey());
             }
         });
-        for (Map.Entry<String, String> item : infoIds) {
-            if (item.getKey() != null || item.getKey() != "") {
+        for (Map.Entry<String, Object> item : infoIds) {
                 String key = item.getKey();
-                String val = item.getValue();
-                buffer.append(key+val);
-            }
+                Object val = item.getValue();
+                if(val instanceof String[]){
+                    Gson gson=new Gson();
+                    String s = gson.toJson(val);
+                    buffer.append(key+s);
+                    Log.e("key","key---"+s);
+                }
+                else{
+                    if(!val.equals("")){
+                        buffer.append(key+val);
+                    }
+
+                }
+                Log.e("buffer",buffer.toString());
         }
         return buffer.toString();
     }

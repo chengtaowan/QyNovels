@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private List<Fragment> list=new ArrayList<>();
     private List<RadioButton> rblist=new ArrayList<>();
     private int page;
+    private String token;
+    public static String gamename,num,datapath;
     public static List<String> mSelectPath=new ArrayList<>();
 
     @Override
@@ -51,7 +53,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         setContentView(R.layout.activity_main);
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
-
+        SharedPreferences preferences=getSharedPreferences("token", MODE_PRIVATE);
+        token = preferences.getString("token", "");
         init();
         Intent intent=getIntent();
         if(intent!=null){
@@ -100,7 +103,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
        vp.setCurrentItem(0);
        vp.setOffscreenPageLimit(3);
        rb_case.setChecked(true);
-            }
+
+    }
 
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -111,6 +115,11 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                     vp.setCurrentItem(1);
                 }
                 else if(radioGroup.getCheckedRadioButtonId()==R.id.rb_fl){
+                    if(token.equals("")){
+                        Intent intent=new Intent(MainActivity.this,LoginActivity.class);
+                        intent.putExtra("type",1);
+                        startActivity(intent);
+                    }
                     vp.setCurrentItem(2);
                 }
                 else if(radioGroup.getCheckedRadioButtonId()==R.id.rb_wd){

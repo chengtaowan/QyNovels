@@ -2,16 +2,10 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        debug {
+        config {
             storeFile file('D:\\key\\qykey.jks')
             storePassword '123456'
-            keyPassword '123456'
-            keyAlias = 'key0'
-        }
-        release {
-            storeFile file('D:\\key\\qykey.jks')
-            storePassword '123456'
-            keyAlias = 'key0'
+            keyAlias = 'luwenjun'
             keyPassword '123456'
         }
     }
@@ -20,7 +14,7 @@ android {
     defaultConfig {
         applicationId "com.jdhd.qynovels"
         minSdkVersion 22
-        targetSdkVersion 22
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -29,11 +23,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
-        debug {
-            signingConfig signingConfigs.release
-        }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -55,7 +46,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.github.bumptech.glide:glide:4.1.1'
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
     implementation 'jp.wasabeef:glide-transformations:2.0.1'
     implementation 'com.android.support:design:29.0.0'
     implementation 'com.android.support:recyclerview-v7:29.0.0'

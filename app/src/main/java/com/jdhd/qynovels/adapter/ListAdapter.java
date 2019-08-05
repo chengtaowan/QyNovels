@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
@@ -107,8 +109,8 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(list.size()>3){
-            shownum=list.size()/3;
+        if(list.size()>5){
+            shownum=list.size()/5;
         }
         else{
            shownum=1;
@@ -130,11 +132,31 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 listsize=list.size();
             }
             for(int i=0;i<listsize;i++){
-                if(list.size()==0||list.size()==1||list.size()==2||list.size()==3){
+                if(list.size()==0||list.size()==1||list.size()==2||list.size()==3||list.size()==4||list.size()==5){
                     list.add(new CaseBean.DataBean.ListBean());
                     break;
                 }
-                else if(list.size()>3&&i%3==0&&i!=0){
+                else if(list.size()>5&&i==5){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
+                }
+                else if(list.size()>5&&i%8==0&&i>5){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
+                }
+                else if(list.size()>5&&i%11==0&&i>8){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
+                }
+                else if(list.size()>5&&i%14==0&&i>11){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
+                }
+                else if(list.size()>5&&i%17==0&&i>14){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
+                }
+                else if(list.size()>5&&i%20==0&&i>17){
                     Log.e("123","1234"+"--"+list.size()+"--"+i);
                     list.add(i,new CaseBean.DataBean.ListBean());
                 }
@@ -169,10 +191,20 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 if(list.get(position).getName()!=null){
                     if(list.get(position).getImage()!=null){
                         GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
-                        Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(viewHolder.book);
+                        Glide.with(context)
+                                .asBitmap()
+                                .load(url)
+                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
+                                .into(viewHolder.book);
                     }
                     viewHolder.name.setText(list.get(position).getName());
-                    viewHolder.zj.setText("读到："+list.get(position).getReadContent());
+                    if(list.get(position).getReadContent().equals("")){
+                        viewHolder.zj.setText("未开始");
+                    }
+                    else{
+                        viewHolder.zj.setText("读到："+list.get(position).getReadContent());
+                    }
+
                     viewHolder.ll.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -222,18 +254,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                             context.startActivity(intent);
                         }
                     });
-                    viewHolder.del.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            database=dbUtils.getWritableDatabase();
-                            database.execSQL("delete from usercase where name='"+list.get(position).getName()+"'");
-                            delBookRankPresenter.setId(list.get(position).getId());
-                            delBookRankPresenter.loadData();
-                            list.remove(position);
-                            notifyDataSetChanged();
-                            viewHolder.sml.quickClose();
-                        }
-                    });
+
                 }
             }
             else{
@@ -275,6 +296,8 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 }
             }
 
+
+
         }
         else if(holder instanceof FeedViewHolder){
             Log.e("position",position+"--");
@@ -289,8 +312,8 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                                 viewHolder.book.setImageDrawable(resource);
                             }
                         });
-                viewHolder.name.setText(newfeedlist.get(position).getTitle());
-                viewHolder.zj.setText(newfeedlist.get(position).getDescription());
+                viewHolder.name.setText(newfeedlist.get(position).getDescription());
+                viewHolder.zj.setText(newfeedlist.get(position).getTitle());
                 newfeedlist.get(position).setVideoAdListener(new TTFeedAd.VideoAdListener() {
                     @Override
                     public void onVideoLoad(TTFeedAd ttFeedAd) {
@@ -318,26 +341,6 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                     }
                 });
                 bindData(viewHolder,newfeedlist.get(position));
-                viewHolder.del.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        list.remove(position);
-                        list.add(new CaseBean.DataBean.ListBean());
-                        int random=(int) (Math.random() * (30 - 0)) + 0;
-                        Glide.with(context).load(newfeedlist.get(random).getImageList().get(0).getImageUrl())
-                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
-                                .into(new SimpleTarget<Drawable>() {
-                                    @Override
-                                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
-                                        viewHolder.book.setImageDrawable(resource);
-                                    }
-                                });
-                        viewHolder.name.setText(newfeedlist.get(random).getTitle());
-                        viewHolder.zj.setText(newfeedlist.get(random).getDescription());
-                        notifyDataSetChanged();
-                        viewHolder.sml.quickClose();
-                    }
-                });
             }
         }
 
@@ -364,7 +367,28 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         else if(list.size()==3&&position==2){
             return TYPE_FEED;
         }
-        else if(list.size()>=4&&position%3==0&&position!=0){
+        else if(list.size()==4&&position==3){
+            return TYPE_FEED;
+        }
+        else if(list.size()==5&&position==4){
+            return TYPE_FEED;
+        }
+        else if(list.size()>5&&position==5){
+            return TYPE_FEED;
+        }
+        else if(list.size()>5&&position%8==0&&position>5){
+            return TYPE_FEED;
+        }
+        else if(list.size()>5&&position%11==0&&position>8){
+            return TYPE_FEED;
+        }
+        else if(list.size()>5&&position%14==0&&position>11){
+            return TYPE_FEED;
+        }
+        else if(list.size()>5&&position%17==0&&position>14){
+            return TYPE_FEED;
+        }
+        else if(list.size()>5&&position%20==0&&position>17){
             return TYPE_FEED;
         }
         else{
@@ -386,40 +410,32 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
 
     class ListViewHolder extends RecyclerView.ViewHolder{
-        private ImageView book;
-        private TextView name,zj,yd,tg,xh;
-        private Button del;
-        private SwipeMenuLayout sml;
-        private LinearLayout ll;
+        private ImageView book,select;
+        private TextView name,zj;
+        private RelativeLayout ll;
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             book=itemView.findViewById(R.id.case_book);
+            select=itemView.findViewById(R.id.select);
             name=itemView.findViewById(R.id.case_name);
             zj=itemView.findViewById(R.id.case_zj);
-            tg=itemView.findViewById(R.id.case_tg);
-            xh=itemView.findViewById(R.id.case_xh);
-            del=itemView.findViewById(R.id.case_del);
-            sml=itemView.findViewById(R.id.case_sml);
-            ll=itemView.findViewById(R.id.case_ll);
+            ll=itemView.findViewById(R.id.ll);
         }
     }
 
     class FeedViewHolder extends RecyclerView.ViewHolder{
-        private ImageView book;
-        private TextView name,zj,yd,tg,xh;
+        private ImageView book,select;
+        private TextView name,zj;
         private Button del;
         private SwipeMenuLayout sml;
-        private LinearLayout ll;
+        private RelativeLayout ll;
         public FeedViewHolder(@NonNull View itemView) {
             super(itemView);
             book=itemView.findViewById(R.id.case_book);
+            select=itemView.findViewById(R.id.select);
             name=itemView.findViewById(R.id.case_name);
             zj=itemView.findViewById(R.id.case_zj);
-            tg=itemView.findViewById(R.id.case_tg);
-            xh=itemView.findViewById(R.id.case_xh);
-            del=itemView.findViewById(R.id.case_del);
-            sml=itemView.findViewById(R.id.case_sml);
-            ll=itemView.findViewById(R.id.case_ll);
+            ll=itemView.findViewById(R.id.ll);
         }
     }
 

@@ -8,11 +8,8 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.glong.reader.activities.CustomReaderActivity;
 import com.glong.reader.activities.ExtendReaderActivity;
-import com.glong.reader.activities.NormalReaderActivity;
 import com.glong.reader.activities.PaperActivity;
-import com.glong.reader.activities.SimpleReaderActivity;
 import com.glong.sample.R;
 
 
@@ -26,14 +23,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.simple_reader).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SimpleReaderActivity.class));
+                //startActivity(new Intent(MainActivity.this, SimpleReaderActivity.class));
             }
         });
 
         findViewById(R.id.normal_reader).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, NormalReaderActivity.class));
+                //startActivity(new Intent(MainActivity.this, NormalReaderActivity.class));
             }
         });
 
@@ -47,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.custom_reader).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, CustomReaderActivity.class));
+                //startActivity(new Intent(MainActivity.this, CustomReaderActivity.class));
             }
         });
 

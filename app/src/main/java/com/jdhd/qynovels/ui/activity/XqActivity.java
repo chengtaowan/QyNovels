@@ -29,10 +29,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.glong.reader.activities.CustomReaderActivity;
+
 import com.glong.reader.activities.ExtendReaderActivity;
-import com.glong.reader.activities.NormalReaderActivity;
-import com.glong.reader.activities.SimpleReaderActivity;
+
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.XqymAdapter;
 import com.jdhd.qynovels.app.MyApp;

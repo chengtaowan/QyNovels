@@ -19,13 +19,12 @@
 
 </activity>
 
-    <activity android:name="com.glong.reader.activities.SimpleReaderActivity" android:theme="@style/NoActionTheme"/>
 
-    <activity android:name="com.glong.reader.activities.NormalReaderActivity" android:theme="@style/NoActionTheme"/>
 
-    <activity android:name="com.glong.reader.activities.ExtendReaderActivity" android:theme="@style/NoActionTheme"/>
+    <activity android:name="com.glong.reader.activities.ExtendReaderActivity" android:theme="@style/NoActionTheme"
+        />
 
-    <activity android:name="com.glong.reader.activities.CustomReaderActivity"/>
+
 
     <activity android:name="com.glong.reader.activities.WebViewActivity"/>
 

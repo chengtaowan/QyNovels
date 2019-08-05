@@ -59,7 +59,7 @@ interface IReaderManager {
      * @param chapterIndex 章节索引
      * @param charIndex    跳转到缓存的那个字符
      */
-    void startFromCache(String key, int chapterIndex, int charIndex, @NonNull String chapterName);
+   // void startFromCache(String key, int chapterIndex, int charIndex, @NonNull String chapterName);
 
     /**
      * 从缓存启动阅读器
@@ -69,7 +69,7 @@ interface IReaderManager {
      * @param chapterIndex 章节索引
      * @param charIndex    跳转到缓存的那个字符
      */
-    void startFromCache(File cacheDir, String key, int chapterIndex, int charIndex, @NonNull String chapterName);
+    //void startFromCache(File cacheDir, String key, int chapterIndex, int charIndex, @NonNull String chapterName);
 
     void drawPage(Canvas canvas);
 }

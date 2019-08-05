@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -44,7 +45,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
-public class ZpActivity extends AppCompatActivity implements IPrizesView, View.OnClickListener, IDrawView {
+public class ZpActivity extends AppCompatActivity implements IPrizesView, View.OnClickListener, IDrawView{
     private IPrizePresenterImpl prizePresenter;
     private String title,name,path;
     private ImageView back;
@@ -58,6 +59,8 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
     private SmartRefreshLayout sr;
     private boolean hasNetWork;
     private FunctionBean functionBean;
+    private IVideoflPresenterImpl videoflPresenter;
+    private String gamename,datapath,num;
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -145,14 +148,8 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
                             .ready()
 
                             .go(MyApp.Url.webbaseUrl+path);
-                    if(functionBean!=null) {
-                        if (functionBean.getReqName().equals("draw")) {
-                            drawPresenter.setGame_num(functionBean.getReqParameter().getGame_num());
-                            drawPresenter.setDatapath(functionBean.getDataPath());
-                            drawPresenter.setGame_name(functionBean.getReqParameter().getGame_name());
-                            drawPresenter.loadData();
-                        }
-                    }
+                    prizePresenter.setGame_name(name);
+                    prizePresenter.loadData();
                     sr.finishRefresh();
                 }
             }
@@ -164,12 +161,23 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                web.getJsAccessEntrace().quickCallJs("getPrize", new ValueCallback<String>() {
+                new Thread(new Runnable() {
                     @Override
-                    public void onReceiveValue(String s) {
-                        com.tencent.mm.opensdk.utils.Log.e("data",s);
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                            web.getJsAccessEntrace().quickCallJs("getPrize", new ValueCallback<String>() {
+                                @Override
+                                public void onReceiveValue(String s) {
+                                    com.tencent.mm.opensdk.utils.Log.e("data",s);
+                                }
+                            },string);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                },string);
+                }).start();
+
             }
         });
     }
@@ -205,7 +213,6 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                com.tencent.mm.opensdk.utils.Log.e("draw",string);
                 web.getJsAccessEntrace().quickCallJs("draw", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String s) {
@@ -241,6 +248,7 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
                     drawPresenter.setDatapath(functionBean.getDataPath());
                     drawPresenter.setGame_name(functionBean.getReqParameter().getGame_name());
                     drawPresenter.loadData();
+
                 }
             }
             switch (functionBean.getFunctionName()){
@@ -282,104 +290,119 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
             //视频广告加载后，视频资源缓存到本地的回调，在此回调后，播放本地视频，流畅不阻塞。
             @Override
             public void onRewardVideoCached() {
-               // Toast.makeText(ZpActivity.this,"rewardVideoAd video cached",Toast.LENGTH_SHORT).show();
+
+
+               //Toast.makeText(ZpActivity.this,"rewardVideoAd video cached",Toast.LENGTH_SHORT).show();
             }
 
             //视频广告的素材加载完毕，比如视频url等，在此回调后，可以播放在线视频，网络不好可能出现加载缓冲，影响体验。
             @Override
             public void onRewardVideoAdLoad(TTRewardVideoAd ad) {
-                //Toast.makeText(getContext(),"rewardVideoAd loaded",Toast.LENGTH_SHORT).show();
+
+                //Toast.makeText(ZpActivity.this,"rewardVideoAd loaded",Toast.LENGTH_SHORT).show();
                 mttRewardVideoAd = ad;
 //                mttRewardVideoAd.setShowDownLoadBar(false);
                 if (mttRewardVideoAd != null) {
                     //step6:在获取到广告后展示
-                    mttRewardVideoAd.showRewardVideoAd(ZpActivity.this);
-                    mttRewardVideoAd = null;
-                } else {
-                    //Toast.makeText(ZpActivity.this,"请先加载广告",Toast.LENGTH_SHORT).show();
-                }
-                mttRewardVideoAd.setRewardAdInteractionListener(new TTRewardVideoAd.RewardAdInteractionListener() {
 
-                    @Override
-                    public void onAdShow() {
-                       // Toast.makeText(ZpActivity.this,"rewardVideoAd show",Toast.LENGTH_SHORT).show();
-                    }
+                    mttRewardVideoAd.setRewardAdInteractionListener(new TTRewardVideoAd.RewardAdInteractionListener() {
 
-                    @Override
-                    public void onAdVideoBarClick() {
-                        //Toast.makeText(ZpActivity.this,"rewardVideoAd bar click",Toast.LENGTH_SHORT).show();
-                    }
+                        @Override
+                        public void onAdShow() {
 
-                    @Override
-                    public void onAdClose() {
-                        //Toast.makeText(ZpActivity.this,"rewardVideoAd close",Toast.LENGTH_SHORT).show();
-                    }
-
-                    //视频播放完成回调
-                    @Override
-                    public void onVideoComplete() {
-                        web.getJsAccessEntrace().quickCallJs("watchVideoSuccess", new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String s) {
-                                com.tencent.mm.opensdk.utils.Log.e("data",s);
-                            }
-                        },"观看完成");
-                        Toast.makeText(ZpActivity.this,"观看完成，获取一次抽奖机会",Toast.LENGTH_SHORT).show();
-                        //Toast.makeText(ZpActivity.this,"rewardVideoAd complete",Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onVideoError() {
-                        //Toast.makeText(ZpActivity.this,"rewardVideoAd error",Toast.LENGTH_SHORT).show();
-                    }
-
-                    //视频播放完成后，奖励验证回调，rewardVerify：是否有效，rewardAmount：奖励梳理，rewardName：奖励名称
-                    @Override
-                    public void onRewardVerify(boolean rewardVerify, int rewardAmount, String rewardName) {
-
-                        //Toast.makeText(ZpActivity.this,"verify:" + rewardVerify + " amount:" + rewardAmount +
-                                //" name:" + rewardName,Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onSkippedVideo() {
-                        //Toast.makeText(ZpActivity.this,"rewardVideoAd has onSkippedVideo",Toast.LENGTH_SHORT).show();
-                    }
-                });
-                mttRewardVideoAd.setDownloadListener(new TTAppDownloadListener() {
-                    @Override
-                    public void onIdle() {
-                        mHasShowDownloadActive = false;
-                    }
-
-                    @Override
-                    public void onDownloadActive(long totalBytes, long currBytes, String fileName, String appName) {
-                        if (!mHasShowDownloadActive) {
-                            mHasShowDownloadActive = true;
-                           // Toast.makeText(getContext(),"下载中，点击下载区域暂停",Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(ZpActivity.this,"rewardVideoAd show",Toast.LENGTH_SHORT).show();
                         }
-                    }
 
-                    @Override
-                    public void onDownloadPaused(long totalBytes, long currBytes, String fileName, String appName) {
-                       // Toast.makeText(getContext(),"下载暂停，点击下载区域继续",Toast.LENGTH_SHORT).show();
-                    }
+                        @Override
+                        public void onAdVideoBarClick() {
 
-                    @Override
-                    public void onDownloadFailed(long totalBytes, long currBytes, String fileName, String appName) {
-                        //Toast.makeText(getContext(),"下载失败，点击下载区域重新下载",Toast.LENGTH_SHORT).show();
-                    }
+                            //Toast.makeText(ZpActivity.this,"rewardVideoAd bar click",Toast.LENGTH_SHORT).show();
+                        }
 
-                    @Override
-                    public void onDownloadFinished(long totalBytes, String fileName, String appName) {
-                        //Toast.makeText(getContext(),"下载完成，点击下载区域重新下载",Toast.LENGTH_SHORT).show();
-                    }
+                        @Override
+                        public void onAdClose() {
+                            Log.e("watch","观看完成3");
+                            prizePresenter.setGame_name(name);
+                            prizePresenter.loadData();
+                            web.getJsAccessEntrace().quickCallJs("watchVideoSuccess", new ValueCallback<String>() {
+                                @Override
+                                public void onReceiveValue(String s) {
+                                    com.tencent.mm.opensdk.utils.Log.e("data",s);
+                                }
+                            },"{}");
 
-                    @Override
-                    public void onInstalled(String fileName, String appName) {
-                       // Toast.makeText(getContext(),"安装完成，点击下载区域打开",Toast.LENGTH_SHORT).show();
-                    }
-                });
+                            //Toast.makeText(ZpActivity.this,"rewardVideoAd close",Toast.LENGTH_SHORT).show();
+                        }
+
+                        //视频播放完成回调
+                        @Override
+                        public void onVideoComplete() {
+
+                        }
+
+                        @Override
+                        public void onVideoError() {
+
+                            //Toast.makeText(ZpActivity.this,"rewardVideoAd error",Toast.LENGTH_SHORT).show();
+                        }
+
+                        //视频播放完成后，奖励验证回调，rewardVerify：是否有效，rewardAmount：奖励梳理，rewardName：奖励名称
+                        @Override
+                        public void onRewardVerify(boolean rewardVerify, int rewardAmount, String rewardName) {
+
+//                        Toast.makeText(ZpActivity.this,"verify:" + rewardVerify + " amount:" + rewardAmount +
+//                                " name:" + rewardName,Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onSkippedVideo() {
+                            Log.e("watch","观看完成7");
+                            //Toast.makeText(ZpActivity.this,"rewardVideoAd has onSkippedVideo",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    mttRewardVideoAd.setDownloadListener(new TTAppDownloadListener() {
+                        @Override
+                        public void onIdle() {
+                            mHasShowDownloadActive = false;
+                        }
+
+                        @Override
+                        public void onDownloadActive(long totalBytes, long currBytes, String fileName, String appName) {
+                            if (!mHasShowDownloadActive) {
+                                mHasShowDownloadActive = true;
+                                // Toast.makeText(getContext(),"下载中，点击下载区域暂停",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onDownloadPaused(long totalBytes, long currBytes, String fileName, String appName) {
+                            // Toast.makeText(getContext(),"下载暂停，点击下载区域继续",Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onDownloadFailed(long totalBytes, long currBytes, String fileName, String appName) {
+                            //Toast.makeText(getContext(),"下载失败，点击下载区域重新下载",Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onDownloadFinished(long totalBytes, String fileName, String appName) {
+                            //Toast.makeText(getContext(),"下载完成，点击下载区域重新下载",Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onInstalled(String fileName, String appName) {
+                            // Toast.makeText(getContext(),"安装完成，点击下载区域打开",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    mttRewardVideoAd.showRewardVideoAd(ZpActivity.this);
+                    //mttRewardVideoAd = null;
+                } else {
+                    Toast.makeText(ZpActivity.this,"广告加载失败，请检查网络",Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+
             }
         });
     }

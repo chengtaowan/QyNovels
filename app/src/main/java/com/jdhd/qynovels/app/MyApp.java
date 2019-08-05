@@ -90,6 +90,7 @@ public class MyApp extends Application {
 
     public class Url{
         @DefaultDomain()
+        //public static final String baseUrl="http://192.168.1.199:19919/api.php/v1/";
         public static final String baseUrl = "http://api.damobi.cn/v1/";
         public static final String webbaseUrl="http://h5.damobi.cn/";
         //public static final String webbaseUrl="http://192.168.1.127:8848/";

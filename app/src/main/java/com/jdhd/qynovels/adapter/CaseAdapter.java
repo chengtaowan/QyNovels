@@ -53,7 +53,6 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     private List<CaseBean.DataBean.ListBean> listBean=new ArrayList<>();
     private Context context;
     private FragmentActivity activity;
-    public static final int TYPE_TITLE=0;
     public static final int TYPE_LIST=1;
     private onItemClick onItemClick;
     private String token="";
@@ -92,11 +91,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
         SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
         RecyclerView.ViewHolder viewHolder=null;
-        if(viewType==TYPE_TITLE){
-            View view= LayoutInflater.from(context).inflate(R.layout.item_casetitle,parent,false);
-            viewHolder=new TitleViewHolder(view);
-        }
-        else  if(viewType==TYPE_LIST){
+        if(viewType==TYPE_LIST){
             View view= LayoutInflater.from(context).inflate(R.layout.item_caselist,null,false);
             viewHolder=new ListViewHolder(view);
         }
@@ -105,77 +100,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-        if(holder instanceof TitleViewHolder){
-            TitleViewHolder viewHolder= (TitleViewHolder) holder;
-            if(hotBean==null){
-                return;
-            }
-            viewHolder.des.setText(hotBean.getIntro());
-            Log.e("img",hotBean.getImage()+"---");
-            if(hotBean.getImage()!=null){
-                GlideUrl url = DeviceInfoUtils.getUrl(hotBean.getImage());
-                Glide.with(context)
-                        .load(url)
-                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
-                        .into(viewHolder.book);
-            }
-            viewHolder.name.setText(hotBean.getName());
-            viewHolder.ll.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    bookListPresenter=new IBookListPresenterImpl(new IBookListView() {
-                        @Override
-                        public void onSuccess(BookListBean bookListBean) {
-                            bookBean=bookListBean;
-                            database=dbUtils.getWritableDatabase();
-                            if(!token.equals("")){
-                                if(bookBean!=null){
-                                    database.execSQL("delete from readhistory where user='user'and name='"+hotBean.getName()+"'");
-                                    database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                                            "values('user'," +
-                                            "'"+hotBean.getName()+"'," +
-                                            "'"+hotBean.getImage()+"'," +
-                                            "'"+hotBean.getAuthor()+"'," +
-                                            "'"+bookBean.getData().getList().get(0).getName()+"'," +
-                                            "10," + "10," + "'"+hotBean.getBookId()+"'," +
-                                            "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'')");
-                                }
-
-                            }
-                            else{
-                                if(bookBean!=null){
-                                    database.execSQL("delete from readhistory where user='visitor'and name='"+hotBean.getName()+"'");
-                                    database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                                            "values('visitor'," +
-                                            "'"+hotBean.getName()+"'," +
-                                            "'"+hotBean.getImage()+"'," +
-                                            "'"+hotBean.getAuthor()+"'," +
-                                            "'"+bookBean.getData().getList().get(0).getName()+"'," +
-                                            "10," + "10," + "'"+hotBean.getBookId()+"'," +
-                                            "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'')");
-                                }
-
-                            }
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                           Log.e("booklisterror",error);
-                        }
-                    }, context);
-                    bookListPresenter.setId(hotBean.getBookId());
-                    bookListPresenter.loadData();
-                    Intent intent=new Intent(context, ExtendReaderActivity.class);
-                    intent.putExtra("id",hotBean.getBookId());
-                    intent.putExtra("token",token);
-                    intent.putExtra("img",hotBean.getImage());
-                    intent.putExtra("name",hotBean.getName());
-                    intent.putExtra("author",hotBean.getAuthor());
-                    context.startActivity(intent);
-                }
-            });
-        }
-        else if(holder instanceof ListViewHolder){
+        if(holder instanceof ListViewHolder){
             ListViewHolder viewHolder= (ListViewHolder) holder;
             LinearLayoutManager layoutManager = new LinearLayoutManager(context) {
                 @Override
@@ -197,33 +122,17 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 1;
     }
 
     @Override
     public int getItemViewType(int position) {
         if(position==0){
-           return TYPE_TITLE;
-        }
-        else if(position==1){
             return TYPE_LIST;
         }
         return -1;
     }
 
-
-    class TitleViewHolder extends RecyclerView.ViewHolder{
-        private LinearLayout ll;
-        private ImageView book;
-        private TextView name,des;
-        public TitleViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ll=itemView.findViewById(R.id.sj_ll);
-            book=itemView.findViewById(R.id.sj_book);
-            name=itemView.findViewById(R.id.sj_name);
-            des=itemView.findViewById(R.id.sj_des);
-        }
-    }
     class ListViewHolder extends RecyclerView.ViewHolder{
         private SwipeRecyclerView rv;
         public ListViewHolder(@NonNull View itemView) {

@@ -1,15 +1,26 @@
 package com.glong.reader.localtest;
 
 import android.content.Context;
+import android.os.Message;
+import android.util.Log;
 
+import com.glong.reader.activities.MyApp;
 import com.glong.reader.entry.BookContentBean;
+import com.glong.reader.entry.BookListBean;
 import com.glong.reader.entry.ChapterContentBean;
 import com.glong.reader.entry.ChapterItemBean;
 import com.glong.reader.presenter.IBookContentPresenterImpl;
+import com.glong.reader.util.DeviceInfoUtils;
 import com.glong.reader.view.IBookContentView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.CacheControl;
+import rxhttp.wrapper.param.RxHttp;
+import rxhttp.wrapper.parse.SimpleParser;
 
 /**
  * Created by Garrett on 2018/11/23.
@@ -18,7 +29,7 @@ import java.util.List;
 public class LocalServer implements IBookContentView {
 
      public IBookContentPresenterImpl bookContentPresenter=new IBookContentPresenterImpl(this);
-     public static BookContentBean bookContent=new BookContentBean();
+     public static BookContentBean.DataBean bookContent=new BookContentBean.DataBean();
      /**
      * 模拟网络请求
      *
@@ -45,24 +56,51 @@ public class LocalServer implements IBookContentView {
      *
      * @return 章节内容
      */
-    public static ChapterContentBean syncDownloadContent(ChapterItemBean chapterItemBean) {
-        ChapterContentBean chapterContentBean = new ChapterContentBean();
-        chapterContentBean.setChapterId(chapterItemBean.getChapterId());
-        chapterContentBean.setChapterName(chapterItemBean.getChapterName());
-        StringBuilder contentBuilder = new StringBuilder();
-        while (contentBuilder.length() < 1000) {
-//            contentBuilder.append(String.valueOf(chapterItemBean.getChapterName() + "</p>" +
-//                    "　　</p>" +
-//                    "　　世界上一成不变的东西，只有“任何事物都是在不断变化的”这条真理。</p> —— 斯里兰卡<br><br>" +
-//                    "　　</p>" +
-//                    "　　我需要三件东西：爱情友谊和图书。然而这三者之间何其相通！炽热的爱情可以充实图书的内容，图书又是人们最忠实的朋友。</p> —— 蒙田<br><br>" +
-//                    "　　</p>" +
-//                    "　　生活有度，人生添寿。</p> —— 书摘<br><br>"));
-            contentBuilder.append(LocalConstant.CONTENT);
+    public static BookContentBean.DataBean syncDownloadContent(String token,BookListBean.DataBean.ListBean listBean) {
 
+        int time= DeviceInfoUtils.getTime();
+        Map<String,String> map=new HashMap<>();
+        map.put("time",time+"");
+        if(token!=null){
+            map.put("token",token);
         }
-        chapterContentBean.setChapterContent(contentBuilder.toString());
-        return chapterContentBean;
+        map.put("id",listBean.getId()+"");
+        String compareTo = DeviceInfoUtils.getCompareTo(map);
+        String sign=DeviceInfoUtils.md5(compareTo);
+        map.put("sign",sign);
+        Log.e("zjid",listBean.getId()+"");
+        Log.e("time",time+"");
+        Log.e("token",token+"");
+        Log.e("sign",sign+"");
+        if(token!=null){
+            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                    .addHeader("token",token)
+                    .add(map)
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asParser(new SimpleParser<BookContentBean>(){})
+                    .subscribe(bookContentBean->{
+                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                            bookContent=bookContentBean.getData();
+                        }
+                    },throwable->{
+                        Log.e("zjerror",throwable.getMessage());
+                    });
+        }
+        else{
+            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                    .add(map)
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asParser(new SimpleParser<BookContentBean>(){})
+                    .subscribe(bookContentBean->{
+                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                            bookContent=bookContentBean.getData();
+                        }
+                    },throwable->{
+                        Log.e("zjerror",throwable.getMessage());
+                    });
+        }
+        Log.e("bookcontent",bookContent.toString());
+        return bookContent;
     }
 
 
@@ -71,28 +109,55 @@ public class LocalServer implements IBookContentView {
      *
      * @return 章节内容
      */
-    public BookContentBean syncgetContent(int id, Context context) {
-        bookContentPresenter.setContext(context);
-        bookContentPresenter.setId(id);
-        bookContentPresenter.loadData();
-        if(bookContent!=null){
-            ChapterContentBean chapterContentBean = new ChapterContentBean();
-            chapterContentBean.setChapterId(bookContent.getData().getId()+"");
-            chapterContentBean.setChapterName("111");
-            StringBuilder contentBuilder = new StringBuilder();
-            while (contentBuilder.length() < 1000) {
-                contentBuilder.append(bookContent.getData().getContent());
-
-            }
-            chapterContentBean.setChapterContent(contentBuilder.toString());
+    public static BookContentBean.DataBean syncgetContent(int id, String token) {
+        int time= DeviceInfoUtils.getTime();
+        Map<String,String> map=new HashMap<>();
+        map.put("time",time+"");
+        if(token!=null){
+            map.put("token",token);
         }
-
+        map.put("id",id+"");
+        String compareTo = DeviceInfoUtils.getCompareTo(map);
+        String sign=DeviceInfoUtils.md5(compareTo);
+        map.put("sign",sign);
+        Log.e("zjid",id+"");
+        Log.e("time",time+"");
+        Log.e("token",token+"");
+        Log.e("sign",sign+"");
+        if(token!=null){
+            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                    .addHeader("token",token)
+                    .add(map)
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asParser(new SimpleParser<BookContentBean>(){})
+                    .subscribe(bookContentBean->{
+                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                            bookContent=bookContentBean.getData();
+                        }
+                    },throwable->{
+                        Log.e("zjerror",throwable.getMessage());
+                    });
+        }
+        else{
+            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
+                    .add(map)
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asParser(new SimpleParser<BookContentBean>(){})
+                    .subscribe(bookContentBean->{
+                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
+                            bookContent=bookContentBean.getData();
+                        }
+                    },throwable->{
+                        Log.e("zjerror",throwable.getMessage());
+                    });
+        }
+        Log.e("bookcontent",bookContent.toString());
         return bookContent;
     }
 
     @Override
     public void onBookSuccess(BookContentBean bookContentBean) {
-        bookContent=bookContentBean;
+        bookContent=bookContentBean.getData();
     }
 
     @Override

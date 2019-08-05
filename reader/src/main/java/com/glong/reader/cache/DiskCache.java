@@ -23,7 +23,7 @@ public class DiskCache extends Cache {
 
     @Override
     public void put(String key, String value) {
-        ACache.get(getCacheDir()).put(key, value);
+        //ACache.get(getCacheDir()).put(key, value);
     }
 
     @Override
