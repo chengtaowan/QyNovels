@@ -15,7 +15,9 @@ import com.jdhd.qynovels.adapter.MuluAdapter;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.BookListBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookListPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.view.bookcase.IBookListView;
+import com.umeng.analytics.MobclickAgent;
 
 public class MuluActivity extends AppCompatActivity implements IBookListView , View.OnClickListener {
     private ImageView back;
@@ -28,6 +30,8 @@ public class MuluActivity extends AppCompatActivity implements IBookListView , V
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mulu);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         MyApp.addActivity(this);
         Intent intent=getIntent();
         int id=intent.getIntExtra("id",0);
@@ -76,5 +80,17 @@ public class MuluActivity extends AppCompatActivity implements IBookListView , V
         if(R.id.ml_back==view.getId()){
             finish();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

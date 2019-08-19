@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.bookcase.SzUser;
 import com.jdhd.qynovels.module.personal.UserBean;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.activity.BindCodeActivity;
@@ -37,6 +38,7 @@ import com.jdhd.qynovels.ui.activity.TxActivity;
 import com.jdhd.qynovels.ui.activity.XxActivity;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.personal.IPersonalView;
+import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -72,6 +74,22 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         super.onStart();
         personalPresenter=new IPersonalPresenterImpl(this,getContext());
         personalPresenter.loadData();
+        SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
+        token = preferences.getString("token", "");
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
+        token = preferences.getString("token", "");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
+        token = preferences.getString("token", "");
     }
 
     @Override
@@ -90,6 +108,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         action=intent.getIntExtra("action",1);
         SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
         token = preferences.getString("token", "");
+        Log.e("logintoken",token+"===");
         if(token.equals("")){
             Glide.with(getContext()).clear(wd_toux);
             wd_toux.setImageResource(R.mipmap.my_touxiang);
@@ -159,6 +178,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             mobel=user.getData().getMobile();
             bindwx=user.getData().getBind_wx();
             wxname=user.getData().getWx_name();
+            Log.e("wxname1",wxname);
             if(!user.getData().getAvatar().equals("http://api.damobi.cn")){
                 Glide.with(getContext())
                         .load(user.getData().getAvatar())
@@ -197,19 +217,20 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             startActivity(intent);
         }
         else if(R.id.wd_tx==view.getId()){
-            if(user.getData()!=null){
-                Intent intent=new Intent(getContext(), TxActivity.class);
-                intent.putExtra("money",user.getData().getMoney());
-                intent.putExtra("wxname",wxname);
-                intent.putExtra("totle",user.getData().getTotal_gold());
-                intent.putExtra("jb", DeviceInfoUtils.NumtFormat(user.getData().getBalance()));
-                startActivity(intent);
-            }
-            else{
-                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
 
-            }
+                if(user.getData()!=null){
+                    Intent intent=new Intent(getContext(), TxActivity.class);
+                    intent.putExtra("time",user.getData().getRead_time()/60);
+                    intent.putExtra("money",user.getData().getMoney());
+                    intent.putExtra("wxname",wxname);
+                    intent.putExtra("totle",user.getData().getTotal_gold());
+                    intent.putExtra("jb", DeviceInfoUtils.NumtFormat(user.getData().getBalance()));
+                    startActivity(intent);
+                }
+                else{
+                    Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
 
+                }
         }
         else if(R.id.wd_fk==view.getId()){
             if(token.equals("")){
@@ -233,24 +254,33 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             intent.putExtra("token",token);
             intent.putExtra("type",1);
             startActivity(intent);
+
         }
         else if(R.id.wd_toux==view.getId()){
-            if(user.getData()!=null){
-                Intent intent=new Intent(getContext(), GrzlActivity.class);
-                intent.putExtra("name",nickname);
-                intent.putExtra("avatar",avatar);
-                intent.putExtra("sex",sex);
-                intent.putExtra("uid",uid);
-                intent.putExtra("mobile",mobel+"");
-                intent.putExtra("bindwx",bindwx);
-                intent.putExtra("wxname",wxname);
-                intent.putExtra("type","wode");
-                startActivity(intent);
+            SharedPreferences sharedPreferences=getActivity().getSharedPreferences("token",MODE_PRIVATE);
+            token=sharedPreferences.getString("token","");
+            if(token.equals("")){
+                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+                if(user.getData()!=null){
+                    Intent intent=new Intent(getContext(), GrzlActivity.class);
+                    intent.putExtra("name",nickname);
+                    intent.putExtra("avatar",avatar);
+                    intent.putExtra("sex",sex);
+                    intent.putExtra("uid",uid);
+                    intent.putExtra("mobile",mobel+"");
+                    intent.putExtra("bindwx",bindwx);
+                    intent.putExtra("wxname",wxname);
+                    intent.putExtra("type","wode");
+                    startActivity(intent);
+                }
+                else{
+                    Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
 
+                }
             }
+
 
         }
         else if(R.id.wd_wdjb==view.getId()){
@@ -296,6 +326,10 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void notifyData(UserBean userBean){
+
+        if(userBean==null){
+            return;
+        }
         if(userBean.getCode()==401){
             wd_lb.setVisibility(View.VISIBLE);
             wd_yq.setVisibility(View.VISIBLE);
@@ -303,8 +337,22 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             wo_dl.setVisibility(View.VISIBLE);
             wd_name.setVisibility(View.GONE);
             wd_hbm.setVisibility(View.GONE);
+            wd_toux.setImageResource(R.mipmap.my_touxiang);
+            //Toast.makeText(getContext(),userBean.getMsg(),Toast.LENGTH_SHORT).show();
+        }
+        else if(userBean.getCode()==9026){
+            wd_lb.setVisibility(View.VISIBLE);
+            wd_yq.setVisibility(View.VISIBLE);
+            wd_xj.setVisibility(View.VISIBLE);
+            wo_dl.setVisibility(View.VISIBLE);
+            wd_name.setVisibility(View.GONE);
+            wd_hbm.setVisibility(View.GONE);
+            wd_toux.setImageResource(R.mipmap.my_touxiang);
+            Toast.makeText(getContext(),userBean.getMsg(),Toast.LENGTH_SHORT).show();
         }
         else{
+            user=userBean;
+            MobclickAgent.onProfileSignIn(userBean.getData().getUid()+"");
             if(userBean.getData().getBind_show()==0){
                 wd_xj.setVisibility(View.GONE);
             }
@@ -323,7 +371,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                 uid=user.getData().getUid();
                 mobel=user.getData().getMobile();
                 bindwx=user.getData().getBind_wx();
-                wxname=user.getData().getNickname();
+                wxname=user.getData().getWx_name()+"";
                 SharedPreferences sharedPreferences=getContext().getSharedPreferences("nickname", MODE_PRIVATE);
                 SharedPreferences.Editor editor=sharedPreferences.edit();
                 editor.putString("nickname",nickname);
@@ -386,7 +434,19 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                     wo_dl.setVisibility(View.VISIBLE);
                     wd_name.setVisibility(View.GONE);
                     wd_hbm.setVisibility(View.GONE);
+                    wd_toux.setImageResource(R.mipmap.my_touxiang);
+                  //  Toast.makeText(getContext(),userBean.getMsg(),Toast.LENGTH_SHORT).show();
                     return;
+                }
+                else if(userBean.getCode()==9026){
+                    wd_lb.setVisibility(View.VISIBLE);
+                    wd_yq.setVisibility(View.VISIBLE);
+                    wd_xj.setVisibility(View.VISIBLE);
+                    wo_dl.setVisibility(View.VISIBLE);
+                    wd_name.setVisibility(View.GONE);
+                    wd_hbm.setVisibility(View.GONE);
+                    wd_toux.setImageResource(R.mipmap.my_touxiang);
+                    Toast.makeText(getContext(),userBean.getMsg(),Toast.LENGTH_SHORT).show();
                 }
                 else{
                     user=userBean;
@@ -421,7 +481,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                         uid=user.getData().getUid();
                         mobel=user.getData().getMobile();
                         bindwx=user.getData().getBind_wx();
-                        wxname=user.getData().getNickname();
+                        wxname=user.getData().getWx_name()+"";
                         if (!user.getData().getAvatar() .equals("http://api.damobi.cn")) {
                             Glide.with(getContext())
                                     .load(user.getData().getAvatar())

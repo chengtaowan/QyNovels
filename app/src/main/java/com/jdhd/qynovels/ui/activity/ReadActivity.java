@@ -15,7 +15,9 @@ import com.glong.reader.widget.ReaderView;
 import com.jdhd.qynovels.R;
 
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.List;
 
@@ -25,6 +27,8 @@ public class ReadActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         // 隐藏状态栏
@@ -85,4 +89,15 @@ public class ReadActivity extends AppCompatActivity {
         }
 
     };
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
+    }
 }

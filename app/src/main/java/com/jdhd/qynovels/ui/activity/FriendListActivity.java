@@ -13,10 +13,12 @@ import android.widget.TextView;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.persenter.impl.personal.IShareListPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IShareListView;
 import com.just.agentweb.AgentWeb;
 import com.tencent.mm.opensdk.utils.Log;
+import com.umeng.analytics.MobclickAgent;
 
 public class FriendListActivity extends AppCompatActivity implements IShareListView {
     private ImageView back;
@@ -29,6 +31,8 @@ public class FriendListActivity extends AppCompatActivity implements IShareListV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
         title=intent.getStringExtra("title");
@@ -82,5 +86,16 @@ public class FriendListActivity extends AppCompatActivity implements IShareListV
     @Override
     public void onShareListError(String error) {
         Log.e("sharelisterror",error);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

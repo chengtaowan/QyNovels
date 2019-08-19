@@ -58,9 +58,9 @@ public class IBindTelPresenterImpl implements IBindTelPresenter {
                 .asParser(new SimpleParser<BindTelBean>(){})
                 .subscribe(bindTelBean->{
                     Log.e("code",bindTelBean.getCode()+""+bindTelBean.getMsg());
-                    if(bindTelBean.getCode()==200&&bindTelBean.getMsg().equals("绑定成功")){
+                    //if(bindTelBean.getCode()==200&&bindTelBean.getMsg().equals("绑定成功")){
                         iBindTelView.onBindtelSuccess(bindTelBean);
-                    }
+                    //}
                 },throwable->{
                     iBindTelView.onBindtelError(throwable.getMessage());
                 });

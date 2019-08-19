@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,12 @@ public class FlAdapter extends RecyclerView.Adapter<FlAdapter.FlViewHolder>{
     public void onBindViewHolder(@NonNull FlViewHolder holder, final int position) {
         if(list.get(position).getIcon()!=null){
             GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getIcon());
-            Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.img);
+            Log.e("flimg",list.get(position).getIcon()+"--");
+            Glide.with(context)
+                    .load(url)
+                    .apply(new RequestOptions().error(R.mipmap.book_100))
+                    .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.img);
 
         }
         holder.name.setText(list.get(position).getName());

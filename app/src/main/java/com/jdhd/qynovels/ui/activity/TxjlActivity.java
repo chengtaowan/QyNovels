@@ -11,14 +11,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.TxjlAdapter;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.DrawListBean;
 import com.jdhd.qynovels.persenter.impl.personal.IDrawListPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IDrawListView;
+import com.umeng.analytics.MobclickAgent;
 
 public class TxjlActivity extends AppCompatActivity implements View.OnClickListener , IDrawListView {
    private ImageView back;
@@ -30,6 +33,9 @@ public class TxjlActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_txjl);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         drawListPresenter=new IDrawListPresenterImpl(this,this);
@@ -59,11 +65,17 @@ public class TxjlActivity extends AppCompatActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(drawListBean.getData().getList().size()!=0){
-                    wsj.setVisibility(View.GONE);
+                if(drawListBean.getCode()!=200){
+                    Toast.makeText(TxjlActivity.this,drawListBean.getMsg(),Toast.LENGTH_SHORT).show();
                 }
-               adapter.refresh(drawListBean.getData().getList());
-                Log.e("listsize",drawListBean.getData().getList().size()+"");
+                else{
+                    if(drawListBean.getData().getList().size()!=0){
+                        wsj.setVisibility(View.GONE);
+                    }
+                    adapter.refresh(drawListBean.getData().getList());
+                    Log.e("listsize",drawListBean.getData().getList().size()+"");
+                }
+
             }
         });
     }
@@ -71,5 +83,17 @@ public class TxjlActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onError(String error) {
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

@@ -45,7 +45,7 @@ public class ICasePresenterImpl implements ICasePresenter {
             RxHttp.get(MyApp.Url.baseUrl+"bookrack")
                     .removeAllHeader("User-Agent")
                     .addHeader("token",token)
-                    .addHeader("User-Agent","Mozilla/5.0 (Linux; Android 4.4.2; MX4 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Mobile Crosswalk/10.39.235.16 Mobile Safari/537.36")
+                    //.addHeader("User-Agent","Mozilla/5.0 (Linux; Android 4.4.2; MX4 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Mobile Crosswalk/10.39.235.16 Mobile Safari/537.36")
                     .add(map)
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<CaseBean>(){})

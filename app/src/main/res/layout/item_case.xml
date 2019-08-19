@@ -44,15 +44,14 @@
             android:src="@mipmap/sj_yinying"
             android:layout_alignParentBottom="true"
             android:scaleType="fitXY"/>
-        <ImageView
+        <CheckBox
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@mipmap/sj_ca"
             android:layout_alignParentRight="true"
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
             android:id="@+id/select"
-            android:visibility="gone"/>
+            style="@style/CustomCheckBoxTheme" />
     </RelativeLayout>
 
     <TextView

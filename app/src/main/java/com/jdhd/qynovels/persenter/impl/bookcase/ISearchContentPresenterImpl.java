@@ -2,6 +2,7 @@ package com.jdhd.qynovels.persenter.impl.bookcase;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.SearchContentBean;
@@ -52,9 +53,13 @@ public class ISearchContentPresenterImpl implements ISearchContentPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<SearchContentBean>(){})
                     .subscribe(searchContentBean->{
-                        if(searchContentBean.getCode()==200&&searchContentBean.getMsg().equals("请求成功")){
+                        Log.e("success",searchContentBean.getMsg()+"-"+searchContentBean.getCode());
+                        //if(searchContentBean.getCode()==200&&searchContentBean.getMsg().equals("请求成功")){
                             iSearchContentView.onSuccess(searchContentBean);
-                        }
+                       // }
+                      //  else if(searchContentBean.getCode()==9005&&searchContentBean.getMsg().equals("暂无数据")){
+
+                       // }
                     },throwable->{
                         iSearchContentView.onError(throwable.getMessage());
                     });

@@ -33,6 +33,7 @@ import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.FunctionBean;
 import com.jdhd.qynovels.persenter.impl.personal.IShareImgPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.FuLiFragment;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IShareImgView;
@@ -44,6 +45,7 @@ import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.utils.Log;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -130,6 +132,9 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_yq);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         hasNetWork = DeviceInfoUtils.hasNetWork(this);
         Intent intent = getIntent();
@@ -329,9 +334,16 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
         return false;
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
-        //web.clearWebCache();
+        MobclickAgent.onPause(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
     }
 }

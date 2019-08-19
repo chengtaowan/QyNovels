@@ -51,11 +51,9 @@ public class ISignPresenterImpl implements ISignPresenter {
                 .addHeader("token",token)
                 .add(map)
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                .asParser(new SimpleParser<SignBean>(){})
+                .asString()
                 .subscribe(signBean->{
-                    if(signBean.getCode()==200&&signBean.getMsg().equals("请求成功")){
-                        iSignView.onSignSuccess(signBean);
-                    }
+                    iSignView.onSignSuccess(signBean);
                 },throwable->{
                     iSignView.onSignError(throwable.getMessage());
                 });

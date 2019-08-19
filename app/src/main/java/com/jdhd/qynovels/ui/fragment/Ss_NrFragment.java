@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Ss_NrAdapter;
@@ -30,6 +31,7 @@ public class Ss_NrFragment extends Fragment implements Ss_NrAdapter.onItemClick,
 
     private RecyclerView rv;
     private String content;
+    private RelativeLayout wsj;
     private ISearchContentPresenterImpl searchContentPresenter;
     private Ss_NrAdapter adapter;
     private List<SearchContentBean.DataBean.ListBean> listBean=new ArrayList<>();
@@ -56,6 +58,7 @@ public class Ss_NrFragment extends Fragment implements Ss_NrAdapter.onItemClick,
     }
 
     private void init(View view) {
+        wsj=view.findViewById(R.id.tx_wsj);
         rv=view.findViewById(R.id.ss_nr_rv);
         LinearLayoutManager manager=new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
@@ -74,8 +77,14 @@ public class Ss_NrFragment extends Fragment implements Ss_NrAdapter.onItemClick,
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                listBean=searchContentBean.getData().getList();
-               adapter.refresh(searchContentBean.getData().getList());
+               // listBean=searchContentBean.getData().getList();
+                if(searchContentBean.getData().getList()==null){
+                    wsj.setVisibility(View.VISIBLE);
+                }
+                else if(searchContentBean.getData().getList()!=null){
+                    adapter.refresh(searchContentBean.getData().getList());
+                }
+
             }
         });
     }

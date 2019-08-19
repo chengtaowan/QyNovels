@@ -22,9 +22,11 @@ import com.jdhd.qynovels.adapter.TxAdapter;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.DrawSetBean;
 import com.jdhd.qynovels.persenter.impl.personal.IDrawSetPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IDrawSetView;
 import com.jdhd.qynovels.widget.CustomPopWindow;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,15 +43,18 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
     private float mone;
     private RecyclerView rv;
     private TxAdapter adapter;
-    private int totle;
+    private int totle,time;
     private IDrawSetPresenterImpl drawSetPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tx);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
+        time=intent.getIntExtra("time",0);
         yue=intent.getStringExtra("jb");
         mone=intent.getFloatExtra("money",0f);
         wxname=intent.getStringExtra("wxname");
@@ -151,10 +156,18 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
         intent.putExtra("page", 3);
         startActivity(intent);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         finish();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 
     @Override
@@ -169,7 +182,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             startActivity(intent);
         }
         else if(R.id.tx10==view.getId()){
-            showPopWindow(img,1,10000);
+            showPopWindow(img,10,100000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==0){
                    linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -185,7 +198,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
 
         }
         else if(R.id.tx15==view.getId()){
-            showPopWindow(img,10,100000);
+            showPopWindow(img,15,150000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==1){
                     linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -200,7 +213,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             }
         }
         else if(R.id.tx20==view.getId()){
-            showPopWindow(img,15,150000);
+            showPopWindow(img,20,200000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==2){
                     linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -215,7 +228,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             }
         }
         else if(R.id.tx25==view.getId()){
-            showPopWindow(img,20,200000);
+            showPopWindow(img,25,250000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==3){
                     linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -230,7 +243,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             }
         }
         else if(R.id.tx30==view.getId()){
-            showPopWindow(img,25,250000);
+            showPopWindow(img,30,300000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==4){
                     linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -245,7 +258,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
             }
         }
         else if(R.id.tx50==view.getId()){
-            showPopWindow(img,30,300000);
+            showPopWindow(img,50,500000);
             for(int i=0;i<linearLayouts.size();i++){
                 if(i==5){
                     linearLayouts.get(i).setBackgroundResource(R.drawable.shape_txx);
@@ -286,7 +299,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
         }
     };
     private void showPopWindow(View v,int num,int gold){
-        final CustomPopWindow customPopWindow=new CustomPopWindow(TxActivity.this,itemclick,wxname,num,gold,totle);
+        final CustomPopWindow customPopWindow=new CustomPopWindow(TxActivity.this,itemclick,wxname,num,gold,totle,time);
         customPopWindow.showAtLocation(v,
                 Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
         customPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {

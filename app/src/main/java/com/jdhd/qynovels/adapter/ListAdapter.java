@@ -7,12 +7,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -68,6 +72,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import rxhttp.wrapper.param.RequestBuilder;
+
 public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements IDelBookRankView {
 
     private Context context;
@@ -85,6 +91,26 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private int getnum;
     private int count=0;
     private int listsize;
+    private int type=0;
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    /**
+     * 控制是否显示Checkbox
+     */
+    private boolean showCheckBox;
+    public boolean isShowCheckBox() {
+        return showCheckBox;
+    }
+    public void setShowCheckBox(boolean showCheckBox) {
+        this.showCheckBox = showCheckBox;
+    }
+    /**
+     * 防止Checkbox错乱 做setTag  getTag操作
+     */
+    private SparseBooleanArray mCheckStates = new SparseBooleanArray();
 
     private List<TTFeedAd> feedlist=new ArrayList<>();
     private List<TTFeedAd> newfeedlist=new ArrayList<>();
@@ -131,36 +157,39 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 }
                 listsize=list.size();
             }
-            for(int i=0;i<listsize;i++){
-                if(list.size()==0||list.size()==1||list.size()==2||list.size()==3||list.size()==4||list.size()==5){
-                    list.add(new CaseBean.DataBean.ListBean());
-                    break;
-                }
-                else if(list.size()>5&&i==5){
-                    Log.e("123","1234"+"--"+list.size()+"--"+i);
-                    list.add(i,new CaseBean.DataBean.ListBean());
-                }
-                else if(list.size()>5&&i%8==0&&i>5){
-                    Log.e("123","1234"+"--"+list.size()+"--"+i);
-                    list.add(i,new CaseBean.DataBean.ListBean());
-                }
-                else if(list.size()>5&&i%11==0&&i>8){
-                    Log.e("123","1234"+"--"+list.size()+"--"+i);
-                    list.add(i,new CaseBean.DataBean.ListBean());
-                }
-                else if(list.size()>5&&i%14==0&&i>11){
-                    Log.e("123","1234"+"--"+list.size()+"--"+i);
-                    list.add(i,new CaseBean.DataBean.ListBean());
-                }
-                else if(list.size()>5&&i%17==0&&i>14){
-                    Log.e("123","1234"+"--"+list.size()+"--"+i);
-                    list.add(i,new CaseBean.DataBean.ListBean());
-                }
-                else if(list.size()>5&&i%20==0&&i>17){
-                    Log.e("123","1234"+"--"+list.size()+"--"+i);
-                    list.add(i,new CaseBean.DataBean.ListBean());
+            if(feedlist.size()!=0){
+                for(int i=0;i<listsize;i++){
+                    if(list.size()==0||list.size()==1||list.size()==2||list.size()==3||list.size()==4||list.size()==5){
+                        list.add(new CaseBean.DataBean.ListBean());
+                        break;
+                    }
+                    else if(list.size()>5&&i==5){
+                        Log.e("123","1234"+"--"+list.size()+"--"+i);
+                        list.add(i,new CaseBean.DataBean.ListBean());
+                    }
+                    else if(list.size()>5&&i%8==0&&i>5){
+                        Log.e("123","1234"+"--"+list.size()+"--"+i);
+                        list.add(i,new CaseBean.DataBean.ListBean());
+                    }
+                    else if(list.size()>5&&i%11==0&&i>8){
+                        Log.e("123","1234"+"--"+list.size()+"--"+i);
+                        list.add(i,new CaseBean.DataBean.ListBean());
+                    }
+                    else if(list.size()>5&&i%14==0&&i>11){
+                        Log.e("123","1234"+"--"+list.size()+"--"+i);
+                        list.add(i,new CaseBean.DataBean.ListBean());
+                    }
+                    else if(list.size()>5&&i%17==0&&i>14){
+                        Log.e("123","1234"+"--"+list.size()+"--"+i);
+                        list.add(i,new CaseBean.DataBean.ListBean());
+                    }
+                    else if(list.size()>5&&i%20==0&&i>17){
+                        Log.e("123","1234"+"--"+list.size()+"--"+i);
+                        list.add(i,new CaseBean.DataBean.ListBean());
+                    }
                 }
             }
+
         }
         count=1;
         SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
@@ -184,17 +213,20 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+
         if(holder instanceof ListViewHolder){
             Log.e("list",list.size()+"--");
             ListViewHolder viewHolder= (ListViewHolder) holder;
             if(list.size()!=0){
                 if(list.get(position).getName()!=null){
                     if(list.get(position).getImage()!=null){
+                        Log.e("images",list.get(position).getImage());
                         GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
                         Glide.with(context)
-                                .asBitmap()
                                 .load(url)
                                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
+                                .apply(new RequestOptions().error(R.mipmap.book_100))
+                                .apply(new RequestOptions().placeholder(R.mipmap.book_100))
                                 .into(viewHolder.book);
                     }
                     viewHolder.name.setText(list.get(position).getName());
@@ -204,99 +236,113 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                     else{
                         viewHolder.zj.setText("读到："+list.get(position).getReadContent());
                     }
+                    //防止复用导致的checkbox显示错乱
+                    viewHolder.select.setTag(position);
+                    //防止复用导致的checkbox显示错乱
+                    viewHolder.select.setTag(position);
+                    //判断当前checkbox的状态
+                    if (showCheckBox) {
+                        viewHolder.select.setVisibility(View.VISIBLE);
+                        //防止显示错乱
+                        viewHolder.select.setChecked(mCheckStates.get(position, false));
+                    } else {
+                        viewHolder.select.setVisibility(View.GONE);
+                        //取消掉Checkbox后不再保存当前选择的状态
+                        viewHolder.select.setChecked(false);
+                        mCheckStates.clear();
+                    }
+                    //对checkbox的监听 保存选择状态 防止checkbox显示错乱
+                    viewHolder.select.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            onItemClickListener.onClick(compoundButton, position);
+                            int pos = (int) compoundButton.getTag();
+                            if (b) {
+                                mCheckStates.put(pos, true);
+                            } else {
+                                mCheckStates.delete(pos);
+                            }
+
+                        }
+                    });
+                    //长按监听
+                    viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View view) {
+                            onItemClickListener.onLongClick(view, position);
+                            type=1;
+                            return false;
+                        }
+                    });
 
                     viewHolder.ll.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            bookListPresenter=new IBookListPresenterImpl(new IBookListView() {
-                                @Override
-                                public void onSuccess(BookListBean bookListBean) {
-                                    bookBean=bookListBean;
-                                    database=dbUtils.getWritableDatabase();
-                                    if(!token.equals("")){
-                                        database.execSQL("delete from readhistory where user='user'and name='"+list.get(position).getName()+"'");
-                                        database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                                                "values('user'," +
-                                                "'"+list.get(position).getName()+"'," +
-                                                "'"+list.get(position).getImage()+"'," +
-                                                "'"+list.get(position).getAuthor()+"'," +
-                                                "'"+bookListBean.getData().getList().get(0).getName()+"'," +
-                                                "10," + "10," + "'"+list.get(position).getBookId()+"'," +
-                                                "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'')");
-
-                                    }
-                                    else{
-                                        database.execSQL("delete from readhistory where user='visitor'and name='"+list.get(position).getName()+"'");
-                                        database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                                                "values('visitor'," +
-                                                "'"+list.get(position).getName()+"'," +
-                                                "'"+list.get(position).getImage()+"'," +
-                                                "'"+list.get(position).getAuthor()+"'," +
-                                                "'"+bookListBean.getData().getList().get(0).getName()+"'," +
-                                                "10," + "10," + "'"+list.get(position).getBookId()+"'," +
-                                                "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'')");
-                                    }
+                            if(type==1){
+                                //判断当前checkbox的状态
+                                if (showCheckBox) {
+                                    viewHolder.select.setVisibility(View.VISIBLE);
+                                    //防止显示错乱
+                                    viewHolder.select.setChecked(mCheckStates.get(position, false));
+                                } else {
+                                    viewHolder.select.setVisibility(View.GONE);
+                                    //取消掉Checkbox后不再保存当前选择的状态
+                                    viewHolder.select.setChecked(false);
+                                    mCheckStates.clear();
                                 }
+                            }
+                            else{
+                                bookListPresenter=new IBookListPresenterImpl(new IBookListView() {
+                                    @Override
+                                    public void onSuccess(BookListBean bookListBean) {
+                                        bookBean=bookListBean;
+                                        database=dbUtils.getWritableDatabase();
+                                        if(!token.equals("")){
+                                            database.execSQL("delete from readhistory where user='user'and name='"+list.get(position).getName()+"'");
+                                            database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                                                    "values('user'," +
+                                                    "'"+list.get(position).getName()+"'," +
+                                                    "'"+list.get(position).getImage()+"'," +
+                                                    "'"+list.get(position).getAuthor()+"'," +
+                                                    "'"+bookListBean.getData().getList().get(0).getName()+"'," +
+                                                    "10," + "10," + "'"+list.get(position).getBookId()+"'," +
+                                                    "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'')");
 
-                                @Override
-                                public void onError(String error) {
-                                    Log.e("booklisterror",error);
-                                }
-                            }, context);
-                            bookListPresenter.setId(list.get(position).getBookId());
-                            bookListPresenter.loadData();
-                            Intent intent=new Intent(context, ExtendReaderActivity.class);
-                            intent.putExtra("token",token);
-                            intent.putExtra("id",list.get(position).getBookId());
-                            intent.putExtra("img",list.get(position).getImage());
-                            intent.putExtra("name",list.get(position).getName());
-                            intent.putExtra("author",list.get(position).getAuthor());
-                            context.startActivity(intent);
+                                        }
+                                        else{
+                                            database.execSQL("delete from readhistory where user='visitor'and name='"+list.get(position).getName()+"'");
+                                            database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                                                    "values('visitor'," +
+                                                    "'"+list.get(position).getName()+"'," +
+                                                    "'"+list.get(position).getImage()+"'," +
+                                                    "'"+list.get(position).getAuthor()+"'," +
+                                                    "'"+bookListBean.getData().getList().get(0).getName()+"'," +
+                                                    "10," + "10," + "'"+list.get(position).getBookId()+"'," +
+                                                    "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'')");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        Log.e("booklisterror",error);
+                                    }
+                                }, context);
+                                bookListPresenter.setId(list.get(position).getBookId());
+                                bookListPresenter.loadData();
+                                Intent intent=new Intent(context, ExtendReaderActivity.class);
+                                intent.putExtra("token",token);
+                                intent.putExtra("id",list.get(position).getBookId());
+                                intent.putExtra("img",list.get(position).getImage());
+                                intent.putExtra("name",list.get(position).getName());
+                                intent.putExtra("author",list.get(position).getAuthor());
+                                context.startActivity(intent);
+                            }
+
                         }
                     });
 
                 }
             }
-            else{
-                if(newfeedlist.size()!=0){
-                    Log.e("newtitle",newfeedlist.get(position).getTitle());
-                    Glide.with(context).load(newfeedlist.get(position).getImageList().get(0).getImageUrl())
-                            .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
-                            .into(new SimpleTarget<Drawable>() {
-                                @Override
-                                public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
-                                    viewHolder.book.setImageDrawable(resource);
-                                }
-                            });
-                    viewHolder.name.setText(newfeedlist.get(position).getTitle());
-                    List<View> viewList=new ArrayList<>();
-                    viewList.add(viewHolder.itemView);
-                    newfeedlist.get(position).registerViewForInteraction((ViewGroup)viewHolder.itemView,viewList,viewList,new TTNativeAd.AdInteractionListener() {
-                        @Override
-                        public void onAdClicked(View view, TTNativeAd ad) {
-                            if (ad != null) {
-                                //TToast.show(mContext, "广告" + ad.getTitle() + "被点击");
-                            }
-                        }
-
-                        @Override
-                        public void onAdCreativeClick(View view, TTNativeAd ad) {
-                            if (ad != null) {
-                               // TToast.show(mContext, "广告" + ad.getTitle() + "被创意按钮被点击");
-                            }
-                        }
-
-                        @Override
-                        public void onAdShow(TTNativeAd ad) {
-                            if (ad != null) {
-                               // TToast.show(mContext, "广告" + ad.getTitle() + "展示");
-                            }
-                        }
-                    });
-                }
-            }
-
-
 
         }
         else if(holder instanceof FeedViewHolder){
@@ -304,7 +350,10 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             FeedViewHolder viewHolder= (FeedViewHolder) holder;
             if(newfeedlist.size()!=0){
                 //Log.e("newtitle",newfeedlist.get(position).getTitle());
-                Glide.with(context).load(newfeedlist.get(position).getImageList().get(0).getImageUrl())
+                Glide.with(context)
+                        .load(newfeedlist.get(position).getImageList().get(0).getImageUrl())
+                        .apply(new RequestOptions().error(R.mipmap.book_100))
+                        .apply(new RequestOptions().placeholder(R.mipmap.book_100))
                         .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
                         .into(new SimpleTarget<Drawable>() {
                             @Override
@@ -314,6 +363,41 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                         });
                 viewHolder.name.setText(newfeedlist.get(position).getDescription());
                 viewHolder.zj.setText(newfeedlist.get(position).getTitle());
+                //防止复用导致的checkbox显示错乱
+                viewHolder.select.setTag(position);
+                //判断当前checkbox的状态
+                if (showCheckBox) {
+                    viewHolder.select.setVisibility(View.VISIBLE);
+                    //防止显示错乱
+                    viewHolder.select.setChecked(mCheckStates.get(position, false));
+                } else {
+                    viewHolder.select.setVisibility(View.GONE);
+                    //取消掉Checkbox后不再保存当前选择的状态
+                    viewHolder.select.setChecked(false);
+                    mCheckStates.clear();
+                }
+
+                //长按监听
+                viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        return onItemClickListener.onLongClick(view, position);
+                    }
+                });
+                //对checkbox的监听 保存选择状态 防止checkbox显示错乱
+                viewHolder.select.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        onItemClickListener.onClick(compoundButton, position);
+                        int pos = (int) compoundButton.getTag();
+                        if (b) {
+                            mCheckStates.put(pos, true);
+                        } else {
+                            mCheckStates.delete(pos);
+                        }
+
+                    }
+                });
                 newfeedlist.get(position).setVideoAdListener(new TTFeedAd.VideoAdListener() {
                     @Override
                     public void onVideoLoad(TTFeedAd ttFeedAd) {
@@ -358,42 +442,48 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public int getItemViewType(int position) {
-        if(list.size()==1){
-            return TYPE_FEED;
-        }
-        if(list.size()==2&&position==1){
-            return TYPE_FEED;
-        }
-        else if(list.size()==3&&position==2){
-            return TYPE_FEED;
-        }
-        else if(list.size()==4&&position==3){
-            return TYPE_FEED;
-        }
-        else if(list.size()==5&&position==4){
-            return TYPE_FEED;
-        }
-        else if(list.size()>5&&position==5){
-            return TYPE_FEED;
-        }
-        else if(list.size()>5&&position%8==0&&position>5){
-            return TYPE_FEED;
-        }
-        else if(list.size()>5&&position%11==0&&position>8){
-            return TYPE_FEED;
-        }
-        else if(list.size()>5&&position%14==0&&position>11){
-            return TYPE_FEED;
-        }
-        else if(list.size()>5&&position%17==0&&position>14){
-            return TYPE_FEED;
-        }
-        else if(list.size()>5&&position%20==0&&position>17){
-            return TYPE_FEED;
-        }
-        else{
+        if(feedlist.size()==0){
             return TYPE_LIST;
         }
+        else{
+            if(list.size()==1){
+                return TYPE_FEED;
+            }
+            if(list.size()==2&&position==1){
+                return TYPE_FEED;
+            }
+            else if(list.size()==3&&position==2){
+                return TYPE_FEED;
+            }
+            else if(list.size()==4&&position==3){
+                return TYPE_FEED;
+            }
+            else if(list.size()==5&&position==4){
+                return TYPE_FEED;
+            }
+            else if(list.size()>5&&position==5){
+                return TYPE_FEED;
+            }
+            else if(list.size()>5&&position%8==0&&position>5){
+                return TYPE_FEED;
+            }
+            else if(list.size()>5&&position%11==0&&position>8){
+                return TYPE_FEED;
+            }
+            else if(list.size()>5&&position%14==0&&position>11){
+                return TYPE_FEED;
+            }
+            else if(list.size()>5&&position%17==0&&position>14){
+                return TYPE_FEED;
+            }
+            else if(list.size()>5&&position%20==0&&position>17){
+                return TYPE_FEED;
+            }
+            else{
+                return TYPE_LIST;
+            }
+        }
+
 
     }
 
@@ -410,7 +500,8 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
 
     class ListViewHolder extends RecyclerView.ViewHolder{
-        private ImageView book,select;
+        private ImageView book;
+        private CheckBox select;
         private TextView name,zj;
         private RelativeLayout ll;
         public ListViewHolder(@NonNull View itemView) {
@@ -424,7 +515,8 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
 
     class FeedViewHolder extends RecyclerView.ViewHolder{
-        private ImageView book,select;
+        private ImageView book;
+        private CheckBox select;
         private TextView name,zj;
         private Button del;
         private SwipeMenuLayout sml;
@@ -520,6 +612,18 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         ad.setDownloadListener(downloadListener); // 注册下载监听器
         mTTAppDownloadListenerMap.put(adViewHolder, downloadListener);
     }
+    /**
+     * 自己写接口，实现点击和长按监听
+     */
+    public interface onItemClickListener {
+        void onClick(View view, int pos);
 
+        boolean onLongClick(View view, int pos);
+    }
 
+    private onItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(ListAdapter.onItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
 }

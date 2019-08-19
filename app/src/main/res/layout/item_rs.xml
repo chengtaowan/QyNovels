@@ -30,6 +30,8 @@
                 android:textColor="#2F3236"
                 android:text="冰与火之歌"
                 android:textStyle="bold"
+                android:lines="1"
+                android:ellipsize="end"
                 android:layout_below="@+id/kd_top"
                 android:id="@+id/kd_name"/>
 
@@ -40,7 +42,7 @@
                 android:layout_alignParentBottom="true"
                 android:text="热度："
                 android:textColor="#828486"
-                android:textSize="11sp"/>
+                android:textSize="11sp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

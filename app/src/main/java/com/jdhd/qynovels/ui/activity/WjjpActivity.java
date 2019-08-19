@@ -28,9 +28,11 @@ import com.jdhd.qynovels.persenter.impl.bookshop.IJxPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookshop.IModulePresenterImpl;
 import com.jdhd.qynovels.ui.fragment.ManWjFragment;
 import com.jdhd.qynovels.ui.fragment.WmanWjFragment;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.bookshop.IJxView;
 import com.jdhd.qynovels.view.bookshop.IModuleView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +49,9 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wjjp);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         modulePresenter=new IModulePresenterImpl(this,this,20);
@@ -63,11 +68,7 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
         tab.addOnTabSelectedListener(this);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
 
-    }
 
     @Override
     public void onClick(View view) {
@@ -140,5 +141,17 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

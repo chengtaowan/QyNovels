@@ -409,7 +409,7 @@ public class ReaderResolve {
             int charSum = showChars.size();
             float start = x;
 
-            int retractCharNum =0;// 缩进符数量
+            int retractCharNum =2;// 缩进符数量
             String lineData = showLine.getLineData();
             // 遍历计算缩进符数量
             String tempData = showLine.getLineData();
@@ -419,7 +419,6 @@ public class ReaderResolve {
                     tempData = tempData.substring(retractCharNum);
                 }
             }
-            Log.e("sRetract","缩进符数量"+retractCharNum);
 
             Rect bounds = new Rect();
             mMainBodyPaint.getTextBounds(lineData, 0, retractCharNum, bounds);

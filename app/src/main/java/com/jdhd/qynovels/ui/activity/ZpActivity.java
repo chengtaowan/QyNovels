@@ -35,6 +35,7 @@ import com.jdhd.qynovels.module.personal.VideoflBean;
 import com.jdhd.qynovels.persenter.impl.personal.IDrawPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IPrizePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IVideoflPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IDrawView;
@@ -44,6 +45,7 @@ import com.just.agentweb.AgentWeb;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.umeng.analytics.MobclickAgent;
 
 public class ZpActivity extends AppCompatActivity implements IPrizesView, View.OnClickListener, IDrawView{
     private IPrizePresenterImpl prizePresenter;
@@ -77,7 +79,7 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
                     startActivity(intent);
                     break;
                 case 2:
-                    loadAd("901121365", TTAdConstant.VERTICAL);
+                    loadAd("926447225", TTAdConstant.VERTICAL);
                     break;
             }
 
@@ -87,6 +89,9 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zp);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         hasNetWork = DeviceInfoUtils.hasNetWork(this);
         Intent intent=getIntent();
@@ -182,11 +187,7 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
         });
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        web.clearWebCache();
-    }
+
 
     @Override
     public void onPrizeError(String error) {
@@ -239,7 +240,7 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
 
         @JavascriptInterface
         public void GGScriptMessageCommon(String str) {
-            com.tencent.mm.opensdk.utils.Log.e("name",str);
+            Log.e("name",str);
             Gson gson=new Gson();
             functionBean = gson.fromJson(str, FunctionBean.class);
             if(functionBean.getReqName()!=null){
@@ -284,7 +285,7 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
         mTTAdNative.loadRewardVideoAd(adSlot, new TTAdNative.RewardVideoAdListener() {
             @Override
             public void onError(int code, String message) {
-                Toast.makeText(ZpActivity.this,message,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ZpActivity.this,message,Toast.LENGTH_SHORT).show();
             }
 
             //视频广告加载后，视频资源缓存到本地的回调，在此回调后，播放本地视频，流畅不阻塞。
@@ -327,7 +328,7 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
                             web.getJsAccessEntrace().quickCallJs("watchVideoSuccess", new ValueCallback<String>() {
                                 @Override
                                 public void onReceiveValue(String s) {
-                                    com.tencent.mm.opensdk.utils.Log.e("data",s);
+                                    com.tencent.mm.opensdk.utils.Log.e("watchvideo",s);
                                 }
                             },"{}");
 
@@ -405,5 +406,18 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
 
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        web.clearWebCache();
+        MobclickAgent.onPause(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
     }
 }

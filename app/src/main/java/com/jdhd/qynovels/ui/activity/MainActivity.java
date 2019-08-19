@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
@@ -26,8 +27,10 @@ import com.jdhd.qynovels.ui.fragment.CaseFragment;
 import com.jdhd.qynovels.ui.fragment.FuLiFragment;
 import com.jdhd.qynovels.ui.fragment.ShopFragment;
 import com.jdhd.qynovels.ui.fragment.WodeFragment;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.widget.NoScrollViewPager;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +48,24 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private int page;
     private String token;
     public static String gamename,num,datapath;
+    public static LinearLayout ll;
+    public static TextView delete,cancle;
     public static List<String> mSelectPath=new ArrayList<>();
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SharedPreferences preferences=getSharedPreferences("token", MODE_PRIVATE);
+        token = preferences.getString("token", "");
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         SharedPreferences preferences=getSharedPreferences("token", MODE_PRIVATE);
@@ -80,8 +95,15 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     protected void onResume() {
         super.onResume();
+        SharedPreferences preferences=getSharedPreferences("token", MODE_PRIVATE);
+        token = preferences.getString("token", "");
+        Log.e("maintoken",token);
+        MobclickAgent.onResume(this);
     }
     private void init() {
+        ll=findViewById(R.id.ll);
+        delete=findViewById(R.id.delete);
+        cancle=findViewById(R.id.cancle);
        vp=findViewById(R.id.vp);
        rg=findViewById(R.id.rg);
        rb_case=findViewById(R.id.rb_case);
@@ -106,7 +128,14 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     }
 
-            @Override
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MainActivity.ll.setVisibility(View.GONE);
+        MobclickAgent.onPause(this);
+    }
+
+    @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 if(radioGroup.getCheckedRadioButtonId()==R.id.rb_case){
                     vp.setCurrentItem(0);
@@ -115,6 +144,9 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                     vp.setCurrentItem(1);
                 }
                 else if(radioGroup.getCheckedRadioButtonId()==R.id.rb_fl){
+                    SharedPreferences preferences=getSharedPreferences("token", MODE_PRIVATE);
+                    token = preferences.getString("token", "");
+                    Log.e("maintoken",token);
                     if(token.equals("")){
                         Intent intent=new Intent(MainActivity.this,LoginActivity.class);
                         intent.putExtra("type",1);
@@ -168,3 +200,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             }
 
     }
+
+
+

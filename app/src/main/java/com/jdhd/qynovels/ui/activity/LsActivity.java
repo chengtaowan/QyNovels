@@ -22,8 +22,10 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.LsAdapter;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.BookBean;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,8 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ls);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         dbUtils=new DbUtils(this);
@@ -64,6 +68,7 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
                 bookBean.setImg(cursor.getString(cursor.getColumnIndex("image")));
                 bookBean.setDes("读到："+cursor.getString(cursor.getColumnIndex("readContent")));
                 bookBean.setTime(cursor.getString(cursor.getColumnIndex("lastTime")));
+                bookBean.setBookid(cursor.getInt(cursor.getColumnIndex("bookid")));
                 list.add(bookBean);
             }
         }
@@ -75,6 +80,7 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
                 bookBean.setImg(cursor.getString(cursor.getColumnIndex("image")));
                 bookBean.setDes("读到："+cursor.getString(cursor.getColumnIndex("readContent")));
                 bookBean.setTime(cursor.getString(cursor.getColumnIndex("lastTime")));
+                bookBean.setBookid(cursor.getInt(cursor.getColumnIndex("bookid")));
                 list.add(bookBean);
             }
         }
@@ -134,7 +140,14 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
         }
     }
     @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

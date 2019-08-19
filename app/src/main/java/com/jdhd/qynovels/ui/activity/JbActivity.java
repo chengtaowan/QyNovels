@@ -16,9 +16,11 @@ import com.jdhd.qynovels.adapter.JbAdapter;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.GoldListBean;
 import com.jdhd.qynovels.persenter.impl.personal.IGoldListPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IGoldListView;
+import com.umeng.analytics.MobclickAgent;
 
 public class JbActivity extends AppCompatActivity implements View.OnClickListener , IGoldListView {
     private ImageView back;
@@ -35,6 +37,9 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jb);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
@@ -100,5 +105,16 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onError(String error) {
         Log.e("jberror",error);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

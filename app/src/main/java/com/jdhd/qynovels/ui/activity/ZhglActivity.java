@@ -17,7 +17,15 @@ import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.personal.BindWxBean;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.umeng.analytics.MobclickAgent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class ZhglActivity extends AppCompatActivity implements View.OnClickListener {
     private String mobile="",wxname="";
@@ -31,6 +39,10 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zhgl);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
@@ -46,6 +58,13 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         init();
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getwxBean(BindWxBean bindWxBean){
+        if(!bindWxBean.getData().getWx_name().equals("")){
+           wx.setText(bindWxBean.getData().getWx_name());
+           wx.setClickable(false);
+        }
     }
 
     private void init() {
@@ -70,7 +89,7 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
         }
         if(wxname.equals("")){
             if(wx.getText().toString().equals("")){
-                wx.setText("未绑定");
+                wx.setText("立即绑定");
             }
             else{
                 wxname=wx.getText().toString();
@@ -84,10 +103,7 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
+
 
     @Override
     public void onClick(View view) {
@@ -113,8 +129,18 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
            }
        }
        else if(R.id.zh_wx==view.getId()){
-           if(wx.getText().equals("未绑定")){
-
+           if(wx.getText().equals("立即绑定")){
+               if(!MyApp.getApi().isWXAppInstalled()){
+                   Toast.makeText(ZhglActivity.this,"请先安装微信客户端",Toast.LENGTH_SHORT).show();
+                   return;
+               }
+               SendAuth.Req req = new SendAuth.Req();
+               req.scope = "snsapi_userinfo";
+               req.state = "bindwechat";
+               MyApp.getApi().sendReq(req);
+//               Intent intent=new Intent(ZhglActivity.this,MainActivity.class);
+//               intent.putExtra("page",3);
+//               startActivity(intent);
            }
            else{
                zh_wx.setClickable(false);
@@ -130,6 +156,33 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
            intent.putExtra("page",3);
            intent.setAction("exit");
            startActivity(intent);
+           MobclickAgent.onProfileSignOff();
        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent=new Intent(ZhglActivity.this,MainActivity.class);
+        intent.putExtra("page", 3);
+        startActivity(intent);
     }
 }

@@ -114,7 +114,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="章节目录"
+            android:text="查看目录"
             android:textColor="#2F3236"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -155,24 +155,18 @@
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="60dp"
         android:layout_marginTop="23dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:id="@+id/xq_gg"
         android:background="#fff">
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="110dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/xq_img"
-            android:background="@drawable/shape_yj"/>
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="15dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="5dp"
-            android:layout_marginBottom="5dp"
-            android:src="@mipmap/gg_bt"
-            android:id="@+id/gg"/>
+            android:layout_centerInParent="true"
+            android:background="@drawable/shape_yj"
+            android:orientation="vertical"/>
     </RelativeLayout>
 </LinearLayout>

@@ -78,7 +78,11 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             }
             if(listBeanList.get(position).getImage()!=null){
                 GlideUrl url = DeviceInfoUtils.getUrl(listBeanList.get(position).getImage());
-                Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+                Glide.with(context).load(url)
+                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
+                        .apply(new RequestOptions().error(R.mipmap.book_100))
+                        .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                        .into(holder.book);
 
             }
             holder.name.setText(listBeanList.get(position).getName());
@@ -109,7 +113,11 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             }
             if(list.get(position).getImage()!=null){
                 GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
-                Glide.with(context).load(list.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+                Glide.with(context)
+                        .load(list.get(position).getImage())
+                        .apply(new RequestOptions().error(R.mipmap.book_100))
+                        .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
             }
             holder.name.setText(list.get(position).getName());
             holder.grade.setText(list.get(position).getGrade()+"");
@@ -138,7 +146,11 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
             }
             if(readlist.get(position).getImage()!=null){
                 GlideUrl url = DeviceInfoUtils.getUrl(readlist.get(position).getImage());
-                Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+                Glide.with(context)
+                        .load(url)
+                        .apply(new RequestOptions().error(R.mipmap.book_100))
+                        .apply(new RequestOptions().placeholder(R.mipmap.book_100)).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
+                        .into(holder.book);
 
             }
             holder.name.setText(readlist.get(position).getName());

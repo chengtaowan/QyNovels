@@ -9,7 +9,9 @@ import android.widget.ImageView;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.umeng.analytics.MobclickAgent;
 
 public class GywmActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView back;
@@ -17,6 +19,9 @@ public class GywmActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gywm);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
@@ -30,6 +35,24 @@ public class GywmActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Intent intent=new Intent(GywmActivity.this,SzActivity.class);
+        startActivity(intent);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent=new Intent(GywmActivity.this,MainActivity.class);
+        intent.putExtra("page", 3);
         startActivity(intent);
     }
 }

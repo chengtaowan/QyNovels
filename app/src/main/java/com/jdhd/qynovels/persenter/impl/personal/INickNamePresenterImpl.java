@@ -54,9 +54,9 @@ public class INickNamePresenterImpl implements ISexPresenter {
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                 .asParser(new SimpleParser<NickNameBean>(){})
                 .subscribe(nickNameBean->{
-                    if(nickNameBean.getCode()==200&&nickNameBean.getMsg().equals("修改成功")){
+                    //if(nickNameBean.getCode()==200&&nickNameBean.getMsg().equals("修改成功")){
                         iNickNameView.onNickNameSuccess(nickNameBean);
-                    }
+                   // }
                 },throwable->{
                     iNickNameView.onNickNameError(throwable.getMessage());
                 });

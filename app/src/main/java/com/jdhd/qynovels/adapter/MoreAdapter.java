@@ -3,6 +3,7 @@ package com.jdhd.qynovels.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,10 +56,14 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.MoreViewHolder
     @Override
     public void onBindViewHolder(@NonNull MoreViewHolder holder, final int position) {
         holder.grade.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Oswald-Bold.otf"));
-        holder.type.setVisibility(View.VISIBLE);
+        holder.type.setVisibility(View.GONE);
         if(list.get(position).getImage()!=null){
             GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
-            Glide.with(context).load(list.get(position).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            Glide.with(context)
+                    .load(url)
+                    .apply(new RequestOptions().error(R.mipmap.book_100))
+                    .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
 
         }
         holder.name.setText(list.get(position).getName());
@@ -71,7 +76,7 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.MoreViewHolder
             holder.wj.setText("完结");
         }
         holder.num.setText(list.get(position).getNumber()+"字");
-        holder.type.setText(list.get(position).getClassName());
+        //holder.type.setText(list.get(position).getClassName()+"111");
        holder.itemView.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {

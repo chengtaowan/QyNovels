@@ -28,7 +28,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:orientation="horizontal"
             android:gravity="center"
             android:id="@+id/xq_jrsj"
@@ -37,23 +37,23 @@
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="14dp"
-                android:src="@mipmap/xqy_jrsj"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:id="@+id/icon"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="加入书架"
                 android:textColor="#2F3236"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginLeft="2dp"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:id="@+id/jr"/>
         </LinearLayout>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:layout_alignParentRight="true"
             android:background="#E8564E"
             android:text="免费阅读图书"

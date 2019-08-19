@@ -20,8 +20,10 @@ import com.jdhd.qynovels.adapter.MoreAdapter;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ClassContentBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IClassContentPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.bookshop.IClassContentView;
+import com.umeng.analytics.MobclickAgent;
 
 public class MorePhbActivity extends AppCompatActivity implements View.OnClickListener ,RadioGroup.OnCheckedChangeListener, IClassContentView {
     private ImageView back,search;
@@ -41,6 +43,9 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_phb);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
@@ -157,11 +162,7 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(intent);
         }
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
 
-    }
 
     @Override
     protected void onDestroy() {
@@ -184,5 +185,17 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onError(String error) {
        Log.e("moreerror",error);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,11 +41,14 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.bytedance.sdk.openadsdk.AdSlot;
+import com.bytedance.sdk.openadsdk.FilterWord;
+import com.bytedance.sdk.openadsdk.TTAdConstant;
 import com.bytedance.sdk.openadsdk.TTAdDislike;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTAppDownloadListener;
 import com.bytedance.sdk.openadsdk.TTBannerAd;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.glong.reader.ScreenUtils;
 import com.glong.reader.TurnStatus;
 import com.glong.reader.adpater.CatalogueAdapter;
@@ -71,6 +75,7 @@ import com.glong.reader.view.IReadAwardView;
 import com.glong.reader.view.MenuView;
 import com.glong.reader.view.SettingView;
 import com.glong.reader.view.SimpleOnSeekBarChangeListener;
+import com.glong.reader.widget.DislikeDialog;
 import com.glong.reader.widget.EffectOfCover;
 import com.glong.reader.widget.EffectOfNon;
 import com.glong.reader.widget.EffectOfRealBothWay;
@@ -109,7 +114,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 
     private MenuView mMenuView;// 菜单View
     private SettingView mSettingView;// 设置View
-    private SeekBar mChapterSeekBar;//调节章节的SeekBar
+    public static SeekBar mChapterSeekBar;//调节章节的SeekBar
 
     private DrawerLayout mDrawerLayout;//操作抽屉
     private NavigationView mNavigationView;//左侧用于展示目录的抽屉
@@ -127,21 +132,37 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private TextView big,zh;
     private SeekBar lightSeekBar;
     private IReadAwardPresenterImpl readAwardPresenter;
-    private int recLen=32;
+    private int recLen=30;
     private int clicknum=1;
-    Timer timer = new Timer();
     private ImageView daynight;
     private LinearLayout gg;
     private TTAdNative mTTAdNative;
     private ImageView book;
+    private int p=0;
     private TextView bookname,bookauthor;
     private String img,name,author;
+    private ImageView logo;
+    private List<TTNativeExpressAd>  mTTAdList=new ArrayList<>();
+    private RelativeLayout jz;
     private View view;
+    Timer timer = new Timer();
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            content= (String) msg.obj;
+            if(msg.what==1){
+                int count=msg.arg1;
+                Log.e("readaward",count+"--");
+                if(count==0){
+                    readAwardPresenter.loadData();
+                    recLen=5;
+
+                }
+            }
+            else{
+                content= (String) msg.obj;
+            }
+
 
 
         }
@@ -158,6 +179,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         uiModeManager=(UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
         mTTAdNative = TTAdSdk.getAdManager().createAdNative(this);
+        TTAdSdk.getAdManager().requestPermissionIfNecessary(this);
         Intent intent=getIntent();
         id=intent.getIntExtra("id",0);
         token=intent.getStringExtra("token");
@@ -171,21 +193,33 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         bookContentPresenter=new IBookContentPresenterImpl(this);
         readAwardPresenter=new IReadAwardPresenterImpl(this);
         readAwardPresenter.setToken(token);
+        Log.e("readtoken",token);
+        readAwardPresenter.setId(id);
 
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                Message message = new Message();
+//                message.what=1;
+//                message.arg1 = recLen;
+//                if(recLen!=-1){
+//                    recLen--;
+//                }else {
+//                    return;
+//                }
+//                handler.sendMessage(message);
+//            }
+//        }, 1000,1000);
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                runOnUiThread(new Runnable() {
-                    // UI thread
-                    @Override
-                    public void run() {
-                        recLen--;
-                        if(recLen ==0){
-                            readAwardPresenter.loadData();
-                            recLen=32;
-                        }
-                    }
-                });
+                recLen--;
+                Log.e("readaward",recLen+"--");
+                if(recLen ==0){
+                    readAwardPresenter.loadData();
+                    recLen=30;
+
+                }
             }
         };
         timer.schedule(task, 1000, 1000);
@@ -197,8 +231,10 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initView() {
+        jz=findViewById(R.id.jz);
+        logo=findViewById(R.id.img);
         gg=findViewById(R.id.gg);
-        loadBannerAd(gg);
+        loadExpressAd("926447562",gg,logo);
         daynight=findViewById(R.id.daynight);
         bj1=findViewById(R.id.reader_bg_0);
         bj2=findViewById(R.id.reader_bg_1);
@@ -246,7 +282,6 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 //        findViewById(R.id.effect_cover).setOnClickListener(this);
 //        findViewById(R.id.effect_slide).setOnClickListener(this);
 //        findViewById(R.id.effect_non).setOnClickListener(this);
-
 
 
         mChapterSeekBar.setOnSeekBarChangeListener(new SimpleOnSeekBarChangeListener() {
@@ -298,7 +333,11 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                 TurnStatus turnStatus = mReaderManager.toSpecifiedChapter(position, 0);
                 if (turnStatus == TurnStatus.LOAD_SUCCESS) {
                     mReaderView.invalidateBothPage();
+
                 }
+                p=position;
+                Log.e("position",position+"");
+                mChapterSeekBar.setProgress(position);
                 mDrawerLayout.closeDrawer(mNavigationView);
             }
         });
@@ -352,7 +391,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         int i = item.getItemId();
 
          if (i == R.id.share) {
-            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -444,6 +483,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        timer.cancel();
         if (mDisposable != null && !mDisposable.isDisposed()) {
             mDisposable.dispose();
         }
@@ -513,6 +553,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             mMenuView.dismiss();
             // 切换背景
         } else if (i == R.id.reader_bg_0) {
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
             bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1_on));
             bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
             bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
@@ -524,6 +565,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             colorsConfig.setTextColor(Color.parseColor("#5B5956"));
             mReaderView.setColorsConfig(colorsConfig);
         } else if (i == R.id.reader_bg_1) {
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_1));
             bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2_on));
             bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
             bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
@@ -535,6 +577,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             colorsConfig.setTextColor(Color.parseColor("#4E402A"));
             mReaderView.setColorsConfig(colorsConfig);
         } else if (i == R.id.reader_bg_2) {
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_2));
             bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3_on));
             bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
             bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
@@ -547,6 +590,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             colorsConfig.setTextColor(Color.parseColor("#5F665F"));
             mReaderView.setColorsConfig(colorsConfig);
         } else if (i == R.id.reader_bg_3) {
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_3));
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4_on));
             bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
             bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
@@ -559,6 +603,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             colorsConfig.setTextColor(Color.parseColor("#928E8C"));
             mReaderView.setColorsConfig(colorsConfig);
         } else if (i == R.id.reader_bg_4) {
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5_on));
             bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
             bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
@@ -607,6 +652,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             mReaderView.setEffect(new EffectOfSlide(this));
         } else if (i == R.id.daynight) {
             if(clicknum%2==0){
+                mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
                 mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_0));
                 daynight.setImageResource(R.mipmap.yuedu_yj);
                 ColorsConfig colorsConfig=new ColorsConfig();
@@ -614,6 +660,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                 mReaderView.setColorsConfig(colorsConfig);
             }
             else{
+                mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
                 mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_4));
                 daynight.setImageResource(R.mipmap.yuedu_yj_on);
                 ColorsConfig colorsConfig=new ColorsConfig();
@@ -665,6 +712,12 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                    public String obtainChapterContent(BookContentBean.DataBean dataBean) {
                        if(dataBean.getContent()!=null){
                            Log.e("nr",dataBean.getContent());
+                           runOnUiThread(new Runnable() {
+                               @Override
+                               public void run() {
+                                   jz.setVisibility(View.GONE);
+                               }
+                           });
                            return dataBean.getContent();
                        }
                        else{
@@ -679,6 +732,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 
                    }
                };
+
                bookContentPresenter.setContext(ExtendReaderActivity.this);
                bookContentPresenter.setId(bookListBean.getData().getList().get(0).getId());
                bookContentPresenter.loadData();
@@ -713,7 +767,14 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(ExtendReaderActivity.this,"您已阅读30s,奖励金币"+readAwardBean.getData().getAward(),Toast.LENGTH_SHORT).show();
+                if(readAwardBean.getCode()!=200){
+                    Toast.makeText(ExtendReaderActivity.this,readAwardBean.getMsg(),Toast.LENGTH_SHORT).show();
+
+                }
+                else{
+                    Toast.makeText(ExtendReaderActivity.this,"您已阅读30s,奖励金币"+readAwardBean.getData().getAward(),Toast.LENGTH_SHORT).show();
+
+                }
             }
         });
     }
@@ -726,131 +787,169 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onPause() {
         super.onPause();
-        timer.cancel();
+        //timer.cancel();
+        //timer=new Timer();
     }
 
-    private void loadBannerAd(LinearLayout mBannerContainer) {
+
+    private void loadExpressAd(String codeId,LinearLayout mExpressContainer,ImageView img) {
+        mExpressContainer.removeAllViews();
+        float expressViewWidth = 350;
+        float expressViewHeight = 350;
+        try{
+            expressViewWidth = 350;
+            expressViewHeight = 53;
+        }catch (Exception e){
+            expressViewHeight = 0; //高度设置为0,则高度会自适应
+        }
         //step4:创建广告请求参数AdSlot,具体参数含义参考文档
         AdSlot adSlot = new AdSlot.Builder()
-                .setCodeId("901121895") //广告位id
+                .setCodeId(codeId) //广告位id
                 .setSupportDeepLink(true)
-                .setImageAcceptedSize(300, 200)
+                .setAdCount(1) //请求广告数量为1到3条
+                .setExpressViewAcceptedSize(expressViewWidth,expressViewHeight) //期望模板广告view的size,单位dp
+                .setImageAcceptedSize(150,53 )
                 .build();
         //step5:请求广告，对请求回调的广告作渲染处理
-        mTTAdNative.loadBannerAd(adSlot, new TTAdNative.BannerAdListener() {
-
+        mTTAdNative.loadBannerExpressAd(adSlot, new TTAdNative.NativeExpressAdListener() {
             @Override
             public void onError(int code, String message) {
                 Toast.makeText(ExtendReaderActivity.this,message,Toast.LENGTH_SHORT).show();
-                mBannerContainer.removeAllViews();
+                //TToast.show(BannerExpressActivity.this, "load error : " + code + ", " + message);
+                mExpressContainer.removeAllViews();
+                mExpressContainer.setVisibility(View.GONE);
+                img.setVisibility(View.VISIBLE);
             }
 
             @Override
-            public void onBannerAdLoad(final TTBannerAd ad) {
-                if (ad == null) {
+            public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
+                if (ads == null || ads.size() == 0){
                     return;
                 }
-                View bannerView = ad.getBannerView();
-                if (bannerView == null) {
-                    return;
-                }
-                //设置轮播的时间间隔  间隔在30s到120秒之间的值，不设置默认不轮播
-                //ad.setSlideIntervalTime(30 * 1000);
-                mBannerContainer.removeAllViews();
-                mBannerContainer.addView(bannerView);
-                //设置广告互动监听回调
-                ad.setBannerInteractionListener(new TTBannerAd.AdInteractionListener() {
-                    @Override
-                    public void onAdClicked(View view, int type) {
-                        //Toast.makeText(context,"广告被点击",Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onAdShow(View view, int type) {
-                        //Toast.makeText(context,"广告展示",Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-                //（可选）设置下载类广告的下载监听
-                bindDownloadListener(ad);
-                //在banner中显示网盟提供的dislike icon，有助于广告投放精准度提升
-                ad.setShowDislikeIcon(new TTAdDislike.DislikeInteractionCallback() {
-                    @Override
-                    public void onSelected(int position, String value) {
-                        //Toast.makeText(context,"点击"+value,Toast.LENGTH_SHORT).show();
-
-                        //用户选择不喜欢原因后，移除广告展示
-                        mBannerContainer.removeAllViews();
-                        mBannerContainer.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        //Toast.makeText(context,"点击取消",Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
-                //获取网盟dislike dialog，您可以在您应用中本身自定义的dislike icon 按钮中设置 mTTAdDislike.showDislikeDialog();
-                /*mTTAdDislike = ad.getDislikeDialog(new TTAdDislike.DislikeInteractionCallback() {
-                        @Override
-                        public void onSelected(int position, String value) {
-                            TToast.show(mContext, "点击 " + value);
-                        }
-
-                        @Override
-                        public void onCancel() {
-                            TToast.show(mContext, "点击取消 ");
-                        }
-                    });
-                if (mTTAdDislike != null) {
-                    XXX.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mTTAdDislike.showDislikeDialog();
-                        }
-                    });
-                } */
-
+                TTNativeExpressAd mTTAd = ads.get(0);
+                mTTAdList.add(mTTAd);
+                mTTAd.setSlideIntervalTime(30*1000);
+                bindAdListener(mTTAd,mExpressContainer,img);
+                startTime = System.currentTimeMillis();
+                mTTAd.render();
             }
         });
     }
+    private long startTime = 0;
+
     private boolean mHasShowDownloadActive = false;
 
-    private void bindDownloadListener(TTBannerAd ad) {
+    private void bindAdListener(TTNativeExpressAd ad,LinearLayout mExpressContainer,ImageView img) {
+        ad.setExpressInteractionListener(new TTNativeExpressAd.ExpressAdInteractionListener() {
+            @Override
+            public void onAdClicked(View view, int type) {
+                // TToast.show(mContext, "广告被点击");
+            }
+
+            @Override
+            public void onAdShow(View view, int type) {
+                //TToast.show(mContext, "广告展示");
+                img.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onRenderFail(View view, String msg, int code) {
+                Log.e("ExpressView","render fail:"+(System.currentTimeMillis() - startTime));
+                //TToast.show(mContext, msg+" code:"+code);
+            }
+
+            @Override
+            public void onRenderSuccess(View view, float width, float height) {
+                Log.e("ExpressView", "render suc:" + (System.currentTimeMillis() - startTime));
+                //返回view的宽高 单位 dp
+                // TToast.show(mContext, "渲染成功");
+                mExpressContainer.removeAllViews();
+                mExpressContainer.addView(view);
+            }
+        });
+        //dislike设置
+        bindDislike(ad, false,mExpressContainer,img);
+        if (ad.getInteractionType() != TTAdConstant.INTERACTION_TYPE_DOWNLOAD){
+            return;
+        }
         ad.setDownloadListener(new TTAppDownloadListener() {
             @Override
             public void onIdle() {
-                //Toast.makeText(ExtendReaderActivity.this, "点击图片开始下载", Toast.LENGTH_SHORT).show();
-
+                // TToast.show(BannerExpressActivity.this, "点击开始下载", Toast.LENGTH_LONG);
             }
 
             @Override
             public void onDownloadActive(long totalBytes, long currBytes, String fileName, String appName) {
                 if (!mHasShowDownloadActive) {
                     mHasShowDownloadActive = true;
-                    //Toast.makeText(context, "下载中，点击图片暂停", Toast.LENGTH_SHORT).show();
+                    // TToast.show(BannerExpressActivity.this, "下载中，点击暂停", Toast.LENGTH_LONG);
                 }
             }
 
             @Override
             public void onDownloadPaused(long totalBytes, long currBytes, String fileName, String appName) {
-               // Toast.makeText(ExtendReaderActivity.this, "下载暂停，点击图片继续", Toast.LENGTH_SHORT).show();
+                //TToast.show(BannerExpressActivity.this, "下载暂停，点击继续", Toast.LENGTH_LONG);
             }
 
             @Override
             public void onDownloadFailed(long totalBytes, long currBytes, String fileName, String appName) {
-                //Toast.makeText(context, "下载失败，点击图片重新下载", Toast.LENGTH_SHORT).show();
+                // TToast.show(BannerExpressActivity.this, "下载失败，点击重新下载", Toast.LENGTH_LONG);
             }
 
             @Override
             public void onInstalled(String fileName, String appName) {
-                //Toast.makeText(ExtendReaderActivity.this, "安装完成，点击图片打开", Toast.LENGTH_SHORT).show();
+                //TToast.show(BannerExpressActivity.this, "安装完成，点击图片打开", Toast.LENGTH_LONG);
             }
 
             @Override
             public void onDownloadFinished(long totalBytes, String fileName, String appName) {
-                //Toast.makeText(ExtendReaderActivity.this, "点击图片安装", Toast.LENGTH_SHORT).show();
+                // TToast.show(BannerExpressActivity.this, "点击安装", Toast.LENGTH_LONG);
+            }
+        });
+    }
+
+    /**
+     * 设置广告的不喜欢, 注意：强烈建议设置该逻辑，如果不设置dislike处理逻辑，则模板广告中的 dislike区域不响应dislike事件。
+     * @param ad
+     * @param customStyle 是否自定义样式，true:样式自定义
+     */
+    private void bindDislike(TTNativeExpressAd ad, boolean customStyle,LinearLayout mExpressContainer,ImageView img) {
+        if (customStyle) {
+            //使用自定义样式
+            List<FilterWord> words = ad.getFilterWords();
+            if (words == null || words.isEmpty()) {
+                return;
+            }
+
+            final DislikeDialog dislikeDialog = new DislikeDialog(ExtendReaderActivity.this, words);
+            dislikeDialog.setOnDislikeItemClick(new DislikeDialog.OnDislikeItemClick() {
+                @Override
+                public void onItemClick(FilterWord filterWord) {
+                    //屏蔽广告
+                    // TToast.show(mContext, "点击 " + filterWord.getName());
+                    //用户选择不喜欢原因后，移除广告展示
+                    mExpressContainer.removeAllViews();
+                    mExpressContainer.setVisibility(View.GONE);
+                    img.setVisibility(View.VISIBLE);
+                }
+            });
+            ad.setDislikeDialog(dislikeDialog);
+            return;
+        }
+        //使用默认模板中默认dislike弹出样式
+        ad.setDislikeCallback(ExtendReaderActivity.this, new TTAdDislike.DislikeInteractionCallback() {
+            @Override
+            public void onSelected(int position, String value) {
+                // TToast.show(mContext, "点击 " + value);
+                //用户选择不喜欢原因后，移除广告展示
+                mExpressContainer.removeAllViews();
+                mExpressContainer.setVisibility(View.GONE);
+                img.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onCancel() {
+                // TToast.show(mContext, "点击取消 ");
             }
         });
     }

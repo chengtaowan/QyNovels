@@ -30,6 +30,7 @@ import com.jdhd.qynovels.ui.activity.WjjpActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.youth.banner.Banner;
+import com.youth.banner.listener.OnBannerListener;
 import com.youth.banner.loader.ImageLoader;
 
 import java.util.ArrayList;
@@ -108,15 +109,29 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            viewHolder.banner.setImageLoader(new GlideImageLoader());   //设置图片加载器
            viewHolder.banner.setImages(imglist);  //设置banner中显示图片
            viewHolder.banner.start();  //设置完毕后调用
+           viewHolder.banner.setOnBannerListener(new OnBannerListener() {
+               @Override
+               public void OnBannerClick(int p) {
+                   Intent intent=new Intent(context,XqActivity.class);
+                   intent.putExtra("xq",2);
+                   intent.putExtra("sc_type",0);
+                   intent.putExtra("id",list.get(position).getList().get(p).getBookId());
+                   context.startActivity(intent);
+               }
+           });
        }
        else if(holder instanceof TypeViewHolder){
            TypeViewHolder viewHolder= (TypeViewHolder) holder;
 
            if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeFunction){
-               Glide.with(context).load(list.get(position).getList().get(0).getIcon()).into(viewHolder.img1);
-               Glide.with(context).load(list.get(position).getList().get(1).getIcon()).into(viewHolder.img2);
-               Glide.with(context).load(list.get(position).getList().get(2).getIcon()).into(viewHolder.img3);
-               Glide.with(context).load(list.get(position).getList().get(3).getIcon()).into(viewHolder.img4);
+               Glide.with(context).load(list.get(position).getList().get(0).getIcon()).apply(new RequestOptions().error(R.mipmap.book_100))
+                       .apply(new RequestOptions().placeholder(R.mipmap.book_100)).into(viewHolder.img1);
+               Glide.with(context).load(list.get(position).getList().get(1).getIcon()).apply(new RequestOptions().error(R.mipmap.book_100))
+                       .apply(new RequestOptions().placeholder(R.mipmap.book_100)).into(viewHolder.img2);
+               Glide.with(context).load(list.get(position).getList().get(2).getIcon()).apply(new RequestOptions().error(R.mipmap.book_100))
+                       .apply(new RequestOptions().placeholder(R.mipmap.book_100)).into(viewHolder.img3);
+               Glide.with(context).load(list.get(position).getList().get(3).getIcon()).apply(new RequestOptions().error(R.mipmap.book_100))
+                       .apply(new RequestOptions().placeholder(R.mipmap.book_100)).into(viewHolder.img4);
                viewHolder.tex1.setText(list.get(position).getList().get(0).getName());
                viewHolder.tex2.setText(list.get(position).getList().get(1).getName());
                viewHolder.tex3.setText(list.get(position).getList().get(2).getName());
@@ -133,7 +148,11 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
               viewHolder.tex.setText(list.get(position).getName());
               if(list.get(position).getList().get(0).getImage()!=null){
                   GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getList().get(0).getImage());
-                  Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(viewHolder.book);
+                  Glide.with(context)
+                          .load(url)
+                          .apply(new RequestOptions().error(R.mipmap.book_100))
+                          .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                          .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(viewHolder.book);
 
               }
                viewHolder.name.setText(list.get(position).getList().get(0).getName());

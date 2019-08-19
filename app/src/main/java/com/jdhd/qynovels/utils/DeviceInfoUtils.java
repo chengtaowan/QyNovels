@@ -281,4 +281,6 @@ public class DeviceInfoUtils {
                 .build());
         return imgurl;
     }
+
+
 }

@@ -2,6 +2,7 @@ package com.glong.reader.presenter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.glong.reader.activities.MyApp;
 import com.glong.reader.entry.BookContentBean;
@@ -21,6 +22,11 @@ import rxhttp.wrapper.parse.SimpleParser;
 public class IReadAwardPresenterImpl implements IReadAwardPresenter {
     private IReadAwardView iReadAwardView;
     private Context context;
+    private int id;
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setContext(Context context) {
         this.context = context;
@@ -45,9 +51,14 @@ public class IReadAwardPresenterImpl implements IReadAwardPresenter {
         if(!token.equals("")){
             map.put("token",token);
         }
+        map.put("book_id",id+"");
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
+        Log.e("bookid",id+"");
+        Log.e("time",time+"");
+        Log.e("sign",sign);
+        Log.e("token",token);
         if(!token.equals("")){
             RxHttp.postForm(MyApp.Url.baseUrl+"readAward")
                     .addHeader("token",token)
@@ -55,6 +66,7 @@ public class IReadAwardPresenterImpl implements IReadAwardPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<ReadAwardBean>(){})
                     .subscribe(readAwardBean->{
+                        Log.e("readaward",readAwardBean.getMsg());
                         iReadAwardView.onReadSuccess(readAwardBean);
                     },throwable->{
                         iReadAwardView.onReadError(throwable.getMessage());

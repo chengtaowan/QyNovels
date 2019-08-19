@@ -50,7 +50,10 @@ public class IHotSearchPresenterImpl implements IHotSearchPresenter {
                             iHotSearchView.onSuccess(hotSearchBean);
                         }
                     },throwable->{
-                        iHotSearchView.onError(throwable.getMessage());
+                        if(!throwable.getMessage().equals("")){
+                            iHotSearchView.onError(throwable.getMessage());
+                        }
+
                     });
         }
         else{
@@ -63,7 +66,9 @@ public class IHotSearchPresenterImpl implements IHotSearchPresenter {
                             iHotSearchView.onSuccess(hotSearchBean);
                         }
                     },throwable->{
-                        iHotSearchView.onError(throwable.getMessage());
+                        if(!throwable.getMessage().equals("")){
+                            iHotSearchView.onError(throwable.getMessage());
+                        }
                     });
         }
 

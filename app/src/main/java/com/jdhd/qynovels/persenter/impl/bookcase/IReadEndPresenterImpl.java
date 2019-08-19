@@ -58,9 +58,9 @@ public class IReadEndPresenterImpl implements IReadEndPresenter {
                     .asParser(new SimpleParser<ReadEndBean>(){})
                     .subscribe(readEndBean->{
                         Log.e("qqq",readEndBean.getMsg());
-                        if(readEndBean.getCode()==200&&readEndBean.getMsg().equals("请求成功")){
+                        //if(readEndBean.getCode()==200&&readEndBean.getMsg().equals("请求成功")){
                             iReadEndView.onEndSuccess(readEndBean);
-                        }
+                        //}
                     },throwable->{
                         iReadEndView.onEndError(throwable.getMessage());
                     });

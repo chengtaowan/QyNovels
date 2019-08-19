@@ -18,10 +18,12 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.FunctionBean;
 import com.jdhd.qynovels.persenter.impl.personal.IPrizeRecodePresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IPrizeRecodeView;
 import com.just.agentweb.AgentWeb;
 import com.tencent.mm.opensdk.utils.Log;
+import com.umeng.analytics.MobclickAgent;
 
 public class PrizeListActivity extends AppCompatActivity implements View.OnClickListener, IPrizeRecodeView {
     private ImageView back;
@@ -34,6 +36,8 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prize_list);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
 
         Intent intent=getIntent();
@@ -123,5 +127,16 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
             Gson gson=new Gson();
             FunctionBean functionBean = gson.fromJson(str, FunctionBean.class);
         }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

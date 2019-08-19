@@ -25,8 +25,10 @@ import com.google.gson.Gson;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.personal.FeedBackBean;
 import com.jdhd.qynovels.persenter.impl.personal.IFeedBackPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IFeedBackView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,6 +60,9 @@ public class FkActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fk);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+        //AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content));
+
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         MainActivity.mSelectPath.clear();
         Intent intent = getIntent();
@@ -356,5 +361,16 @@ public class FkActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onBackError(String error) {
         Log.e("backerror",error);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

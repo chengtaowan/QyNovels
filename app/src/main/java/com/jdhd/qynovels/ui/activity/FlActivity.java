@@ -16,8 +16,10 @@ import com.jdhd.qynovels.adapter.Fl_biaoti_Adapter;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ClassBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IClassPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.bookshop.IClassView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,8 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fl);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         classPresenter=new IClassPresenterImpl(this,this);
@@ -101,9 +105,16 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         finish();
+        MobclickAgent.onPause(this);
     }
 
     @Override

@@ -5,6 +5,15 @@ public class BookBean {
     private String name;
     private String des;
     private String time;
+    private int bookid;
+
+    public int getBookid() {
+        return bookid;
+    }
+
+    public void setBookid(int bookid) {
+        this.bookid = bookid;
+    }
 
     public String getImg() {
         return img;

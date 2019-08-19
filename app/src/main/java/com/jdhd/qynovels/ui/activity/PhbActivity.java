@@ -24,8 +24,10 @@ import com.jdhd.qynovels.module.bookshop.RankBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IRankPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.MphbFragment;
 import com.jdhd.qynovels.ui.fragment.WphbFragment;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.bookshop.IRankView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,9 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phb);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         rankPresenter=new IRankPresenterImpl(this,this);
@@ -126,9 +131,16 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         finish();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 
     @Override

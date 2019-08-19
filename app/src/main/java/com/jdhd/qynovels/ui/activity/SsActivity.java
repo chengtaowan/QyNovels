@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,7 +23,9 @@ import com.jdhd.qynovels.module.bookcase.SsBean;
 import com.jdhd.qynovels.ui.fragment.Ss_LxFragment;
 import com.jdhd.qynovels.ui.fragment.Ss_NrFragment;
 import com.jdhd.qynovels.ui.fragment.Ss_RsFragment;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,6 +41,9 @@ public class SsActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ss);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         EventBus.getDefault().register(this);
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
@@ -151,15 +157,23 @@ public class SsActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void afterTextChanged(Editable editable) {
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

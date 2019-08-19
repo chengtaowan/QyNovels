@@ -56,7 +56,10 @@ public class XsAdapter extends RecyclerView.Adapter<XsAdapter.XsViewHolder>{
         }
         if(list.get(position).getImage()!=null){
             GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
-            Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            Glide.with(context).load(url)
+                    .apply(new RequestOptions().error(R.mipmap.book_100))
+                    .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
 
         }
         holder.name.setText(list.get(position).getName());

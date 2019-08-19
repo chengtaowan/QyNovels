@@ -25,6 +25,10 @@ public class ISignSetingPresenterImpl implements ISignSetingPresenter {
     private String token;
     private String file;
 
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public ISignSetingPresenterImpl(ISignSetingView  iSignSetingView, Context context) {
         this.iSignSetingView = iSignSetingView;
         this.context = context;
@@ -32,8 +36,10 @@ public class ISignSetingPresenterImpl implements ISignSetingPresenter {
 
     @Override
     public void loadData() {
-        SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
-        token = preferences.getString("token", "");
+        if(token.equals("")){
+            SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
+            token = preferences.getString("token", "");
+        }
         int time= DeviceInfoUtils.getTime();
         Map<String,String> map=new HashMap<>();
         map.put("time",time+"");
@@ -43,18 +49,16 @@ public class ISignSetingPresenterImpl implements ISignSetingPresenter {
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
-        Log.e("token",token);
+        Log.e("signtoken",token+"##");
         Log.e("time",time+"");
         Log.e("sign",sign);
         RxHttp.postForm(MyApp.Url.baseUrl+"signSetting")
                 .addHeader("token",token)
                 .add(map)
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                .asParser(new SimpleParser<SignSetingBean>(){})
+                .asString()
                 .subscribe(avatarBean->{
-                    if(avatarBean.getCode()==200&&avatarBean.getMsg().equals("请求成功")){
-                        iSignSetingView.onSetingSuccess(avatarBean);
-                    }
+                   iSignSetingView.onSetingSuccess(avatarBean);
                 },throwable->{
                     iSignSetingView.onSetingError(throwable.getMessage());
                 });

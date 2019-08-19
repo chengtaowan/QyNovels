@@ -10,8 +10,12 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.SyncStateContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,6 +31,7 @@ import com.jdhd.qynovels.persenter.impl.personal.ICaptchaPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.ILoginPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.WodeFragment;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.ICaptchaView;
 import com.jdhd.qynovels.view.personal.ILoginView;
@@ -36,6 +41,7 @@ import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -51,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button but;
     private ICaptchaPresenterImpl captchaPresenter;
     private ILoginPresenterImpl loginPresenter;
-    private int recLen = 59;
+    private int recLen = 60;
     private TextView ys,xy;
     Timer timer = new Timer();
     private int type;
@@ -60,6 +66,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
         MyApp.addActivity(this);
         Intent intent = getIntent();
         type=intent.getIntExtra("type",0);
@@ -94,14 +101,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         xy.setOnClickListener(this);
         gb=findViewById(R.id.dl_gb);
         wx=findViewById(R.id.dl_wx);
-        phone=findViewById(R.id.dl_phone);
-        yzm=findViewById(R.id.dl_yzm);
-        yy=findViewById(R.id.dl_yy);
         but=findViewById(R.id.dl_but);
         but.setOnClickListener(this);
+        phone=findViewById(R.id.dl_phone);
+        yy=findViewById(R.id.dl_yy);
+        yzm=findViewById(R.id.dl_yzm);
+//        getyzm=findViewById(R.id.getyzm);
+//        getyzm.setOnClickListener(this);
         gb.setOnClickListener(this);
         wx.setOnClickListener(this);
         yy.setOnClickListener(this);
+        phone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(phone.getText().toString().length()>=11){
+                    //getyzm.setBackground(R.drawable.item_yzmon);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
 
@@ -123,6 +150,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             req.state = "wechat_sdk_demo_test";
             MyApp.getApi().sendReq(req);
             finish();
+
         }
         else if(R.id.dl_yy==view.getId()){
             String tel=phone.getText().toString();
@@ -130,7 +158,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(LoginActivity.this,"请输入手机号",Toast.LENGTH_SHORT).show();
             }
             else{
-                captchaPresenter=new ICaptchaPresenterImpl(this,LoginActivity.this,tel);
+                captchaPresenter=new ICaptchaPresenterImpl(this,LoginActivity.this);
+                captchaPresenter.setTel(tel);
                 captchaPresenter.loadData();
             }
 
@@ -138,9 +167,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else if(R.id.dl_but==view.getId()){
             String tel=phone.getText().toString();
             String y=yzm.getText().toString();
+            if(tel.equals("")||y.equals("")){
+               Toast.makeText(LoginActivity.this,"手机号或验证码为空",Toast.LENGTH_SHORT).show();
+            }
+            else{
+                loginPresenter=new ILoginPresenterImpl(this,this,tel,y);
+                loginPresenter.loadData();
+            }
 
-            loginPresenter=new ILoginPresenterImpl(this,this,tel,y);
-            loginPresenter.loadData();
 
         }
         else if(R.id.xy==view.getId()){
@@ -156,10 +190,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             startActivity(intent);
         }
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
+
 
     @Override
     public void onCaptchaSuccess(CaptchaBean captchaBean) {
@@ -168,25 +199,49 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void run() {
                 Log.e("yzm",captchaBean.getData().getCode()+"");
                 yy.setClickable(false);
-                TimerTask task = new TimerTask() {
-                    @Override
-                    public void run() {
-                        runOnUiThread(new Runnable() {
-                            // UI thread
-                            @Override
-                            public void run() {
-                                recLen--;
-                                yy.setText("已发送  "+recLen+"s");
-                                if(recLen <=0){
-                                    yy.setText("获取语音验证码");
-                                    yy.setClickable(true);
-                                    timer.cancel();
+                if(captchaBean.getCode()==9008){
+                    Toast toast = Toast.makeText(LoginActivity.this, captchaBean.getMsg(), Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    yy.setText("获取语音验证码");
+                }
+                else if(captchaBean.getCode()==9007){
+                    Toast toast = Toast.makeText(LoginActivity.this, captchaBean.getMsg(), Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    yy.setText("获取语音验证码");
+                }
+                else if(captchaBean.getCode()==9002){
+                    Toast toast = Toast.makeText(LoginActivity.this, captchaBean.getMsg(), Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    yy.setText("获取语音验证码");
+                }
+                else{
+                    yy.setClickable(false);
+                    TimerTask task = new TimerTask() {
+                        @Override
+                        public void run() {
+                            runOnUiThread(new Runnable() {
+                                // UI thread
+                                @Override
+                                public void run() {
+                                    recLen--;
+                                    yy.setText("已发送  "+recLen+"s");
+                                    if(recLen <=0){
+                                        yy.setText("获取语音验证码");
+                                        yy.setClickable(true);
+                                        recLen=60;
+                                        timer.cancel();
+                                        timer=new Timer();
+                                    }
                                 }
-                            }
-                        });
-                    }
-                };
-                timer.schedule(task, 1000, 1000);
+                            });
+                        }
+                    };
+                    timer.schedule(task, 1000, 1000);
+                }
+
                 //yzm.setText(captchaBean.getData().getCode()+"");
             }
         });
@@ -204,20 +259,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                SharedPreferences preferences=getSharedPreferences("token",MODE_PRIVATE);
-                SharedPreferences.Editor editor=preferences.edit();
-                editor.putString("token",tokenBean.getData().getToken());
-                editor.putString("login","success");
-                editor.commit();
-                if(type==1){
-                    Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                    intent.putExtra("page", 2);
-                    startActivity(intent);
+                if(tokenBean.getCode()==9007){
+                    Toast toast = Toast.makeText(LoginActivity.this, tokenBean.getMsg(), Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    timer.cancel();
+                    timer=new Timer();
+                    yy.setText("获取语音验证码");
+                    yy.setClickable(true);
                 }
-                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                intent.putExtra("page", 3);
-                intent.putExtra("action",0);
-                startActivity(intent);
+                else{
+                    SharedPreferences preferences=getSharedPreferences("token",MODE_PRIVATE);
+                    SharedPreferences.Editor editor=preferences.edit();
+                    editor.putString("token",tokenBean.getData().getToken());
+                    editor.putString("login","success");
+                    editor.commit();
+                    if(type==1){
+                        Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                        intent.putExtra("page", 2);
+                        startActivity(intent);
+                    }
+                    else{
+                        Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                        intent.putExtra("page", 3);
+                        intent.putExtra("action",0);
+                        startActivity(intent);
+                    }
+                }
             }
         });
     }
@@ -225,5 +293,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onTokenError(String error) {
         Log.e("tokenerror",error);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

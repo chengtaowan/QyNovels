@@ -14,8 +14,10 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.BindCodeBean;
 import com.jdhd.qynovels.persenter.impl.personal.IBindCodePresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IBindCodeView;
+import com.umeng.analytics.MobclickAgent;
 
 public class BindCodeActivity extends AppCompatActivity implements View.OnClickListener, IBindCodeView {
     private ImageView back,qc;
@@ -26,6 +28,8 @@ public class BindCodeActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bind_code);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
@@ -67,8 +71,14 @@ public class BindCodeActivity extends AppCompatActivity implements View.OnClickL
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(BindCodeActivity.this,bindCodeBean.getMsg(),Toast.LENGTH_SHORT).show();
-                finish();
+                if(bindCodeBean.getCode()!=200){
+                    Toast.makeText(BindCodeActivity.this,bindCodeBean.getMsg(),Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(BindCodeActivity.this,bindCodeBean.getMsg(),Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
             }
         });
     }
@@ -84,5 +94,17 @@ public class BindCodeActivity extends AppCompatActivity implements View.OnClickL
         if(bindCodePresenter!=null){
             bindCodePresenter.destoryView();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

@@ -29,14 +29,16 @@ import com.jdhd.qynovels.module.personal.SignBean;
 import com.jdhd.qynovels.module.personal.SignSetingBean;
 import com.jdhd.qynovels.persenter.impl.personal.ISignPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.ISignSetingPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.ISignSetingView;
 import com.jdhd.qynovels.view.personal.ISignView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class QdActivity extends AppCompatActivity implements View.OnClickListener, ISignSetingView, ISignView {
+public class QdActivity extends AppCompatActivity implements View.OnClickListener {
     private LinearLayout qd;
     private TextView ljqd,cg,sp,tian,yqd;
     private ImageView back;
@@ -59,11 +61,14 @@ public class QdActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qd);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
-        signSetingPresenter=new ISignSetingPresenterImpl(this,this);
-        signSetingPresenter.loadData();
-        signPresenter=new ISignPresenterImpl(this,this);
+//        signSetingPresenter=new ISignSetingPresenterImpl(this,this);
+//        signSetingPresenter.loadData();
+       // signPresenter=new ISignPresenterImpl(this,this);
         TTAdManager ttAdManager = TTAdSdk.getAdManager();
         //step2:(可选，强烈建议在合适的时机调用):申请部分权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题。
         TTAdSdk.getAdManager().requestPermissionIfNecessary(this);
@@ -165,7 +170,7 @@ public class QdActivity extends AppCompatActivity implements View.OnClickListene
                     cg.setVisibility(View.VISIBLE);
                     yqd.setVisibility(View.GONE);
                     sp.setVisibility(View.VISIBLE);
-                    loadAd("901121365", TTAdConstant.VERTICAL);
+                    loadAd("926447225", TTAdConstant.VERTICAL);
                     //Toast.makeText(QdActivity.this,"看小视频",Toast.LENGTH_SHORT).show();
                     signPresenter.loadData();
                     break;
@@ -183,51 +188,51 @@ public class QdActivity extends AppCompatActivity implements View.OnClickListene
 
     }
 
-    @Override
-    public void onSetingSuccess(SignSetingBean signSetingBean) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                signSeting=signSetingBean;
-                Log.e("issign",signSetingBean.getData().getIs_sign()+"+++");
-                adapter.refresh(signSetingBean.getData().getRule());
-                sp.setText("看视频再领"+signSeting.getData().getDouble_award()+"金币");
-                tian.setText(signSetingBean.getData().getSignNum()+"");
-                for(int i=0;i<signSetingBean.getData().getSignData().size();i++){
-                    daylist.get(i).setText(signSetingBean.getData().getSignData().get(i).getDate());
-                    jblist.get(i).setText(signSetingBean.getData().getSignData().get(i).getAward()+"");
-                    if(signSetingBean.getData().getSignData().get(i).getDate().equals("今天")&&signSetingBean.getData().getSignData().get(i).getIs_sign()==0){
-                        qdlist.get(i).setImageResource(R.mipmap.qd_jb);
-                        qd.setBackgroundResource(R.drawable.shap_qd);
-                        ljqd.setVisibility(View.VISIBLE);
-                        cg.setVisibility(View.GONE);
-                        sp.setVisibility(View.GONE);
-                    }
-                    else if(signSetingBean.getData().getSignData().get(i).getDate().equals("今天")&&signSetingBean.getData().getSignData().get(i).getIs_sign()==1){
-                        qdlist.get(i).setImageResource(R.mipmap.qd_jb_wc);
-                        qd.setBackgroundResource(R.drawable.shape_qd_on);
-                        ljqd.setVisibility(View.GONE);
-                        cg.setVisibility(View.VISIBLE);
-                        sp.setVisibility(View.VISIBLE);
-                        jblist.get(i).setVisibility(View.GONE);
-                    }
-                    else if(signSetingBean.getData().getSignData().get(i).getIs_sign()==0){
-                        qdlist.get(i).setImageResource(R.mipmap.qd_jb_on);
-                    }
-                    else{
-                        qdlist.get(i).setImageResource(R.mipmap.qd_jb_wc);
-                        jblist.get(i).setVisibility(View.GONE);
-                    }
-                }
-              signPresenter.loadData();
-            }
-        });
-    }
-
-    @Override
-    public void onSetingError(String error) {
-        Log.e("setingerror",error);
-    }
+//   @Override
+//    public void onSetingSuccess(SignSetingBean signSetingBean) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                signSeting=signSetingBean;
+//                Log.e("issign",signSetingBean.getData().getIs_sign()+"+++");
+//                adapter.refresh(signSetingBean.getData().getRule());
+//                sp.setText("看视频再领"+signSeting.getData().getDouble_award()+"金币");
+//                tian.setText(signSetingBean.getData().getSignNum()+"");
+//                for(int i=0;i<signSetingBean.getData().getSignData().size();i++){
+//                    daylist.get(i).setText(signSetingBean.getData().getSignData().get(i).getDate());
+//                    jblist.get(i).setText(signSetingBean.getData().getSignData().get(i).getAward()+"");
+//                    if(signSetingBean.getData().getSignData().get(i).getDate().equals("今天")&&signSetingBean.getData().getSignData().get(i).getIs_sign()==0){
+//                        qdlist.get(i).setImageResource(R.mipmap.qd_jb);
+//                        qd.setBackgroundResource(R.drawable.shap_qd);
+//                        ljqd.setVisibility(View.VISIBLE);
+//                        cg.setVisibility(View.GONE);
+//                        sp.setVisibility(View.GONE);
+//                    }
+//                    else if(signSetingBean.getData().getSignData().get(i).getDate().equals("今天")&&signSetingBean.getData().getSignData().get(i).getIs_sign()==1){
+//                        qdlist.get(i).setImageResource(R.mipmap.qd_jb_wc);
+//                        qd.setBackgroundResource(R.drawable.shape_qd_on);
+//                        ljqd.setVisibility(View.GONE);
+//                        cg.setVisibility(View.VISIBLE);
+//                        sp.setVisibility(View.VISIBLE);
+//                        jblist.get(i).setVisibility(View.GONE);
+//                    }
+//                    else if(signSetingBean.getData().getSignData().get(i).getIs_sign()==0){
+//                        qdlist.get(i).setImageResource(R.mipmap.qd_jb_on);
+//                    }
+//                    else{
+//                        qdlist.get(i).setImageResource(R.mipmap.qd_jb_wc);
+//                        jblist.get(i).setVisibility(View.GONE);
+//                    }
+//                }
+//              signPresenter.loadData();
+//            }
+//        });
+//    }
+//
+//    @Override
+//    public void onSetingError(String error) {
+//        Log.e("setingerror",error);
+//    }
 
     @Override
     protected void onDestroy() {
@@ -240,21 +245,21 @@ public class QdActivity extends AppCompatActivity implements View.OnClickListene
         }
     }
 
-    @Override
-    public void onSignSuccess(SignBean signBean) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-               tian.setText(signBean.getData().getSign_num()+"");
-
-            }
-        });
-    }
-
-    @Override
-    public void onSignError(String error) {
-       Log.e("signerror",error);
-    }
+//    @Override
+//    public void onSignSuccess(SignBean signBean) {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//               tian.setText(signBean.getData().getSign_num()+"");
+//
+//            }
+//        });
+//    }
+//
+//    @Override
+//    public void onSignError(String error) {
+//       Log.e("signerror",error);
+//    }
     private boolean mHasShowDownloadActive = false;
     private void loadAd(String codeId, int orientation) {
 
@@ -385,5 +390,17 @@ public class QdActivity extends AppCompatActivity implements View.OnClickListene
                 });
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

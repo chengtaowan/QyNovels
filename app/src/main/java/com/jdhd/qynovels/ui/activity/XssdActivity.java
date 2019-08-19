@@ -27,8 +27,10 @@ import com.jdhd.qynovels.module.bookshop.ModuleBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IModulePresenterImpl;
 import com.jdhd.qynovels.ui.fragment.ManxsFragment;
 import com.jdhd.qynovels.ui.fragment.WmanxsFragment;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.bookshop.IModuleView;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +50,8 @@ public class XssdActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xssd);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         sharedPreferences=getSharedPreferences("sex", Context.MODE_PRIVATE);
@@ -69,11 +73,7 @@ public class XssdActivity extends AppCompatActivity implements View.OnClickListe
         tab.addOnTabSelectedListener(this);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
-    }
+
 
     @Override
     public void onClick(View view) {
@@ -142,5 +142,17 @@ public class XssdActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onError(String error) {
         Log.e("xs",error);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+        MobclickAgent.onPause(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
     }
 }

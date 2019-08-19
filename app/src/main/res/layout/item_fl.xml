@@ -41,6 +41,7 @@
             android:textSize="10sp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:id="@+id/fl_num"/>
+            android:id="@+id/fl_num"
+            android:visibility="gone"/>
     </RelativeLayout>
 </LinearLayout>

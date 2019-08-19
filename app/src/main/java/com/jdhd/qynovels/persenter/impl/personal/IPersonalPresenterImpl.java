@@ -31,7 +31,6 @@ public class IPersonalPresenterImpl implements IPersonalPresenter {
     public void loadData() {
         SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
-        Log.e("weixintoken",token);
         int time= DeviceInfoUtils.getTime();
         Map<String,String> map=new HashMap<>();
         map.put("time",time+"");
@@ -46,9 +45,10 @@ public class IPersonalPresenterImpl implements IPersonalPresenter {
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                 .asParser(new SimpleParser<UserBean>(){})
                 .subscribe(userBean->{
-                    if(userBean.getCode()==200&&userBean.getMsg().equals("请求成功")){
+                    Log.e("userbean",userBean.getCode()+"--"+userBean.getMsg());
+                    //if(userBean.getCode()==200&&userBean.getMsg().equals("请求成功")){
                        personalView.onSuccess(userBean);
-                    }
+                   // }
                 },throwable->{
                     personalView.onError(throwable.getMessage());
                 });

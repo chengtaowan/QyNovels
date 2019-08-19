@@ -29,10 +29,10 @@ public class CustomPopWindow extends PopupWindow implements IWithDrawView {
     private RelativeLayout pop_close;
     private String wxname;
     private int num;
-    private int gold;
+    private int gold,time;
     private int yue;
     private IWithDrawrPresenterImpl withDrawrPresenter;
-    public CustomPopWindow(Activity context, View.OnClickListener itemClick,String wxname,int num,int gold,int yue) {
+    public CustomPopWindow(Activity context, View.OnClickListener itemClick,String wxname,int num,int gold,int yue,int time) {
         super(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = inflater.inflate(R.layout.widget_popupwindow, null);//alt+ctrl+f
@@ -44,6 +44,7 @@ public class CustomPopWindow extends PopupWindow implements IWithDrawView {
         this.num=num;
         this.gold=gold;
         this.yue=yue;
+        this.time=time;
         initView();
         initPopWindow();
     }
@@ -100,11 +101,14 @@ public class CustomPopWindow extends PopupWindow implements IWithDrawView {
                 pop_pt.setBackgroundResource(R.drawable.shape_pt);
                 ptdz.setTextColor(Color.parseColor("#E8564E"));
                 gzdz.setTextColor(Color.parseColor("#E8564E"));
-                if(yue<num*10000){
+                if(time<30){
+                    Toast.makeText(context,"阅读满30分钟才可提现！",Toast.LENGTH_SHORT).show();
+                }
+                else if(yue<num*10000){
                     Toast.makeText(context,"金币还不够呦",Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    withDrawrPresenter.setGold(gold);
+                    withDrawrPresenter.setGold(num*10000);
                     withDrawrPresenter.setRapid(10);
                     withDrawrPresenter.loadData();
                 }
@@ -121,11 +125,14 @@ public class CustomPopWindow extends PopupWindow implements IWithDrawView {
                 pop_pt.setBackgroundResource(R.drawable.shape_pt_on);
                 ptdz.setTextColor(Color.parseColor("#E8564E"));
                 gzdz.setTextColor(Color.parseColor("#E8564E"));
-                if(yue<num*10000){
+                if(time<30){
+                    Toast.makeText(context,"阅读满30分钟才可提现！",Toast.LENGTH_SHORT).show();
+                }
+                else if(yue<num*10000){
                     Toast.makeText(context,"金币还不够呦",Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    withDrawrPresenter.setGold(gold);
+                    withDrawrPresenter.setGold(num*10000);
                     withDrawrPresenter.setRapid(20);
                     withDrawrPresenter.loadData();
                 }

@@ -19,7 +19,9 @@ import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTSplashAd;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.umeng.analytics.MobclickAgent;
 import com.youth.banner.WeakHandler;
 
 import java.util.Timer;
@@ -48,6 +50,8 @@ public class GgActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gg);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         StatusBarUtil.setStatusBarMode(GgActivity.this, true, R.color.c_ffffff);
         MyApp.addActivity(this);
         WindowManager manager = getWindowManager();
@@ -61,7 +65,7 @@ public class GgActivity extends AppCompatActivity implements View.OnClickListene
         mTTAdNative = TTAdSdk.getAdManager().createAdNative(this);
         //在合适的时机申请权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题
         //在开屏时候申请不太合适，因为该页面倒计时结束或者请求超时会跳转，在该页面申请权限，体验不好
-        TTAdSdk.getAdManager().requestPermissionIfNecessary(MyApp.getAppContext());
+        //TTAdSdk.getAdManager().requestPermissionIfNecessary(MyApp.getAppContext());
         //定时，AD_TIME_OUT时间到时执行，如果开屏广告没有加载则跳转到主页面
         mHandler.sendEmptyMessageDelayed(MSG_GO_MAIN, AD_TIME_OUT);
         //加载开屏广告
@@ -101,7 +105,7 @@ public class GgActivity extends AppCompatActivity implements View.OnClickListene
     private void loadSplashAd() {
         //step3:创建开屏广告请求参数AdSlot,具体参数含义参考文档
         AdSlot adSlot = new AdSlot.Builder()
-                .setCodeId("801121648")
+                .setCodeId("826447918")
                 .setSupportDeepLink(true)
                 .setImageAcceptedSize(width, height)
                 .build();
@@ -195,5 +199,16 @@ public class GgActivity extends AppCompatActivity implements View.OnClickListene
     protected void onStop() {
         super.onStop();
         mForceGoMain = true;
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

@@ -13,10 +13,12 @@ import android.widget.TextView;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.persenter.impl.personal.IShareImgPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IShareImgView;
 import com.just.agentweb.AgentWeb;
 import com.tencent.mm.opensdk.utils.Log;
+import com.umeng.analytics.MobclickAgent;
 
 public class XyActivity extends AppCompatActivity implements View.OnClickListener, IShareImgView {
     private String title;
@@ -30,6 +32,9 @@ public class XyActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xy);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         shareImgPresenter=new IShareImgPresenterImpl(this,this);
         Intent intent = getIntent();
@@ -104,5 +109,17 @@ public class XyActivity extends AppCompatActivity implements View.OnClickListene
         if(shareImgPresenter!=null){
             shareImgPresenter.destoryView();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
     }
 }

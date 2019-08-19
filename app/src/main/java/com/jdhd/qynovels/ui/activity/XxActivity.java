@@ -16,8 +16,10 @@ import com.jdhd.qynovels.adapter.XxAdapter;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.MessageBean;
 import com.jdhd.qynovels.persenter.impl.personal.IMessagePresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IMessageView;
+import com.umeng.analytics.MobclickAgent;
 
 public class XxActivity extends AppCompatActivity implements IMessageView,View.OnClickListener {
     private ImageView back;
@@ -29,6 +31,9 @@ public class XxActivity extends AppCompatActivity implements IMessageView,View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xx);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         messagePresenter=new IMessagePresenterImpl(this,this);
@@ -73,5 +78,16 @@ public class XxActivity extends AppCompatActivity implements IMessageView,View.O
             intent.putExtra("page",3);
             startActivity(intent);
         }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
     }
 }

@@ -3,6 +3,7 @@ package com.jdhd.qynovels.ui.activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,7 +13,14 @@ import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.personal.UserBean;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.umeng.analytics.MobclickAgent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class SzActivity extends AppCompatActivity implements View.OnClickListener {
     private RelativeLayout sz,zh,gy;
@@ -20,16 +28,23 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
     private String token;
     private String avatar="",nickname="",sex="",mobile="",wxname;
     private int uid,bindwx;
+    private UserBean user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sz);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent perintent=getIntent();
         int type=perintent.getIntExtra("type",0);
         if(type==1){
-            token=perintent.getStringExtra("token");
+            SharedPreferences preferences=getSharedPreferences("token",MODE_PRIVATE);
+            token=preferences.getString("token","");
             if(!token.equals("")){
                 nickname=perintent.getStringExtra("name");
                 mobile=perintent.getStringExtra("mobile");
@@ -61,12 +76,11 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
         intent.putExtra("page", 3);
         startActivity(intent);
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
-    }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void notifyData(UserBean userBean){
+        user=userBean;
+    }
     @Override
     public void onClick(View view) {
         if(R.id.sz_sz==view.getId()){
@@ -90,7 +104,6 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
         else if(R.id.sz_zh==view.getId()){
             if(nickname.equals("")&&avatar.equals("")&&sex.equals("")){
                 Toast.makeText(SzActivity.this,"请登录",Toast.LENGTH_SHORT).show();
-
             }
             else{
                 Intent intent=new Intent(SzActivity.this,ZhglActivity.class);
@@ -110,5 +123,25 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
             intent.putExtra("page",3);
             startActivity(intent);
         }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

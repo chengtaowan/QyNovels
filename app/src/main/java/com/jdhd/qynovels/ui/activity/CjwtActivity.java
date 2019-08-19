@@ -12,7 +12,9 @@ import android.widget.ImageView;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.CjwtAdapter;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.umeng.analytics.MobclickAgent;
 
 public class CjwtActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView back;
@@ -21,6 +23,9 @@ public class CjwtActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cjwt);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
 
@@ -42,5 +47,16 @@ public class CjwtActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent=new Intent(CjwtActivity.this,MainActivity.class);
         intent.putExtra("page", 3);
         startActivity(intent);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

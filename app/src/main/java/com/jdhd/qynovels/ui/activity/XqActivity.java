@@ -38,9 +38,12 @@ import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.AddBookBean;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
 import com.jdhd.qynovels.module.bookcase.BookListBean;
+import com.jdhd.qynovels.module.bookcase.CaseBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.IAddBookRankPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookInfoPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookListPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.utils.FastBlurUtil;
@@ -48,14 +51,16 @@ import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.bookcase.IAddBookRankView;
 import com.jdhd.qynovels.view.bookcase.IBookInfoView;
 import com.jdhd.qynovels.view.bookcase.IBookListView;
+import com.jdhd.qynovels.view.bookcase.ICaseView;
 import com.jdhd.qynovels.widget.RatingBar;
+import com.umeng.analytics.MobclickAgent;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class XqActivity extends AppCompatActivity implements View.OnClickListener , IBookInfoView, IAddBookRankView, IBookListView {
+public class XqActivity extends AppCompatActivity implements View.OnClickListener , IBookInfoView, IAddBookRankView, IBookListView, ICaseView {
     private RecyclerView rv;
     private static int type;
     private int sc_type;
@@ -67,7 +72,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     private ImageView gif;
     private XqymAdapter adapter;
     private LinearLayout jrsj;
-    private TextView yd;
+    private TextView yd,jr;
     private IAddBookRankPresenterImpl addBookRankPresenter;
     private int id;
     private DbUtils dbUtils;
@@ -79,6 +84,9 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     private ImageView back;
     private Toolbar toolbar;
     private TextView title;
+    private ImageView  icon;
+    private boolean iscase;
+    private ICasePresenterImpl casePresenter;
     private View.OnTouchListener onTouchListener= new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -91,6 +99,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xqym);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
         MyApp.addActivity(this);
         dbUtils=new DbUtils(this);
         SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);
@@ -108,10 +117,14 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
         bookListPresenter.setId(id);
         bookListPresenter.loadData();
         init();
+        casePresenter=new ICasePresenterImpl(this,this);
+
     }
 
 
     private void init() {
+        icon=findViewById(R.id.icon);
+        jr=findViewById(R.id.jr);
         toolbar=findViewById(R.id.toolbar);
         title=findViewById(R.id.tex);
         title.setVisibility(View.GONE);
@@ -176,6 +189,9 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
            addBookRankPresenter.setId(id);
            addBookRankPresenter.loadData();
            Toast.makeText(XqActivity.this,"加入书架",Toast.LENGTH_SHORT).show();
+           jr.setText("已加入书架");
+           jr.setTextColor(Color.parseColor("#999999"));
+           icon.setImageResource(R.mipmap.xqy_jrsjon);
        }
        else if(R.id.xq_back==view.getId()){
            change();
@@ -226,7 +242,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                 bookBean=bookInfoBean;
                 jz.setVisibility(View.GONE);
                 adapter.refresh(bookInfoBean.getData());
-
+                casePresenter.loadData();
             }
         });
     }
@@ -266,24 +282,30 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
             public void run() {
                 database=dbUtils.getWritableDatabase();
                 if(!token.equals("")){
-                    database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
-                            "values('user'," +
-                            "'"+bookBean.getData().getBook().getName()+"'," +
-                            "'"+bookBean.getData().getBook().getImage()+"'," +
-                            "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                            "'"+listBean.getData().getList().get(0).getName()+"'," +
-                            "10+10+'"+bookBean.getData().getBook().getBookId()+"'," +
-                            "0,''+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                    if(bookBean.getData().getBook()!=null){
+                        database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
+                                "values('user'," +
+                                "'"+bookBean.getData().getBook().getName()+"'," +
+                                "'"+bookBean.getData().getBook().getImage()+"'," +
+                                "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                                "'"+listBean.getData().getList().get(0).getName()+"'," +
+                                "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
+                                "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                    }
+
                 }
                 else{
-                    database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
-                            "values('visitor'," +
-                            "'"+bookBean.getData().getBook().getName()+"'," +
-                            "'"+bookBean.getData().getBook().getImage()+"'," +
-                            "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                            "'"+listBean.getData().getList().get(0).getName()+"'," +
-                            "10+10+'"+bookBean.getData().getBook().getBookId()+"'," +
-                            "0,''+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                    if(bookBean.getData().getBook()!=null){
+                        database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
+                                "values('visitor'," +
+                                "'"+bookBean.getData().getBook().getName()+"'," +
+                                "'"+bookBean.getData().getBook().getImage()+"'," +
+                                "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                                "'"+listBean.getData().getList().get(0).getName()+"'," +
+                                "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
+                                "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                    }
+
                 }
 
             }
@@ -298,6 +320,39 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onSuccess(BookListBean bookListBean) {
        listBean=bookListBean;
+    }
+
+    @Override
+    public void onSuccess(CaseBean caseBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.e("ceshi",(bookBean.getData()==null)+"");
+                if(bookBean.getData()!=null){
+                    for(int i=0;i<caseBean.getData().getList().size();i++){
+                        Log.e("ceshi",bookBean.getData().getBook().getBookId()+"--"+caseBean.getData().getList().get(i).getBookId());
+                        if((caseBean.getData().getList().get(i).getBookId()+"").equals(bookBean.getData().getBook().getBookId()+"")){
+                            iscase=true;
+                            break;
+                        }
+                        else{
+                            iscase=false;
+                        }
+                    }
+                }
+                if(iscase){
+                  jr.setText("已加入书架");
+                  jr.setTextColor(Color.parseColor("#999999"));
+                  icon.setImageResource(R.mipmap.xqy_jrsjon);
+                }
+                else{
+                    jr.setText("加入书架");
+                    jr.setTextColor(Color.parseColor("#2F3236"));
+                    icon.setImageResource(R.mipmap.xqy_jrsj);
+                }
+
+            }
+        });
     }
 
     @Override
@@ -317,13 +372,13 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onPause() {
         super.onPause();
-        //getPositionAndOffset();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //scrollToPosition();
+        MobclickAgent.onResume(this); // 不能遗漏
     }
 
     public void change(){
@@ -360,6 +415,10 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
         }
         else if(type==8){
             Intent intent=new Intent(XqActivity.this,MorePhbActivity.class);
+            startActivity(intent);
+        }
+        else if(type==9){
+            Intent intent=new Intent(XqActivity.this,LsActivity.class);
             startActivity(intent);
         }
     }

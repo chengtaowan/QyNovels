@@ -1,12 +1,16 @@
 package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +23,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.BookBean;
+import com.jdhd.qynovels.ui.activity.LsActivity;
+import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.mcxtzhang.swipemenulib.SwipeMenuLayout;
@@ -49,7 +55,12 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
     public void onBindViewHolder(@NonNull final LsViewHolder holder, final int position) {
         if(list.get(position).getImg()!=null){
             GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImg());
-            Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            Glide.with(context)
+                    .load(url)
+                    .apply(new RequestOptions().error(R.mipmap.book_100))
+                    .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+
 
         }
         holder.name.setText(list.get(position).getName());
@@ -66,6 +77,17 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
 
            }
        });
+       holder.rl.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               Log.e("click","1111");
+               Intent intent=new Intent(context, XqActivity.class);
+               intent.putExtra("id",list.get(position).getBookid());
+               intent.putExtra("xq",9);
+               intent.putExtra("sc_type",1);
+               context.startActivity(intent);
+           }
+       });
     }
 
     @Override
@@ -78,6 +100,8 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
         private TextView name,zj,day;
         private Button del;
         private SwipeMenuLayout sml;
+        private LinearLayout ll;
+        private RelativeLayout rl;
         public LsViewHolder(@NonNull View itemView) {
             super(itemView);
             book=itemView.findViewById(R.id.ls_book);
@@ -86,6 +110,8 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
             day=itemView.findViewById(R.id.ls_day);
             del=itemView.findViewById(R.id.ls_del);
             sml=itemView.findViewById(R.id.sml);
+            ll=itemView.findViewById(R.id.ll);
+            rl=itemView.findViewById(R.id.rl);
         }
     }
 }

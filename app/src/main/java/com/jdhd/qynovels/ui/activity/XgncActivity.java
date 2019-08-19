@@ -15,8 +15,10 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.NickNameBean;
 import com.jdhd.qynovels.persenter.impl.personal.INickNamePresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.INickNameView;
+import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,6 +31,9 @@ public class XgncActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xgnc);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
@@ -63,20 +68,22 @@ public class XgncActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
-    }
+
 
     @Override
     public void onNickNameSuccess(NickNameBean nickNameBean) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                EventBus.getDefault().post(nickNameBean.getData().getNickname());
-                Intent intent=new Intent(XgncActivity.this,GrzlActivity.class);
-                startActivity(intent);
+                if(nickNameBean.getCode()!=200){
+                    Toast.makeText(XgncActivity.this,nickNameBean.getMsg(),Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    EventBus.getDefault().post(nickNameBean.getData().getNickname());
+                    Intent intent=new Intent(XgncActivity.this,GrzlActivity.class);
+                    startActivity(intent);
+                }
+
             }
         });
     }
@@ -84,5 +91,17 @@ public class XgncActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onNickNameError(String error) {
         Log.e("nicknameerror",error);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

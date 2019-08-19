@@ -31,6 +31,7 @@ import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookInfoPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.FuLiFragment;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.utils.ImageUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
@@ -40,6 +41,7 @@ import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.utils.Log;
+import com.umeng.analytics.MobclickAgent;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.io.File;
@@ -62,15 +64,21 @@ public class ShareActivity extends AppCompatActivity implements View.OnClickList
     private RatingBar start;
     private Bitmap bitmap;
     private TextView wan;
+    private String url="";
+    private Bitmap qr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent = getIntent();
         id=intent.getIntExtra("id",0);
+        url=intent.getStringExtra("url");
         SharedPreferences sharedPreferences=getSharedPreferences("nickname",MODE_PRIVATE);
         nickname=sharedPreferences.getString("nickname","");
         bookInfoPresenter=new IBookInfoPresenterImpl(this,this);
@@ -82,7 +90,9 @@ public class ShareActivity extends AppCompatActivity implements View.OnClickList
 
     private void init() {
         ewm=findViewById(R.id.fx_ewm);
-        Bitmap qr = CodeUtils.createImage("http://www.qubaobei.com//ios//cf//uploadfile//132//9//8289.jpg", 90, 90, null);
+        if(!url.equals("")){
+            qr = CodeUtils.createImage(url, 90, 90, null);
+        }
         ewm.setImageBitmap(qr);
         save=findViewById(R.id.fx_save);
         photo=findViewById(R.id.photo);
@@ -205,5 +215,17 @@ public class ShareActivity extends AppCompatActivity implements View.OnClickList
 
     private String buildTransaction(final String type) {
         return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

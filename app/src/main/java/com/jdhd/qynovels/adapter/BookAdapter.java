@@ -85,7 +85,11 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                  viewHolder.tex.setText(list.get(position).getName());
                  if(list.get(position).getList().get(0).getImage()!=null){
                      GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getList().get(0).getImage());
-                     Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(viewHolder.book);
+                     Glide.with(context).load(url)
+                             .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
+                             .apply(new RequestOptions().error(R.mipmap.book_100))
+                             .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                             .into(viewHolder.book);
 
                  }
                  viewHolder.name.setText(list.get(position).getList().get(0).getName());

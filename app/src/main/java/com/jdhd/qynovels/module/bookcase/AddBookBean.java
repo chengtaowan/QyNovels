@@ -14,7 +14,7 @@ public class AddBookBean {
     private int code;
     private String msg;
     private String time;
-    private List<?> data;
+    //private List<?> data;
 
     public int getCode() {
         return code;
@@ -40,11 +40,11 @@ public class AddBookBean {
         this.time = time;
     }
 
-    public List<?> getData() {
-        return data;
-    }
-
-    public void setData(List<?> data) {
-        this.data = data;
-    }
+//    public List<?> getData() {
+//        return data;
+//    }
+//
+//    public void setData(List<?> data) {
+//        this.data = data;
+//    }
 }

@@ -20,14 +20,16 @@
         android:layout_marginLeft="25dp"
         android:layout_marginTop="38dp"
         android:id="@+id/logo"/>
+
     <ImageView
-        android:layout_width="35dp"
-        android:layout_height="20dp"
-        android:src="@mipmap/sj_qd"
+        android:id="@+id/sj_qd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginTop="38dp"
-        android:layout_marginRight="15dp"
-        android:id="@+id/sj_qd"/>
+        android:layout_marginRight="14dp"
+        android:src="@mipmap/sj_qd"
+        android:visibility="gone"/>
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
@@ -35,7 +37,8 @@
         android:layout_toLeftOf="@+id/sj_qd"
         android:layout_marginRight="15dp"
         android:layout_marginTop="38dp"
-        android:id="@+id/sj_ls"/>
+        android:id="@+id/sj_ls"
+        android:layout_alignParentRight="true"/>
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"

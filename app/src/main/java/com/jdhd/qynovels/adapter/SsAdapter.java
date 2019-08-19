@@ -59,7 +59,11 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
         if(type==1){
             if(list.get(position).getImage()!=null){
                 GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
-                Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+                Glide.with(context)
+                        .load(url)
+                        .apply(new RequestOptions().error(R.mipmap.book_100))
+                        .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
             }
             holder.name.setText(list.get(position).getName());
             holder.num.setText(list.get(position).getSearch()+"次搜索");
@@ -76,7 +80,11 @@ public class SsAdapter extends RecyclerView.Adapter<SsAdapter.SsViewHolder>{
         else{
             if(list.get(position+1).getImage()!=null){
                 GlideUrl url = DeviceInfoUtils.getUrl(list.get(position+1).getImage());
-                Glide.with(context).load(list.get(position+1).getImage()).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+                Glide.with(context)
+                        .load(list.get(position+1).getImage())
+                        .apply(new RequestOptions().error(R.mipmap.book_100))
+                        .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
             }
             holder.name.setText(list.get(position+1).getName());
             holder.num.setText(list.get(position+1).getSearch()+"次搜索");

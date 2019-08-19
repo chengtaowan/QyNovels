@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Message;
 import android.util.Log;
 
+import com.glong.reader.activities.ExtendReaderActivity;
 import com.glong.reader.activities.MyApp;
 import com.glong.reader.entry.BookContentBean;
 import com.glong.reader.entry.BookListBean;
@@ -133,6 +134,8 @@ public class LocalServer implements IBookContentView {
                     .subscribe(bookContentBean->{
                         if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
                             bookContent=bookContentBean.getData();
+                            ExtendReaderActivity.mChapterSeekBar.setProgress(ExtendReaderActivity.mChapterSeekBar.getProgress()+1);
+                            Log.e("caprogress",ExtendReaderActivity.mChapterSeekBar.getProgress()+"");
                         }
                     },throwable->{
                         Log.e("zjerror",throwable.getMessage());
@@ -146,6 +149,8 @@ public class LocalServer implements IBookContentView {
                     .subscribe(bookContentBean->{
                         if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
                             bookContent=bookContentBean.getData();
+                            ExtendReaderActivity.mChapterSeekBar.setProgress(ExtendReaderActivity.mChapterSeekBar.getProgress()+1);
+                            Log.e("caprogress",ExtendReaderActivity.mChapterSeekBar.getProgress()+"");
                         }
                     },throwable->{
                         Log.e("zjerror",throwable.getMessage());

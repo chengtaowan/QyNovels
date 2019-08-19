@@ -55,9 +55,9 @@ public class IAvatarPresenterImpl implements IAvatarPresenter {
                 .asParser(new SimpleParser<AvatarBean>(){})
                 .subscribe(avatarBean->{
                     Log.e("avatar",avatarBean.getCode()+"--"+avatarBean.getMsg());
-                    if(avatarBean.getCode()==200&&avatarBean.getMsg().equals("success")){
+                    //if(avatarBean.getCode()==200&&avatarBean.getMsg().equals("success")){
                         iAvatarView.onAvatarSuccess(avatarBean);
-                    }
+                    //}
                 },throwable->{
                     iAvatarView.onAvatarError(throwable.getMessage());
                 });

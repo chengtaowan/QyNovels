@@ -71,11 +71,12 @@ public class ILoginPresenterImpl implements ILoginPresenter {
                 .add(map)
                 .asParser(new SimpleParser<TokenBean>(){})
                 .subscribe(tokenBean->{
-                    if(tokenBean.getCode()==200&&tokenBean.getMsg().equals("success")){
+                    Log.e("login",tokenBean.getCode()+"-"+tokenBean.getMsg());
+                    //if(tokenBean.getCode()==200&&tokenBean.getMsg().equals("success")){
                         token=tokenBean.getData().getToken();
                         //Log.e("asdtoken",token);
                         iLoginView.onTokenSuccess(tokenBean);
-                    }
+                   // }
                 },throwable->{
                     iLoginView.onTokenError(throwable.getMessage());
                 });

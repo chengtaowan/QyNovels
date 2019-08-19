@@ -22,10 +22,12 @@ import com.jdhd.qynovels.module.bookcase.BookGradeBean;
 import com.jdhd.qynovels.module.bookcase.ReadEndBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookGradePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IReadEndPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.bookcase.IBookGradeView;
 import com.jdhd.qynovels.view.bookcase.IReadEndView;
 import com.jdhd.qynovels.widget.RatingBar;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +44,13 @@ public class YdwActivity extends AppCompatActivity implements View.OnClickListen
     private ReadEndBean readEnd=new ReadEndBean();
     private GfAdapter adapter;
     private IBookGradePresenterImpl bookGradePresenter;
+    private String url="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ydw);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent = getIntent();
@@ -106,6 +111,7 @@ public class YdwActivity extends AppCompatActivity implements View.OnClickListen
             if(!token.equals("")){
                 Intent intent=new Intent(YdwActivity.this,ShareActivity.class);
                 intent.putExtra("id",id);
+                intent.putExtra("url",url);
                 startActivity(intent);
             }else{
                 Toast.makeText(YdwActivity.this,"登录后才能分享哦！",Toast.LENGTH_SHORT).show();
@@ -124,13 +130,20 @@ public class YdwActivity extends AppCompatActivity implements View.OnClickListen
        runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               readEnd=readEndBean;
-               readnum.setText(readEndBean.getData().getReadEndNum()+"");
-               int[] ints = randomCommon(0, readEndBean.getData().getList().size() - 1, 3);
-               for(int i=0;i<ints.length;i++){
-                   list.add(readEndBean.getData().getList().get(ints[i]));
+               if(readEndBean.getCode()!=200){
+                   Toast.makeText(YdwActivity.this,readEndBean.getMsg(),Toast.LENGTH_SHORT).show();
                }
-               adapter.refreshread(list);
+               else{
+                   readEnd=readEndBean;
+                   readnum.setText(readEndBean.getData().getReadEndNum()+"");
+                   int[] ints = randomCommon(0, readEndBean.getData().getList().size() - 1, 3);
+                   for(int i=0;i<ints.length;i++){
+                       list.add(readEndBean.getData().getList().get(ints[i]));
+                   }
+                   adapter.refreshread(list);
+                   url=readEndBean.getData().getQRcodeUrl();
+               }
+
            }
        });
     }
@@ -183,5 +196,16 @@ public class YdwActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onGradeError(String error) {
        Log.e("gradeerror",error);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
     }
 }

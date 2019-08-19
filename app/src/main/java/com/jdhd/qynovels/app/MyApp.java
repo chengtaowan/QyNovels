@@ -12,6 +12,8 @@ import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.commonsdk.UMConfigure;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
 import java.util.ArrayList;
@@ -37,6 +39,9 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         Fresco.initialize(this);
+        UMConfigure.init(this, "5d50e0b90cafb24cf000049c", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, null);
+        // 选用LEGACY_AUTO页面采集模式
+        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO);
         MyApp.context=getApplicationContext();
         // android 7.0系统解决拍照的问题
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -51,9 +56,11 @@ public class MyApp extends Application {
 
        //穿山甲初始化
         TTAdSdk.init(this,new TTAdConfig.Builder()
-                .appId("5001121")
+                .appId("5026447")
+               // .appId("5001121")
                 .useTextureView(true) //使用TextureView控件播放视频,默认为SurfaceView,当有SurfaceView冲突的场景，可以使用TextureView
-                .appName("APP测试媒体")
+                .appName("趣阅小说_android")
+                //.appName("APP测试媒体")
                 .titleBarTheme(TTAdConstant.TITLE_BAR_THEME_DARK)
                 .allowShowNotify(true) //是否允许sdk展示通知栏提示
                 .allowShowPageWhenScreenLock(true) //是否在锁屏场景支持展示广告落地页

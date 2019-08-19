@@ -19,16 +19,22 @@ import okhttp3.CacheControl;
 import rxhttp.wrapper.param.RxHttp;
 import rxhttp.wrapper.parse.SimpleParser;
 
+/**
+ *获取验证码
+ */
 public class ICaptchaPresenterImpl implements IPersonalPresenter {
     private ICaptchaView iCaptchaView;
     private Context context;
     private String token;
     private String tel;
 
-    public ICaptchaPresenterImpl(ICaptchaView iCaptchaView, Context context, String tel) {
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public ICaptchaPresenterImpl(ICaptchaView iCaptchaView, Context context) {
         this.iCaptchaView = iCaptchaView;
         this.context = context;
-        this.tel = tel;
     }
 
     @Override

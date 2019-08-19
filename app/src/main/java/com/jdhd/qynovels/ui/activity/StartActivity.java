@@ -24,11 +24,13 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.RefreshTokenBean;
 import com.jdhd.qynovels.persenter.impl.personal.IRefreshTokenPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IRefreshTokenView;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.umeng.analytics.MobclickAgent;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -38,7 +40,7 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             if(msg.arg1==1){
-                Intent intent=new Intent(StartActivity.this,GgActivity.class);
+                Intent intent=new Intent(StartActivity.this,MainActivity.class);
                 startActivity(intent);
             }
         }
@@ -48,6 +50,7 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
 
@@ -91,5 +94,17 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
     protected void onDestroy() {
         super.onDestroy();
         refreshTokenPresenter.destoryView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this); // 不能遗漏
     }
 }

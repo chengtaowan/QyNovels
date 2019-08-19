@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,17 +34,22 @@ import com.bytedance.sdk.openadsdk.TTFeedAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.CaseAdapter;
+import com.jdhd.qynovels.adapter.ListAdapter;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
+import com.jdhd.qynovels.module.bookcase.ConfigBean;
 import com.jdhd.qynovels.module.personal.UserBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
+import com.jdhd.qynovels.persenter.impl.bookcase.IConfigPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.activity.LsActivity;
 import com.jdhd.qynovels.ui.activity.QdActivity;
 import com.jdhd.qynovels.ui.activity.SsActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
+import com.jdhd.qynovels.utils.AppSigning;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.bookcase.ICaseView;
+import com.jdhd.qynovels.view.bookcase.IConfigView;
 import com.jdhd.qynovels.view.personal.IPersonalView;
 import com.jdhd.qynovels.widget.MRefreshHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -59,12 +65,12 @@ import okhttp3.Request;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CaseFragment extends Fragment implements View.OnClickListener, ICaseView,CaseAdapter.onItemClick, IPersonalView {
+public class CaseFragment extends Fragment implements View.OnClickListener, ICaseView,CaseAdapter.onItemClick, IPersonalView, IConfigView {
     private ImageView ss,ls,qd;
     private RecyclerView rv;
     public static ICasePresenterImpl casePresenter;
     private CaseAdapter adapter;
-    private List<CaseBean.DataBean.ListBean> list=new ArrayList<>();
+    public static List<CaseBean.DataBean.ListBean> list=new ArrayList<>();
     private RelativeLayout jz;
     private ImageView gif;
     private int hotid;
@@ -80,7 +86,18 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     protected boolean isCreated = false;
     private ICaseView iCaseView;
     private IPersonalPresenterImpl personalPresenter;
+    private IConfigPresenterImpl configPresenter;
     private TextView time;
+    private int studia=0;
+
+    /**
+     * 是否显示ｃｈｅｃｋｂｏｘ
+     */
+    private boolean isShowCheck;
+    /**
+     * 记录选中的ｃｈｅｃｋｂｏｘ
+     */
+    private List<String> checkList;
     public CaseFragment() {
         mTTAdNative = TTAdSdk.getAdManager().createAdNative(getContext());
         // Required empty public constructor
@@ -123,19 +140,40 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         super.onAttach(context);
         // 标记
         isCreated = true;
-        new Thread(new Runnable() {
+        configPresenter=new IConfigPresenterImpl(new IConfigView() {
             @Override
-            public void run() {
-                loadListAd();
+            public void onConfigSuccess(ConfigBean configBean) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(configBean.getData().getList().get(1).getStatus()==20){
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    loadListAd();
+                                }
+                            }).start();
+                        }
+                    }
+                });
             }
-        }).start();
+
+            @Override
+            public void onConfigError(String error) {
+               Log.e("configerror",error);
+            }
+        },getContext());
+        configPresenter.loadData();
+
         casePresenter=new ICasePresenterImpl(new ICaseView() {
             @Override
             public void onSuccess(CaseBean caseBean) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        sr.finishRefresh();
+                        if(sr!=null){
+                            sr.finishRefresh();
+                        }
                         adapter.refreshlist(caseBean.getData().getList());
                         adapter.refreshhot(caseBean.getData().getHot());
                     }
@@ -154,19 +192,39 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     @Override
     public void onResume() {
         super.onResume();
-        new Thread(new Runnable() {
+        configPresenter=new IConfigPresenterImpl(new IConfigView() {
             @Override
-            public void run() {
-                loadListAd();
+            public void onConfigSuccess(ConfigBean configBean) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(configBean.getData().getList().get(1).getStatus()==20){
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    loadListAd();
+                                }
+                            }).start();
+                        }
+                    }
+                });
             }
-        }).start();
+
+            @Override
+            public void onConfigError(String error) {
+                Log.e("configerror",error);
+            }
+        },getContext());
+        configPresenter.loadData();
         casePresenter=new ICasePresenterImpl(new ICaseView() {
             @Override
             public void onSuccess(CaseBean caseBean) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        sr.finishRefresh();
+                        if(sr!=null){
+                            sr.finishRefresh();
+                        }
                         adapter.refreshlist(caseBean.getData().getList());
                         adapter.refreshhot(caseBean.getData().getHot());
                     }
@@ -191,6 +249,10 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         iCaseView=this;
         personalPresenter=new IPersonalPresenterImpl(this,getContext());
         personalPresenter.loadData();
+        configPresenter=new IConfigPresenterImpl(this,getContext());
+        configPresenter.loadData();
+        String sha1 = AppSigning.getSha1(getContext());
+        Log.e("sha1",sha1);
         if(iCaseView!=null){
             casePresenter=new ICasePresenterImpl(iCaseView,getContext());
             casePresenter.loadData();
@@ -252,15 +314,6 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                }
                adapter.refreshlist(list);
            }
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    loadListAd();
-                }
-            }).start();
-
-
         }
 
         return  view;
@@ -296,17 +349,22 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
               hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
               if(!hasNetWork){
                   Toast.makeText(getContext(),"网络连接不可用",Toast.LENGTH_SHORT).show();
-                 sr.finishRefresh();
+                  if(sr!=null){
+                      sr.finishRefresh();
+                  }
+
               }
               else{
                   casePresenter.loadData();
-                  mData.clear();
-                  new Thread(new Runnable() {
-                      @Override
-                      public void run() {
-                          loadListAd();
-                      }
-                  }).start();
+                  //mData.clear();
+                  if(studia==20){
+                      new Thread(new Runnable() {
+                          @Override
+                          public void run() {
+                              loadListAd();
+                          }
+                      }).start();
+                  }
                   adapter.refreshfeed(mData);
               }
 
@@ -345,7 +403,9 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                sr.finishRefresh();
+                if(sr!=null){
+                    sr.finishRefresh();
+                }
                 database=dbUtils.getWritableDatabase();
                 database.execSQL("delete from hot");
                 database.execSQL("delete from usercase");
@@ -406,7 +466,9 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
 
     @Override
     public void onError(String error) {
-        sr.finishRefresh();
+        if(sr!=null){
+            sr.finishRefresh();
+        }
         Log.e("caseerror",error);
     }
 
@@ -435,7 +497,8 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     private void loadListAd() {
         //step4:创建feed广告请求类型参数AdSlot,具体参数含义参考文档
         AdSlot adSlot = new AdSlot.Builder()
-                .setCodeId("901121737")
+                //.setCodeId("901121737")
+                .setCodeId("926447877")
                 .setSupportDeepLink(true)
                 .setImageAcceptedSize(640, 320)
                 .setAdCount(10) //请求广告数量为1到3条
@@ -444,7 +507,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         mTTAdNative.loadFeedAd(adSlot, new TTAdNative.FeedAdListener() {
             @Override
             public void onError(int code, String message) {
-              Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
+             // Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -490,7 +553,9 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            sr.finishRefresh();
+                            if(sr!=null){
+                                sr.finishRefresh();
+                            }
                             adapter.refreshlist(caseBean.getData().getList());
                             adapter.refreshhot(caseBean.getData().getHot());
                         }
@@ -504,5 +569,30 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
             }, getContext());
             casePresenter.loadData();
         }
+    }
+
+    @Override
+    public void onConfigSuccess(ConfigBean configBean) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                studia=configBean.getData().getList().get(1).getStatus();
+                Log.e("studia",studia+"");
+                if(configBean.getData().getList().get(1).getStatus()==20){
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadListAd();
+                        }
+                    }).start();
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void onConfigError(String error) {
+        Log.e("configerror",error);
     }
 }

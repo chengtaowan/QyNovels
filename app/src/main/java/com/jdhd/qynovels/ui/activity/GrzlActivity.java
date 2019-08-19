@@ -43,12 +43,14 @@ import com.jdhd.qynovels.module.personal.AvatarBean;
 import com.jdhd.qynovels.module.personal.SexBean;
 import com.jdhd.qynovels.persenter.impl.personal.IAvatarPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.ISexPresenterImpl;
+import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.ImageUtil;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.utils.getPhotoFromPhotoAlbum;
 import com.jdhd.qynovels.view.personal.IAvatarView;
 import com.jdhd.qynovels.view.personal.ISexView;
 import com.jdhd.qynovels.widget.PhotoPopupWindow;
+import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -87,6 +89,9 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grzl);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+
+
         getPermission();
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
@@ -101,11 +106,11 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         bindwx=perintent.getIntExtra("bindwx",0);
         wxname=perintent.getStringExtra("wxname");
         type=perintent.getStringExtra("type");
-        Log.e("type",type+"]]]");
         Log.e("wxname",wxname);
         avatarPresenter=new IAvatarPresenterImpl(this,GrzlActivity.this);
         init();
         xgnc.setText(nickname);
+        Log.e("nickname",nickname);
         Intent intent=getIntent();
         String action = intent.getAction();
         if(intent!=null&&action!=null){
@@ -153,15 +158,6 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
-        intent.putExtra("fragment_flag", 4);
-        intent.putExtra("nickname",xgname);
-        intent.setAction("name");
-        startActivity(intent);
-    }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void changename(String name){
         xgnc.setText(name);
@@ -170,25 +166,9 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if(R.id.zl_back==view.getId()){
-            Log.e("type",type+"---");
-            if(type.equals("wode")){
-                Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
-                intent.putExtra("page", 3);
-                startActivity(intent);
-            }
-            else if(type.equals("sz")){
-                Intent intent=new Intent(GrzlActivity.this,SzActivity.class);
-                intent.putExtra("name",nickname);
-                intent.putExtra("avatar",avatar);
-                intent.putExtra("sex",sex);
-                intent.putExtra("uid",uid);
-                intent.putExtra("mobile",mobile+"");
-                intent.putExtra("bindwx",bindwx);
-                intent.putExtra("wxname",wxname);
-                intent.putExtra("type",2);
-                startActivity(intent);
-            }
-
+            Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
+            intent.putExtra("page", 3);
+            startActivity(intent);
         }
         else if(R.id.xg_tx==view.getId()){
             mPhotoPopupWindow = new PhotoPopupWindow(GrzlActivity.this, new View.OnClickListener() {
@@ -250,10 +230,6 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         GrzlActivity.this.startActivityForResult(intent, 2);
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     @Override
@@ -493,7 +469,13 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
        runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               xgxb.setText(sexBean.getData().getSex());
+               if(sexBean.getCode()!=200){
+                  Toast.makeText(GrzlActivity.this,sexBean.getMsg(),Toast.LENGTH_SHORT).show();
+               }
+               else{
+                   xgxb.setText(sexBean.getData().getSex());
+               }
+
            }
        });
     }
@@ -555,9 +537,16 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                imgurl=avatarBean.getData().getAvatar();
-                Log.e("imgurl",imgurl);
-                EventBus.getDefault().post(imgurl);
+                if(avatarBean.getCode()!=200){
+                    Toast.makeText(GrzlActivity.this,avatarBean.getMsg(),Toast.LENGTH_SHORT).show();
+
+                }
+                else{
+                    imgurl=avatarBean.getData().getAvatar();
+                    Log.e("imgurl",imgurl);
+                    EventBus.getDefault().post(imgurl);
+                }
+
             }
         });
     }
@@ -588,6 +577,26 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
 
         Log.e(tag, msg);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
+        intent.putExtra("page", 3);
+        startActivity(intent);
     }
 
 }

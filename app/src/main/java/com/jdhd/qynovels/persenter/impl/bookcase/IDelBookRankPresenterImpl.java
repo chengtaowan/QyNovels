@@ -27,10 +27,15 @@ public class IDelBookRankPresenterImpl implements IBookInfoPresenter {
         this.context = context;
     }
 
-    private int id;
+    private String id;
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
+    }
+    private int type;
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     @Override
@@ -44,10 +49,11 @@ public class IDelBookRankPresenterImpl implements IBookInfoPresenter {
             map.put("token",token);
         }
         map.put("id",id+"");
-        map.put("type",10+"");
+        map.put("type",type+"");
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
+        Log.e("id--",id+"");
         if(token!=null){
             RxHttp.postForm(MyApp.Url.baseUrl+"delBookrack")
                     .addHeader("token",token)
@@ -55,7 +61,7 @@ public class IDelBookRankPresenterImpl implements IBookInfoPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<DelBookRackBean>(){})
                     .subscribe(delBookRackBean->{
-                        Log.e("qqq",delBookRackBean.getMsg());
+                        Log.e("delbook",delBookRackBean.getMsg());
                         if(delBookRackBean.getCode()==200&&delBookRackBean.getMsg().equals("请求成功")){
                             iDelBookRankView.onSuccess(delBookRackBean);
                         }

@@ -48,9 +48,9 @@ public class IDrawListPresenterImpl implements IPersonalPresenter {
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                 .asParser(new SimpleParser<DrawListBean>(){})
                 .subscribe(drawListBean->{
-                    if(drawListBean.getCode()==200&&drawListBean.getMsg().equals("请求成功")){
+                    //if(drawListBean.getCode()==200&&drawListBean.getMsg().equals("请求成功")){
                         iDrawListView.onSuccess(drawListBean);
-                    }
+                    //}
                 },throwable->{
                     iDrawListView.onError(throwable.getMessage());
                 });

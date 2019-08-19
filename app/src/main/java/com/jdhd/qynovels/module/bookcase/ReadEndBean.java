@@ -58,6 +58,15 @@ public class ReadEndBean {
 
         private int readEndNum;
         private List<ListBean> list;
+        private String QRcodeUrl;
+
+        public String getQRcodeUrl() {
+            return QRcodeUrl;
+        }
+
+        public void setQRcodeUrl(String QRcodeUrl) {
+            this.QRcodeUrl = QRcodeUrl;
+        }
 
         public int getReadEndNum() {
             return readEndNum;

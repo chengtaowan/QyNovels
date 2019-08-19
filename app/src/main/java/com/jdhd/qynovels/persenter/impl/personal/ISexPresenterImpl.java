@@ -55,9 +55,9 @@ public class ISexPresenterImpl implements ISexPresenter {
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                 .asParser(new SimpleParser<SexBean>(){})
                 .subscribe(sexBean->{
-                    if(sexBean.getCode()==200&&sexBean.getMsg().equals("修改成功")){
+                    //if(sexBean.getCode()==200&&sexBean.getMsg().equals("修改成功")){
                         iSexView.onSexSuccess(sexBean);
-                    }
+                    //}
                 },throwable->{
                     iSexView.onSexError(throwable.getMessage());
                 });

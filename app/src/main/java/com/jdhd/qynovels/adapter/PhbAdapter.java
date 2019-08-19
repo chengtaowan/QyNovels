@@ -63,7 +63,11 @@ public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
         holder.num.setText(position+1+"");
         if(list.get(position).getImage()!=null){
             GlideUrl url = DeviceInfoUtils.getUrl(list.get(position).getImage());
-            Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.img);
+            Glide.with(context)
+                    .load(url)
+                    .apply(new RequestOptions().error(R.mipmap.book_100))
+                    .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.img);
 
         }
         holder.name.setText(list.get(position).getName());
@@ -89,7 +93,7 @@ public class PhbAdapter extends RecyclerView.Adapter<PhbAdapter.PhbViewHolder>{
                 Intent intent=new Intent(context, XqActivity.class);
                 intent.putExtra("page", 2);
                 intent.putExtra("xq",3);
-                intent.putExtra("id",list.get(position).getId());
+                intent.putExtra("id",list.get(position).getBookId());
                 context.startActivity(intent);
             }
         });

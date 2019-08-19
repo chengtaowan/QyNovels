@@ -55,7 +55,11 @@ public class RsAdapter extends RecyclerView.Adapter<RsAdapter.RsViewHolder>{
     public void onBindViewHolder(@NonNull RsViewHolder holder, final int position) {
         if(list.get(position+1).getImage()!=null){
             GlideUrl url = DeviceInfoUtils.getUrl(list.get(position+1).getImage());
-            Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
+            Glide.with(context)
+                    .load(url)
+                    .apply(new RequestOptions().error(R.mipmap.book_100))
+                    .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis))).into(holder.book);
 
         }
         holder.name.setText(list.get(position+1).getName());
