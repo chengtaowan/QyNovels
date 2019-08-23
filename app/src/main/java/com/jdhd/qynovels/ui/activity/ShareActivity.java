@@ -66,6 +66,7 @@ public class ShareActivity extends AppCompatActivity implements View.OnClickList
     private TextView wan;
     private String url="";
     private Bitmap qr;
+    private ImageView back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +90,8 @@ public class ShareActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void init() {
+        back=findViewById(R.id.back);
+        back.setOnClickListener(this);
         ewm=findViewById(R.id.fx_ewm);
         if(!url.equals("")){
             qr = CodeUtils.createImage(url, 90, 90, null);
@@ -132,6 +135,9 @@ public class ShareActivity extends AppCompatActivity implements View.OnClickList
         }
         else if(R.id.pyqfx==view.getId()){
             sharePicture(bitmap,SendMessageToWX.Req.WXSceneTimeline);
+        }
+        else if(R.id.back==view.getId()){
+            finish();
         }
     }
 
@@ -227,5 +233,11 @@ public class ShareActivity extends AppCompatActivity implements View.OnClickList
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this); // 不能遗漏
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

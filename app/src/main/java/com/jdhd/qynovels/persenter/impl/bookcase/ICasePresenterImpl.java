@@ -51,9 +51,9 @@ public class ICasePresenterImpl implements ICasePresenter {
                     .asParser(new SimpleParser<CaseBean>(){})
                     .subscribe(caseBean->{
                         Log.e("case",caseBean.getCode()+"--"+caseBean.getMsg());
-                        if(caseBean.getCode()==200&&caseBean.getMsg().equals("请求成功")){
+                        //if(caseBean.getCode()==200&&caseBean.getMsg().equals("请求成功")){
                             iCaseView.onSuccess(caseBean);
-                        }
+                        //}
                     },throwable->{
                         if(throwable.getMessage()!=null){
                             iCaseView.onError(throwable.getMessage());

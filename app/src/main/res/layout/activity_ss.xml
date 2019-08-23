@@ -50,6 +50,8 @@
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:hint="请输入书名"
+                android:lines="1"
+                android:singleLine="true"
                 android:layout_marginLeft="6dp"
                 android:textColor="#828486"
                 android:textSize="14sp"

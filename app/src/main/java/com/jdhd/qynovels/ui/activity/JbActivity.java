@@ -78,9 +78,10 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View view) {
         if(R.id.jb_back==view.getId()){
-            Intent intent=new Intent(JbActivity.this,MainActivity.class);
-            intent.putExtra("page", 3);
-            startActivity(intent);
+//            Intent intent=new Intent(JbActivity.this,MainActivity.class);
+//            intent.putExtra("page", 3);
+//            startActivity(intent);
+            finish();
         }
         else if(R.id.jb_tx==view.getId()){
             Intent intent=new Intent(JbActivity.this,TxActivity.class);
@@ -116,5 +117,11 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

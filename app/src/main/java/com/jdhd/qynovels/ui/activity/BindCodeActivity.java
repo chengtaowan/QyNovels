@@ -71,6 +71,7 @@ public class BindCodeActivity extends AppCompatActivity implements View.OnClickL
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.e("bindcode",bindCodeBean.getMsg());
                 if(bindCodeBean.getCode()!=200){
                     Toast.makeText(BindCodeActivity.this,bindCodeBean.getMsg(),Toast.LENGTH_SHORT).show();
                 }
@@ -106,5 +107,11 @@ public class BindCodeActivity extends AppCompatActivity implements View.OnClickL
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

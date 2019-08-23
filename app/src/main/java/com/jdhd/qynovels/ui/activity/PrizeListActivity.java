@@ -139,4 +139,10 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
         super.onPause();
         MobclickAgent.onPause(this); // 不能遗漏
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

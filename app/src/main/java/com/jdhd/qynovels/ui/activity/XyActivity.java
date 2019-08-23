@@ -78,8 +78,9 @@ public class XyActivity extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        Intent intent=new Intent(XyActivity.this,LoginActivity.class);
-        startActivity(intent);
+//        Intent intent=new Intent(XyActivity.this,LoginActivity.class);
+//        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -121,5 +122,11 @@ public class XyActivity extends AppCompatActivity implements View.OnClickListene
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

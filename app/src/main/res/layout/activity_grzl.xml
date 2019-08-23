@@ -74,7 +74,8 @@
             android:textColor="#ff2c2a35"
             android:textSize="15sp"
             android:layout_marginLeft="15dp"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:id="@+id/nctext"/>
         <ImageView
             android:layout_width="7dp"
             android:layout_height="12dp"
@@ -84,9 +85,13 @@
             android:src="@mipmap/back_x"
             android:id="@+id/xg_n2"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/nctext"
             android:text="暂无昵称"
+            android:lines="1"
+            android:gravity="end"
+            android:ellipsize="end"
             android:textColor="#ff94939a"
             android:textSize="15sp"
             android:layout_centerVertical="true"

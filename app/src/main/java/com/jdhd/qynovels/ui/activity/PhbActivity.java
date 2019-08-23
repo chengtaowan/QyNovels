@@ -103,9 +103,10 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        Intent intent=new Intent(PhbActivity.this,MainActivity.class);
-        intent.putExtra("page", 1);
-        startActivity(intent);
+//        Intent intent=new Intent(PhbActivity.this,MainActivity.class);
+//        intent.putExtra("page", 1);
+//        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -139,16 +140,16 @@ public class PhbActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
         MobclickAgent.onPause(this); // 不能遗漏
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent=new Intent(PhbActivity.this,MainActivity.class);
-        intent.putExtra("fragment_flag", 2);
-        startActivity(intent);
+//        Intent intent=new Intent(PhbActivity.this,MainActivity.class);
+//        intent.putExtra("fragment_flag", 2);
+//        startActivity(intent);
+        finish();
     }
 
 

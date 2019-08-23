@@ -18,7 +18,7 @@
     <ImageView
         android:layout_width="72dp"
         android:layout_height="100dp"
-        android:src="@mipmap/a"
+        android:src="@mipmap/book_100"
         android:id="@+id/gf_book"
         android:scaleType="fitXY"/>
     <RelativeLayout

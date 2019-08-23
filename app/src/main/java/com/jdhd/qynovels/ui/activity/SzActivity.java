@@ -72,9 +72,10 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent=new Intent(SzActivity.this,MainActivity.class);
-        intent.putExtra("page", 3);
-        startActivity(intent);
+//        Intent intent=new Intent(SzActivity.this,MainActivity.class);
+//        intent.putExtra("page", 3);
+//        startActivity(intent);
+        finish();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -119,9 +120,10 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
             startActivity(intent);
         }
         else if(R.id.sz_back==view.getId()){
-            Intent intent=new Intent(SzActivity.this,MainActivity.class);
-            intent.putExtra("page",3);
-            startActivity(intent);
+//            Intent intent=new Intent(SzActivity.this,MainActivity.class);
+//            intent.putExtra("page",3);
+//            startActivity(intent);
+            finish();
         }
     }
 
@@ -141,7 +143,7 @@ public class SzActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
         MobclickAgent.onPause(this); // 不能遗漏
     }
+
 }

@@ -35,6 +35,7 @@ import okhttp3.CacheControl;
 import rxhttp.wrapper.param.RxHttp;
 import rxhttp.wrapper.parse.SimpleParser;
 
+
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IPersonalView , IBindwxView {
     private IWXAPI api;
     private static final String APP_ID = "wxf2f9d368f73b6719";

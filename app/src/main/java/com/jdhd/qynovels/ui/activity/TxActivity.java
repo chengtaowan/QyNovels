@@ -152,9 +152,10 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent=new Intent(TxActivity.this,MainActivity.class);
-        intent.putExtra("page", 3);
-        startActivity(intent);
+//        Intent intent=new Intent(TxActivity.this,MainActivity.class);
+//        intent.putExtra("page", 3);
+//        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -166,16 +167,16 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
         MobclickAgent.onPause(this); // 不能遗漏
     }
 
     @Override
     public void onClick(View view) {
         if(R.id.tx_back==view.getId()){
-            Intent intent=new Intent(TxActivity.this,MainActivity.class);
-            intent.putExtra("page",3);
-            startActivity(intent);
+//            Intent intent=new Intent(TxActivity.this,MainActivity.class);
+//            intent.putExtra("page",3);
+//            startActivity(intent);
+            finish();
         }
         else if(R.id.txjl==view.getId()){
             Intent intent=new Intent(TxActivity.this,TxjlActivity.class);
@@ -310,6 +311,7 @@ public class TxActivity extends AppCompatActivity implements View.OnClickListene
         });
 
     }
+
 
 
 }

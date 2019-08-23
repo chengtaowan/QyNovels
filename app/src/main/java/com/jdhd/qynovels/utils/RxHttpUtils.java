@@ -12,6 +12,7 @@ import okhttp3.CacheControl;
 import rxhttp.wrapper.param.RxHttp;
 import rxhttp.wrapper.parse.SimpleParser;
 
+
 public class RxHttpUtils {
     private static Context context;
     private static String token;

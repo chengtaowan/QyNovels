@@ -28,6 +28,26 @@ public class IAddBookRankPresenterImpl implements IBookInfoPresenter {
     }
 
     private int id;
+    private int backlistId;
+    private float backlistPercent;
+    private int readStatus;
+    private int charIndex;
+
+    public void setCharIndex(int charIndex) {
+        this.charIndex = charIndex;
+    }
+
+    public void setBacklistId(int backlistId) {
+        this.backlistId = backlistId;
+    }
+
+    public void setBacklistPercent(float backlistPercent) {
+        this.backlistPercent = backlistPercent;
+    }
+
+    public void setReadStatus(int readStatus) {
+        this.readStatus = readStatus;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -44,13 +64,14 @@ public class IAddBookRankPresenterImpl implements IBookInfoPresenter {
             map.put("token",token);
         }
         map.put("bookId",id+"");
-        map.put("backlistId",0+"");
-        map.put("backlistPercent",0+"");
-        map.put("readStatus",10+"");
+        map.put("backlistId",backlistId+"");
+        map.put("backlistPercent",backlistPercent+"");
+        map.put("readStatus",readStatus+"");
+        map.put("charIndex",charIndex+"");
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
-        if(token!=null){
+        if(!token.equals("")){
             RxHttp.postForm(MyApp.Url.baseUrl+"addBookrack")
                     .addHeader("token",token)
                     .add(map)
@@ -71,11 +92,10 @@ public class IAddBookRankPresenterImpl implements IBookInfoPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<AddBookBean>(){})
                     .subscribe(addBookBean->{
-                        Log.e("qqq",addBookBean.getMsg());
-                        if(addBookBean.getCode()==200&&addBookBean.getMsg().equals("请求成功")){
-
+                        Log.e("addbook",addBookBean.getMsg());
+                        //if(addBookBean.getCode()==200&&addBookBean.getMsg().equals("请求成功")){
                             iAddBookRankView.onSuccess(addBookBean);
-                        }
+                       // }
                     },throwable->{
                         iAddBookRankView.onAddError(throwable.getMessage()+throwable.getCause());
                     });

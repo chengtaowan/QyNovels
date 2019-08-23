@@ -70,9 +70,9 @@ public class ISearchContentPresenterImpl implements ISearchContentPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<SearchContentBean>(){})
                     .subscribe(searchContentBean->{
-                        if(searchContentBean.getCode()==200&&searchContentBean.getMsg().equals("请求成功")){
+                        //if(searchContentBean.getCode()==200&&searchContentBean.getMsg().equals("请求成功")){
                             iSearchContentView.onSuccess(searchContentBean);
-                        }
+                       // }
                     },throwable->{
                         iSearchContentView.onError(throwable.getMessage());
                     });

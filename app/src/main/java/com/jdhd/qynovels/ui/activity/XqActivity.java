@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -30,9 +31,9 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import com.glong.reader.activities.ExtendReaderActivity;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.activities.ExtendReaderActivity;
 import com.jdhd.qynovels.adapter.XqymAdapter;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.AddBookBean;
@@ -55,9 +56,13 @@ import com.jdhd.qynovels.view.bookcase.ICaseView;
 import com.jdhd.qynovels.widget.RatingBar;
 import com.umeng.analytics.MobclickAgent;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class XqActivity extends AppCompatActivity implements View.OnClickListener , IBookInfoView, IAddBookRankView, IBookListView, ICaseView {
@@ -71,8 +76,9 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     private RelativeLayout jz;
     private ImageView gif;
     private XqymAdapter adapter;
-    private LinearLayout jrsj;
-    private TextView yd,jr;
+    public static LinearLayout jrsj;
+    private TextView yd;
+    public static TextView jr;
     private IAddBookRankPresenterImpl addBookRankPresenter;
     private int id;
     private DbUtils dbUtils;
@@ -84,8 +90,9 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     private ImageView back;
     private Toolbar toolbar;
     private TextView title;
-    private ImageView  icon;
+    public static ImageView  icon;
     private boolean iscase;
+    private Cursor listcursor;
     private ICasePresenterImpl casePresenter;
     private View.OnTouchListener onTouchListener= new View.OnTouchListener() {
         @Override
@@ -186,15 +193,16 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View view) {
        if(R.id.xq_jrsj==view.getId()){
+           jrsj.setClickable(true);
            addBookRankPresenter.setId(id);
+           addBookRankPresenter.setBacklistId(0);
+           addBookRankPresenter.setBacklistPercent(0);
+           addBookRankPresenter.setReadStatus(10);
            addBookRankPresenter.loadData();
-           Toast.makeText(XqActivity.this,"加入书架",Toast.LENGTH_SHORT).show();
-           jr.setText("已加入书架");
-           jr.setTextColor(Color.parseColor("#999999"));
-           icon.setImageResource(R.mipmap.xqy_jrsjon);
+
        }
        else if(R.id.xq_back==view.getId()){
-           change();
+           finish();
        }
        else if(R.id.xq_yd==view.getId()){
           String time= DeviceInfoUtils.getTime()+"";
@@ -204,6 +212,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
            intent.putExtra("img",bookBean.getData().getBook().getImage());
            intent.putExtra("name",bookBean.getData().getBook().getName());
            intent.putExtra("author",bookBean.getData().getBook().getAuthor());
+           intent.putExtra("type",2);
          startActivity(intent);
          database=dbUtils.getWritableDatabase();
          Log.e("token--",token+"===");
@@ -242,7 +251,52 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                 bookBean=bookInfoBean;
                 jz.setVisibility(View.GONE);
                 adapter.refresh(bookInfoBean.getData());
-                casePresenter.loadData();
+                if(!token.equals("")){
+                    casePresenter.loadData();
+                }
+                else{
+                    List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
+                    database=dbUtils.getReadableDatabase();
+                    listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
+                    while(listcursor.moveToNext()){
+                        CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                        listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                        listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                        listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                        listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                        listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                        listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                        listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                        listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                        listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                        listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                        list.add(listBean);
+                    }
+                    for(int i=0;i<list.size();i++){
+                        Log.e("bookinfolist",list.get(i).getName()+"--"+list.get(i).getBookId());
+                        Log.e("visitor",list.get(i).getBookId()+"--"+bookBean.getData().getBook().getBookId());
+                        if(list.get(i).getBookId()==bookBean.getData().getBook().getBookId()){
+                            iscase=true;
+                            break;
+                        }
+                        else{
+                            iscase=false;
+                        }
+                    }
+                    if(iscase){
+                        jr.setText("已加入书架");
+                        jr.setTextColor(Color.parseColor("#999999"));
+                        icon.setImageResource(R.mipmap.xqy_jrsjon);
+                        jrsj.setClickable(false);
+                    }
+                    else{
+                        jr.setText("加入书架");
+                        jr.setTextColor(Color.parseColor("#2F3236"));
+                        icon.setImageResource(R.mipmap.xqy_jrsj);
+                    }
+
+                }
+
             }
         });
     }
@@ -280,33 +334,59 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                database=dbUtils.getWritableDatabase();
-                if(!token.equals("")){
-                    if(bookBean.getData().getBook()!=null){
-                        database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
-                                "values('user'," +
-                                "'"+bookBean.getData().getBook().getName()+"'," +
-                                "'"+bookBean.getData().getBook().getImage()+"'," +
-                                "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                                "'"+listBean.getData().getList().get(0).getName()+"'," +
-                                "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
-                                "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
-                    }
+                Log.e("addbookbean",addBookBean.getMsg()+"--"+addBookBean.getCode());
+                if(addBookBean.getCode()==9005){
+                    Toast.makeText(XqActivity.this,"加入书架",Toast.LENGTH_SHORT).show();
+                    jr.setText("已加入书架");
+                    jrsj.setClickable(false);
+                    jr.setTextColor(Color.parseColor("#999999"));
+                    icon.setImageResource(R.mipmap.xqy_jrsjon);
+                    database=dbUtils.getWritableDatabase();
 
+                     if(bookBean.getData().getBook()!=null){
+                         Log.e("addbookid",bookBean.getData().getBook().getBookId()+"==="+bookBean.getData().getBook().getName());
+                            database.execSQL("delete from usercase where name='"+bookBean.getData().getBook().getName()+"'");
+                            database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
+                                    "values('visitor'," +
+                                    "'"+bookBean.getData().getBook().getName()+"'," +
+                                    "'"+bookBean.getData().getBook().getImage()+"'," +
+                                    "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                                    "'"+listBean.getData().getList().get(0).getName()+"'," +
+                                    "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
+                                    "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                         Cursor cursor = database.rawQuery("select * from usercase where user='visitor'", new String[]{});
+                         while(cursor.moveToNext()){
+                             Log.e("cursor",cursor.getString(listcursor.getColumnIndex("name")));
+                         }
+                     }
+                    EventBus.getDefault().post(addBookBean);
+                }
+                else if(addBookBean.getCode()!=200){
+                   Toast.makeText(XqActivity.this,addBookBean.getMsg(),Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    if(bookBean.getData().getBook()!=null){
-                        database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
-                                "values('visitor'," +
-                                "'"+bookBean.getData().getBook().getName()+"'," +
-                                "'"+bookBean.getData().getBook().getImage()+"'," +
-                                "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                                "'"+listBean.getData().getList().get(0).getName()+"'," +
-                                "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
-                                "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
-                    }
+                    Toast.makeText(XqActivity.this,"加入书架",Toast.LENGTH_SHORT).show();
+                    jr.setText("已加入书架");
+                    jrsj.setClickable(false);
+                    jr.setTextColor(Color.parseColor("#999999"));
+                    icon.setImageResource(R.mipmap.xqy_jrsjon);
+                    database=dbUtils.getWritableDatabase();
+                    EventBus.getDefault().post(addBookBean);
+                        if(bookBean.getData().getBook()!=null){
+                            database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
+                                    "values('user'," +
+                                    "'"+bookBean.getData().getBook().getName()+"'," +
+                                    "'"+bookBean.getData().getBook().getImage()+"'," +
+                                    "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                                    "'"+listBean.getData().getList().get(0).getName()+"'," +
+                                    "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
+                                    "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                        }
+
+
 
                 }
+
 
             }
         });
@@ -365,7 +445,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        change();
+        //change();
         finish();
     }
 

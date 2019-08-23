@@ -24,12 +24,14 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.bookcase.SzUser;
+import com.jdhd.qynovels.module.personal.NameBean;
+import com.jdhd.qynovels.module.personal.TokenBean;
 import com.jdhd.qynovels.module.personal.UserBean;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.activity.BindCodeActivity;
-import com.jdhd.qynovels.ui.activity.CjwtActivity;
 import com.jdhd.qynovels.ui.activity.FkActivity;
 import com.jdhd.qynovels.ui.activity.GrzlActivity;
+import com.jdhd.qynovels.ui.activity.HelpActivity;
 import com.jdhd.qynovels.ui.activity.JbActivity;
 import com.jdhd.qynovels.ui.activity.LoginActivity;
 import com.jdhd.qynovels.ui.activity.LsActivity;
@@ -38,6 +40,9 @@ import com.jdhd.qynovels.ui.activity.TxActivity;
 import com.jdhd.qynovels.ui.activity.XxActivity;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.personal.IPersonalView;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -49,7 +54,7 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WodeFragment extends Fragment implements View.OnClickListener,IPersonalView{
+public class WodeFragment extends BasePageFragment implements View.OnClickListener,IPersonalView{
 
     private TextView wo_dl,wd_name,wd_hbm,wd_jb,wd_jrjb,wd_ydsj;
     private RelativeLayout wd_ls,wd_tx,wd_fk,wd_sz,wd_lb,wd_yq,wd_xj;
@@ -62,6 +67,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
     private int bindwx;
     private int uid,total_gold,today_gold,read_time,balance,message_count,bind_show;
     private float money;
+    private SmartRefreshLayout sr;
 //    private ImageView gif;
 //    private RelativeLayout jz;
     private IPersonalPresenterImpl personalPresenter;
@@ -72,15 +78,16 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
     @Override
     public void onStart() {
         super.onStart();
-        personalPresenter=new IPersonalPresenterImpl(this,getContext());
-        personalPresenter.loadData();
+        Log.e("statues","onstart");
         SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
         token = preferences.getString("token", "");
+        personalPresenter.loadData();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.e("statues","onattach");
         SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
         token = preferences.getString("token", "");
     }
@@ -88,6 +95,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
     @Override
     public void onResume() {
         super.onResume();
+        Log.e("statues","onresume");
         SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
         token = preferences.getString("token", "");
     }
@@ -101,8 +109,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             EventBus.getDefault().register(this);
         }
 
-        personalPresenter=new IPersonalPresenterImpl(this,getContext());
-        personalPresenter.loadData();
+
         init(view);
         Intent intent=getActivity().getIntent();
         action=intent.getIntExtra("action",1);
@@ -140,6 +147,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
     }
 
     private void init(View view) {
+        sr=view.findViewById(R.id.sr);
         wd_xx=view.findViewById(R.id.wd_xx);
         wo_dl=view.findViewById(R.id.wd_dl);
         wd_ls=view.findViewById(R.id.wd_ls);
@@ -169,6 +177,18 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         wd_toux.setOnClickListener(this);
         wd_xx.setOnClickListener(this);
         wd_xj.setOnClickListener(this);
+        sr.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshLayout) {
+                if(token.equals("")){
+                    sr.finishRefresh();
+                }
+                else{
+                    personalPresenter.loadData();
+                }
+
+            }
+        });
         //Glide.with(getContext()).load(R.mipmap.re).into(gif);
         if(user.getData()!=null){
             avatar=user.getData().getAvatar();
@@ -198,6 +218,12 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             }
             else{
                 wd_xx.setImageResource(R.mipmap.my_xx);
+            }
+            if(user.getData().getBind_show()==0){
+                wd_xj.setVisibility(View.GONE);
+            }
+            else{
+                wd_xj.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -237,7 +263,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                 Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
             }
             else{
-                Intent intent=new Intent(getContext(), FkActivity.class);
+                Intent intent=new Intent(getContext(), HelpActivity.class);
                 intent.putExtra("token",token);
                 startActivity(intent);
             }
@@ -265,7 +291,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             else{
                 if(user.getData()!=null){
                     Intent intent=new Intent(getContext(), GrzlActivity.class);
-                    intent.putExtra("name",nickname);
+                    intent.putExtra("name",wd_name.getText().toString());
                     intent.putExtra("avatar",avatar);
                     intent.putExtra("sex",sex);
                     intent.putExtra("uid",uid);
@@ -320,8 +346,48 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void changename(NameBean nameBean){
+        wd_name.setText(nameBean.getName());
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void changeavatar(String url){
-        Glide.with(getContext()).load(url).into(wd_toux);
+        Log.e("tokenbean",url);
+        //wd_toux.setImageResource(R.mipmap.my_touxiang);
+        wd_xj.setVisibility(View.VISIBLE);
+        if(url.equals("200")){
+            Glide.with(getContext())
+                    .load(url)
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .apply(new RequestOptions().error(R.mipmap.my_touxiang))
+                    .apply(new RequestOptions().placeholder(R.mipmap.my_touxiang))
+                    .into(wd_toux);
+            wd_lb.setVisibility(View.VISIBLE);
+            wd_yq.setVisibility(View.VISIBLE);
+            wd_xj.setVisibility(View.VISIBLE);
+            wo_dl.setVisibility(View.VISIBLE);
+            wd_name.setVisibility(View.GONE);
+            wd_hbm.setVisibility(View.GONE);
+            wd_jb.setText("0");
+            wd_jrjb.setText("0");
+            wd_ydsj.setText("0");
+
+        }
+        else{
+             wd_xj.setVisibility(View.GONE);
+            Glide.with(getContext())
+                    .load(url)
+                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                    .apply(new RequestOptions().error(R.mipmap.my_touxiang))
+                    .apply(new RequestOptions().placeholder(R.mipmap.my_touxiang))
+                    .into(wd_toux);
+        }
+
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getToken(TokenBean tokenBean){
+        if(tokenBean.getCode()==200){
+            personalPresenter.loadData();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -337,6 +403,9 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             wo_dl.setVisibility(View.VISIBLE);
             wd_name.setVisibility(View.GONE);
             wd_hbm.setVisibility(View.GONE);
+            wd_jb.setText("0");
+            wd_jrjb.setText("0");
+            wd_ydsj.setText("0");
             wd_toux.setImageResource(R.mipmap.my_touxiang);
             //Toast.makeText(getContext(),userBean.getMsg(),Toast.LENGTH_SHORT).show();
         }
@@ -347,6 +416,9 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
             wo_dl.setVisibility(View.VISIBLE);
             wd_name.setVisibility(View.GONE);
             wd_hbm.setVisibility(View.GONE);
+            wd_jb.setText("0");
+            wd_jrjb.setText("0");
+            wd_ydsj.setText("0");
             wd_toux.setImageResource(R.mipmap.my_touxiang);
             Toast.makeText(getContext(),userBean.getMsg(),Toast.LENGTH_SHORT).show();
         }
@@ -376,6 +448,7 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                 SharedPreferences.Editor editor=sharedPreferences.edit();
                 editor.putString("nickname",nickname);
                 editor.commit();
+
                 if (!userBean.getData().getAvatar().equals("http://api.damobi.cn")) {
                     Glide.with(getContext())
                             .load(userBean.getData().getAvatar())
@@ -434,6 +507,9 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                     wo_dl.setVisibility(View.VISIBLE);
                     wd_name.setVisibility(View.GONE);
                     wd_hbm.setVisibility(View.GONE);
+                    wd_jb.setText("0");
+                    wd_jrjb.setText("0");
+                    wd_ydsj.setText("0");
                     wd_toux.setImageResource(R.mipmap.my_touxiang);
                   //  Toast.makeText(getContext(),userBean.getMsg(),Toast.LENGTH_SHORT).show();
                     return;
@@ -445,10 +521,14 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                     wo_dl.setVisibility(View.VISIBLE);
                     wd_name.setVisibility(View.GONE);
                     wd_hbm.setVisibility(View.GONE);
+                    wd_jb.setText("0");
+                    wd_jrjb.setText("0");
+                    wd_ydsj.setText("0");
                     wd_toux.setImageResource(R.mipmap.my_touxiang);
                     Toast.makeText(getContext(),userBean.getMsg(),Toast.LENGTH_SHORT).show();
                 }
                 else{
+                    sr.finishRefresh();
                     user=userBean;
                     Log.e("bindshow2",userBean.getData().getBind_show()+"");
                     if(userBean.getData().getBind_show()==0){
@@ -482,10 +562,13 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
                         mobel=user.getData().getMobile();
                         bindwx=user.getData().getBind_wx();
                         wxname=user.getData().getWx_name()+"";
+                        Log.e("useravatar",userBean.getData().getAvatar()+"---");
                         if (!user.getData().getAvatar() .equals("http://api.damobi.cn")) {
                             Glide.with(getContext())
                                     .load(user.getData().getAvatar())
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                    .apply(new RequestOptions().error(R.mipmap.my_touxiang))
+                                    .apply(new RequestOptions().placeholder(R.mipmap.my_touxiang))
                                     .into(wd_toux);
                         }
                         else{
@@ -518,6 +601,12 @@ public class WodeFragment extends Fragment implements View.OnClickListener,IPers
     @Override
     public void onDetach() {
         super.onDetach();
-        personalPresenter.destoryView();
+        //personalPresenter.destoryView();
+    }
+
+    @Override
+    public void fetchData() {
+        personalPresenter=new IPersonalPresenterImpl(this,getContext());
+        personalPresenter.loadData();
     }
 }

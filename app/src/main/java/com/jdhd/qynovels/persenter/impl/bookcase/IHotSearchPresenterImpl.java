@@ -46,9 +46,9 @@ public class IHotSearchPresenterImpl implements IHotSearchPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<HotSearchBean>(){})
                     .subscribe(hotSearchBean->{
-                        if(hotSearchBean.getCode()==200&&hotSearchBean.getMsg().equals("请求成功")){
+                        //if(hotSearchBean.getCode()==200&&hotSearchBean.getMsg().equals("请求成功")){
                             iHotSearchView.onSuccess(hotSearchBean);
-                        }
+                       // }
                     },throwable->{
                         if(!throwable.getMessage().equals("")){
                             iHotSearchView.onError(throwable.getMessage());

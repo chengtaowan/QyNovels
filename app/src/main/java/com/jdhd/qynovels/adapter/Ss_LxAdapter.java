@@ -10,20 +10,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.module.bookcase.SearchContentBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Ss_LxAdapter extends RecyclerView.Adapter<Ss_LxAdapter.Ss_LxViewHolder>{
     private Context context;
-    private List<String> list;
+    private List<SearchContentBean.DataBean.ListBean> list;
     private onItemClick onItemClick;
 
     public void setOnItemClick(Ss_LxAdapter.onItemClick onItemClick) {
         this.onItemClick = onItemClick;
     }
 
-    public Ss_LxAdapter(Context context, List<String> list) {
+    public Ss_LxAdapter(Context context, List<SearchContentBean.DataBean.ListBean> list) {
         this.context = context;
         this.list = list;
     }
@@ -39,7 +40,7 @@ public class Ss_LxAdapter extends RecyclerView.Adapter<Ss_LxAdapter.Ss_LxViewHol
     @Override
     public void onBindViewHolder(@NonNull Ss_LxViewHolder holder, final int position) {
 
-       holder.tex.setText(list.get(position));
+       holder.tex.setText(list.get(position).getName());
        holder.itemView.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {

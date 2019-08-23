@@ -18,7 +18,7 @@ import java.util.Map;
 
 import okhttp3.CacheControl;
 import rxhttp.wrapper.param.RxHttp;
-import rxhttp.wrapper.parse.SimpleParser;
+
 
 public class IWelfarePresenterImpl implements IWelfarePresenter {
     private IWelfareView iWelfareView;

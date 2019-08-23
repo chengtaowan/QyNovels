@@ -50,6 +50,7 @@
             android:layout_height="match_parent"
             android:textColor="#2C2A35"
             android:textSize="15sp"
+            android:singleLine="true"
             android:background="@null"
             android:hint="请输入昵称"
             android:id="@+id/nc"

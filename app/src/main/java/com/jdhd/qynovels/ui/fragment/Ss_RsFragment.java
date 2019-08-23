@@ -64,7 +64,10 @@ public class Ss_RsFragment extends Fragment implements Ss_RsAdapter.onItemClick,
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                adapter.refresh(hotSearchBean.getData().getList());
+                if(hotSearchBean.getCode()==200){
+                    adapter.refresh(hotSearchBean.getData().getList());
+                }
+
             }
         });
     }

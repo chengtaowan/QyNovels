@@ -74,9 +74,10 @@ public class XxActivity extends AppCompatActivity implements IMessageView,View.O
     @Override
     public void onClick(View view) {
         if(R.id.xx_back==view.getId()){
-            Intent intent=new Intent(XxActivity.this,MainActivity.class);
-            intent.putExtra("page",3);
-            startActivity(intent);
+//            Intent intent=new Intent(XxActivity.this,MainActivity.class);
+//            intent.putExtra("page",3);
+//            startActivity(intent);
+            finish();
         }
     }
     @Override
@@ -89,5 +90,11 @@ public class XxActivity extends AppCompatActivity implements IMessageView,View.O
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

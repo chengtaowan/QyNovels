@@ -40,6 +40,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.AvatarBean;
+import com.jdhd.qynovels.module.personal.NameBean;
 import com.jdhd.qynovels.module.personal.SexBean;
 import com.jdhd.qynovels.persenter.impl.personal.IAvatarPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.ISexPresenterImpl;
@@ -108,6 +109,7 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         type=perintent.getStringExtra("type");
         Log.e("wxname",wxname);
         avatarPresenter=new IAvatarPresenterImpl(this,GrzlActivity.this);
+        sexPresenter=new ISexPresenterImpl(this,GrzlActivity.this);
         init();
         xgnc.setText(nickname);
         Log.e("nickname",nickname);
@@ -159,16 +161,18 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void changename(String name){
-        xgnc.setText(name);
+    public void changename(NameBean nameBean){
+        Log.e("changename",nameBean.getName());
+        xgnc.setText(nameBean.getName());
     }
 
     @Override
     public void onClick(View view) {
         if(R.id.zl_back==view.getId()){
-            Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
-            intent.putExtra("page", 3);
-            startActivity(intent);
+//            Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
+//            intent.putExtra("page", 3);
+//            startActivity(intent);
+            finish();
         }
         else if(R.id.xg_tx==view.getId()){
             mPhotoPopupWindow = new PhotoPopupWindow(GrzlActivity.this, new View.OnClickListener() {
@@ -196,8 +200,8 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         else if(R.id.zl_xb==view.getId()){
             int i = change_sex();
             if(i!=0){
-                sexPresenter=new ISexPresenterImpl(this,GrzlActivity.this,i);
-                sexPresenter.loadData();
+                Log.e("xbnum",i+"---");
+
             }
         }
         else if(R.id.zl_zh==view.getId()){
@@ -457,6 +461,8 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
                     editor.putString("sex","女");
                 }
                 editor.commit();
+                sexPresenter.setSex(chosesex);
+                sexPresenter.loadData();
                 Toast.makeText(GrzlActivity.this,"性别修改成功",Toast.LENGTH_SHORT).show();
             }
         });
@@ -594,9 +600,10 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
-        intent.putExtra("page", 3);
-        startActivity(intent);
+//        Intent intent=new Intent(GrzlActivity.this,MainActivity.class);
+//        intent.putExtra("page", 3);
+//        startActivity(intent);
+        finish();
     }
 
 }

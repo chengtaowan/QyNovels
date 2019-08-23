@@ -85,9 +85,10 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
     @Override
     public void onClick(View view) {
         if(R.id.fl_back==view.getId()){
-            Intent intent=new Intent(FlActivity.this,MainActivity.class);
-            intent.putExtra("page", 1);
-            startActivity(intent);
+//            Intent intent=new Intent(FlActivity.this,MainActivity.class);
+//            intent.putExtra("page", 1);
+//            startActivity(intent);
+            finish();
         }
         else if(R.id.fl_ss==view.getId()){
             Intent intent=new Intent(FlActivity.this,SsActivity.class);
@@ -99,9 +100,10 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent=new Intent(FlActivity.this,MainActivity.class);
-        intent.putExtra("fragment_flag", 2);
-        startActivity(intent);
+//        Intent intent=new Intent(FlActivity.this,MainActivity.class);
+//        intent.putExtra("fragment_flag", 2);
+//        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -113,7 +115,6 @@ public class FlActivity extends AppCompatActivity implements Fl_biaoti_Adapter.o
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
         MobclickAgent.onPause(this);
     }
 

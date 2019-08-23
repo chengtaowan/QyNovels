@@ -144,6 +144,7 @@ public class CaseBean {
              * backlistPercent : 3
              * lastTime : 14425154521
              * backlistId : 123
+             * charIndex:当前页的第一个字符在本章的位置
              */
 
             private int id;
@@ -154,9 +155,18 @@ public class CaseBean {
             private int readStatus;
             private int bookStatus;
             private int bookId;
-            private int backlistPercent;
+            private float backlistPercent;
             private long lastTime;
             private int backlistId;
+            private int charIndex;
+
+            public int getCharIndex() {
+                return charIndex;
+            }
+
+            public void setCharIndex(int charIndex) {
+                this.charIndex = charIndex;
+            }
 
             public int getId() {
                 return id;
@@ -222,11 +232,11 @@ public class CaseBean {
                 this.bookId = bookId;
             }
 
-            public int getBacklistPercent() {
+            public float getBacklistPercent() {
                 return backlistPercent;
             }
 
-            public void setBacklistPercent(int backlistPercent) {
+            public void setBacklistPercent(float backlistPercent) {
                 this.backlistPercent = backlistPercent;
             }
 

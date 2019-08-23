@@ -96,4 +96,10 @@ public class TxjlActivity extends AppCompatActivity implements View.OnClickListe
         super.onPause();
         MobclickAgent.onPause(this); // 不能遗漏
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

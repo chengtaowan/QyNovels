@@ -53,9 +53,9 @@ public class IVideoflPresenterImpl implements IVideoflPresenter {
                 .asParser(new SimpleParser<VideoflBean>(){})
                 .subscribe(videoflBean->{
                     Log.e("avatar",videoflBean.getCode()+"--"+videoflBean.getMsg());
-                    if(videoflBean.getCode()==200&&videoflBean.getMsg().equals("领取成功")){
+                    //if(videoflBean.getCode()==200&&videoflBean.getMsg().equals("领取成功")){
                         iVideoflView.onVideoSuccess(videoflBean);
-                    }
+                   // }
                 },throwable->{
                     iVideoflView.onVideoError(throwable.getMessage());
                 });

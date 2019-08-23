@@ -200,9 +200,10 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
             startActivity(intent);
         }
         else{
-            Intent intent=new Intent(YqActivity.this,MainActivity.class);
-            intent.putExtra("page",2);
-            startActivity(intent);
+//            Intent intent=new Intent(YqActivity.this,MainActivity.class);
+//            intent.putExtra("page",2);
+//            startActivity(intent);
+            finish();
         }
 
     }
@@ -345,5 +346,11 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

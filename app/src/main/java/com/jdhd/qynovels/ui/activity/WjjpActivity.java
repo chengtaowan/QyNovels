@@ -72,18 +72,20 @@ public class WjjpActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        Intent intent=new Intent(WjjpActivity.this,MainActivity.class);
-        intent.putExtra("page", 1);
-        startActivity(intent);
+//        Intent intent=new Intent(WjjpActivity.this,MainActivity.class);
+//        intent.putExtra("page", 1);
+//        startActivity(intent);
+        finish();
     }
 
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent=new Intent(WjjpActivity.this,MainActivity.class);
-        intent.putExtra("page", 1);
-        startActivity(intent);
+//        Intent intent=new Intent(WjjpActivity.this,MainActivity.class);
+//        intent.putExtra("page", 1);
+//        startActivity(intent);
+        finish();
     }
 
 

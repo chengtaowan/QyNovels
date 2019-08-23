@@ -93,4 +93,10 @@ public class MuluActivity extends AppCompatActivity implements IBookListView , V
         super.onPause();
         MobclickAgent.onPause(this); // 不能遗漏
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

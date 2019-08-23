@@ -51,13 +51,13 @@ public class NickNameBean {
          * nickname : 感受人工
          */
 
-        private String nickname;
+        private Object nickname;
 
-        public String getNickname() {
+        public Object getNickname() {
             return nickname;
         }
 
-        public void setNickname(String nickname) {
+        public void setNickname(Object nickname) {
             this.nickname = nickname;
         }
     }

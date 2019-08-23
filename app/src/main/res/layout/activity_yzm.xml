@@ -13,10 +13,11 @@
         <ImageView
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:src="@mipmap/dl_gb"
+            android:src="@mipmap/back_h"
             android:layout_marginTop="43dp"
             android:layout_marginLeft="30dp"
-            android:id="@+id/dl_gb"/>
+            android:id="@+id/dl_gb"
+            android:scaleType="fitXY"/>
     </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
@@ -65,6 +66,7 @@
             android:layout_height="wrap_content"
             android:textColor="#E8564E"
             android:textSize="14sp"
+            android:layout_marginLeft="5dp"
             android:id="@+id/phone"/>
     </LinearLayout>
     <RelativeLayout
@@ -84,7 +86,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
             android:id="@+id/again"
-            android:text=""
+            android:text="60s"
             android:gravity="center_vertical"
             android:textColor="#ffe8564e"
             android:textSize="16sp"

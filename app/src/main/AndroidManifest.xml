@@ -35,13 +35,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Main"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.YzmActivity"></activity>
-        <activity android:name=".ui.activity.FkActivity" />
-        <activity android:name=".ui.activity.PrizeListActivity" />
-        <activity android:name=".ui.activity.ZpActivity" />
-        <activity android:name=".ui.activity.YqActivity" />
-        <activity android:name=".ui.activity.XyActivity" />
-        <activity android:name=".ui.activity.FriendListActivity" />
+        <activity android:name=".ui.activity.HelpActivity" android:screenOrientation="portrait" ></activity>
+        <activity android:name=".ui.activity.YzmActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.FkActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.PrizeListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.ZpActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.YqActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.XyActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.FriendListActivity" android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="design_width_in_dp"
@@ -50,58 +51,59 @@
             android:name="design_height_in_dp"
             android:value="667" />
 
-        <activity android:name=".ui.activity.BindCodeActivity" />
-        <activity android:name=".ui.activity.XxActivity" />
-        <activity android:name=".ui.activity.ReadActivity" />
-        <activity android:name=".ui.activity.BindMobileActivity" />
-        <activity android:name=".ui.activity.MuluActivity" />
-        <activity android:name=".ui.activity.TxjlActivity" />
-        <activity android:name=".ui.activity.QdActivity" />
+        <activity android:name=".ui.activity.BindCodeActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.XxActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.ReadActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.BindMobileActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.MuluActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.TxjlActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.QdActivity" android:screenOrientation="portrait"/>
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:taskAffinity="net.sourceforge.simcpux" />
-        <activity android:name=".ui.activity.GgActivity" />
-        <activity android:name=".ui.activity.StartActivity">
+            android:taskAffinity="net.sourceforge.simcpux" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.GgActivity" android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.StartActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.ShareActivity" />
-        <activity android:name=".ui.activity.YdwActivity">
+        <activity android:name=".ui.activity.ShareActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.YdwActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="com.jdhd.qynovels" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.JbActivity" />
-        <activity android:name=".ui.activity.CjwtActivity" />
-        <activity android:name=".ui.activity.GywmActivity" />
-        <activity android:name=".ui.activity.TxActivity" />
-        <activity android:name=".ui.activity.ZhglActivity" />
-        <activity android:name=".ui.activity.SzActivity" />
-        <activity android:name=".ui.activity.XgncActivity" />
+        <activity android:name=".ui.activity.JbActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.CjwtActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.GywmActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.TxActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.ZhglActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.SzActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.XgncActivity" android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activity.GrzlActivity"
-            android:launchMode="singleTask" />
-        <activity android:name=".ui.activity.LoginActivity" />
-        <activity android:name=".ui.activity.MorePhbActivity" />
-        <activity android:name=".ui.activity.LsActivity" />
+            android:launchMode="singleTask" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.LoginActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.MorePhbActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.LsActivity" android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activity.SsActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".ui.activity.XqActivity" />
-        <activity android:name=".ui.activity.XssdActivity" />
-        <activity android:name=".ui.activity.WjjpActivity" />
-        <activity android:name=".ui.activity.PhbActivity" />
-        <activity android:name=".ui.activity.FlActivity" />
+            android:windowSoftInputMode="adjustPan|stateHidden" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.XqActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.XssdActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.WjjpActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.PhbActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activity.FlActivity" android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activity.MainActivity"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.ExtendReaderActivity" android:screenOrientation="portrait"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

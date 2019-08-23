@@ -55,7 +55,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private static final int TYEP_BOOK=0;
     private static final int TYEP_TOP=1;
     private static final int TYEP_CENTER=2;
-    private static final int TYEP_BOTTOM=3;
+    //private static final int TYEP_BOTTOM=3;
     private Context context;
     private Activity activity;
     private TTAdNative mTTAdNative;
@@ -92,10 +92,10 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_xqcenter, parent, false);
             viewHolder=new CenterViewHolder(view);
         }
-        else if(viewType==TYEP_BOTTOM){
-            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_xqbottom, parent, false);
-            viewHolder=new BottomViewHolder(view);
-        }
+//        else if(viewType==TYEP_BOTTOM){
+//            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_xqbottom, parent, false);
+//            viewHolder=new BottomViewHolder(view);
+//        }
         return viewHolder;
     }
 
@@ -150,6 +150,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
        else if(holder instanceof TopViewHolder){
            TopViewHolder viewHolder= (TopViewHolder) holder;
            //loadBannerAd(viewHolder.img,viewHolder.gg);
+           viewHolder.gg.setVisibility(View.GONE);
            loadExpressAd("926447562",viewHolder.img,viewHolder.gg);
            if(dataBean.getBook()==null){
                return;
@@ -205,9 +206,9 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                }
            });
        }
-       else if(holder instanceof BottomViewHolder){
-           BottomViewHolder viewHolder= (BottomViewHolder) holder;
-       }
+//       else if(holder instanceof BottomViewHolder){
+//           BottomViewHolder viewHolder= (BottomViewHolder) holder;
+//       }
     }
     private void loadExpressAd(String codeId,LinearLayout mExpressContainer,RelativeLayout gg) {
         mExpressContainer.removeAllViews();
@@ -280,6 +281,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                // TToast.show(mContext, "渲染成功");
                 mExpressContainer.removeAllViews();
                 mExpressContainer.addView(view);
+                gg.setVisibility(View.VISIBLE);
             }
         });
         //dislike设置
@@ -457,7 +459,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public int getItemCount() {
-        return 4;
+        return 3;
     }
 
     @Override
@@ -471,9 +473,9 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         else if(position==2){
             return TYEP_CENTER;
         }
-        else if(position==3){
-            return TYEP_BOTTOM;
-        }
+//        else if(position==3){
+//            return TYEP_BOTTOM;
+//        }
         return -1;
     }
 

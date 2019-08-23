@@ -93,14 +93,15 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(intent);
         }
         else if(R.id.more_back==view.getId()){
-            if(ptype==1){
-                Intent intent=new Intent(MorePhbActivity.this,FlActivity.class);
-                startActivity(intent);
-            }
-            else if(ptype==2){
-                Intent intent=new Intent(MorePhbActivity.this,WjjpActivity.class);
-                startActivity(intent);
-            }
+//            if(ptype==1){
+//                Intent intent=new Intent(MorePhbActivity.this,FlActivity.class);
+//                startActivity(intent);
+//            }
+//            else if(ptype==2){
+//                Intent intent=new Intent(MorePhbActivity.this,WjjpActivity.class);
+//                startActivity(intent);
+//            }
+            finish();
 
         }
     }
@@ -153,14 +154,15 @@ public class MorePhbActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if(ptype==1){
-            Intent intent=new Intent(MorePhbActivity.this,FlActivity.class);
-            startActivity(intent);
-        }
-        else if(ptype==2){
-            Intent intent=new Intent(MorePhbActivity.this,WjjpActivity.class);
-            startActivity(intent);
-        }
+//        if(ptype==1){
+//            Intent intent=new Intent(MorePhbActivity.this,FlActivity.class);
+//            startActivity(intent);
+//        }
+//        else if(ptype==2){
+//            Intent intent=new Intent(MorePhbActivity.this,WjjpActivity.class);
+//            startActivity(intent);
+//        }
+        finish();
     }
 
 

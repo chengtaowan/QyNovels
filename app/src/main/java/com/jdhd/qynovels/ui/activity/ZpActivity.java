@@ -204,9 +204,10 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
 
     @Override
     public void onClick(View view) {
-        Intent intent=new Intent(ZpActivity.this,MainActivity.class);
-        intent.putExtra("page",2);
-        startActivity(intent);
+//        Intent intent=new Intent(ZpActivity.this,MainActivity.class);
+//        intent.putExtra("page",2);
+//        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -419,5 +420,11 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this); // 不能遗漏
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

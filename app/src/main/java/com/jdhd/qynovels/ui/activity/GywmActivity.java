@@ -34,8 +34,7 @@ public class GywmActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        Intent intent=new Intent(GywmActivity.this,SzActivity.class);
-        startActivity(intent);
+        finish();
     }
     @Override
     protected void onResume() {
@@ -51,8 +50,7 @@ public class GywmActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent=new Intent(GywmActivity.this,MainActivity.class);
-        intent.putExtra("page", 3);
-        startActivity(intent);
+        finish();
+
     }
 }

@@ -34,10 +34,10 @@
             <!--</LinearLayout>-->
         <!--</com.google.android.material.appbar.AppBarLayout>-->
 
-         <com.glong.reader.widget.ReaderView
+         <com.glong.reader.readerwidget.ReaderView
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:id="@+id/readview"></com.glong.reader.widget.ReaderView>
+             android:id="@+id/readview"></com.glong.reader.readerwidget.ReaderView>
         <!--&lt;!&ndash;底部页面&ndash;&gt;-->
         <!--<LinearLayout-->
             <!--android:id="@+id/read_ll_bottom_menu"-->

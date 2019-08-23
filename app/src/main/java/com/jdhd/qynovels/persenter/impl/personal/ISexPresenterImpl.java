@@ -26,10 +26,14 @@ public class ISexPresenterImpl implements ISexPresenter {
     private String token;
     private int sex;
 
-    public ISexPresenterImpl(ISexView iSexView, Context context, int sex) {
+    public void setSex(int sex) {
+        this.sex = sex;
+    }
+
+    public ISexPresenterImpl(ISexView iSexView, Context context) {
         this.iSexView = iSexView;
         this.context = context;
-        this.sex = sex;
+
     }
 
     @Override

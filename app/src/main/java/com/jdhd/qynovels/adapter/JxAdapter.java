@@ -3,6 +3,7 @@ package com.jdhd.qynovels.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,6 +105,7 @@ public class JxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> imp
            if(list.get(position).getType()==MyApp.ModuleType.kSectionTypeBanner){
                for(int i=0;i<list.get(position).getList().size();i++){
                    imglist.add(list.get(position).getList().get(i).getUrl());
+                   Log.e("imagelist",list.get(position).getList().get(i).getUrl());
                }
            }
            viewHolder.banner.setImageLoader(new GlideImageLoader());   //设置图片加载器

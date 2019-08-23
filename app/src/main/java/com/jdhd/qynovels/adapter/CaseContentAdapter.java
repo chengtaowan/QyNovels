@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -188,9 +189,16 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     delBookRankPresenter.loadData();
                 }
                 database=dbUtils.getWritableDatabase();
+                SharedPreferences sharedPreferences=context.getSharedPreferences("token",Context.MODE_PRIVATE);
+                String token=sharedPreferences.getString("token","");
                 for(int i=0;i<checkList.size();i++){
                     Log.e("checklist",checkList.get(i)+"");
-                    database.execSQL("delete from usercase where name='"+list.get(Integer.parseInt(checkList.get(i))).getName()+"'");
+                    if(token.equals("")){
+                        database.execSQL("delete from usercase where user='visitor' and name='"+list.get(Integer.parseInt(checkList.get(i))).getName()+"'");
+                    }
+                    else{
+                        database.execSQL("delete from usercase where user='user' and name='"+list.get(Integer.parseInt(checkList.get(i))).getName()+"'");
+                    }
                     list.remove(Integer.parseInt(checkList.get(i)));
                 }
 

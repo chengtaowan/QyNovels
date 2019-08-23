@@ -77,17 +77,19 @@ public class XssdActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        Intent intent=new Intent(XssdActivity.this, MainActivity.class);
-        intent.putExtra("page",1);
-        startActivity(intent);
+//        Intent intent=new Intent(XssdActivity.this, MainActivity.class);
+//        intent.putExtra("page",1);
+//        startActivity(intent);
+        finish();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent=new Intent(XssdActivity.this, MainActivity.class);
-        intent.putExtra("page",1);
-        startActivity(intent);
+//        Intent intent=new Intent(XssdActivity.this, MainActivity.class);
+//        intent.putExtra("page",1);
+//        startActivity(intent);
+        finish();
     }
 
 //    @Override
@@ -146,7 +148,6 @@ public class XssdActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
         MobclickAgent.onPause(this); // 不能遗漏
     }
 

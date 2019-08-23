@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.Ss_LxAdapter;
+import com.jdhd.qynovels.module.bookcase.SearchContentBean;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 
 import java.util.ArrayList;
@@ -29,8 +30,14 @@ import java.util.List;
 public class Ss_LxFragment extends Fragment implements Ss_LxAdapter.onItemClick{
 
     private RecyclerView rv;
-    private List<String> list=new ArrayList<>();
+    private List<SearchContentBean.DataBean.ListBean> list=new ArrayList<>();
+
+    public Ss_LxFragment(List<SearchContentBean.DataBean.ListBean> list) {
+        this.list = list;
+    }
+
     public Ss_LxFragment() {
+
         // Required empty public constructor
     }
 
@@ -45,9 +52,6 @@ public class Ss_LxFragment extends Fragment implements Ss_LxAdapter.onItemClick{
     }
 
     private void init(View view) {
-        for(int i=0;i<10;i++){
-            list.add("万历十五年"+i);
-        }
         rv=view.findViewById(R.id.ss_rs_lx_rv);
         LinearLayoutManager manager=new LinearLayoutManager(getContext());
         rv.setLayoutManager(manager);
@@ -63,6 +67,7 @@ public class Ss_LxFragment extends Fragment implements Ss_LxAdapter.onItemClick{
     @Override
     public void onLxClick(int index) {
         Intent intent=new Intent(getContext(), XqActivity.class);
+        intent.putExtra("id",list.get(index).getBookId());
         startActivity(intent);
     }
 }

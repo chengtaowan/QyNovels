@@ -60,10 +60,11 @@ public class FriendListActivity extends AppCompatActivity implements IShareListV
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(FriendListActivity.this,YqActivity.class);
-                intent.putExtra("title",title);
-                intent.putExtra("path",path);
-                startActivity(intent);
+//                Intent intent=new Intent(FriendListActivity.this,YqActivity.class);
+//                intent.putExtra("title",title);
+//                intent.putExtra("path",path);
+//                startActivity(intent);
+                finish();
             }
         });
     }
@@ -97,5 +98,11 @@ public class FriendListActivity extends AppCompatActivity implements IShareListV
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

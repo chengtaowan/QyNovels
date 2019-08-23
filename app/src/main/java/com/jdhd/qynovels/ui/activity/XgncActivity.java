@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.personal.NameBean;
 import com.jdhd.qynovels.module.personal.NickNameBean;
 import com.jdhd.qynovels.persenter.impl.personal.INickNamePresenterImpl;
 import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
@@ -75,11 +76,12 @@ public class XgncActivity extends AppCompatActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.e("nickbean",nickNameBean.getMsg());
                 if(nickNameBean.getCode()!=200){
                     Toast.makeText(XgncActivity.this,nickNameBean.getMsg(),Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    EventBus.getDefault().post(nickNameBean.getData().getNickname());
+                    EventBus.getDefault().post(new NameBean(nickNameBean.getData().getNickname().toString()));
                     Intent intent=new Intent(XgncActivity.this,GrzlActivity.class);
                     startActivity(intent);
                 }
@@ -101,7 +103,12 @@ public class XgncActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
         MobclickAgent.onPause(this); // 不能遗漏
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

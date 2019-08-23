@@ -35,6 +35,7 @@ import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.CaseAdapter;
 import com.jdhd.qynovels.adapter.ListAdapter;
+import com.jdhd.qynovels.module.bookcase.AddBookBean;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
 import com.jdhd.qynovels.module.bookcase.ConfigBean;
 import com.jdhd.qynovels.module.personal.UserBean;
@@ -42,7 +43,6 @@ import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IConfigPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.activity.LsActivity;
-import com.jdhd.qynovels.ui.activity.QdActivity;
 import com.jdhd.qynovels.ui.activity.SsActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.utils.AppSigning;
@@ -56,6 +56,10 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +80,8 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     private int hotid;
     private DbUtils dbUtils;
     private SQLiteDatabase database;
-    private Cursor hotcursor,listcursor;
+    private Cursor hotcursor;
+    private Cursor listcursor;
     private SmartRefreshLayout sr;
     private boolean hasNetWork;
     private String token;
@@ -106,15 +111,63 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("statud","oncreate");
         adapter=new CaseAdapter(getContext(),getActivity());
+
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void change(AddBookBean addBookBean){
+        Log.e("addcode",addBookBean.getCode()+"[[");
+        if(addBookBean.getCode()==9005){
+            List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
+            List<CaseBean.DataBean.ListBean> newlist =new ArrayList<>();
+            database=dbUtils.getReadableDatabase();
+            listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
+            while(listcursor.moveToNext()){
+                CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                list.add(listBean);
+            }
+            Log.e("caselistsizerl",list.size()+"[[");
+            for(int i=0;i<list.size();i++){
+                if(!list.get(i).getReadContent().equals("")){
+                    newlist.add(list.get(i));
+                }
+
+            }
+            if(newlist.size()!=0){
+                adapter.refreshlist(newlist);
+                sr.finishRefresh();
+            }
+//            else{
+//                casePresenter.loadData();
+//            }
+        }
+        else{
+            casePresenter=new ICasePresenterImpl(this,getContext());
+            casePresenter.loadData();
+        }
+
+        Log.e("change","收到");
 
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // 标记
-        //isCreated = true;
+        Log.e("statud","onstart");
+        personalPresenter.loadData();
+//        // 标记
+//        isCreated = true;
 //        casePresenter=new ICasePresenterImpl(new ICaseView() {
 //            @Override
 //            public void onSuccess(CaseBean caseBean) {
@@ -138,112 +191,125 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        // 标记
+        Log.e("statud","onattach");
+//        // 标记
         isCreated = true;
-        configPresenter=new IConfigPresenterImpl(new IConfigView() {
-            @Override
-            public void onConfigSuccess(ConfigBean configBean) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(configBean.getData().getList().get(1).getStatus()==20){
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    loadListAd();
-                                }
-                            }).start();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onConfigError(String error) {
-               Log.e("configerror",error);
-            }
-        },getContext());
-        configPresenter.loadData();
-
-        casePresenter=new ICasePresenterImpl(new ICaseView() {
-            @Override
-            public void onSuccess(CaseBean caseBean) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(sr!=null){
-                            sr.finishRefresh();
-                        }
-                        adapter.refreshlist(caseBean.getData().getList());
-                        adapter.refreshhot(caseBean.getData().getHot());
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        }, getContext());
-        casePresenter.loadData();
+//        configPresenter=new IConfigPresenterImpl(new IConfigView() {
+//            @Override
+//            public void onConfigSuccess(ConfigBean configBean) {
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if(configBean.getData().getList().get(1).getStatus()==20){
+//                            new Thread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    loadListAd();
+//                                }
+//                            }).start();
+//                        }
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onConfigError(String error) {
+//               Log.e("configerror",error);
+//            }
+//        },getContext());
+//        configPresenter.loadData();
+//
+//        casePresenter=new ICasePresenterImpl(new ICaseView() {
+//            @Override
+//            public void onSuccess(CaseBean caseBean) {
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if(sr!=null){
+//                            sr.finishRefresh();
+//                        }
+//                        adapter.refreshlist(caseBean.getData().getList());
+//                        adapter.refreshhot(caseBean.getData().getHot());
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, getContext());
+//        casePresenter.loadData();
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        configPresenter=new IConfigPresenterImpl(new IConfigView() {
-            @Override
-            public void onConfigSuccess(ConfigBean configBean) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(configBean.getData().getList().get(1).getStatus()==20){
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    loadListAd();
-                                }
-                            }).start();
-                        }
-                    }
-                });
-            }
+        Log.e("statud","onresume");
+//        configPresenter=new IConfigPresenterImpl(new IConfigView() {
+//            @Override
+//            public void onConfigSuccess(ConfigBean configBean) {
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if(configBean.getData().getList().get(1).getStatus()==20){
+//                            new Thread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    loadListAd();
+//                                }
+//                            }).start();
+//                        }
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onConfigError(String error) {
+//                Log.e("configerror",error);
+//            }
+//        },getContext());
+//        configPresenter.loadData();
+//        casePresenter=new ICasePresenterImpl(new ICaseView() {
+//            @Override
+//            public void onSuccess(CaseBean caseBean) {
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if(sr!=null){
+//                            sr.finishRefresh();
+//                        }
+//                        adapter.refreshlist(caseBean.getData().getList());
+//                        adapter.refreshhot(caseBean.getData().getHot());
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//
+//            }
+//        }, getContext());
+//        casePresenter.loadData();
+    }
 
-            @Override
-            public void onConfigError(String error) {
-                Log.e("configerror",error);
-            }
-        },getContext());
-        configPresenter.loadData();
-        casePresenter=new ICasePresenterImpl(new ICaseView() {
-            @Override
-            public void onSuccess(CaseBean caseBean) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(sr!=null){
-                            sr.finishRefresh();
-                        }
-                        adapter.refreshlist(caseBean.getData().getList());
-                        adapter.refreshhot(caseBean.getData().getHot());
-                    }
-                });
-            }
 
-            @Override
-            public void onError(String error) {
-
-            }
-        }, getContext());
-        casePresenter.loadData();
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e("statud","onpause");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.e("statud","oncreateview");
         View view= inflater.inflate(R.layout.fragment_case, container, false);
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         SharedPreferences preferences=getActivity().getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
         iCaseView=this;
@@ -253,13 +319,14 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         configPresenter.loadData();
         String sha1 = AppSigning.getSha1(getContext());
         Log.e("sha1",sha1);
-        if(iCaseView!=null){
-            casePresenter=new ICasePresenterImpl(iCaseView,getContext());
+        casePresenter=new ICasePresenterImpl(this,getContext());
+        if(!token.equals("")){
             casePresenter.loadData();
         }
         dbUtils=new DbUtils(getContext());
         init(view);
         hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
+        Log.e("hasnetwork",hasNetWork+"---");
         if(!hasNetWork){
             jz.setVisibility(View.GONE);
            database=dbUtils.getReadableDatabase();
@@ -278,6 +345,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
            Log.e("casetoken",token+"---");
            if(!token.equals("")){
                List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
+               database=dbUtils.getReadableDatabase();
                listcursor=database.rawQuery("select * from usercase where user='user'",new String[]{});
                while(listcursor.moveToNext()){
                    CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
@@ -297,6 +365,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
            }
            else{
                List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
+               database=dbUtils.getReadableDatabase();
                listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
                while(listcursor.moveToNext()){
                    CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
@@ -315,6 +384,49 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                adapter.refreshlist(list);
            }
         }
+        else{
+            Log.e("casetoken",token+"---");
+            if(!token.equals("")){
+
+            }
+            else{
+                List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
+                List<CaseBean.DataBean.ListBean> newlist =new ArrayList<>();
+                database=dbUtils.getReadableDatabase();
+                listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
+                while(listcursor.moveToNext()){
+                    CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                    listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                    listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                    listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                    listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                    listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                    listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                    listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                    listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                    listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                    listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                    list.add(listBean);
+                }
+                Log.e("caselistsize",list.size()+"]]]");
+                for(int i=0;i<list.size();i++){
+                    if(!list.get(i).getReadContent().equals("")){
+                        newlist.add(list.get(i));
+                    }
+
+                }
+                if(newlist.size()!=0){
+                    adapter.refreshlist(newlist);
+                    jz.setVisibility(View.GONE);
+                }
+                else{
+                    casePresenter.loadData();
+                }
+
+            }
+
+
+            }
 
         return  view;
     }
@@ -355,17 +467,55 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
 
               }
               else{
-                  casePresenter.loadData();
-                  //mData.clear();
-                  if(studia==20){
-                      new Thread(new Runnable() {
-                          @Override
-                          public void run() {
-                              loadListAd();
+                  if(token.equals("")){
+                      List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
+                      List<CaseBean.DataBean.ListBean> newlist =new ArrayList<>();
+                      database=dbUtils.getReadableDatabase();
+                      listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
+                      while(listcursor.moveToNext()){
+                          CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                          listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                          listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                          listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                          listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                          listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                          listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                          listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                          listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                          listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                          listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                          list.add(listBean);
+                      }
+                      Log.e("caselistsizerl",list.size()+"[[");
+                      for(int i=0;i<list.size();i++){
+                          if(!list.get(i).getReadContent().equals("")){
+                              newlist.add(list.get(i));
                           }
-                      }).start();
+
+                      }
+                      if(newlist.size()!=0){
+                          adapter.refreshlist(newlist);
+                          sr.finishRefresh();
+                      }
+                      else{
+                          casePresenter.loadData();
+                      }
+
                   }
-                  adapter.refreshfeed(mData);
+                  else{
+                      casePresenter.loadData();
+                      //mData.clear();
+                      if(studia==20){
+                          new Thread(new Runnable() {
+                              @Override
+                              public void run() {
+                                  loadListAd();
+                              }
+                          }).start();
+                      }
+                      adapter.refreshfeed(mData);
+                  }
+
               }
 
           }
@@ -387,8 +537,8 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         }
         else if(R.id.sj_qd==view.getId()){
             if(!token.equals("")){
-                Intent intent=new Intent(getActivity(), QdActivity.class);
-                startActivity(intent);
+//                Intent intent=new Intent(getActivity(), QdActivity.class);
+//                startActivity(intent);
             }
             else{
                 Toast.makeText(getContext(),"请先登录",Toast.LENGTH_SHORT).show();
@@ -403,9 +553,11 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.e("caselist","casebean");
                 if(sr!=null){
                     sr.finishRefresh();
                 }
+                jz.setVisibility(View.GONE);
                 database=dbUtils.getWritableDatabase();
                 database.execSQL("delete from hot");
                 database.execSQL("delete from usercase");
@@ -428,6 +580,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                 }
                 else{
                     for(int i=0;i<caseBean.getData().getList().size();i++){
+                        Log.e("notokencontent",caseBean.getData().getList().get(i).getReadContent()+"---");
                         database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
                                 " values('visitor'," +
                                 "'"+caseBean.getData().getList().get(i).getName()+"'," +
@@ -475,6 +628,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         if(casePresenter!=null){
             casePresenter.destoryView();
         }
@@ -567,7 +721,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
 
                 }
             }, getContext());
-            casePresenter.loadData();
+            //casePresenter.loadData();
         }
     }
 

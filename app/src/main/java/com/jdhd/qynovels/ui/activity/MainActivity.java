@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
        adapter.refresh(list);
        vp.setAdapter(adapter);
        vp.setCurrentItem(0);
-       vp.setOffscreenPageLimit(3);
        rb_case.setChecked(true);
 
     }

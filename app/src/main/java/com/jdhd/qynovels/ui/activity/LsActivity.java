@@ -113,31 +113,33 @@ public class LsActivity extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        if(type==1){
-            Intent intent=new Intent(LsActivity.this,MainActivity.class);
-            intent.putExtra("page", 0);
-            startActivity(intent);
-        }
-        else if(type==4){
-            Intent intent=new Intent(LsActivity.this,MainActivity.class);
-            intent.putExtra("page", 3);
-            startActivity(intent);
-        }
+//        if(type==1){
+//            Intent intent=new Intent(LsActivity.this,MainActivity.class);
+//            intent.putExtra("page", 0);
+//            startActivity(intent);
+//        }
+//        else if(type==4){
+//            Intent intent=new Intent(LsActivity.this,MainActivity.class);
+//            intent.putExtra("page", 3);
+//            startActivity(intent);
+//        }
+        finish();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if(type==1){
-            Intent intent=new Intent(LsActivity.this,MainActivity.class);
-            intent.putExtra("page", 0);
-            startActivity(intent);
-        }
-        else if(type==4){
-            Intent intent=new Intent(LsActivity.this,MainActivity.class);
-            intent.putExtra("page", 3);
-            startActivity(intent);
-        }
+//        if(type==1){
+//            Intent intent=new Intent(LsActivity.this,MainActivity.class);
+//            intent.putExtra("page", 0);
+//            startActivity(intent);
+//        }
+//        else if(type==4){
+//            Intent intent=new Intent(LsActivity.this,MainActivity.class);
+//            intent.putExtra("page", 3);
+//            startActivity(intent);
+//        }
+        finish();
     }
     @Override
     protected void onResume() {

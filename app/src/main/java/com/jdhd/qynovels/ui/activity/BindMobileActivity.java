@@ -192,4 +192,10 @@ public class BindMobileActivity extends AppCompatActivity implements View.OnClic
         super.onPause();
         MobclickAgent.onPause(this);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

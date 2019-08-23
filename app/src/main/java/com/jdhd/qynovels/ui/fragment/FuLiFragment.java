@@ -74,7 +74,6 @@ import com.jdhd.qynovels.persenter.impl.personal.IWelfarePresenterImpl;
 import com.jdhd.qynovels.ui.activity.FriendListActivity;
 import com.jdhd.qynovels.ui.activity.LoginActivity;
 import com.jdhd.qynovels.ui.activity.MainActivity;
-import com.jdhd.qynovels.ui.activity.QdActivity;
 
 import com.jdhd.qynovels.ui.activity.YqActivity;
 import com.jdhd.qynovels.ui.activity.ZpActivity;
@@ -240,8 +239,15 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.e("shuju",videoflBean.getData().getAward()+"");
-                Toast.makeText(getContext(),"观看完成，获取"+videoflBean.getData().getAward()+"金币",Toast.LENGTH_SHORT).show();
+                if(videoflBean.getCode()==200){
+                    Log.e("shuju",videoflBean.getData().getAward()+"");
+                    Toast.makeText(getContext(),"观看完成，获取"+videoflBean.getData().getAward()+"金币",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getContext(),videoflBean.getMsg(),Toast.LENGTH_SHORT).show();
+
+                }
+
 
             }
         });
@@ -292,6 +298,7 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.e("singstring",string);
                 Toast.makeText(getContext(),"签到成功",Toast.LENGTH_SHORT).show();
                 signSetingPresenter.loadData();
             }
@@ -971,6 +978,7 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
                         }
                         @Override
                         public void onAdClose() {
+                            Log.e("fltype",type+"===");
                             if(type==1){
                                 android.util.Log.e("watch","观看完成3");
                                 singInVideoPresenter.loadData();
@@ -1146,8 +1154,8 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
                 welfarePresenter.loadData();
             }
             if(signSetingPresenter!=null){
-                SharedPreferences preferences=getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-                token = preferences.getString("token", "");
+//                SharedPreferences preferences=getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
+//                token = preferences.getString("token", "");
                 Log.e("fulitoken",token);
                 signSetingPresenter.setToken(token);
                 signSetingPresenter.loadData();

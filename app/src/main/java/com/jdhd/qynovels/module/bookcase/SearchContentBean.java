@@ -50,6 +50,15 @@ public class SearchContentBean {
 
     public static class DataBean {
         private List<ListBean> list;
+        private List<ListBean> recommend;
+
+        public List<ListBean> getRecommend() {
+            return recommend;
+        }
+
+        public void setRecommend(List<ListBean> recommend) {
+            this.recommend = recommend;
+        }
 
         public List<ListBean> getList() {
             return list;
@@ -172,6 +181,23 @@ public class SearchContentBean {
 
             public void setHot(int hot) {
                 this.hot = hot;
+            }
+
+            @Override
+            public String toString() {
+                return "ListBean{" +
+                        "bookId=" + bookId +
+                        ", name='" + name + '\'' +
+                        ", image='" + image + '\'' +
+                        ", intro='" + intro + '\'' +
+                        ", author='" + author + '\'' +
+                        ", grade=" + grade +
+                        ", finishStatus=" + finishStatus +
+                        ", number=" + number +
+                        ", search=" + search +
+                        ", attention=" + attention +
+                        ", hot=" + hot +
+                        '}';
             }
         }
     }

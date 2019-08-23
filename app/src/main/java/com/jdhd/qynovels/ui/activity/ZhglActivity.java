@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.BindWxBean;
 import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
+import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.umeng.analytics.MobclickAgent;
@@ -35,6 +37,8 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
     private RelativeLayout zh_zh,zh_sj,zh_wx;
     private int type;
     private Button tc;
+    private DbUtils dbUtils;
+    private SQLiteDatabase database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +47,7 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
         if(!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
+        dbUtils=new DbUtils(this);
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent=getIntent();
@@ -108,15 +113,16 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
        if(R.id.zh_back==view.getId()){
-           if(type==1){
-              Intent intent=new Intent(ZhglActivity.this,GrzlActivity.class);
-
-              startActivity(intent);
-           }
-           else{
-               Intent intent=new Intent(ZhglActivity.this,SzActivity.class);
-               startActivity(intent);
-           }
+//           if(type==1){
+//              Intent intent=new Intent(ZhglActivity.this,GrzlActivity.class);
+//
+//              startActivity(intent);
+//           }
+//           else{
+//               Intent intent=new Intent(ZhglActivity.this,SzActivity.class);
+//               startActivity(intent);
+//           }
+           finish();
        }
        else if(R.id.zh_sj==view.getId()){
            if(sj.getText().equals("未绑定")){
@@ -152,11 +158,15 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
            SharedPreferences.Editor editor=preferences.edit();
            editor.clear();
            editor.commit();
+           database=dbUtils.getWritableDatabase();
+           database.execSQL("delete from usercase");
+           database.execSQL("delete from readhistory");
            Intent intent=new Intent(ZhglActivity.this,MainActivity.class);
            intent.putExtra("page",3);
            intent.setAction("exit");
            startActivity(intent);
            MobclickAgent.onProfileSignOff();
+           EventBus.getDefault().post("200");
        }
     }
 
@@ -181,8 +191,9 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent=new Intent(ZhglActivity.this,MainActivity.class);
-        intent.putExtra("page", 3);
-        startActivity(intent);
+//        Intent intent=new Intent(ZhglActivity.this,MainActivity.class);
+//        intent.putExtra("page", 3);
+//        startActivity(intent);
+        finish();
     }
 }
