@@ -53,6 +53,7 @@ public class FkActivity extends AppCompatActivity implements View.OnClickListene
     private List<RelativeLayout> rlist=new ArrayList<>();
     private LinearLayout ll2;
     private String token;
+    private String islogin;
     private IFeedBackPresenterImpl feedBackPresenter;
     private List<String> list=new ArrayList<>();
 
@@ -67,6 +68,7 @@ public class FkActivity extends AppCompatActivity implements View.OnClickListene
         MainActivity.mSelectPath.clear();
         Intent intent = getIntent();
         token=intent.getStringExtra("token");
+        islogin=intent.getStringExtra("islogin");
         feedBackPresenter=new IFeedBackPresenterImpl(this,this);
         init();
     }

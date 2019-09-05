@@ -12,6 +12,7 @@ import com.jdhd.qynovels.persenter.inter.personal.IPersonalPresenter;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.personal.ILoginView;
 import com.jdhd.qynovels.view.personal.IPersonalView;
+import com.rxjava.rxlife.RxLife;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +26,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class ILoginPresenterImpl implements ILoginPresenter {
     private ILoginView iLoginView;
     private Context context;
-    private String brand,model,sv,imei,sim;
+    private String brand,model,sv,imei,sim,source="";
     private int os,root,network,time;
     private String phone,yzm;
     private String token;
@@ -53,6 +54,12 @@ public class ILoginPresenterImpl implements ILoginPresenter {
         map.put("sim",sim+"");
         map.put("network",network+"");
         map.put("time",time+"");
+        if(source.equals("null")){
+            map.put("source","yingyongbao");
+        }
+        else{
+            map.put("source",source+"");
+        }
         String s = DeviceInfoUtils.md5(DeviceInfoUtils.getCompareTo(map));
         map.put("sign",s);
         Log.e("tel",phone);
@@ -67,6 +74,7 @@ public class ILoginPresenterImpl implements ILoginPresenter {
         Log.e("network",network+"");
         Log.e("time",time+"");
         Log.e("sign",s);
+        Log.e("sourcelo3",source+"---");
         RxHttp.postForm(MyApp.Url.baseUrl+"token")
                 .add(map)
                 .asParser(new SimpleParser<TokenBean>(){})
@@ -101,6 +109,12 @@ public class ILoginPresenterImpl implements ILoginPresenter {
         sim=DeviceInfoUtils.getSIM(context);
         network=DeviceInfoUtils.getNetWork(context);
         time=DeviceInfoUtils.getTime();
+        source=DeviceInfoUtils.getChannelName(context);
+        Log.e("sourcelo1",source+"---");
+        if(source.equals("")){
+            source="yingyongbao";
+        }
+        Log.e("sourcelo2",source+"---");
     }
 
 }

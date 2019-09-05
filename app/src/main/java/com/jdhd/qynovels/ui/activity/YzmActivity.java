@@ -20,6 +20,8 @@ import com.jdhd.qynovels.module.personal.CaptchaBean;
 import com.jdhd.qynovels.module.personal.TokenBean;
 import com.jdhd.qynovels.persenter.impl.personal.ICaptchaPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.ILoginPresenterImpl;
+import com.jdhd.qynovels.ui.fragment.CaseFragment;
+import com.jdhd.qynovels.ui.fragment.ShopFragment;
 import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.ICaptchaView;
@@ -221,6 +223,7 @@ public class YzmActivity extends AppCompatActivity implements View.OnClickListen
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.e("isloginiii",tokenBean.getCode()+"--"+tokenBean.getMsg());
                 if(tokenBean.getCode()==9007){
                     Toast toast = Toast.makeText(YzmActivity.this, tokenBean.getMsg(), Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
@@ -231,7 +234,9 @@ public class YzmActivity extends AppCompatActivity implements View.OnClickListen
                     SharedPreferences.Editor editor=preferences.edit();
                     editor.putString("token",tokenBean.getData().getToken());
                     editor.putString("login","success");
+                    editor.putString("islogin",tokenBean.getData().getIs_login()+"");
                     editor.commit();
+                    Log.e("islogin",tokenBean.getData().getIs_login()+"+++");
                     if(type==1){
                         Intent intent=new Intent(YzmActivity.this,MainActivity.class);
                         intent.putExtra("page", 2);
@@ -244,6 +249,11 @@ public class YzmActivity extends AppCompatActivity implements View.OnClickListen
                         startActivity(intent);
                         EventBus.getDefault().post(tokenBean);
                     }
+
+                    ShopFragment.lhb.setVisibility(View.GONE);
+                    ShopFragment.closePopWindow();
+                    CaseFragment.lhb.setVisibility(View.GONE);
+                    CaseFragment.closePopWindow();
                 }
                 else{
                     Toast toast = Toast.makeText(YzmActivity.this, tokenBean.getMsg(), Toast.LENGTH_LONG);

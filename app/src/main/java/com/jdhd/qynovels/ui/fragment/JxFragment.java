@@ -23,12 +23,17 @@ import com.bumptech.glide.Glide;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.JxAdapter;
 import com.jdhd.qynovels.module.bookshop.ShopBean;
+import com.jdhd.qynovels.module.personal.ChangeSexBean;
 import com.jdhd.qynovels.persenter.impl.bookshop.IJxPresenterImpl;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.bookshop.IJxView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,16 +69,23 @@ public class JxFragment extends Fragment implements IJxView {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_jx, container, false);
+
         sharedPreferences=getContext().getSharedPreferences("sex", Context.MODE_PRIVATE);
         sex = sharedPreferences.getString("sex", "");
+        Log.e("shopbean",sex);
         if(sex.equals("女")){
            psex=30;
         }
+        else{
+            psex=20;
+        }
+        Log.e("shopbean",psex+"---");
         jxPresenter=new IJxPresenterImpl(this,1,getContext());
         jxPresenter.setSex(psex);
         jxPresenter.loadData();
         hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
         init(view);
+        Log.e("shopbean","oncreate");
         return view;
     }
 
@@ -87,15 +99,6 @@ public class JxFragment extends Fragment implements IJxView {
         rv.setLayoutManager(manager);
         adapter=new JxAdapter(getContext());
         rv.setAdapter(adapter);
-//        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                if(recyclerView.getLayoutManager() !=null) {
-//                    //getPositionAndOffset();
-//                }
-//            }
-//        });
         sr.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
@@ -121,63 +124,22 @@ public class JxFragment extends Fragment implements IJxView {
         super.onResume();
         //scrollToPosition();
     }
-    private void scrollToPosition() {
-
-        sharedPreferences= getContext().getSharedPreferences("jx",Activity.MODE_PRIVATE);
-
-        lastOffset=sharedPreferences.getInt("lastOffset",0);
-
-        lastPosition=sharedPreferences.getInt("lastPosition",0);
-
-        if(rv.getLayoutManager() !=null&&lastPosition>=0) {
-
-            ((LinearLayoutManager)rv.getLayoutManager()).scrollToPositionWithOffset(lastPosition,lastOffset);
-
-        }
-
-    }
-
-
-    private  void getPositionAndOffset() {
-
-        LinearLayoutManager layoutManager = (LinearLayoutManager)rv.getLayoutManager();
-
-//获取可视的第一个view
-
-        View topView = layoutManager.getChildAt(0);
-
-        if(topView !=null) {
-
-//获取与该view的顶部的偏移量
-
-            lastOffset= topView.getTop();
-
-//得到该View的数组位置
-
-            lastPosition= layoutManager.getPosition(topView);
-
-            sharedPreferences= getContext().getSharedPreferences("jx", Activity.MODE_PRIVATE);
-
-            SharedPreferences.Editor editor =sharedPreferences.edit();
-
-            editor.putInt("lastOffset",lastOffset);
-
-            editor.putInt("lastPosition",lastPosition);
-
-            editor.commit();
-
-        }
-
-    }
 
     @Override
     public void onSuccess(ShopBean shopBean) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                sr.finishRefresh();
-                jz.setVisibility(View.GONE);
-               adapter.refresh(shopBean.getData().getList());
+                Log.e("shopbean",shopBean.getCode()+"--"+shopBean.getMsg());
+                if(shopBean.getCode()==200){
+                    sr.finishRefresh();
+                    jz.setVisibility(View.GONE);
+                    adapter.refresh(shopBean.getData().getList());
+                }
+                else{
+                    Toast.makeText(getContext(),shopBean.getMsg(),Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
@@ -190,6 +152,7 @@ public class JxFragment extends Fragment implements IJxView {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //jxPresenter.destoryView();
+
+
     }
 }

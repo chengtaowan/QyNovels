@@ -1,8 +1,11 @@
 package com.jdhd.qynovels.readerview;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -67,5 +70,19 @@ public class ScreenUtils {
             lp.screenBrightness = (brightness <= 0 ? 1 : brightness) / 255f;
         }
         window.setAttributes(lp);
+    }
+
+    /**
+     * 设置当前系统的亮度值:0~255
+     */
+    public static void setSysScreenBrightness(Context context,int brightness) {
+        try {
+            ContentResolver resolver = context.getContentResolver();
+            Uri uri = Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS);
+            Settings.System.putInt(resolver, Settings.System.SCREEN_BRIGHTNESS, brightness);
+            resolver.notifyChange(uri, null); // 实时通知改变
+        } catch (Exception e) {
+            Log.e("asd", "设置当前系统的亮度值失败：", e);
+        }
     }
 }

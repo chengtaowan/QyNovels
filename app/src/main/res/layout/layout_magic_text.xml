@@ -12,9 +12,10 @@
     <TextView
         android:id="@+id/textPlus"
         android:textSize="14sp"
-        android:textColor="#2F3236"
+        android:textColor="#667F9D"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text=""/>
+        android:text=""
+        />
 </LinearLayout>

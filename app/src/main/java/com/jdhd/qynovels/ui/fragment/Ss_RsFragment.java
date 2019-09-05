@@ -20,7 +20,6 @@ import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.view.bookcase.IHotSearchView;
 import com.tencent.mm.opensdk.utils.Log;
 
-import org.greenrobot.eventbus.EventBus;
 
 /**
  * A simple {@link Fragment} subclass.

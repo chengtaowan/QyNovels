@@ -18,10 +18,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/rl"/>
-            <include layout="@layout/item_jz"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/rl"/>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="53dp"

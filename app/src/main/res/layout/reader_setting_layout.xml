@@ -102,7 +102,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginLeft="15dp"
-                    android:background="@drawable/item_readbj1_on" />
+                    android:background="@drawable/item_readbj1" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
@@ -114,7 +114,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/item_readbj2" />
+                    android:background="@drawable/item_readbj2_on" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"

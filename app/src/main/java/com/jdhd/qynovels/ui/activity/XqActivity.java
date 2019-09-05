@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 
+import com.bumptech.glide.load.model.GlideUrl;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.activities.ExtendReaderActivity;
 import com.jdhd.qynovels.adapter.XqymAdapter;
@@ -94,6 +95,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
     private boolean iscase;
     private Cursor listcursor;
     private ICasePresenterImpl casePresenter;
+    private String islogin;
     private View.OnTouchListener onTouchListener= new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -111,6 +113,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
         dbUtils=new DbUtils(this);
         SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
+        islogin=preferences.getString("islogin","");
         Intent intent=getIntent();
         type=intent.getIntExtra("xq",1);
         sc_type=intent.getIntExtra("lx",1);
@@ -212,7 +215,15 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
            intent.putExtra("img",bookBean.getData().getBook().getImage());
            intent.putExtra("name",bookBean.getData().getBook().getName());
            intent.putExtra("author",bookBean.getData().getBook().getAuthor());
-           intent.putExtra("type",2);
+           intent.putExtra("backlistid",bookBean.getData().getBook().getBacklistNum());
+           intent.putExtra("charIndex",0f);
+           if(jr.getText().equals("已加入书架")){
+               intent.putExtra("type",1);
+           }
+           else{
+               intent.putExtra("type",2);
+           }
+
          startActivity(intent);
          database=dbUtils.getWritableDatabase();
          Log.e("token--",token+"===");
@@ -251,7 +262,8 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                 bookBean=bookInfoBean;
                 jz.setVisibility(View.GONE);
                 adapter.refresh(bookInfoBean.getData());
-                if(!token.equals("")){
+                Log.e("bookinfo",token+"---"+islogin);
+                if(!token.equals("")&&islogin.equals("1")){
                     casePresenter.loadData();
                 }
                 else{
@@ -306,29 +318,6 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
        Log.e("bookinfoerror",error);
     }
 
-    public class MyThread extends Thread{
-        private String url;
-        private ImageView bj;
-
-        public MyThread(String url, ImageView bj) {
-            this.url = url;
-            this.bj = bj;
-        }
-
-        @Override
-        public void run() {
-            super.run();
-            final Bitmap blurBitmap2 = FastBlurUtil.GetUrlBitmap(url, 2);
-            // 刷新ui必须在主线程中执行
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    bj.setImageBitmap(blurBitmap2);
-                }
-            });
-        }
-    }
-
     @Override
     public void onSuccess(AddBookBean addBookBean) {
         runOnUiThread(new Runnable() {
@@ -342,8 +331,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                     jr.setTextColor(Color.parseColor("#999999"));
                     icon.setImageResource(R.mipmap.xqy_jrsjon);
                     database=dbUtils.getWritableDatabase();
-
-                     if(bookBean.getData().getBook()!=null){
+                     if(bookBean.getData().getBook()!=null&&listBean.getData().getList()!=null){
                          Log.e("addbookid",bookBean.getData().getBook().getBookId()+"==="+bookBean.getData().getBook().getName());
                             database.execSQL("delete from usercase where name='"+bookBean.getData().getBook().getName()+"'");
                             database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
@@ -354,10 +342,6 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                                     "'"+listBean.getData().getList().get(0).getName()+"'," +
                                     "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
                                     "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
-                         Cursor cursor = database.rawQuery("select * from usercase where user='visitor'", new String[]{});
-                         while(cursor.moveToNext()){
-                             Log.e("cursor",cursor.getString(listcursor.getColumnIndex("name")));
-                         }
                      }
                     EventBus.getDefault().post(addBookBean);
                 }

@@ -211,4 +211,7 @@ public class GfAdapter extends RecyclerView.Adapter<GfAdapter.GfViewHolder>{
     public interface onItemClick{
         void onGfclick(int index);
     }
+
+
+
 }

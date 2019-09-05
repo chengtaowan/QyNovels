@@ -14,6 +14,7 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jdhd.qynovels.R;
@@ -32,6 +33,7 @@ public class HelpActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView back;
     private TextView title;
     private String token;
+    private String islogin;
 
     @Override
     protected void onStart() {
@@ -122,9 +124,15 @@ public class HelpActivity extends AppCompatActivity implements View.OnClickListe
 
             switch (functionBean.getFunctionName()){
                 case "help":
-                    Intent intent=new Intent(HelpActivity.this,FkActivity.class);
-                    intent.putExtra("token",token);
-                    startActivity(intent);
+                    if(!token.equals("")&&islogin.equals("1")){
+                        Intent intent=new Intent(HelpActivity.this,FkActivity.class);
+                        intent.putExtra("token",token);
+                        startActivity(intent);
+                    }
+                    else{
+                        Toast.makeText(HelpActivity.this,"登录之后才可以反馈",Toast.LENGTH_SHORT).show();
+                    }
+
                     break;
 
             }

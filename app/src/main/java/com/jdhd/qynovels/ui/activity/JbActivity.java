@@ -33,6 +33,7 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
     private float mone;
     private String s,wxname;
     private double v;
+    private int time;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +49,7 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
         today=intent.getIntExtra("today",0);
         total=intent.getIntExtra("total",0);
         wxname=intent.getStringExtra("wxname");
+        time=intent.getIntExtra("time",0);
         goldListPresenter=new IGoldListPresenterImpl(this,JbActivity.this);
         goldListPresenter.loadData();
         init();
@@ -89,6 +91,7 @@ public class JbActivity extends AppCompatActivity implements View.OnClickListene
             intent.putExtra("money",mone);
             intent.putExtra("wxname",wxname);
             intent.putExtra("totle",total);
+            intent.putExtra("time",time);
             startActivity(intent);
         }
     }

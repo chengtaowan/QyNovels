@@ -61,8 +61,8 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     private String time;
     private IBookListPresenterImpl bookListPresenter;
     private BookListBean bookBean=new BookListBean();
-    private List<TTFeedAd> feedlist=new ArrayList<>();
-    public void refreshfeed(List<TTFeedAd> feedlist){
+    private List<TTNativeExpressAd> feedlist=new ArrayList<>();
+    public void refreshfeed(List<TTNativeExpressAd> feedlist){
         this.feedlist=feedlist;
         notifyDataSetChanged();
     }

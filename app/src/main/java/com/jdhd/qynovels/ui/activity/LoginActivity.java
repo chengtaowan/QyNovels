@@ -43,7 +43,6 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.umeng.analytics.MobclickAgent;
 
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -71,26 +70,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Intent intent = getIntent();
         type=intent.getIntExtra("type",0);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
-        //同时请求多个权限
-        RxPermissions.getInstance(LoginActivity.this)
-                .request(Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.INTERNET,
-                        Manifest.permission.ACCESS_WIFI_STATE,
-                        Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.ACCESS_NETWORK_STATE)//多个权限用","隔开
-                .subscribe(new Action1<Boolean>() {
-                    @Override
-                    public void call(Boolean aBoolean) {
-                        if (aBoolean) {
-                            //当所有权限都允许之后，返回true
-                            Log.i("permissions", "btn_more_sametime：" + aBoolean);
-                        } else {
-                            //只要有一个权限禁止，返回false，
-                            //下一次申请只申请没通过申请的权限
-                            Log.i("permissions", "btn_more_sametime：" + aBoolean);
-                        }
-                    }
-                });
+//        //同时请求多个权限
+//        RxPermissions.getInstance(LoginActivity.this)
+//                .request(Manifest.permission.READ_PHONE_STATE,
+//                        Manifest.permission.INTERNET,
+//                        Manifest.permission.ACCESS_WIFI_STATE,
+//                        Manifest.permission.READ_PHONE_STATE,
+//                        Manifest.permission.ACCESS_NETWORK_STATE)//多个权限用","隔开
+//                .subscribe(new Action1<Boolean>() {
+//                    @Override
+//                    public void call(Boolean aBoolean) {
+//                        if (aBoolean) {
+//                            //当所有权限都允许之后，返回true
+//                            Log.i("permissions", "btn_more_sametime：" + aBoolean);
+//                        } else {
+//                            //只要有一个权限禁止，返回false，
+//                            //下一次申请只申请没通过申请的权限
+//                            Log.i("permissions", "btn_more_sametime：" + aBoolean);
+//                        }
+//                    }
+//                });
         init();
     }
 
@@ -142,10 +141,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         if(R.id.dl_gb==view.getId()){
-                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                intent.putExtra("page",3);
-                startActivity(intent);
-
+            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+            intent.putExtra("page",3);
+            startActivity(intent);
         }
         else if(R.id.dl_wx==view.getId()){
             if(!MyApp.getApi().isWXAppInstalled()){
@@ -283,9 +281,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-//        intent.putExtra("page",3);
-//        startActivity(intent);
-        finish();
+        Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+        intent.putExtra("page",3);
+        startActivity(intent);
+        //finish();
     }
 }

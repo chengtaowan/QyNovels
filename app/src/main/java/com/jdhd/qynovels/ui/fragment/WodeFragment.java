@@ -4,7 +4,7 @@ package com.jdhd.qynovels.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -22,14 +22,17 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 import com.jdhd.qynovels.R;
-import com.jdhd.qynovels.module.bookcase.SzUser;
+import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.personal.EventBean;
 import com.jdhd.qynovels.module.personal.NameBean;
 import com.jdhd.qynovels.module.personal.TokenBean;
 import com.jdhd.qynovels.module.personal.UserBean;
+import com.jdhd.qynovels.module.personal.UserEventBean;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.IUserEventPresenterImpl;
 import com.jdhd.qynovels.ui.activity.BindCodeActivity;
-import com.jdhd.qynovels.ui.activity.FkActivity;
 import com.jdhd.qynovels.ui.activity.GrzlActivity;
 import com.jdhd.qynovels.ui.activity.HelpActivity;
 import com.jdhd.qynovels.ui.activity.JbActivity;
@@ -38,8 +41,11 @@ import com.jdhd.qynovels.ui.activity.LsActivity;
 import com.jdhd.qynovels.ui.activity.SzActivity;
 import com.jdhd.qynovels.ui.activity.TxActivity;
 import com.jdhd.qynovels.ui.activity.XxActivity;
+import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
+import com.jdhd.qynovels.utils.EventDbUtils;
 import com.jdhd.qynovels.view.personal.IPersonalView;
+import com.jdhd.qynovels.view.personal.IUserEventView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -49,12 +55,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
+
 import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WodeFragment extends BasePageFragment implements View.OnClickListener,IPersonalView{
+public class WodeFragment extends BaseFragment implements View.OnClickListener,IPersonalView, IUserEventView {
 
     private TextView wo_dl,wd_name,wd_hbm,wd_jb,wd_jrjb,wd_ydsj;
     private RelativeLayout wd_ls,wd_tx,wd_fk,wd_sz,wd_lb,wd_yq,wd_xj;
@@ -68,9 +76,18 @@ public class WodeFragment extends BasePageFragment implements View.OnClickListen
     private int uid,total_gold,today_gold,read_time,balance,message_count,bind_show;
     private float money;
     private SmartRefreshLayout sr;
-//    private ImageView gif;
-//    private RelativeLayout jz;
     private IPersonalPresenterImpl personalPresenter;
+    private static final String TAG = "WoDeFragment";
+    private View rootView;
+    private String islogin="";
+    //标志位，标志已经初始化完成
+    private boolean isPrepared;
+    //是否已被加载过一次，第二次就不再去请求数据了
+    private boolean mHasLoadedOnce;
+    private SharedPreferences preferences;
+    private DbUtils dbUtils;
+    private SQLiteDatabase database;
+    private IUserEventPresenterImpl iUserEventPresenter;
     public WodeFragment() {
         // Required empty public constructor
     }
@@ -78,10 +95,12 @@ public class WodeFragment extends BasePageFragment implements View.OnClickListen
     @Override
     public void onStart() {
         super.onStart();
-        Log.e("statues","onstart");
+        Log.e(TAG,"onstart");
         SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
         token = preferences.getString("token", "");
-        personalPresenter.loadData();
+
+//        personalPresenter=new IPersonalPresenterImpl(this,getContext());
+//        personalPresenter.loadData();
     }
 
     @Override
@@ -98,25 +117,31 @@ public class WodeFragment extends BasePageFragment implements View.OnClickListen
         Log.e("statues","onresume");
         SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
         token = preferences.getString("token", "");
+        lazyLoad();
+        Log.e(TAG,"onstartresume");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_wode, container, false);
+        if(rootView==null){
+            rootView= inflater.inflate(R.layout.fragment_wode, container, false);
+            isPrepared = true;
+            preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
+            token = preferences.getString("token", "");
+            islogin=preferences.getString("islogin","");
+            //lazyLoad();
+            init(rootView);
+        }
         if(!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-
-
-        init(view);
+        iUserEventPresenter=new IUserEventPresenterImpl(this,getContext());
+        dbUtils=new DbUtils(getContext());
         Intent intent=getActivity().getIntent();
         action=intent.getIntExtra("action",1);
-        SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
-        token = preferences.getString("token", "");
         Log.e("logintoken",token+"===");
-        if(token.equals("")){
+        if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
             Glide.with(getContext()).clear(wd_toux);
             wd_toux.setImageResource(R.mipmap.my_touxiang);
             wd_jb.setText("0");
@@ -143,7 +168,7 @@ public class WodeFragment extends BasePageFragment implements View.OnClickListen
             }
 
         }
-        return view;
+        return rootView;
     }
 
     private void init(View view) {
@@ -180,7 +205,7 @@ public class WodeFragment extends BasePageFragment implements View.OnClickListen
         sr.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
-                if(token.equals("")){
+                if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
                     sr.finishRefresh();
                 }
                 else{
@@ -233,6 +258,16 @@ public class WodeFragment extends BasePageFragment implements View.OnClickListen
     @Override
     public void onClick(View view) {
         if(R.id.wd_dl==view.getId()){
+            int starttime=DeviceInfoUtils.getTime();
+            EventDbUtils eventDbUtils=new EventDbUtils(getContext());
+            List<EventBean.DataBean> updata = eventDbUtils.updata(MyApp.kQYDataAnalysisEventType.kQYDataAnalysisTargetEvent, starttime, 0, MyApp.kQYTargetDataAnalysis.kQYTargetDataAnalysisMine_login, MyApp.kQYoperationType.kQYSoperationTypeOpen);
+            if(updata.size()==20){
+                Gson gson=new Gson();
+                String s=gson.toJson(updata);
+                iUserEventPresenter.setJson(s);
+                iUserEventPresenter.loadData();
+            }
+
             Intent intent=new Intent(getContext(), LoginActivity.class);
             intent.putExtra("type",0);
             startActivity(intent);
@@ -259,7 +294,7 @@ public class WodeFragment extends BasePageFragment implements View.OnClickListen
                 }
         }
         else if(R.id.wd_fk==view.getId()){
-            if(token.equals("")){
+            if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
                 Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
             }
             else{
@@ -285,11 +320,14 @@ public class WodeFragment extends BasePageFragment implements View.OnClickListen
         else if(R.id.wd_toux==view.getId()){
             SharedPreferences sharedPreferences=getActivity().getSharedPreferences("token",MODE_PRIVATE);
             token=sharedPreferences.getString("token","");
-            if(token.equals("")){
+            String islogin=sharedPreferences.getString("islogin","");
+            if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
                 Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
             }
             else{
                 if(user.getData()!=null){
+                    SharedPreferences sharedPreferences1=getContext().getSharedPreferences("sex",MODE_PRIVATE);
+                    String sex=sharedPreferences1.getString("sex","");
                     Intent intent=new Intent(getContext(), GrzlActivity.class);
                     intent.putExtra("name",wd_name.getText().toString());
                     intent.putExtra("avatar",avatar);
@@ -317,6 +355,7 @@ public class WodeFragment extends BasePageFragment implements View.OnClickListen
                 intent.putExtra("today",user.getData().getToday_gold());
                 intent.putExtra("total",user.getData().getTotal_gold());
                 intent.putExtra("wxname",wxname);
+                intent.putExtra("time",user.getData().getRead_time());
                 startActivity(intent);
             }
             else{
@@ -601,12 +640,34 @@ public class WodeFragment extends BasePageFragment implements View.OnClickListen
     @Override
     public void onDetach() {
         super.onDetach();
-        //personalPresenter.destoryView();
     }
 
     @Override
-    public void fetchData() {
+    protected void lazyLoad() {
+        if (!isPrepared || !isVisible || mHasLoadedOnce){
+            return;
+        }
         personalPresenter=new IPersonalPresenterImpl(this,getContext());
         personalPresenter.loadData();
+        //mHasLoadedOnce = true;
+        Log.e(TAG,TAG+"加载数据");
+    }
+
+    @Override
+    public void onUserEventSuccess(UserEventBean userEventBean) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(userEventBean.getCode()==200){
+                    database=dbUtils.getWritableDatabase();
+                    database.execSQL("delete from userevent");
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onUserEventError(String error) {
+
     }
 }

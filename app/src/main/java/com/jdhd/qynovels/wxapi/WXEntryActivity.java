@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.jdhd.qynovels.app.MyApp;
@@ -16,6 +17,8 @@ import com.jdhd.qynovels.persenter.impl.personal.IBindwxPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.ui.activity.LoginActivity;
 import com.jdhd.qynovels.ui.activity.MainActivity;
+import com.jdhd.qynovels.ui.fragment.CaseFragment;
+import com.jdhd.qynovels.ui.fragment.ShopFragment;
 import com.jdhd.qynovels.ui.fragment.WodeFragment;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.personal.IBindwxView;
@@ -39,7 +42,7 @@ import rxhttp.wrapper.parse.SimpleParser;
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IPersonalView , IBindwxView {
     private IWXAPI api;
     private static final String APP_ID = "wxf2f9d368f73b6719";
-    private String brand,model,sv,imei,sim;
+    private String brand,model,sv,imei,sim,source="";
     private int os,root,network,time;
     public static String token="";
     private IPersonalPresenterImpl personalPresenter;
@@ -117,6 +120,13 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
                          map.put("sim",sim+"");
                          map.put("network",network+"");
                          map.put("time",time+"");
+                         if(source.equals("null")){
+                           map.put("source","yingyongbao");
+                         }
+                         else{
+                             map.put("source",source+"");
+                         }
+
                          String compareTo = DeviceInfoUtils.getCompareTo(map);
                          String s = DeviceInfoUtils.md5(DeviceInfoUtils.getCompareTo(map));
                          map.put("sign",s);
@@ -130,22 +140,27 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
                          Log.e("network",network+"");
                          Log.e("time",time+"");
                          Log.e("sign",s);
-                         Log.e("compare",compareTo);
+                         Log.e("sourcewx3",source+"---");
                          RxHttp.postForm(MyApp.Url.baseUrl+"token")
                                  .add(map)
                                  .asParser(new SimpleParser<TokenBean>(){})
                                  .subscribe(tokenBean->{
-                                     //Log.e("")
+                                     Log.e("tokenbean",tokenBean.getMsg()+"--"+tokenBean.getCode());
                                      if(tokenBean.getCode()==200&&tokenBean.getMsg().equals("success")){
                                          token=tokenBean.getData().getToken();
                                          SharedPreferences preferences=getSharedPreferences("token",MODE_PRIVATE);
                                          SharedPreferences.Editor editor=preferences.edit();
                                          editor.putString("token",token);
                                          editor.putString("login","success");
+                                         editor.putString("islogin",tokenBean.getData().getIs_login()+"");
                                          editor.commit();
                                          Log.e("weixintoken",token+"+++");
                                          EventBus.getDefault().post(token);
                                          personalPresenter.loadData();
+                                         ShopFragment.lhb.setVisibility(View.GONE);
+                                         ShopFragment.closePopWindow();
+                                         CaseFragment.lhb.setVisibility(View.GONE);
+                                         CaseFragment.closePopWindow();
                                      }
                                  },throwable->{
                                      Log.e("asd","th"+throwable.getMessage());
@@ -175,6 +190,12 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
         sim=DeviceInfoUtils.getSim(this);
         network=DeviceInfoUtils.getNetWork(this);
         time=DeviceInfoUtils.getTime();
+        source= DeviceInfoUtils.getChannelName(this);
+        Log.e("sourcewx1",source+"--");
+        if(source.equals("")){
+            source="yingyongbao";
+        }
+        Log.e("sourcewx2",source+"--");
     }
 
     @Override

@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,7 +35,6 @@ public class ReaderResolve {
     public static final int LAST_INDEX = -1;//表示最后一个
     public static final int FIRST_INDEX = 0;//表示第一个
     public static final int UNKNOWN = -2;//未知，在实际翻页时动态计算
-    public static float percent;
 
     //本章在总章节中的索引
     protected int mChapterIndex;
@@ -47,6 +48,8 @@ public class ReaderResolve {
 
     //当前章节标题
     public static String mTitle = "";
+
+    public static float percent;
 
     // 总章节数
     protected int mChapterSum;
@@ -198,7 +201,7 @@ public class ReaderResolve {
         DLog.d(TAG, "pageIndex : " + mPageIndex);
     }
 
-    public void drawPage(Canvas canvas,String mTitle) {
+    public void drawPage(Canvas canvas) {
 //        DLog.d(TAG, "start drawPage,title:" + mTitle + " ,content:" + mContent);
         drawBackground(canvas);
         drawMarginArea(canvas);
@@ -253,6 +256,7 @@ public class ReaderResolve {
         //step6.在边缘区域画时间
         String time = dateFormat.format(new Date());
         drawTime(canvas, time, right + 20, mAreaHeight - mReaderConfig.getPadding()[3] / 2 + baseLine2centerLine, mMarginPaint);
+
     }
 
     /**
@@ -295,8 +299,8 @@ public class ReaderResolve {
      */
     protected void drawBattery(Canvas canvas, Paint batteryPaint, int battery, Rect outRect, Rect innerRect) {
         batteryPaint.setStyle(Paint.Style.STROKE);
+        batteryPaint.setColor(Color.BLACK);
         canvas.drawRect(outRect, batteryPaint);
-
         batteryPaint.setStyle(Paint.Style.FILL);
         innerRect.right = (int) (innerRect.left + innerRect.width() * (battery * 1f / 100));
         canvas.drawRect(innerRect, batteryPaint);
@@ -408,7 +412,7 @@ public class ReaderResolve {
             int charSum = showChars.size();
             float start = x;
 
-            int retractCharNum =2;// 缩进符数量
+            int retractCharNum = 0;// 缩进符数量
             String lineData = showLine.getLineData();
             // 遍历计算缩进符数量
             String tempData = showLine.getLineData();
@@ -427,7 +431,7 @@ public class ReaderResolve {
                     * 1f / (charSum - retractCharNum - 1);
 
             if (retractCharNum > 0) {
-                canvas.drawText(lineData.substring(0, retractCharNum - 1), x, y, mMainBodyPaint);
+//                canvas.drawText(lineData.substring(0, retractCharNum - 1), x, y, mMainBodyPaint);
                 start += retractsWidth;
             }
             for (int i = retractCharNum; i < showChars.size(); i++) {
@@ -436,8 +440,7 @@ public class ReaderResolve {
                 showChar.rectF = new RectF(start, topPosition, start + showChar.charWidth, bottomPosition);
                 start += landscapeSpace;
             }
-        }
-        else {
+        } else {
             canvas.drawText(showLine.getLineData(), x, y, mMainBodyPaint);
 
             // 计算每个字符的位置

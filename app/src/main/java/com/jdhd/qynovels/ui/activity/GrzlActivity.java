@@ -40,6 +40,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.personal.AvatarBean;
+import com.jdhd.qynovels.module.personal.ChangeSexBean;
 import com.jdhd.qynovels.module.personal.NameBean;
 import com.jdhd.qynovels.module.personal.SexBean;
 import com.jdhd.qynovels.persenter.impl.personal.IAvatarPresenterImpl;
@@ -137,7 +138,9 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         tx.setOnClickListener(this);
         nc.setOnClickListener(this);
         xb.setOnClickListener(this);
-        zh.setOnClickListener(this);
+        //zh.setOnClickListener(this);
+        bd.setText(uid+"");
+        bd.setClickable(false);
         if(!avatar.equals("http://api.damobi.cn")){
            Glide.with(this).load(avatar).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(tx);
         }
@@ -154,9 +157,6 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if(sex.equals("女")){
             chosesex=30;
-        }
-        if(uid!=0&&!mobile.equals("")&&!wxname.equals("")){
-            bd.setText("已绑定");
         }
     }
 
@@ -435,17 +435,6 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 chosesex=20;
-            }
-        });
-        builder.setNegativeButton("女", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-               chosesex=30;
-            }
-        });
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
                 SharedPreferences sharedPreferences=getSharedPreferences("sex",MODE_PRIVATE);
                 SharedPreferences.Editor editor=sharedPreferences.edit();
                 if(chosesex==0){
@@ -466,6 +455,36 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(GrzlActivity.this,"性别修改成功",Toast.LENGTH_SHORT).show();
             }
         });
+        builder.setNegativeButton("女", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+               chosesex=30;
+                SharedPreferences sharedPreferences=getSharedPreferences("sex",MODE_PRIVATE);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
+                if(chosesex==0){
+                    xgxb.setText("未知");
+                    editor.putString("sex","男");
+                }
+                else if(chosesex==20){
+                    xgxb.setText("男");
+                    editor.putString("sex","男");
+                }
+                else if(chosesex==30){
+                    xgxb.setText("女");
+                    editor.putString("sex","女");
+                }
+                editor.commit();
+                sexPresenter.setSex(chosesex);
+                sexPresenter.loadData();
+                Toast.makeText(GrzlActivity.this,"性别修改成功",Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+
+            }
+        });
         builder.show();
         return chosesex;
     }
@@ -475,11 +494,16 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
        runOnUiThread(new Runnable() {
            @Override
            public void run() {
+               Log.e("sexbean",sexBean.getCode()+"--"+sexBean.getMsg());
                if(sexBean.getCode()!=200){
                   Toast.makeText(GrzlActivity.this,sexBean.getMsg(),Toast.LENGTH_SHORT).show();
                }
                else{
                    xgxb.setText(sexBean.getData().getSex());
+                   SharedPreferences sharedPreferences=getSharedPreferences("sex",MODE_PRIVATE);
+                   SharedPreferences.Editor editor=sharedPreferences.edit();
+                   editor.putString("sex",sexBean.getData().getSex());
+                   editor.commit();
                }
 
            }

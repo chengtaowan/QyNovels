@@ -1,5 +1,7 @@
 package com.jdhd.qynovels.adapter;
 
+import android.os.Parcelable;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -13,7 +15,7 @@ import com.jdhd.qynovels.ui.fragment.WmanFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShopAdapter extends FragmentStatePagerAdapter {
+public class ShopAdapter extends FragmentPagerAdapter {
     private List<Fragment> list=new ArrayList<>();
 
     public void refresh(List<Fragment> list){
@@ -35,6 +37,11 @@ public class ShopAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
 
         return list.size();
+    }
+
+    @Override
+    public Parcelable saveState() {
+        return null;
     }
 
 }

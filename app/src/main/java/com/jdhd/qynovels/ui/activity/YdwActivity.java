@@ -45,6 +45,8 @@ public class YdwActivity extends AppCompatActivity implements View.OnClickListen
     private GfAdapter adapter;
     private IBookGradePresenterImpl bookGradePresenter;
     private String url="";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -188,7 +190,13 @@ public class YdwActivity extends AppCompatActivity implements View.OnClickListen
        runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               Toast.makeText(YdwActivity.this,"感谢您的评分",Toast.LENGTH_SHORT).show();
+               if(bookGradeBean.getCode()==200){
+                   Toast.makeText(YdwActivity.this,"感谢您的评分",Toast.LENGTH_SHORT).show();
+
+               }
+               else{
+                   Toast.makeText(YdwActivity.this,bookGradeBean.getMsg(),Toast.LENGTH_SHORT).show();
+               }
            }
        });
     }

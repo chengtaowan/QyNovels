@@ -53,8 +53,8 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.list=list;
         notifyDataSetChanged();
     }
-    private List<TTFeedAd> feedlist=new ArrayList<>();
-    public void refreshfeed(List<TTFeedAd> feedlist){
+    private List<TTNativeExpressAd> feedlist=new ArrayList<>();
+    public void refreshfeed(List<TTNativeExpressAd> feedlist){
         this.feedlist=feedlist;
         notifyDataSetChanged();
     }

@@ -1,25 +1,32 @@
 package com.jdhd.qynovels.ui.fragment;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,29 +35,47 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.bytedance.sdk.openadsdk.AdSlot;
+import com.bytedance.sdk.openadsdk.FilterWord;
+import com.bytedance.sdk.openadsdk.TTAdConstant;
+import com.bytedance.sdk.openadsdk.TTAdDislike;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
+import com.bytedance.sdk.openadsdk.TTAppDownloadListener;
 import com.bytedance.sdk.openadsdk.TTFeedAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
+import com.google.gson.Gson;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.adapter.CaseAdapter;
 import com.jdhd.qynovels.adapter.ListAdapter;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.AddBookBean;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
 import com.jdhd.qynovels.module.bookcase.ConfigBean;
+import com.jdhd.qynovels.module.personal.EventBean;
 import com.jdhd.qynovels.module.personal.UserBean;
+import com.jdhd.qynovels.module.personal.UserEventBean;
+import com.jdhd.qynovels.module.personal.VisitorBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IConfigPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.IUserEventPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.IVisitorPresenterImpl;
 import com.jdhd.qynovels.ui.activity.LsActivity;
+import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.activity.SsActivity;
+import com.jdhd.qynovels.ui.activity.StartActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.utils.AppSigning;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
+import com.jdhd.qynovels.utils.EventDbUtils;
 import com.jdhd.qynovels.view.bookcase.ICaseView;
 import com.jdhd.qynovels.view.bookcase.IConfigView;
 import com.jdhd.qynovels.view.personal.IPersonalView;
+import com.jdhd.qynovels.view.personal.IUserEventView;
+import com.jdhd.qynovels.view.personal.IVisitorView;
+import com.jdhd.qynovels.widget.DislikeDialog;
+import com.jdhd.qynovels.widget.GetMoneyPopWindow;
 import com.jdhd.qynovels.widget.MRefreshHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -66,10 +91,12 @@ import java.util.List;
 
 import okhttp3.Request;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CaseFragment extends Fragment implements View.OnClickListener, ICaseView,CaseAdapter.onItemClick, IPersonalView, IConfigView {
+public class CaseFragment extends BaseFragment implements View.OnClickListener, ICaseView,CaseAdapter.onItemClick, IPersonalView, IConfigView, IUserEventView {
     private ImageView ss,ls,qd;
     private RecyclerView rv;
     public static ICasePresenterImpl casePresenter;
@@ -85,15 +112,33 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     private SmartRefreshLayout sr;
     private boolean hasNetWork;
     private String token;
-    private TTAdNative mTTAdNative;
+    private RelativeLayout rl;
+    private IUserEventPresenterImpl iUserEventPresenter;
+    private int sratrTime,endTime;
+
+
     private static final int LIST_ITEM_COUNT = 30;
-    private List<TTFeedAd> mData=new ArrayList<>();
+    private List<TTNativeExpressAd> mData=new ArrayList<>();
     protected boolean isCreated = false;
     private ICaseView iCaseView;
     private IPersonalPresenterImpl personalPresenter;
     private IConfigPresenterImpl configPresenter;
     private TextView time;
     private int studia=0;
+    private TTNativeExpressAd mTTAd;
+    private TTAdNative mTTAdNative;
+    public static ImageView lhb;
+
+    private String TAG="CaseFragment";
+    private String islogin="";
+
+    private View rootView;
+    /** 标志位，标志已经初始化完成 /
+     private boolean isPrepared;
+     /* 是否已被加载过一次，第二次就不再去请求数据了 */
+    private boolean mHasLoadedOnce;
+    private boolean isPrepared;
+
 
     /**
      * 是否显示ｃｈｅｃｋｂｏｘ
@@ -108,11 +153,15 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         // Required empty public constructor
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("statud","oncreate");
+        Log.e(TAG,"oncreate");
         adapter=new CaseAdapter(getContext(),getActivity());
+        mTTAdNative = TTAdSdk.getAdManager().createAdNative(getContext());
+        casePresenter=new ICasePresenterImpl(this,getContext());
+
 
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -146,14 +195,14 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
             }
             if(newlist.size()!=0){
                 adapter.refreshlist(newlist);
-                sr.finishRefresh();
+                if(sr!=null){
+                    sr.finishRefresh();
+                }
+
             }
-//            else{
-//                casePresenter.loadData();
-//            }
         }
         else{
-            casePresenter=new ICasePresenterImpl(this,getContext());
+
             casePresenter.loadData();
         }
 
@@ -164,167 +213,68 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     @Override
     public void onStart() {
         super.onStart();
-        Log.e("statud","onstart");
-        personalPresenter.loadData();
-//        // 标记
-//        isCreated = true;
-//        casePresenter=new ICasePresenterImpl(new ICaseView() {
-//            @Override
-//            public void onSuccess(CaseBean caseBean) {
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        adapter.refreshlist(caseBean.getData().getList());
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, getContext());
-//        loadListAd();
-//        casePresenter.loadData();
+        sratrTime=DeviceInfoUtils.getTime();
+        SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",Context.MODE_PRIVATE);
+        token=sharedPreferences.getString("token","");
+        islogin=sharedPreferences.getString("islogin","");
+        if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
+            lhb.setVisibility(View.VISIBLE);
+        }
+        else{
+            lhb.setVisibility(View.GONE);
+        }
+        Log.e(TAG,"onstart");
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.e("statud","onattach");
-//        // 标记
-        isCreated = true;
-//        configPresenter=new IConfigPresenterImpl(new IConfigView() {
-//            @Override
-//            public void onConfigSuccess(ConfigBean configBean) {
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if(configBean.getData().getList().get(1).getStatus()==20){
-//                            new Thread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    loadListAd();
-//                                }
-//                            }).start();
-//                        }
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onConfigError(String error) {
-//               Log.e("configerror",error);
-//            }
-//        },getContext());
-//        configPresenter.loadData();
-//
-//        casePresenter=new ICasePresenterImpl(new ICaseView() {
-//            @Override
-//            public void onSuccess(CaseBean caseBean) {
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if(sr!=null){
-//                            sr.finishRefresh();
-//                        }
-//                        adapter.refreshlist(caseBean.getData().getList());
-//                        adapter.refreshhot(caseBean.getData().getHot());
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, getContext());
-//        casePresenter.loadData();
-
+        Log.e(TAG,"onattach");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("statud","onresume");
-//        configPresenter=new IConfigPresenterImpl(new IConfigView() {
-//            @Override
-//            public void onConfigSuccess(ConfigBean configBean) {
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if(configBean.getData().getList().get(1).getStatus()==20){
-//                            new Thread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    loadListAd();
-//                                }
-//                            }).start();
-//                        }
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onConfigError(String error) {
-//                Log.e("configerror",error);
-//            }
-//        },getContext());
-//        configPresenter.loadData();
-//        casePresenter=new ICasePresenterImpl(new ICaseView() {
-//            @Override
-//            public void onSuccess(CaseBean caseBean) {
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if(sr!=null){
-//                            sr.finishRefresh();
-//                        }
-//                        adapter.refreshlist(caseBean.getData().getList());
-//                        adapter.refreshhot(caseBean.getData().getHot());
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//
-//            }
-//        }, getContext());
-//        casePresenter.loadData();
+        Log.e(TAG,"onstartresume");
+        lazyLoad();
     }
 
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.e("statud","onpause");
+        endTime=DeviceInfoUtils.getTime();
+        EventDbUtils eventDbUtils=new EventDbUtils(getContext());
+        List<EventBean.DataBean> updata = eventDbUtils.updata(MyApp.kQYDataAnalysisEventType.kQYDataAnalysisPageEvent, sratrTime, endTime, MyApp.kQYoperationType.kQYSoperationTypeOpen, MyApp.kQYPageDataAnalysis.kQYPageDataAnalysisBookShelf);
+        if(updata.size()==20){
+            Gson gson=new Gson();
+            String s=gson.toJson(updata);
+            iUserEventPresenter.setJson(s);
+            iUserEventPresenter.loadData();
+        }
+        Log.e(TAG,"onpause");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.e("statud","oncreateview");
-        View view= inflater.inflate(R.layout.fragment_case, container, false);
+        Log.e(TAG,"oncreateview");
+        if(rootView==null){
+            rootView= inflater.inflate(R.layout.fragment_case, container, false);
+            isPrepared = true;
+            SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
+            token = preferences.getString("token", "");
+
+            init(rootView);
+        }
         if(!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-        SharedPreferences preferences=getActivity().getSharedPreferences("token", Context.MODE_PRIVATE);
-        token = preferences.getString("token", "");
-        iCaseView=this;
-        personalPresenter=new IPersonalPresenterImpl(this,getContext());
-        personalPresenter.loadData();
-        configPresenter=new IConfigPresenterImpl(this,getContext());
-        configPresenter.loadData();
-        String sha1 = AppSigning.getSha1(getContext());
-        Log.e("sha1",sha1);
-        casePresenter=new ICasePresenterImpl(this,getContext());
-        if(!token.equals("")){
-            casePresenter.loadData();
-        }
+        iUserEventPresenter=new IUserEventPresenterImpl(this,getContext());
         dbUtils=new DbUtils(getContext());
-        init(view);
+
+        init(rootView);
         hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
         Log.e("hasnetwork",hasNetWork+"---");
         if(!hasNetWork){
@@ -343,7 +293,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                adapter.refreshhot(hotBean);
            }
            Log.e("casetoken",token+"---");
-           if(!token.equals("")){
+           if((!token.equals("")&&islogin.equals("1"))){
                List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
                database=dbUtils.getReadableDatabase();
                listcursor=database.rawQuery("select * from usercase where user='user'",new String[]{});
@@ -386,7 +336,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         }
         else{
             Log.e("casetoken",token+"---");
-            if(!token.equals("")){
+            if(!token.equals("")&&islogin.equals("1")){
 
             }
             else{
@@ -428,7 +378,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
 
             }
 
-        return  view;
+        return  rootView;
     }
 
     private void init(View view) {
@@ -443,6 +393,18 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
       ss.setOnClickListener(this);
       ls.setOnClickListener(this);
       qd.setOnClickListener(this);
+      rl=view.findViewById(R.id.rl);
+        lhb=view.findViewById(R.id.lhb);
+        SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",Context.MODE_PRIVATE);
+        token=sharedPreferences.getString("token","");
+        islogin=sharedPreferences.getString("islogin","");
+        if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
+            lhb.setVisibility(View.VISIBLE);
+        }
+        else{
+            lhb.setVisibility(View.GONE);
+        }
+        lhb.setOnClickListener(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext()) {
             @Override
             public RecyclerView.LayoutParams generateDefaultLayoutParams() {
@@ -454,6 +416,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
       time.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Oswald-Bold.otf"));
 
       rv.setAdapter(adapter);
+        //loadListAd();
       Glide.with(getContext()).load(R.mipmap.re).into(gif);
       sr.setOnRefreshListener(new OnRefreshListener() {
           @Override
@@ -467,7 +430,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
 
               }
               else{
-                  if(token.equals("")){
+                  if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
                       List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
                       List<CaseBean.DataBean.ListBean> newlist =new ArrayList<>();
                       database=dbUtils.getReadableDatabase();
@@ -504,12 +467,13 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                   }
                   else{
                       casePresenter.loadData();
-                      //mData.clear();
+                      mData.clear();
                       if(studia==20){
                           new Thread(new Runnable() {
                               @Override
                               public void run() {
                                   loadListAd();
+                                 // loadExpressAd("901121253", ListAdapter.FeedViewHolder.ll);
                               }
                           }).start();
                       }
@@ -526,6 +490,15 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     @Override
     public void onClick(View view) {
         if(R.id.sj_ss==view.getId()){
+            int time=DeviceInfoUtils.getTime();
+            EventDbUtils eventDbUtils=new EventDbUtils(getContext());
+            List<EventBean.DataBean> updata = eventDbUtils.updata(MyApp.kQYDataAnalysisEventType.kQYDataAnalysisTargetEvent, time, 0, MyApp.kQYoperationType.kQYSoperationTypeOpen, MyApp.kQYTargetDataAnalysis.kQYTargetDataAnalysisBookshelf_search);
+            if(updata.size()==20){
+                Gson gson=new Gson();
+                String s=gson.toJson(updata);
+                iUserEventPresenter.setJson(s);
+                iUserEventPresenter.loadData();
+            }
             Intent intent=new Intent(getActivity(), SsActivity.class);
             intent.putExtra("ss",1);
             startActivity(intent);
@@ -544,6 +517,10 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
                 Toast.makeText(getContext(),"请先登录",Toast.LENGTH_SHORT).show();
             }
 
+        }
+        else if(R.id.lhb==view.getId()){
+            showPopWindow(rl);
+            lhb.setVisibility(View.GONE);
         }
     }
 
@@ -612,6 +589,7 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.e("userbean","1");
                 time.setText(userBean.getData().getRead_time()/60+"");
             }
         });
@@ -648,82 +626,6 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
         startActivity(intent);
     }
 
-    private void loadListAd() {
-        //step4:创建feed广告请求类型参数AdSlot,具体参数含义参考文档
-        AdSlot adSlot = new AdSlot.Builder()
-                //.setCodeId("901121737")
-                .setCodeId("926447877")
-                .setSupportDeepLink(true)
-                .setImageAcceptedSize(640, 320)
-                .setAdCount(10) //请求广告数量为1到3条
-                .build();
-        //step5:请求广告，调用feed广告异步请求接口，加载到广告后，拿到广告素材自定义渲染
-        mTTAdNative.loadFeedAd(adSlot, new TTAdNative.FeedAdListener() {
-            @Override
-            public void onError(int code, String message) {
-             // Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFeedAdLoad(List<TTFeedAd> ads) {
-                mData=ads;
-                Log.e("data",mData.size()+"--"+mData.get(0).getTitle());
-                adapter.refreshfeed(mData);
-            }
-        });
-    }
-
-//    /**
-////     * 此方法目前仅适用于标示ViewPager中的Fragment是否真实可见
-////     */
-////    @Override
-////    public void setUserVisibleHint(boolean isVisibleToUser) {
-////        super.setUserVisibleHint(isVisibleToUser);
-////
-////        if (!isCreated) {
-////            return;
-////        }
-////
-////        if (isVisibleToUser) {
-////           loadListAd();
-////
-////        }
-////    }
-
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if(!hidden){
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    loadListAd();
-                }
-            }).start();
-            casePresenter=new ICasePresenterImpl(new ICaseView() {
-                @Override
-                public void onSuccess(CaseBean caseBean) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(sr!=null){
-                                sr.finishRefresh();
-                            }
-                            adapter.refreshlist(caseBean.getData().getList());
-                            adapter.refreshhot(caseBean.getData().getHot());
-                        }
-                    });
-                }
-
-                @Override
-                public void onError(String error) {
-
-                }
-            }, getContext());
-            //casePresenter.loadData();
-        }
-    }
 
     @Override
     public void onConfigSuccess(ConfigBean configBean) {
@@ -748,5 +650,134 @@ public class CaseFragment extends Fragment implements View.OnClickListener, ICas
     @Override
     public void onConfigError(String error) {
         Log.e("configerror",error);
+    }
+
+
+    /**
+     * 加载feed广告
+     */
+    private void loadListAd() {
+        //step4:创建feed广告请求类型参数AdSlot,具体参数含义参考文档
+        AdSlot adSlot = new AdSlot.Builder()
+                .setCodeId("926447523")
+                .setSupportDeepLink(true)
+                .setImageAcceptedSize(320, 640)
+                .setExpressViewAcceptedSize(500, 500) //期望模板广告view的size,单位dp
+                .setAdCount(3) //请求广告数量为1到3条
+                .build();
+        //step5:请求广告，调用feed广告异步请求接口，加载到广告后，拿到广告素材自定义渲染
+        mTTAdNative.loadNativeExpressAd(adSlot, new TTAdNative.NativeExpressAdListener() {
+            @Override
+            public void onError(int code, String message) {
+                Log.e("message",message+"---");
+               // Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
+                //TToast.show(NativeExpressListActivity.this, message);
+            }
+
+            @Override
+            public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
+                Log.e("message","1111---");
+                bindAdListener(ads);
+            }
+        });
+    }
+
+    private void bindAdListener(final List<TTNativeExpressAd> ads) {
+        for (TTNativeExpressAd ad : ads) {
+            final TTNativeExpressAd adTmp = ad;
+            mData.add(ad);
+            adapter.refreshfeed(mData);
+
+            adTmp.setExpressInteractionListener(new TTNativeExpressAd.ExpressAdInteractionListener() {
+                @Override
+                public void onAdClicked(View view, int type) {
+                    //TToast.show(NativeExpressListActivity.this, "广告被点击");
+                    Log.e("message","广告被点击");
+                }
+
+                @Override
+                public void onAdShow(View view, int type) {
+                    Log.e("message","广告展示");
+                    //TToast.show(NativeExpressListActivity.this, "广告展示");
+                }
+
+                @Override
+                public void onRenderFail(View view, String msg, int code) {
+                    Log.e("message",msg + " code:" + code);
+                    //TToast.show(NativeExpressListActivity.this, msg + " code:" + code);
+                }
+
+                @Override
+                public void onRenderSuccess(View view, float width, float height) {
+                    //返回view的宽高 单位 dp
+                    Log.e("message","渲染成功");
+                   // TToast.show(NativeExpressListActivity.this, "渲染成功");
+                   // adapter.notifyDataSetChanged();
+                }
+            });
+            ad.render();
+
+        }
+
+    }
+
+
+
+
+
+    @Override
+    protected void lazyLoad() {
+        if (!isPrepared || !isVisible || mHasLoadedOnce){
+            return;
+        }
+        personalPresenter=new IPersonalPresenterImpl(this,getContext());
+        personalPresenter.loadData();
+        configPresenter=new IConfigPresenterImpl(this,getContext());
+        configPresenter.loadData();
+        casePresenter=new ICasePresenterImpl(this,getContext());
+        if(!token.equals("")){
+            casePresenter.loadData();
+        }
+        Log.e(TAG,TAG+"加载数据");
+        //mHasLoadedOnce = true;
+    }
+
+    public  static GetMoneyPopWindow customPopWindow;
+    private void showPopWindow(View v){
+        customPopWindow=new GetMoneyPopWindow(getActivity());
+        customPopWindow.showAtLocation(v,
+                Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+        customPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                customPopWindow.backgroundAlpha(getActivity(), 1f);
+            }
+        });
+
+    }
+
+    public static void closePopWindow(){
+        if(customPopWindow!=null){
+            customPopWindow.dismiss();
+        }
+
+    }
+
+    @Override
+    public void onUserEventSuccess(UserEventBean userEventBean) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(userEventBean.getCode()==200){
+                    database=dbUtils.getWritableDatabase();
+                    database.execSQL("delete from userevent");
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onUserEventError(String error) {
+
     }
 }

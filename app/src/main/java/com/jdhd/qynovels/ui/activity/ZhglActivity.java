@@ -18,7 +18,10 @@ import android.widget.Toast;
 
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.bookshop.ExitBean;
 import com.jdhd.qynovels.module.personal.BindWxBean;
+import com.jdhd.qynovels.ui.fragment.CaseFragment;
+import com.jdhd.qynovels.ui.fragment.ShopFragment;
 import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
@@ -154,19 +157,40 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
            }
        }
        else if(R.id.zh_tc==view.getId()){
+
            SharedPreferences preferences=getSharedPreferences("token", Context.MODE_PRIVATE);
            SharedPreferences.Editor editor=preferences.edit();
            editor.clear();
            editor.commit();
+
+           SharedPreferences sex=getSharedPreferences("sex",MODE_PRIVATE);
+           SharedPreferences.Editor sexeditor=sex.edit();
+           sexeditor.clear();
+           sexeditor.commit();
+
+           SharedPreferences back=getSharedPreferences("background",MODE_PRIVATE);
+           SharedPreferences.Editor backeditor=back.edit();
+           backeditor.clear();
+           backeditor.commit();
+
+           SharedPreferences size=getSharedPreferences("fountsize",MODE_PRIVATE);
+           SharedPreferences.Editor sizeditor=size.edit();
+           sizeditor.clear();
+           sizeditor.commit();
+
            database=dbUtils.getWritableDatabase();
            database.execSQL("delete from usercase");
            database.execSQL("delete from readhistory");
+
            Intent intent=new Intent(ZhglActivity.this,MainActivity.class);
            intent.putExtra("page",3);
            intent.setAction("exit");
            startActivity(intent);
            MobclickAgent.onProfileSignOff();
            EventBus.getDefault().post("200");
+           EventBus.getDefault().post(new ExitBean("200"));
+           ShopFragment.lhb.setVisibility(View.VISIBLE);
+           CaseFragment.lhb.setVisibility(View.VISIBLE);
        }
     }
 

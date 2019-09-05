@@ -2,11 +2,12 @@ package com.jdhd.qynovels.module.personal;
 
 public class RefreshTokenBean {
 
+
     /**
      * code : 200
      * msg : success
      * time : 1561024828
-     * data : {"token":"3f8cc4886670374252378751dec59052","past_due":1562724927}
+     * data : {"token":"3f8cc4886670374252378751dec59052","past_due":1562724927,"is_login":1}
      */
 
     private int code;
@@ -50,10 +51,12 @@ public class RefreshTokenBean {
         /**
          * token : 3f8cc4886670374252378751dec59052
          * past_due : 1562724927
+         * is_login : 1
          */
 
         private String token;
         private int past_due;
+        private int is_login;
 
         public String getToken() {
             return token;
@@ -69,6 +72,14 @@ public class RefreshTokenBean {
 
         public void setPast_due(int past_due) {
             this.past_due = past_due;
+        }
+
+        public int getIs_login() {
+            return is_login;
+        }
+
+        public void setIs_login(int is_login) {
+            this.is_login = is_login;
         }
     }
 }

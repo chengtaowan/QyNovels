@@ -23,6 +23,11 @@ public class IPrizeRecodePresenterImpl implements IPrizeRecodePresenter {
     private String token;
     private String page="";
     private String limit="";
+    private String dataPath="";
+
+    public void setDataPath(String dataPath) {
+        this.dataPath = dataPath;
+    }
 
     public void setPage(String page) {
         this.page = page;
@@ -55,7 +60,7 @@ public class IPrizeRecodePresenterImpl implements IPrizeRecodePresenter {
         Log.e("token",token);
         Log.e("time",time+"");
         Log.e("sign",sign);
-        RxHttp.postForm(MyApp.Url.baseUrl+"prizeRecode")
+        RxHttp.postForm(MyApp.Url.baseUrl+dataPath)
                 .addHeader("token",token)
                 .add(map)
                 .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制

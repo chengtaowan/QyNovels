@@ -2,6 +2,7 @@ package com.jdhd.qynovels.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.activities.ExtendReaderActivity;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.BookBean;
 import com.jdhd.qynovels.ui.activity.LsActivity;
@@ -36,6 +38,7 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
     private List<BookBean> list;
     private DbUtils dbUtils;
     private SQLiteDatabase database;
+    private String token;
 
     public LsAdapter(Context context, List<BookBean> list) {
         this.context = context;
@@ -48,6 +51,8 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
         dbUtils=new DbUtils(context);
         View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ls, parent, false);
         LsViewHolder viewHolder=new LsViewHolder(view);
+        SharedPreferences sharedPreferences=context.getSharedPreferences("token",Context.MODE_PRIVATE);
+        token=sharedPreferences.getString("token","");
         return viewHolder;
     }
 
@@ -81,10 +86,13 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
            @Override
            public void onClick(View view) {
                Log.e("click","1111");
-               Intent intent=new Intent(context, XqActivity.class);
+               Intent intent=new Intent(context, ExtendReaderActivity.class);
                intent.putExtra("id",list.get(position).getBookid());
-               intent.putExtra("xq",9);
-               intent.putExtra("sc_type",1);
+               intent.putExtra("token",token);
+               intent.putExtra("img",list.get(position).getImg());
+               intent.putExtra("name",list.get(position).getName());
+               intent.putExtra("backlistid",0);
+               intent.putExtra("charIndex",0);
                context.startActivity(intent);
            }
        });

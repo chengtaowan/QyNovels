@@ -8,6 +8,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -55,10 +56,12 @@ import com.bytedance.sdk.openadsdk.TTRewardVideoAd;
 import com.google.gson.Gson;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.personal.EventBean;
 import com.jdhd.qynovels.module.personal.FunctionBean;
 
 import com.jdhd.qynovels.module.personal.SignInVideoBean;
 import com.jdhd.qynovels.module.personal.SignSetingBean;
+import com.jdhd.qynovels.module.personal.UserEventBean;
 import com.jdhd.qynovels.module.personal.VideoflBean;
 import com.jdhd.qynovels.persenter.impl.personal.IDrawPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IPrizePresenterImpl;
@@ -68,6 +71,7 @@ import com.jdhd.qynovels.persenter.impl.personal.IShareListPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.ISignPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.ISignSetingPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.ISingInVideoPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.IUserEventPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IVideoflPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IWelfarePresenterImpl;
 
@@ -77,7 +81,9 @@ import com.jdhd.qynovels.ui.activity.MainActivity;
 
 import com.jdhd.qynovels.ui.activity.YqActivity;
 import com.jdhd.qynovels.ui.activity.ZpActivity;
+import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
+import com.jdhd.qynovels.utils.EventDbUtils;
 import com.jdhd.qynovels.view.personal.IDrawView;
 import com.jdhd.qynovels.view.personal.IPrizeRecodeView;
 import com.jdhd.qynovels.view.personal.IPrizesView;
@@ -86,6 +92,7 @@ import com.jdhd.qynovels.view.personal.IShareListView;
 import com.jdhd.qynovels.view.personal.ISignSetingView;
 import com.jdhd.qynovels.view.personal.ISignView;
 import com.jdhd.qynovels.view.personal.ISingInVideoView;
+import com.jdhd.qynovels.view.personal.IUserEventView;
 import com.jdhd.qynovels.view.personal.IVideoflView;
 import com.jdhd.qynovels.view.personal.IWelfareView;
 import com.just.agentweb.AgentWeb;
@@ -112,13 +119,14 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import rx.functions.Action1;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflView, ISignSetingView, ISignView , ISingInVideoView {
+public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSetingView, ISignView , ISingInVideoView , IUserEventView,IWelfareView {
 
     private AgentWeb web;
     private LinearLayout webView;
@@ -143,6 +151,16 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
     protected boolean isCreated = false;
     private String token;
     private ISingInVideoPresenterImpl singInVideoPresenter;
+    private static final String TAG = "FuliFragment";
+    private View rootView;
+    //标志位，标志已经初始化完成
+    private boolean isPrepared;
+    //是否已被加载过一次，第二次就不再去请求数据了
+    private boolean mHasLoadedOnce;
+    private int startTime,endTime;
+    private DbUtils dbUtils;
+    private SQLiteDatabase database;
+    private IUserEventPresenterImpl iUserEventPresenter;
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -183,7 +201,6 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
                     String img=functionBean.getShare_img();
 
                     if(type.equals("1")&&scene.equals("0")){
-
                         getBitmap(getContext(), img, new FuLiFragment.GlideLoadBitmapCallback() {
                             @Override
                             public void getBitmapCallback(Bitmap bitmap) {
@@ -220,11 +237,19 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
                     }
                 break;
                 case 7:
-                    loadAd("926447225",TTAdConstant.VERTICAL,0);
+                    int time=DeviceInfoUtils.getTime();
+                    EventDbUtils eventDbUtils=new EventDbUtils(getContext());
+                    List<EventBean.DataBean> updata = eventDbUtils.updata(MyApp.kQYDataAnalysisEventType.kQYDataAnalysisTargetEvent, time, 0, MyApp.kQYoperationType.kQYSoperationTypeOpen, MyApp.kQYTargetDataAnalysis.kQYTargetDataAnalysisWelfare_watchVideo);
+                    if(updata.size()==20){
+                        Gson gson=new Gson();
+                        String s=gson.toJson(updata);
+                        iUserEventPresenter.setJson(s);
+                        iUserEventPresenter.loadData();
+                    }
+                    loadVideoAd("926447225",TTAdConstant.VERTICAL);
                     break;
                 case 8:
-                    loadAd("926447225",TTAdConstant.VERTICAL,1);
-                    //singInVideoPresenter.loadData();
+                    loadAd("926447225",TTAdConstant.VERTICAL);
                     break;
             }
         }
@@ -242,6 +267,7 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
                 if(videoflBean.getCode()==200){
                     Log.e("shuju",videoflBean.getData().getAward()+"");
                     Toast.makeText(getContext(),"观看完成，获取"+videoflBean.getData().getAward()+"金币",Toast.LENGTH_SHORT).show();
+
                 }
                 else{
                     Toast.makeText(getContext(),videoflBean.getMsg(),Toast.LENGTH_SHORT).show();
@@ -278,6 +304,7 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.e("singsuccess","1");
                 web.getJsAccessEntrace().quickCallJs("signSetting", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String s) {
@@ -307,6 +334,46 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
 
     @Override
     public void onSignError(String error) {
+
+    }
+
+    @Override
+    public void onUserEventSuccess(UserEventBean userEventBean) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(userEventBean.getCode()==200){
+                    database=dbUtils.getWritableDatabase();
+                    database.execSQL("delete from userevent");
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onUserEventError(String error) {
+
+    }
+
+    @Override
+    public void onWelSuccess(String string) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                sr.finishRefresh();
+                Log.e("string",string);
+                web.getJsAccessEntrace().quickCallJs("welfare", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String s) {
+                        Log.e("data",s);
+                    }
+                },string);
+            }
+        });
+    }
+
+    @Override
+    public void onWelError(String error) {
 
     }
 
@@ -343,242 +410,25 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
     @Override
     public void onStart() {
         super.onStart();
-//        if(web!=null){
-//           web.clearWebCache();
-//        }
-        // 标记
-        isCreated = true;
-        welfarePresenter=new IWelfarePresenterImpl(new IWelfareView() {
-            @Override
-            public void onWelSuccess(String string) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        sr.finishRefresh();
-                        Log.e("string",string);
-                        web.getJsAccessEntrace().quickCallJs("welfare", new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String s) {
-                                Log.e("data",s);
-                            }
-                        },string);
-                    }
-                });
-            }
+        startTime=DeviceInfoUtils.getTime();
 
-            @Override
-            public void onWelError(String error) {
-                android.util.Log.e("welerror",error);
-            }
-        }, getContext());
-        welfarePresenter.loadData();
-        SharedPreferences preferences=getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-        token = preferences.getString("token", "");
-        signSetingPresenter=new ISignSetingPresenterImpl(new ISignSetingView() {
-            @Override
-            public void onSetingSuccess(String string) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e("setingstart",string);
-                        web.getJsAccessEntrace().quickCallJs("signSetting", new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String s) {
-                                Log.e("data",s);
-                            }
-                        },string);
-                    }
-                });
-            }
-
-            @Override
-            public void onSetingError(String error) {
-
-            }
-        },getContext());
-        signSetingPresenter.setToken(token);
-        signSetingPresenter.loadData();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-//        if(web!=null){
-//            web.clearWebCache();
-//        }
-        // 标记
-        isCreated = true;
-        welfarePresenter=new IWelfarePresenterImpl(new IWelfareView() {
-            @Override
-            public void onWelSuccess(String string) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        sr.finishRefresh();
-                        Log.e("string",string);
-                        web.getJsAccessEntrace().quickCallJs("welfare", new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String s) {
-                                Log.e("data",s);
-                            }
-                        },string);
-                    }
-                });
-            }
-
-            @Override
-            public void onWelError(String error) {
-                android.util.Log.e("welerror",error);
-            }
-        }, getContext());
-        welfarePresenter.loadData();
-        SharedPreferences preferences=getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-        token = preferences.getString("token", "");
-        signSetingPresenter=new ISignSetingPresenterImpl(new ISignSetingView() {
-            @Override
-            public void onSetingSuccess(String string) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e("setingcreateview",string);
-                        web.getJsAccessEntrace().quickCallJs("signSetting", new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String s) {
-                                Log.e("data",s);
-                            }
-                        },string);
-                    }
-                });
-            }
-
-            @Override
-            public void onSetingError(String error) {
-
-            }
-        },getContext());
-        signSetingPresenter.setToken(token);
-        signSetingPresenter.loadData();
+        Log.e(TAG,"onstart");
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        // 标记
-//        if(web!=null){
-//            web.clearWebCache();
-//        }
-        isCreated = true;
-        welfarePresenter=new IWelfarePresenterImpl(new IWelfareView() {
-            @Override
-            public void onWelSuccess(String string) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        sr.finishRefresh();
-                        Log.e("string",string);
-                        web.getJsAccessEntrace().quickCallJs("welfare", new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String s) {
-                                Log.e("data",s);
-                            }
-                        },string);
-                    }
-                });
-            }
 
-            @Override
-            public void onWelError(String error) {
-                android.util.Log.e("welerror",error);
-            }
-        }, getContext());
-        welfarePresenter.loadData();
-        SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
-        token = preferences.getString("token", "");
-
-        signSetingPresenter=new ISignSetingPresenterImpl(new ISignSetingView() {
-            @Override
-            public void onSetingSuccess(String string) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e("setingattach",string);
-                        web.getJsAccessEntrace().quickCallJs("signSetting", new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String s) {
-                                Log.e("data",s);
-                            }
-                        },string);
-                    }
-                });
-            }
-
-            @Override
-            public void onSetingError(String error) {
-
-            }
-        },getContext());
-        signSetingPresenter.setToken(token);
-        signSetingPresenter.loadData();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // 标记
-//        if(web!=null){
-//            web.clearWebCache();
-//        }
-        isCreated = true;
-        welfarePresenter=new IWelfarePresenterImpl(new IWelfareView() {
-            @Override
-            public void onWelSuccess(String string) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        sr.finishRefresh();
-                        Log.e("string",string);
-                        web.getJsAccessEntrace().quickCallJs("welfare", new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String s) {
-                                Log.e("data",s);
-                            }
-                        },string);
-                    }
-                });
-            }
-
-            @Override
-            public void onWelError(String error) {
-                android.util.Log.e("welerror",error);
-            }
-        }, getContext());
-        welfarePresenter.loadData();
+        Log.e(TAG,"onstartresume");
         SharedPreferences preferences=getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
-        signSetingPresenter=new ISignSetingPresenterImpl(new ISignSetingView() {
-            @Override
-            public void onSetingSuccess(String string) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e("setingresume",string);
-                        web.getJsAccessEntrace().quickCallJs("signSetting", new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String s) {
-                                Log.e("data",s);
-                            }
-                        },string);
-                    }
-                });
-            }
+        lazyLoad();
 
-            @Override
-            public void onSetingError(String error) {
-
-            }
-        },getContext());
-        signSetingPresenter.setToken(token);
-        signSetingPresenter.loadData();
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getToken(String string){
@@ -612,48 +462,19 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_fu_li, container, false);
-//        if(web!=null){
-//            web.clearWebCache();
-//        }
+        if(rootView==null){
+            rootView= inflater.inflate(R.layout.fragment_fu_li, container, false);
+            init(rootView);
+            isPrepared = true;
+
+        }
         if(!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-        welfarePresenter=new IWelfarePresenterImpl(new IWelfareView() {
-            @Override
-            public void onWelSuccess(String string) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        sr.finishRefresh();
-                        Log.e("string",string);
-                        web.getJsAccessEntrace().quickCallJs("welfare", new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String s) {
-                                Log.e("data",s);
-                            }
-                        },string);
-                    }
-                });
-            }
-
-            @Override
-            public void onWelError(String error) {
-                android.util.Log.e("welerror",error);
-            }
-        }, getContext());
-        welfarePresenter.loadData();
-        // 标记
-        isCreated = true;
-        SharedPreferences preferences=getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-        token = preferences.getString("token", "");
-        prizePresenter=new IPrizePresenterImpl(this,getContext());
+        iUserEventPresenter=new IUserEventPresenterImpl(this,getContext());
+        dbUtils=new DbUtils(getContext());
         singInVideoPresenter=new ISingInVideoPresenterImpl(this,getContext());
         videoflPresenter=new IVideoflPresenterImpl(this,getContext());
-        signSetingPresenter=new ISignSetingPresenterImpl(this,getContext());
-        signSetingPresenter.setToken(token);
-        signSetingPresenter.loadData();
         signPresenter=new ISignPresenterImpl(this,getContext());
         hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
         //step1:初始化sdk
@@ -668,26 +489,26 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
         width = metrics.widthPixels;  //以要素为单位
         height = metrics.heightPixels;
 
-        //同时请求多个权限
-        RxPermissions.getInstance(getContext())
-                .request(Manifest.permission.ACCESS_NETWORK_STATE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)//多个权限用","隔开
-                .subscribe(new Action1<Boolean>() {
-                    @Override
-                    public void call(Boolean aBoolean) {
-                        if (aBoolean) {
-                            //当所有权限都允许之后，返回true
-                            android.util.Log.i("permissions", "btn_more_sametime：" + aBoolean);
-                        } else {
-                            //只要有一个权限禁止，返回false，
-                            //下一次申请只申请没通过申请的权限
-                            android.util.Log.i("permissions", "btn_more_sametime：" + aBoolean);
-                        }
-                    }
-                });
+//        //同时请求多个权限
+//        RxPermissions.getInstance(getContext())
+//                .request(Manifest.permission.ACCESS_NETWORK_STATE,
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE)//多个权限用","隔开
+//                .subscribe(new Action1<Boolean>() {
+//                    @Override
+//                    public void call(Boolean aBoolean) {
+//                        if (aBoolean) {
+//                            //当所有权限都允许之后，返回true
+//                            android.util.Log.i("permissions", "btn_more_sametime：" + aBoolean);
+//                        } else {
+//                            //只要有一个权限禁止，返回false，
+//                            //下一次申请只申请没通过申请的权限
+//                            android.util.Log.i("permissions", "btn_more_sametime：" + aBoolean);
+//                        }
+//                    }
+//                });
 
-        init(view);
-        return view;
+
+        return rootView;
     }
 
     private void init(View view) {
@@ -704,32 +525,7 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
 
                 .createAgentWeb()
                 .ready()
-
                 .go(MyApp.Url.webbaseUrl+"novel/index1.html");
-
-
-        //webView.loadUrl();
-        //声明WebSettings子类
-        //WebSettings webSettings = webView.getSettings();
-        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
-        //webSettings.setJavaScriptEnabled(true);
-        //webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        //webView.addJavascriptInterface(AndroidToJs(this), "test");
-        //设置自适应屏幕，两者合用
-//        webSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
-//        webSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
-//
-////缩放操作
-//        webSettings.setSupportZoom(true); //支持缩放，默认为true。是下面那个的前提。
-//        webSettings.setBuiltInZoomControls(true); //设置内置的缩放控件。若为false，则该WebView不可缩放
-//        webSettings.setDisplayZoomControls(false); //隐藏原生的缩放控件
-//
-////其他细节操作
-//        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //关闭webview中缓存
-//        webSettings.setAllowFileAccess(true); //设置可以访问文件
-//
-//        webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
-//        webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
         web.getJsInterfaceHolder().addJavaObject("android", new AndroidInterface(web, getContext()));
         sr.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -741,6 +537,7 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
                 }
                 else{
                     welfarePresenter.loadData();
+                    signSetingPresenter.loadData();
                 }
 
             }
@@ -751,10 +548,18 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
     @Override
     public void onPause() {
         super.onPause();
-        //web.clearWebCache();
-//        if(web!=null){
-//            web.clearWebCache();
-//        }
+        if(web!=null){
+            web.clearWebCache();
+        }
+        endTime=DeviceInfoUtils.getTime();
+        EventDbUtils eventDbUtils=new EventDbUtils(getContext());
+        List<EventBean.DataBean> updata = eventDbUtils.updata(MyApp.kQYDataAnalysisEventType.kQYDataAnalysisPageEvent, startTime, endTime, MyApp.kQYoperationType.kQYSoperationTypeOpen, MyApp.kQYPageDataAnalysis.kQYPageDataAnalysisWelfare);
+        if(updata.size()==20){
+            Gson gson=new Gson();
+            String s=gson.toJson(updata);
+            iUserEventPresenter.setJson(s);
+            iUserEventPresenter.loadData();
+        }
     }
 
     @Override
@@ -765,31 +570,6 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
         }
         EventBus.getDefault().unregister(this);
 
-//        if(prizePresenter!=null){
-//            prizePresenter.destoryView();
-//        }
-//        if(drawPresenter!=null){
-//           drawPresenter.destoryView();
-//        }
-    }
-    @Override
-    public void onPrizeSuccess(String string) {
-       getActivity().runOnUiThread(new Runnable() {
-           @Override
-           public void run() {
-               web.getJsAccessEntrace().quickCallJs("getPrize", new ValueCallback<String>() {
-                   @Override
-                   public void onReceiveValue(String s) {
-                       Log.e("data",s);
-                   }
-               },string);
-           }
-       });
-    }
-
-    @Override
-    public void onPrizeError(String error) {
-      Log.e("prizeerror",error);
     }
 
 
@@ -890,44 +670,141 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
     }
 
 
-    public static byte[] bmpToByteArray(final Bitmap bmp, final boolean needRecycle) {
-        int i;
-        int j;
-        if (bmp.getHeight() > bmp.getWidth()) {
-            i = bmp.getWidth();
-            j = bmp.getWidth();
-        } else {
-            i = bmp.getHeight();
-            j = bmp.getHeight();
-        }
-
-        Bitmap localBitmap = Bitmap.createBitmap(i, j, Bitmap.Config.RGB_565);
-        Canvas localCanvas = new Canvas(localBitmap);
-
-        while (true) {
-            localCanvas.drawBitmap(bmp, new Rect(0, 0, i, j), new Rect(0, 0,i, j), null);
-            if (needRecycle)
-                bmp.recycle();
-            ByteArrayOutputStream localByteArrayOutputStream = new ByteArrayOutputStream();
-            localBitmap.compress(Bitmap.CompressFormat.JPEG, 100,
-                    localByteArrayOutputStream);
-            localBitmap.recycle();
-            byte[] arrayOfByte = localByteArrayOutputStream.toByteArray();
-            try {
-                localByteArrayOutputStream.close();
-                return arrayOfByte;
-            } catch (Exception e) {
-                //F.out(e);
-            }
-            i = bmp.getHeight();
-            j = bmp.getHeight();
-        }
-    }
 
     private boolean mHasShowDownloadActive = false;
 
-    private void loadAd(String codeId, int orientation,int type) {
+    private void loadVideoAd(String codeId, int orientation) {
+        //step4:创建广告请求参数AdSlot,具体参数含义参考文档
+        AdSlot adSlot = new AdSlot.Builder()
+                .setCodeId(codeId)
+                .setSupportDeepLink(true)
+                .setImageAcceptedSize(width, height)
+                .setRewardName("金币") //奖励的名称
+                .setRewardAmount(1)  //奖励的数量
+                .setUserID("user1234")//用户id,必传参数
+                .setMediaExtra("media_extra") //附加参数，可选
+                .setOrientation(orientation) //必填参数，期望视频的播放方向：TTAdConstant.HORIZONTAL 或 TTAdConstant.VERTICAL
+                .build();
+        //step5:请求广告
+        mTTAdNative.loadRewardVideoAd(adSlot, new TTAdNative.RewardVideoAdListener() {
+            @Override
+            public void onError(int code, String message) {
+                Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
+            }
 
+            //视频广告加载后，视频资源缓存到本地的回调，在此回调后，播放本地视频，流畅不阻塞。
+            @Override
+            public void onRewardVideoCached() {
+
+
+                //Toast.makeText(ZpActivity.this,"rewardVideoAd video cached",Toast.LENGTH_SHORT).show();
+            }
+
+            //视频广告的素材加载完毕，比如视频url等，在此回调后，可以播放在线视频，网络不好可能出现加载缓冲，影响体验。
+            @Override
+            public void onRewardVideoAdLoad(TTRewardVideoAd ad) {
+
+                //Toast.makeText(ZpActivity.this,"rewardVideoAd loaded",Toast.LENGTH_SHORT).show();
+                mttRewardVideoAd = ad;
+//                mttRewardVideoAd.setShowDownLoadBar(false);
+                if (mttRewardVideoAd != null) {
+                    //step6:在获取到广告后展示
+
+                    mttRewardVideoAd.setRewardAdInteractionListener(new TTRewardVideoAd.RewardAdInteractionListener() {
+
+                        @Override
+                        public void onAdShow() {
+
+                            //Toast.makeText(ZpActivity.this,"rewardVideoAd show",Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onAdVideoBarClick() {
+                            //Toast.makeText(ZpActivity.this,"rewardVideoAd bar click",Toast.LENGTH_SHORT).show();
+                        }
+                        @Override
+                        public void onAdClose() {
+                            Log.e("watch","观看完成3");
+                            videoflPresenter.loadData();
+                            welfarePresenter.loadData();
+                        }
+                        //Toast.makeText(ZpActivity.this,"rewardVideoAd close",Toast.LENGTH_SHORT).show();
+
+                        //视频播放完成回调
+                        @Override
+                        public void onVideoComplete() {
+
+                        }
+
+                        @Override
+                        public void onVideoError() {
+
+                            //Toast.makeText(ZpActivity.this,"rewardVideoAd error",Toast.LENGTH_SHORT).show();
+                        }
+
+                        //视频播放完成后，奖励验证回调，rewardVerify：是否有效，rewardAmount：奖励梳理，rewardName：奖励名称
+                        @Override
+                        public void onRewardVerify(boolean rewardVerify, int rewardAmount, String rewardName) {
+
+//                        Toast.makeText(ZpActivity.this,"verify:" + rewardVerify + " amount:" + rewardAmount +
+//                                " name:" + rewardName,Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onSkippedVideo() {
+                            android.util.Log.e("watch","观看完成7");
+                            //Toast.makeText(ZpActivity.this,"rewardVideoAd has onSkippedVideo",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    mttRewardVideoAd.setDownloadListener(new TTAppDownloadListener() {
+                        @Override
+                        public void onIdle() {
+                            mHasShowDownloadActive = false;
+                        }
+
+                        @Override
+                        public void onDownloadActive(long totalBytes, long currBytes, String fileName, String appName) {
+                            if (!mHasShowDownloadActive) {
+                                mHasShowDownloadActive = true;
+                                // Toast.makeText(getContext(),"下载中，点击下载区域暂停",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onDownloadPaused(long totalBytes, long currBytes, String fileName, String appName) {
+                            // Toast.makeText(getContext(),"下载暂停，点击下载区域继续",Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onDownloadFailed(long totalBytes, long currBytes, String fileName, String appName) {
+                            //Toast.makeText(getContext(),"下载失败，点击下载区域重新下载",Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onDownloadFinished(long totalBytes, String fileName, String appName) {
+                            //Toast.makeText(getContext(),"下载完成，点击下载区域重新下载",Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onInstalled(String fileName, String appName) {
+                            // Toast.makeText(getContext(),"安装完成，点击下载区域打开",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    mttRewardVideoAd.showRewardVideoAd(getActivity());
+                    //mttRewardVideoAd = null;
+                } else {
+                    Toast.makeText(getContext(),"广告加载失败，请检查网络",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+            }
+        });
+    }
+
+
+
+    private void loadAd(String codeId, int orientation) {
         //step4:创建广告请求参数AdSlot,具体参数含义参考文档
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId(codeId)
@@ -978,16 +855,8 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
                         }
                         @Override
                         public void onAdClose() {
-                            Log.e("fltype",type+"===");
-                            if(type==1){
-                                android.util.Log.e("watch","观看完成3");
-                                singInVideoPresenter.loadData();
-                            }
-                            else if(type==0){
-                                videoflPresenter.loadData();
-                            }
-
-
+                            Log.e("watch","签到观看完成3");
+                            singInVideoPresenter.loadData();
                             //Toast.makeText(ZpActivity.this,"rewardVideoAd close",Toast.LENGTH_SHORT).show();
                         }
 
@@ -1138,29 +1007,40 @@ public class FuLiFragment extends Fragment implements  IPrizesView , IVideoflVie
         }
         return false;
     }
-    /**
-     * 此方法目前仅适用于标示ViewPager中的Fragment是否真实可见
-     */
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
 
-        if (!isCreated) {
+    @Override
+    protected void lazyLoad() {
+        if (!isPrepared || !isVisible || mHasLoadedOnce){
             return;
         }
-
-        if (isVisibleToUser) {
-            if(welfarePresenter!=null){
-                welfarePresenter.loadData();
+        welfarePresenter=new IWelfarePresenterImpl(new IWelfareView() {
+            @Override
+            public void onWelSuccess(String string) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        sr.finishRefresh();
+                        Log.e("string",string);
+                        web.getJsAccessEntrace().quickCallJs("welfare", new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String s) {
+                                Log.e("data",s);
+                            }
+                        },string);
+                    }
+                });
             }
-            if(signSetingPresenter!=null){
-//                SharedPreferences preferences=getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-//                token = preferences.getString("token", "");
-                Log.e("fulitoken",token);
-                signSetingPresenter.setToken(token);
-                signSetingPresenter.loadData();
-            }
 
-        }
+            @Override
+            public void onWelError(String error) {
+                android.util.Log.e("welerror",error);
+            }
+        }, getContext());
+        welfarePresenter.loadData();
+        signSetingPresenter=new ISignSetingPresenterImpl(this,getContext());
+        signSetingPresenter.setToken(token);
+        signSetingPresenter.loadData();
+        Log.e(TAG,TAG+"加载数据");
+       // mHasLoadedOnce = true;
     }
 }

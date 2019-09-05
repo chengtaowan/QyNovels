@@ -101,6 +101,7 @@ public class CustomPopWindow extends PopupWindow implements IWithDrawView {
                 pop_pt.setBackgroundResource(R.drawable.shape_pt);
                 ptdz.setTextColor(Color.parseColor("#E8564E"));
                 gzdz.setTextColor(Color.parseColor("#E8564E"));
+                Log.e("time",time+"--");
                 if(time<30){
                     Toast.makeText(context,"阅读满30分钟才可提现！",Toast.LENGTH_SHORT).show();
                 }
@@ -125,7 +126,7 @@ public class CustomPopWindow extends PopupWindow implements IWithDrawView {
                 pop_pt.setBackgroundResource(R.drawable.shape_pt_on);
                 ptdz.setTextColor(Color.parseColor("#E8564E"));
                 gzdz.setTextColor(Color.parseColor("#E8564E"));
-                if(time<30){
+                if((time/60)<30){
                     Toast.makeText(context,"阅读满30分钟才可提现！",Toast.LENGTH_SHORT).show();
                 }
                 else if(yue<num*10000){

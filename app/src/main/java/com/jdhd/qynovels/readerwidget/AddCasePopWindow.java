@@ -44,10 +44,11 @@ public class AddCasePopWindow extends PopupWindow implements IAddBookRankView, I
     private IBookInfoPresenterImpl bookInfoPresenter;
     private BookInfoBean bookBean=new BookInfoBean();
     private IBookListPresenterImpl iBookListPresenter;
+    private int backlistid;
     private BookListBean listBean=new BookListBean();
 
 
-    public AddCasePopWindow(Activity context, View.OnClickListener itemClick,int type,int id) {
+    public AddCasePopWindow(Activity context, View.OnClickListener itemClick,int type,int id,int backlistid) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view=inflater.inflate(R.layout.item_addcase,null);
         dbUtils=new DbUtils(context);
@@ -62,6 +63,7 @@ public class AddCasePopWindow extends PopupWindow implements IAddBookRankView, I
         this.itemClick = itemClick;
         this.type=type;
         this.id=id;
+        this.backlistid=backlistid;
         initView();
         initPopWindow();
 
@@ -74,6 +76,9 @@ public class AddCasePopWindow extends PopupWindow implements IAddBookRankView, I
             @Override
             public void onClick(View view) {
                 addBookRankPresenter.setId(id);
+                addBookRankPresenter.setReadStatus(20);
+                addBookRankPresenter.setCharIndex(0);
+                addBookRankPresenter.setBacklistId(0);
                 addBookRankPresenter.loadData();
 
 

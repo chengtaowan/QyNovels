@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.ui.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -76,6 +77,7 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
                     intent.putExtra("datapath",functionBean.getDataPath());
                     intent.putExtra("page",functionBean.getReqParameter().getPage());
                     intent.putExtra("limit",functionBean.getReqParameter().getLimit());
+                    Log.e("function",functionBean.getTitle()+"--"+functionBean.getPath()+"--"+functionBean.getDataPath()+"--"+functionBean.getReqParameter().getPage()+"--"+functionBean.getReqParameter().getLimit());
                     startActivity(intent);
                     break;
                 case 2:
@@ -115,6 +117,8 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
         init();
 
     }
+
+
 
     private void init() {
         sr=findViewById(R.id.sr);

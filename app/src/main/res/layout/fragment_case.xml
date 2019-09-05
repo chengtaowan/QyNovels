@@ -6,7 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragment.CaseFragment"
     android:orientation="vertical"
-    android:background="#fff">
+    android:background="#fff"
+    android:id="@+id/rl">
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="150dp"
@@ -93,5 +94,15 @@
         android:id="@+id/sj_rv"
         android:descendantFocusability="blocksDescendants"></androidx.recyclerview.widget.RecyclerView>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="45dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="94dp"
+        android:layout_marginRight="12dp"
+        android:src="@mipmap/lhb"
+        android:id="@+id/lhb"/>
     <include layout="@layout/item_jz"/>
 </RelativeLayout>

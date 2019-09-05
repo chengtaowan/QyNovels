@@ -7,6 +7,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
@@ -30,13 +31,19 @@ import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
+import com.jdhd.qynovels.module.personal.EventBean;
 import com.jdhd.qynovels.module.personal.FunctionBean;
+import com.jdhd.qynovels.module.personal.UserEventBean;
 import com.jdhd.qynovels.persenter.impl.personal.IShareImgPresenterImpl;
+import com.jdhd.qynovels.persenter.impl.personal.IUserEventPresenterImpl;
 import com.jdhd.qynovels.ui.fragment.FuLiFragment;
 import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
+import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
+import com.jdhd.qynovels.utils.EventDbUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
 import com.jdhd.qynovels.view.personal.IShareImgView;
+import com.jdhd.qynovels.view.personal.IUserEventView;
 import com.just.agentweb.AgentWeb;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -50,10 +57,11 @@ import com.umeng.analytics.MobclickAgent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import static com.jdhd.qynovels.ui.fragment.FuLiFragment.createBitmapThumbnail;
 
-public class YqActivity extends AppCompatActivity implements View.OnClickListener , IShareImgView {
+public class YqActivity extends AppCompatActivity implements View.OnClickListener , IShareImgView , IUserEventView {
     private TextView tex,mx;
     private ImageView back;
     private LinearLayout webView;
@@ -66,6 +74,9 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
     private Bitmap map;
     private SmartRefreshLayout sr;
     private boolean hasNetWork;
+    private DbUtils dbUtils;
+    private SQLiteDatabase database;
+    private IUserEventPresenterImpl iUserEventPresenter;
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -78,6 +89,15 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
                     String type=functionBean.getType();
                     String scene=functionBean.getScene();
                     String img=functionBean.getShare_img();
+                    EventDbUtils eventDbUtils=new EventDbUtils(YqActivity.this);
+                    int time=DeviceInfoUtils.getTime();
+                    List<EventBean.DataBean> updata = eventDbUtils.updata(MyApp.kQYDataAnalysisEventType.kQYDataAnalysisTargetEvent, time, 0, MyApp.kQYoperationType.kQYSoperationTypeOpen, MyApp.kQYTargetDataAnalysis.kQYTargetDataAnalysisWelfare_invite_share);
+                    if(updata.size()==20){
+                        Gson gson=new Gson();
+                        String s=gson.toJson(updata);
+                        iUserEventPresenter.setJson(s);
+                        iUserEventPresenter.loadData();
+                    }
                     if(type.equals("1")&&scene.equals("0")){
 
                         getBitmap(YqActivity.this, img, new FuLiFragment.GlideLoadBitmapCallback() {
@@ -133,9 +153,9 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_yq);
         AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
-
-
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        dbUtils=new DbUtils(this);
+        iUserEventPresenter=new IUserEventPresenterImpl(this,this);
         hasNetWork = DeviceInfoUtils.hasNetWork(this);
         Intent intent = getIntent();
         type=intent.getIntExtra("type",0);
@@ -214,12 +234,23 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
             @Override
             public void run() {
                 Log.e("share",string);
-                web.getJsAccessEntrace().quickCallJs("shareImg", new ValueCallback<String>() {
+                new Thread(new Runnable() {
                     @Override
-                    public void onReceiveValue(String s) {
-                        Log.e("data",s);
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        web.getJsAccessEntrace().quickCallJs("shareImg", new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String s) {
+                                Log.e("data",s);
+                            }
+                        },string);
                     }
-                },string);
+                }).start();
+
             }
         });
     }
@@ -227,6 +258,24 @@ public class YqActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onShareError(String error) {
       Log.e("shareimgerror",error);
+    }
+
+    @Override
+    public void onUserEventSuccess(UserEventBean userEventBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(userEventBean.getCode()==200){
+                    database=dbUtils.getWritableDatabase();
+                    database.execSQL("delete from userevent");
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onUserEventError(String error) {
+
     }
 
     public class AndroidInterface {

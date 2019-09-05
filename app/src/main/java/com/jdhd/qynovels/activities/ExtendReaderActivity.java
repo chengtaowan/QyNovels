@@ -1,14 +1,22 @@
 package com.jdhd.qynovels.activities;
 
+import android.app.ActivityManager;
 import android.app.UiModeManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -26,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -43,12 +52,16 @@ import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 
 import com.google.android.material.navigation.NavigationView;
 import com.jdhd.qynovels.R;
+import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.AddBookBean;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
+import com.jdhd.qynovels.module.bookcase.ConfigBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.IAddBookRankPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookInfoPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
+import com.jdhd.qynovels.persenter.impl.bookcase.IConfigPresenterImpl;
+import com.jdhd.qynovels.readerutil.Request;
 import com.jdhd.qynovels.readerview.ScreenUtils;
 import com.jdhd.qynovels.readerview.TurnStatus;
 import com.jdhd.qynovels.config.ColorsConfig;
@@ -75,6 +88,7 @@ import com.jdhd.qynovels.readerwidget.EffectOfRealBothWay;
 import com.jdhd.qynovels.readerwidget.EffectOfRealOneWay;
 import com.jdhd.qynovels.readerwidget.EffectOfSlide;
 import com.jdhd.qynovels.readerwidget.PageChangedCallback;
+
 import com.jdhd.qynovels.readerwidget.ReaderResolve;
 import com.jdhd.qynovels.readerwidget.ReaderView;
 import com.jdhd.qynovels.ui.activity.XqActivity;
@@ -83,17 +97,22 @@ import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.view.bookcase.IAddBookRankView;
 import com.jdhd.qynovels.view.bookcase.IBookInfoView;
 import com.jdhd.qynovels.view.bookcase.ICaseView;
+import com.jdhd.qynovels.view.bookcase.IConfigView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import io.reactivex.disposables.Disposable;
 
-public class ExtendReaderActivity extends AppCompatActivity implements View.OnClickListener, IBookListView, IReadAwardView, IBookContentView , ICaseView , IAddBookRankView , IBookInfoView {
+public class ExtendReaderActivity extends AppCompatActivity implements View.OnClickListener, IBookListView, IReadAwardView, IBookContentView , ICaseView , IAddBookRankView , IBookInfoView, IConfigView {
 
     private static final String TAG = ExtendReaderActivity.class.getSimpleName();
     private UiModeManager uiModeManager;
@@ -121,7 +140,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private TextView big,zh;
     private SeekBar lightSeekBar;
     private IReadAwardPresenterImpl readAwardPresenter;
-    private int recLen=30;
+    public static int recLen=30;
     private int clicknum=1;
     private ImageView daynight;
     private LinearLayout gg;
@@ -140,34 +159,65 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private SQLiteDatabase database;
     private int update=0;
     private String mtitle;
-    Timer timer = new Timer();
+    public static Timer timer = new Timer();
     private ICasePresenterImpl casePresenter;
     private BookInfoBean bookBean;
     private IAddBookRankPresenterImpl addBookRankPresenter;
     private int backlistid,charindex;
-    private Handler handler=new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if(msg.what==1){
-                int count=msg.arg1;
-                Log.e("readaward",count+"--");
-                if(count==0){
-                    readAwardPresenter.loadData();
-                    recLen=5;
-
-                }
-            }
-            else{
-                content= (String) msg.obj;
-            }
-
-
-
-        }
-    };
+    private boolean isFirst;
+    private int changepage=30;
+    private Timer changetimer=new Timer();
+    private TimerTask task;
+    private int seekbar,newseekbar;
+    private IConfigPresenterImpl configPresenter;
 
     public ExtendReaderActivity() {
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //startTimer();
+    }
+
+    private void stopTimer(){
+
+        if (timer != null) {
+            timer.cancel();
+            timer = new Timer();
+        }
+
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        recLen = 30;
+
+    }
+
+    private void startTimer(){
+        if(timer!=null){
+            timer=new Timer();
+            if (task == null) {
+                task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        recLen--;
+                        Log.e("readaward", recLen + "--");
+                        if (recLen == 0) {
+                            readAwardPresenter.loadData();
+                            recLen = 30;
+
+                        }
+                    }
+                };
+                if(timer != null && task != null ){
+                    timer.schedule(task, 1000, 1000);
+                }
+            }
+        }
+
+
     }
 
     @Override
@@ -179,6 +229,10 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         uiModeManager=(UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
         mTTAdNative = TTAdSdk.getAdManager().createAdNative(this);
         TTAdSdk.getAdManager().requestPermissionIfNecessary(this);
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+
         dbUtils=new DbUtils(this);
         Intent intent=getIntent();
         id=intent.getIntExtra("id",0);
@@ -197,12 +251,17 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         bookInfoPresenter=new IBookInfoPresenterImpl(this,this);
         bookInfoPresenter.setId(id);
         bookInfoPresenter.loadData();
-        bookContentPresenter=new IBookContentPresenterImpl(this);
+        configPresenter=new IConfigPresenterImpl(this,this);
+        configPresenter.loadData();
+       // bookContentPresenter=new IBookContentPresenterImpl(this);
         readAwardPresenter=new IReadAwardPresenterImpl(this);
         readAwardPresenter.setToken(token);
         Log.e("readtoken",token);
         readAwardPresenter.setId(id);
         time= DeviceInfoUtils.getTime()+"";
+        initReader();
+        initView();
+        initToolbar();
         addBookRankPresenter=new IAddBookRankPresenterImpl(this,this);
         if(token.equals("")){
             List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
@@ -237,6 +296,27 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             casePresenter=new ICasePresenterImpl(this,this);
             casePresenter.loadData();
         }
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                changepage--;
+                Log.e("changepage",changepage+"--");
+                if(changepage ==0){
+                    Log.e("11111",ReaderView.changecount+"--"+ReaderView.count);
+                    if(ReaderView.changecount==ReaderView.count){
+                        stopTimer();
+                    }
+                    else{
+                        ReaderView.changecount=ReaderView.count;
+                       startTimer();
+                    }
+                    changepage=5;
+
+                }
+            }
+        };
+        changetimer.schedule(task, 1000, 1000);
 //        timer.schedule(new TimerTask() {
 //            @Override
 //            public void run() {
@@ -251,23 +331,22 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 //                handler.sendMessage(message);
 //            }
 //        }, 1000,1000);
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                recLen--;
-                Log.e("readaward",recLen+"--");
-                if(recLen ==0){
-                    readAwardPresenter.loadData();
-                    recLen=30;
-
-                }
-            }
-        };
-        timer.schedule(task, 1000, 1000);
+//        TimerTask task = new TimerTask() {
+//            @Override
+//            public void run() {
+//                recLen--;
+//                Log.e("readaward",recLen+"--");
+//                if(recLen ==0){
+//                    readAwardPresenter.loadData();
+//                    recLen=30;
+//
+//                }
+//            }
+//        };
+//        timer.schedule(task, 1000, 1000);
        // initData();
-        initReader();
-        initView();
-        initToolbar();
+
+
 
     }
 
@@ -275,16 +354,10 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         jz=findViewById(R.id.jz);
         logo=findViewById(R.id.img);
         gg=findViewById(R.id.gg);
-        loadExpressAd("926447562",gg,logo);
         daynight=findViewById(R.id.daynight);
-        bj1=findViewById(R.id.reader_bg_0);
-        bj2=findViewById(R.id.reader_bg_1);
-        bj3=findViewById(R.id.reader_bg_2);
-        bj4=findViewById(R.id.reader_bg_3);
-        bj5=findViewById(R.id.reader_bg_4);
+
         big=findViewById(R.id.big);
-        zh=findViewById(R.id.zh);
-        zh.setText(mReaderView.getTextSize()+"");
+
         findViewById(R.id.sm).setOnClickListener(this);
         big.setOnClickListener(this);
         findViewById(R.id.dim).setOnClickListener(this);
@@ -298,12 +371,10 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         //SeekBar textSizeSeekBar = findViewById(R.id.text_size_seek_bar);
         // 调节文字间距的SeekBar
         //SeekBar textSpaceSeekBar = findViewById(R.id.text_space_seek_bar);
-
-        mDrawerLayout = findViewById(R.id.drawerLayout);
         mNavigationView = findViewById(R.id.navigation);
         mRecyclerView = findViewById(R.id.recyclerView);
-        mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_0));
-        //view.setBackground(getResources().getDrawable(R.color.reader_bg_0));
+        //mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_0));
+        mReaderView.invalidateBothPage();
         initRecyclerViewAndDrawerLayout();
 
         findViewById(R.id.setting).setOnClickListener(this);//设置
@@ -333,11 +404,17 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                     mReaderView.invalidateBothPage();
             }
         });
-
+        seekbar=ScreenUtils.getSystemBrightness(ExtendReaderActivity.this);
+        lightSeekBar.setMax(255);
+        lightSeekBar.setProgress(seekbar);
+        Log.e("seekbar",seekbar+"===");
         lightSeekBar.setOnSeekBarChangeListener(new SimpleOnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                ScreenUtils.changeAppBrightness(ExtendReaderActivity.this, progress);
+                Log.e("seekbar",progress+"===+++");
+                          ScreenUtils.changeAppBrightness(ExtendReaderActivity.this,progress);
+                          ScreenUtils.setSysScreenBrightness(ExtendReaderActivity.this,progress);
+                        //有了权限，你要做什么呢？具体的动作
             }
         });
 
@@ -355,13 +432,13 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 //            }
 //        });
 
-        lightSeekBar.setMax(255);
+
 //        textSizeSeekBar.setMax(100);
 //        textSpaceSeekBar.setMax(200);
 
         // 初始化SeekBar位置
         mChapterSeekBar.setProgress(0);// 如果需要历史纪录的话，可以在这里实现
-        lightSeekBar.setProgress(ScreenUtils.getSystemBrightness(this));
+
 //        textSizeSeekBar.setProgress(mReaderView.getTextSize() - 20);
 //        textSpaceSeekBar.setProgress(mReaderView.getLineSpace());
     }
@@ -416,6 +493,13 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                stopTimer();
+                timer.cancel();
+                timer=new Timer();
+                recLen=30;
+                changetimer.cancel();
+                changetimer=new Timer();
+                changepage=30;
                 if(iscase){
                     updateCase();
                     finish();
@@ -433,10 +517,11 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             }
         });
     }
+
     private void updateCase(){
         update=1;
         int backlistid = 0;
-        Log.e("mtitle",ReaderResolve.mTitle);
+        Log.e("mtitle", ReaderResolve.mTitle);
         for(int i=0;i<bookList.getData().getList().size();i++){
             if(bookList.getData().getList().get(i).getName().equals(ReaderResolve.mTitle)){
                 backlistid=bookList.getData().getList().get(i).getId();
@@ -468,24 +553,144 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void initReader() {
+        bj1=findViewById(R.id.reader_bg_0);
+        bj2=findViewById(R.id.reader_bg_1);
+        bj3=findViewById(R.id.reader_bg_2);
+        bj4=findViewById(R.id.reader_bg_3);
+        bj5=findViewById(R.id.reader_bg_4);
+        zh=findViewById(R.id.zh);
         mReaderView = findViewById(R.id.extend_reader);
+        mDrawerLayout = findViewById(R.id.drawerLayout);
+        zh.setText(mReaderView.getTextSize()+"");
+        mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_1));
+        mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_1));
         mReaderManager = new ReaderView.ReaderManager();
-
-        //mAdapter = new MyReaderAdapter();
-
         mReaderView.setReaderManager(mReaderManager);
-
         mReaderView.setLineSpace((int) (mReaderView.getTextSize()*0.5));
+        mReaderView.invalidateBothPage();
+        SharedPreferences backsharedPreferences=getSharedPreferences("background",MODE_PRIVATE);
+        String back=backsharedPreferences.getString("background","");
+        String color=backsharedPreferences.getString("fountcolor","");
+        if(!color.equals("")){
+            ColorsConfig colorsConfig=new ColorsConfig();
+            colorsConfig.setTextColor(Color.parseColor(color));
+            mReaderView.setColorsConfig(colorsConfig);
+        }
+        else{
+            ColorsConfig colorsConfig=new ColorsConfig();
+            colorsConfig.setTextColor(Color.parseColor("#4E402A"));
+            mReaderView.setColorsConfig(colorsConfig);
+        }
 
+        if(back.equals("0")){
+            mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
+            mReaderView.invalidateBothPage();
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1_on));
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
+        }
+        else if(back.equals("1")){
+            mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_1));
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_1));
+            mReaderView.invalidateBothPage();
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2_on));
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
+        }
+        else if(back.equals("2")){
+            mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_2));
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_2));
+            mReaderView.invalidateBothPage();
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3_on));
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
+        }
+        else if(back.equals("3")){
+            mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_3));
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_3));
+            mReaderView.invalidateBothPage();
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4_on));
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
+        }
+        else if(back.equals("4")){
+            mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
+            mReaderView.invalidateBothPage();
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2));
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3));
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5_on));
+        }
+        else{
+            mReaderView.setBackgroundColor(getResources().getColor(R.color.reader_bg_1));
+            mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_1));
+            mReaderView.invalidateBothPage();
+            bj1.setBackground(getResources().getDrawable(R.drawable.item_readbj1));
+            bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2_on));
+            bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3_on));
+            bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4));
+            bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5));
+        }
+
+        SharedPreferences sizesharedPreferences=getSharedPreferences("fountsize",MODE_PRIVATE);
+        String size=sizesharedPreferences.getString("fountsize","");
+        if(!size.equals("")){
+            mReaderView.setTextSize(Integer.parseInt(size));
+            zh.setText(size);
+        }
+        else{
+            mReaderView.setTextSize(mReaderView.getTextSize());
+            zh.setText(mReaderView.getTextSize()+"");
+        }
+        mAdapter = new ReaderView.Adapter<BookListBean.DataBean.ListBean, BookContentBean.DataBean>() {
+            @Override
+            public String obtainCacheKey(BookListBean.DataBean.ListBean listBean) {
+                Log.e("listbeanid",listBean.getId()+"[[");
+                return listBean.getId()+"";
+            }
+
+            @Override
+            public String obtainChapterName(BookListBean.DataBean.ListBean listBean) {
+                return listBean.getName();//chapterItemBean.getChapterName();
+            }
+
+
+            @Override
+            public String obtainChapterContent(BookContentBean.DataBean dataBean) {
+                Log.e("nr",dataBean.getContent()+"--");
+                return dataBean.getContent();
+            }
+
+            @Override
+            public BookContentBean.DataBean downLoad(BookListBean.DataBean.ListBean listBean) {
+                Log.e("listbeanid",listBean.getId()+"]]");
+                return LocalServer.syncDownloadContent(token,listBean,this);
+
+            }
+        };
         if(mAdapter!=null){
             mReaderView.setAdapter(mAdapter);
-            mReaderManager.toPercent(backlistid,charindex);
+            mReaderManager.startFromCache("",backlistid,ReaderResolve.mCharIndex,ReaderResolve.mTitle);
+            mReaderManager.toPercent(3,charindex);
         }
+
+
 
         //mReaderView.setSretract("111111");
         //mReaderView.setAdapter(mAdapter);
 //        view= LayoutInflater.from(this).inflate(R.layout.item_first, null, false);
-//        book=view.findViewById(R.id.book_img);
+//        book=on
 //        bookname=view.findViewById(R.id.book_name);
 //        bookauthor=view.findViewById(R.id.book_author);
 //        mReaderView.addView(view, FIRST_PAGE);
@@ -559,6 +764,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         if (mDisposable != null && !mDisposable.isDisposed()) {
             mDisposable.dispose();
         }
+        EventBus.getDefault().unregister(this);
     }
 
     private long mDownTime;
@@ -594,6 +800,10 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View v) {
+        SharedPreferences sharedPreferences=getSharedPreferences("background",MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        SharedPreferences sharedPreferences1=getSharedPreferences("fountsize",MODE_PRIVATE);
+        SharedPreferences.Editor sizeeditor=sharedPreferences1.edit();
         int i = v.getId();//上一章
 //下一章
 //目录
@@ -636,6 +846,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             ColorsConfig colorsConfig=new ColorsConfig();
             colorsConfig.setTextColor(Color.parseColor("#5B5956"));
             mReaderView.setColorsConfig(colorsConfig);
+            editor.putString("background","0");
+            editor.putString("fountcolor","#5B5956");
+            mReaderView.invalidateBothPage();
         } else if (i == R.id.reader_bg_1) {
             mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_1));
             bj2.setBackground(getResources().getDrawable(R.drawable.item_readbj2_on));
@@ -648,6 +861,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             ColorsConfig colorsConfig=new ColorsConfig();
             colorsConfig.setTextColor(Color.parseColor("#4E402A"));
             mReaderView.setColorsConfig(colorsConfig);
+            editor.putString("background","1");
+            editor.putString("fountcolor","#4E402A");
+            mReaderView.invalidateBothPage();
         } else if (i == R.id.reader_bg_2) {
             mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_2));
             bj3.setBackground(getResources().getDrawable(R.drawable.item_readbj3_on));
@@ -661,6 +877,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             ColorsConfig colorsConfig=new ColorsConfig();
             colorsConfig.setTextColor(Color.parseColor("#5F665F"));
             mReaderView.setColorsConfig(colorsConfig);
+            editor.putString("background","2");
+            editor.putString("fountcolor","#5F665F");
+            mReaderView.invalidateBothPage();
         } else if (i == R.id.reader_bg_3) {
             mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_3));
             bj4.setBackground(getResources().getDrawable(R.drawable.item_readbj4_on));
@@ -674,6 +893,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             ColorsConfig colorsConfig=new ColorsConfig();
             colorsConfig.setTextColor(Color.parseColor("#928E8C"));
             mReaderView.setColorsConfig(colorsConfig);
+            editor.putString("background","3");
+            editor.putString("fountcolor","#928E8C");
+            mReaderView.invalidateBothPage();
         } else if (i == R.id.reader_bg_4) {
             mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
             bj5.setBackground(getResources().getDrawable(R.drawable.item_readbj5_on));
@@ -687,10 +909,14 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             ColorsConfig colorsConfig=new ColorsConfig();
             colorsConfig.setTextColor(Color.parseColor("#8A8D90"));
             mReaderView.setColorsConfig(colorsConfig);
+            editor.putString("background","4");
+            editor.putString("fountcolor","#8A8D90");
+            mReaderView.invalidateBothPage();
             //切换翻页效果
         }
         else if(i==R.id.sm){
             zh.setText(mReaderView.getTextSize()-1+"");
+            sizeeditor.putString("fountsize",mReaderView.getTextSize()-1+"");
             mReaderView.setTextSize(Integer.parseInt(zh.getText().toString()));
             mReaderView.setLineSpace((int) (mReaderView.getTextSize()*0.5));
             Log.e("textsize",mReaderView.getTextSize()+"");
@@ -698,6 +924,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         }
         else if(i==R.id.big){
             zh.setText(mReaderView.getTextSize()+1+"");
+            sizeeditor.putString("fountsize",mReaderView.getTextSize()+1+"");
             mReaderView.setTextSize(Integer.parseInt(zh.getText().toString()));
             mReaderView.setLineSpace((int) (mReaderView.getTextSize()*0.5));
             Log.e("textsize",mReaderView.getTextSize()+"");
@@ -724,16 +951,16 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             mReaderView.setEffect(new EffectOfSlide(this));
         } else if (i == R.id.daynight) {
             if(clicknum%2==0){
-                mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
-                mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_0));
+                //mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
+               // mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_0));
                 daynight.setImageResource(R.mipmap.yuedu_yj);
                 ColorsConfig colorsConfig=new ColorsConfig();
                 colorsConfig.setTextColor(Color.parseColor("#5B5956"));
                 mReaderView.setColorsConfig(colorsConfig);
             }
             else{
-                mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
-                mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_4));
+                //mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
+                //mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_4));
                 daynight.setImageResource(R.mipmap.yuedu_yj_on);
                 ColorsConfig colorsConfig=new ColorsConfig();
                 colorsConfig.setTextColor(Color.parseColor("#8A8D90"));
@@ -741,6 +968,8 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             }
             clicknum++;
         }
+        editor.commit();
+        sizeeditor.commit();
     }
 
     @Override
@@ -755,6 +984,13 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         } else if (mMenuView.isShowing()) {
             mMenuView.dismiss();
         } else {
+            stopTimer();
+            timer.cancel();
+            timer=new Timer();
+            recLen=30;
+            changetimer.cancel();
+            changetimer=new Timer();
+            changepage=30;
             if(iscase){
                 updateCase();
                 finish();
@@ -787,8 +1023,14 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             }
         }
     };
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getContent(BookContentBean bookContentBean){
+        Log.e("book",bookContentBean.getCode()+"--"+bookContentBean.getMsg());
+        content=bookContentBean.getData().getContent();
+        Log.e("book",content+"--");
+    }
     private void showPopWindow(ExtendReaderActivity activity, int type){
-        AddCasePopWindow addCasePopWindow=new AddCasePopWindow(ExtendReaderActivity.this,itemclick,type,id);
+        AddCasePopWindow addCasePopWindow=new AddCasePopWindow(ExtendReaderActivity.this,itemclick,type,id,backlistid);
         addCasePopWindow.showAtLocation(activity.getWindow().getDecorView(), Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
         addCasePopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
@@ -806,48 +1048,11 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
        runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               mAdapter = new ReaderView.Adapter<BookListBean.DataBean.ListBean, BookContentBean.DataBean>() {
-                   @Override
-                   public String obtainCacheKey(BookListBean.DataBean.ListBean listBean) {
-                       Log.e("listbeanid",listBean.getId()+"[[");
-                       return listBean.getId()+"";
-                   }
-
-                   @Override
-                   public String obtainChapterName(BookListBean.DataBean.ListBean listBean) {
-                       return listBean.getName();//chapterItemBean.getChapterName();
-                   }
 
 
-                   @Override
-                   public String obtainChapterContent(BookContentBean.DataBean dataBean) {
-                       if(dataBean.getContent()!=null){
-                           Log.e("nr",dataBean.getContent());
-                           runOnUiThread(new Runnable() {
-                               @Override
-                               public void run() {
-                                   jz.setVisibility(View.GONE);
-                               }
-                           });
-                           return dataBean.getContent();
-                       }
-                       else{
-                           return "暂无数据";
-                       }
-
-                   }
-
-                   @Override
-                   public BookContentBean.DataBean downLoad(BookListBean.DataBean.ListBean listBean) {
-                       Log.e("listbeanid",listBean.getId()+"]]");
-                       return LocalServer.syncgetContent(listBean.getId(),token);
-
-                   }
-               };
-
-               bookContentPresenter.setContext(ExtendReaderActivity.this);
-               bookContentPresenter.setId(backlistid);
-               bookContentPresenter.loadData();
+//               bookContentPresenter.setContext(ExtendReaderActivity.this);
+//               bookContentPresenter.setId(backlistid);
+//               bookContentPresenter.loadData();
                for(int i=0;i<bookListBean.getData().getList().size();i++){
                    if(bookListBean.getData().getList().get(i).getId()==backlistid){
                        mtitle=bookListBean.getData().getList().get(i).getName();
@@ -860,14 +1065,12 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
                }
                if(list!=null){
                    mReaderView.setAdapter(mAdapter);
-                   mReaderManager.setmTitle(mtitle);
-                   mReaderView.setmTitle(mtitle);
-                   mReaderManager.toPercent(backlistid,charindex);
+                   mReaderManager.toPercent(3,charindex);
                    mReaderView.invalidateBothPage();
                    mCatalogueAdapter.refresh(list);
                    if(mAdapter!=null){
                        mAdapter.setChapterList(bookListBean.getData().getList());
-                      // mAdapter.notifyDataSetChanged();
+                       mAdapter.notifyDataSetChanged();
                    }
 
                }
@@ -922,12 +1125,31 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         Log.e("readawarderror",error);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onPause() {
         super.onPause();
-        //timer.cancel();
-        //timer=new Timer();
+        if(isApplicationInBackground(this)){
+            timer.cancel();
+            timer=new Timer();
+            recLen=30;
+            changetimer.cancel();
+            changetimer=new Timer();
+            changepage=30;
+        }
+
+        boolean ischeck=checkScreen(this);
+        if(ischeck==false){
+            timer.cancel();
+            timer=new Timer();
+            recLen=30;
+            changetimer.cancel();
+            changetimer=new Timer();
+            changepage=30;
+        }
+
     }
+
 
 
     private void loadExpressAd(String codeId,LinearLayout mExpressContainer,ImageView img) {
@@ -1193,5 +1415,45 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onBookinfoError(String error) {
 
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public static boolean isApplicationInBackground(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> taskList = am.getRunningTasks(1);
+        if (taskList != null && !taskList.isEmpty()) {
+            ComponentName topActivity = taskList.get(0).topActivity;
+            if (topActivity != null && !topActivity.getPackageName().equals(context.getPackageName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean checkScreen(Context context){
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean isScreenOn = pm.isScreenOn();//如果为true，则表示屏幕“亮”了，否则屏幕“暗”了。
+        return  isScreenOn;
+    }
+
+    @Override
+    public void onConfigSuccess(ConfigBean configBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(configBean.getData().getList().get(1).getStatus()==20){
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadExpressAd("926447562",gg,logo);                        }
+                    }).start();
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void onConfigError(String error) {
+       Log.e("configerrorread",error);
     }
 }

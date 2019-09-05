@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -49,6 +52,7 @@ import com.bytedance.sdk.openadsdk.TTFeedAd;
 import com.bytedance.sdk.openadsdk.TTImage;
 import com.bytedance.sdk.openadsdk.TTInteractionAd;
 import com.bytedance.sdk.openadsdk.TTNativeAd;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.activities.ExtendReaderActivity;
 import com.jdhd.qynovels.app.MyApp;
@@ -66,6 +70,7 @@ import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.utils.TransformationUtils;
 import com.jdhd.qynovels.view.bookcase.IBookListView;
 import com.jdhd.qynovels.view.bookcase.IDelBookRankView;
+import com.jdhd.qynovels.widget.DislikeDialog;
 import com.mcxtzhang.swipemenulib.SwipeMenuLayout;
 
 import java.util.ArrayList;
@@ -93,6 +98,9 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private int count=0;
     private int listsize;
     private int type=0;
+    private TTNativeExpressAd mTTAd;
+    private TTAdNative mTTAdNative;
+    private String islogin;
 
     public void setType(int type) {
         this.type = type;
@@ -113,9 +121,9 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
      */
     private SparseBooleanArray mCheckStates = new SparseBooleanArray();
 
-    private List<TTFeedAd> feedlist=new ArrayList<>();
-    private List<TTFeedAd> newfeedlist=new ArrayList<>();
-    public void refreshfeed(List<TTFeedAd> feedlist){
+    private List<TTNativeExpressAd> feedlist=new ArrayList<>();
+    private List<TTNativeExpressAd> newfeedlist=new ArrayList<>();
+    public void refreshfeed(List<TTNativeExpressAd> feedlist){
         this.feedlist=feedlist;
         notifyDataSetChanged();
     }
@@ -131,8 +139,10 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public ListAdapter(Context context, FragmentActivity activity) {
         this.context = context;
         this.activity = activity;
+        mTTAdNative = TTAdSdk.getAdManager().createAdNative(context);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -195,11 +205,12 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         count=1;
         SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
+        islogin=preferences.getString("islogin","");
         time= DeviceInfoUtils.getTime()+"";
         RecyclerView.ViewHolder viewHolder=null;
         delBookRankPresenter=new IDelBookRankPresenterImpl(this,context);
         if(viewType==TYPE_FEED){
-            View view= LayoutInflater.from(context).inflate(R.layout.item_case,parent,false);
+            View view= LayoutInflater.from(context).inflate(R.layout.item_gg,parent,false);
             viewHolder=new FeedViewHolder(view);
         }
         else if(viewType==TYPE_LIST){
@@ -207,8 +218,13 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             viewHolder=new ListViewHolder(view);
         }
 
+        //loadExpressAd("901121253",FeedViewHolder.ll);
+
         dbUtils=new DbUtils(context);
-        Log.e("feedlist",feedlist.size()+"--");
+        if(feedlist.size()!=0){
+            Log.e("listsize",feedlist.size()+"--"+(feedlist.get(0)==null)+"---");
+
+        }
         return viewHolder;
     }
 
@@ -307,7 +323,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                                         public void onSuccess(BookListBean bookListBean) {
                                             bookBean=bookListBean;
                                             database=dbUtils.getWritableDatabase();
-                                            if(!token.equals("")){
+                                            if(!token.equals("")&&islogin.equals("1")){
                                                 database.execSQL("delete from readhistory where user='user'and name='"+list.get(position).getName()+"'");
                                                 database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
                                                         "values('user'," +
@@ -363,83 +379,99 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         else if(holder instanceof FeedViewHolder){
             Log.e("position",position+"--");
             FeedViewHolder viewHolder= (FeedViewHolder) holder;
+
             if(newfeedlist.size()!=0){
-                //Log.e("newtitle",newfeedlist.get(position).getTitle());
-                Glide.with(context)
-                        .load(newfeedlist.get(position).getImageList().get(0).getImageUrl())
-                        .apply(new RequestOptions().error(R.mipmap.book_100))
-                        .apply(new RequestOptions().placeholder(R.mipmap.book_100))
-                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
-                        .into(new SimpleTarget<Drawable>() {
-                            @Override
-                            public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
-                                viewHolder.book.setImageDrawable(resource);
-                            }
-                        });
-                viewHolder.name.setText(newfeedlist.get(position).getDescription());
-                viewHolder.zj.setText(newfeedlist.get(position).getTitle());
-                //防止复用导致的checkbox显示错乱
-                viewHolder.select.setTag(position);
-                //判断当前checkbox的状态
-                if (showCheckBox) {
-                    viewHolder.select.setVisibility(View.VISIBLE);
-                    //防止显示错乱
-                    viewHolder.select.setChecked(mCheckStates.get(position, false));
-                } else {
-                    viewHolder.select.setVisibility(View.GONE);
-                    //取消掉Checkbox后不再保存当前选择的状态
-                    viewHolder.select.setChecked(false);
-                    mCheckStates.clear();
+                Log.e("111","111");
+                View view=newfeedlist.get(position).getExpressAdView();
+                if(view!=null){
+                    if(view.getParent()==null){
+                        viewHolder.ll.removeAllViews();
+                        viewHolder.ll.addView(view);
+                    }
                 }
 
-                //长按监听
-                viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        return onItemClickListener.onLongClick(view, position);
-                    }
-                });
-                //对checkbox的监听 保存选择状态 防止checkbox显示错乱
-                viewHolder.select.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        onItemClickListener.onClick(compoundButton, position);
-                        int pos = (int) compoundButton.getTag();
-                        if (b) {
-                            mCheckStates.put(pos, true);
-                        } else {
-                            mCheckStates.delete(pos);
-                        }
-
-                    }
-                });
-                newfeedlist.get(position).setVideoAdListener(new TTFeedAd.VideoAdListener() {
-                    @Override
-                    public void onVideoLoad(TTFeedAd ttFeedAd) {
-
-                    }
-
-                    @Override
-                    public void onVideoError(int i, int i1) {
-
-                    }
-
-                    @Override
-                    public void onVideoAdStartPlay(TTFeedAd ttFeedAd) {
-                      //Toast.makeText(context,"播放",Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onVideoAdPaused(TTFeedAd ttFeedAd) {
-
-                    }
-
-                    @Override
-                    public void onVideoAdContinuePlay(TTFeedAd ttFeedAd) {
-
-                    }
-                });
                 bindData(viewHolder,newfeedlist.get(position));
+                Log.e("kg",newfeedlist.get(position).getExpressAdView().getWidth()+"--"+newfeedlist.get(position).getExpressAdView().getHeight());
+
+
+
+
+                //Log.e("newtitle",newfeedlist.get(position).getTitle());
+//                Glide.with(context)
+//                        .load(newfeedlist.get(position).getImageList().get(0).getImageUrl())
+//                        .apply(new RequestOptions().error(R.mipmap.book_100))
+//                        .apply(new RequestOptions().placeholder(R.mipmap.book_100))
+//                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(MyApp.raduis)))
+//                        .into(new SimpleTarget<Drawable>() {
+//                            @Override
+//                            public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+//                                viewHolder.book.setImageDrawable(resource);
+//                            }
+//                        });
+//                viewHolder.name.setText(newfeedlist.get(position).getDescription());
+//                viewHolder.zj.setText(newfeedlist.get(position).getTitle());
+                //防止复用导致的checkbox显示错乱
+//                viewHolder.select.setTag(position);
+//                //判断当前checkbox的状态
+//                if (showCheckBox) {
+//                    viewHolder.select.setVisibility(View.VISIBLE);
+//                    //防止显示错乱
+//                    viewHolder.select.setChecked(mCheckStates.get(position, false));
+//                } else {
+//                    viewHolder.select.setVisibility(View.GONE);
+//                    //取消掉Checkbox后不再保存当前选择的状态
+//                    viewHolder.select.setChecked(false);
+//                    mCheckStates.clear();
+//                }
+//
+//                //长按监听
+//                viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//                    @Override
+//                    public boolean onLongClick(View view) {
+//                        return onItemClickListener.onLongClick(view, position);
+//                    }
+//                });
+//                //对checkbox的监听 保存选择状态 防止checkbox显示错乱
+//                viewHolder.select.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                        onItemClickListener.onClick(compoundButton, position);
+//                        int pos = (int) compoundButton.getTag();
+//                        if (b) {
+//                            mCheckStates.put(pos, true);
+//                        } else {
+//                            mCheckStates.delete(pos);
+//                        }
+//
+//                    }
+//                });
+//                newfeedlist.get(position).setVideoAdListener(new TTFeedAd.VideoAdListener() {
+//                    @Override
+//                    public void onVideoLoad(TTFeedAd ttFeedAd) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onVideoError(int i, int i1) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onVideoAdStartPlay(TTFeedAd ttFeedAd) {
+//                      //Toast.makeText(context,"播放",Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void onVideoAdPaused(TTFeedAd ttFeedAd) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onVideoAdContinuePlay(TTFeedAd ttFeedAd) {
+//
+//                    }
+//                });
+//                bindData(viewHolder,newfeedlist.get(position));
             }
         }
 
@@ -529,53 +561,81 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         }
     }
 
-    class FeedViewHolder extends RecyclerView.ViewHolder{
-        private ImageView book;
-        private CheckBox select;
-        private TextView name,zj;
-        private Button del;
-        private SwipeMenuLayout sml;
-        private RelativeLayout ll;
+    public class FeedViewHolder extends RecyclerView.ViewHolder{
+        private FrameLayout ll;
         public FeedViewHolder(@NonNull View itemView) {
             super(itemView);
-            book=itemView.findViewById(R.id.case_book);
-            select=itemView.findViewById(R.id.select);
-            name=itemView.findViewById(R.id.case_name);
-            zj=itemView.findViewById(R.id.case_zj);
-            ll=itemView.findViewById(R.id.ll);
+            ll=itemView.findViewById(R.id.fram);
         }
     }
 
-   private void bindData(final FeedViewHolder adViewHolder, TTFeedAd ad){
-       List<View> clickViewList = new ArrayList<>();
-       clickViewList.add(adViewHolder.ll);
-       ad.registerViewForInteraction((ViewGroup) adViewHolder.itemView,clickViewList, clickViewList, new TTNativeAd.AdInteractionListener(){
-
-           @Override
-           public void onAdClicked(View view, TTNativeAd ttNativeAd) {
-               //Toast.makeText(context,"被点击",Toast.LENGTH_SHORT).show();
-           }
-
-           @Override
-           public void onAdCreativeClick(View view, TTNativeAd ttNativeAd) {
-
-           }
-
-           @Override
-           public void onAdShow(TTNativeAd ttNativeAd) {
-              // Toast.makeText(context,"展示",Toast.LENGTH_SHORT).show();
-           }
-       });
-       bindDownloadListener(adViewHolder, ad);
+   private void bindData(final FeedViewHolder adViewHolder, TTNativeExpressAd ad){
+       //设置dislike弹窗，这里展示自定义的dialog
+       bindDislike(ad, true);
+       switch (ad.getInteractionType()) {
+           case TTAdConstant.INTERACTION_TYPE_DOWNLOAD:
+               bindDownloadListener(adViewHolder, ad);
+               break;
+       }
    }
+
+
+    /**
+     * 设置广告的不喜欢，注意：强烈建议设置该逻辑，如果不设置dislike处理逻辑，则模板广告中的 dislike区域不响应dislike事件。
+     *
+     * @param ad
+     * @param customStyle 是否自定义样式，true:样式自定义
+     */
+    private void bindDislike(final TTNativeExpressAd ad, boolean customStyle) {
+        if (customStyle) {
+            //使用自定义样式
+            List<FilterWord> words = ad.getFilterWords();
+            if (words == null || words.isEmpty()) {
+                return;
+            }
+
+            final DislikeDialog dislikeDialog = new DislikeDialog(context, words);
+            dislikeDialog.setOnDislikeItemClick(new DislikeDialog.OnDislikeItemClick() {
+                @Override
+                public void onItemClick(FilterWord filterWord) {
+                    //屏蔽广告
+                    //TToast.show(mContext, "点击 " + filterWord.getName());
+                    //用户选择不喜欢原因后，移除广告展示
+                    feedlist.remove(ad);
+                    notifyDataSetChanged();
+                }
+            });
+            ad.setDislikeDialog(dislikeDialog);
+            return;
+        }
+        //使用默认模板中默认dislike弹出样式
+        ad.setDislikeCallback((Activity) context, new TTAdDislike.DislikeInteractionCallback() {
+            @Override
+            public void onSelected(int position, String value) {
+                //TToast.show(mContext, "点击 " + value);
+                //用户选择不喜欢原因后，移除广告展示
+                feedlist.remove(ad);
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancel() {
+               // TToast.show(mContext, "点击取消 ");
+            }
+        });
+    }
     private Map<FeedViewHolder, TTAppDownloadListener> mTTAppDownloadListenerMap = new WeakHashMap<>();
-    private void bindDownloadListener(final FeedViewHolder adViewHolder, TTFeedAd ad) {
+
+    private void bindDownloadListener(final FeedViewHolder adViewHolder, TTNativeExpressAd ad) {
         TTAppDownloadListener downloadListener = new TTAppDownloadListener() {
+            private boolean mHasShowDownloadActive = false;
+
             @Override
             public void onIdle() {
                 if (!isValid()) {
                     return;
                 }
+                //TToast.show(mContext, "点击广告开始下载");
             }
 
             @SuppressLint("SetTextI18n")
@@ -583,6 +643,10 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             public void onDownloadActive(long totalBytes, long currBytes, String fileName, String appName) {
                 if (!isValid()) {
                     return;
+                }
+                if (!mHasShowDownloadActive) {
+                    mHasShowDownloadActive = true;
+                   // TToast.show(mContext, appName + " 下载中，点击暂停", Toast.LENGTH_LONG);
                 }
             }
 
@@ -592,6 +656,8 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 if (!isValid()) {
                     return;
                 }
+               // TToast.show(mContext, appName + " 下载暂停", Toast.LENGTH_LONG);
+
             }
 
             @Override
@@ -599,7 +665,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 if (!isValid()) {
                     return;
                 }
-
+                //TToast.show(mContext, appName + " 下载失败，重新下载", Toast.LENGTH_LONG);
             }
 
             @Override
@@ -607,7 +673,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 if (!isValid()) {
                     return;
                 }
-
+               // TToast.show(mContext, appName + " 安装完成，点击打开", Toast.LENGTH_LONG);
             }
 
             @Override
@@ -615,6 +681,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 if (!isValid()) {
                     return;
                 }
+               // TToast.show(mContext, appName + " 下载成功，点击安装", Toast.LENGTH_LONG);
 
             }
 
@@ -627,6 +694,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         ad.setDownloadListener(downloadListener); // 注册下载监听器
         mTTAppDownloadListenerMap.put(adViewHolder, downloadListener);
     }
+
     /**
      * 自己写接口，实现点击和长按监听
      */
@@ -641,4 +709,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public void setOnItemClickListener(ListAdapter.onItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
+
+
+
 }

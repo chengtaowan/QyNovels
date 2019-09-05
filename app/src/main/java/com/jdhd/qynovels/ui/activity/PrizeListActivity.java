@@ -1,10 +1,12 @@
 package com.jdhd.qynovels.ui.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -32,6 +34,22 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
     private LinearLayout webView;
     private String title,path,datapath,page,limit;
     private IPrizeRecodePresenterImpl prizeRecodePresenter;
+
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            FunctionBean functionBean= (FunctionBean) msg.obj;
+            datapath=functionBean.getDataPath();
+            limit=functionBean.getReqParameter().getLimit();
+            page=functionBean.getReqParameter().getPage();
+            Log.e("function2",datapath+"--"+page+"--"+limit);
+            prizeRecodePresenter.setPage(page);
+            prizeRecodePresenter.setLimit(limit);
+            prizeRecodePresenter.setDataPath(datapath);
+            prizeRecodePresenter.loadData();
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +64,8 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
         path=intent.getStringExtra("path");
         datapath=intent.getStringExtra("datapath");
         limit=intent.getStringExtra("limit");
+        Log.e("function1",title+"--"+path+"--"+datapath+"--"+page+"--"+limit);
+
         prizeRecodePresenter=new IPrizeRecodePresenterImpl(this,this);
 
         init();
@@ -70,6 +90,7 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
                 .go(MyApp.Url.webbaseUrl+path);
         prizeRecodePresenter.setPage(page);
         prizeRecodePresenter.setLimit(limit);
+        prizeRecodePresenter.setDataPath(datapath);
         prizeRecodePresenter.loadData();
         web.getJsInterfaceHolder().addJavaObject("android", new AndroidInterface(web, this));
     }
@@ -96,6 +117,7 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
                                     Log.e("data",s);
                                 }
                             },str);
+                            Log.e("function","调用");
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -126,6 +148,14 @@ public class PrizeListActivity extends AppCompatActivity implements View.OnClick
             Log.e("name",str);
             Gson gson=new Gson();
             FunctionBean functionBean = gson.fromJson(str, FunctionBean.class);
+            switch (functionBean.getFunctionName()){
+                case "moreNum":
+                    Message message=handler.obtainMessage();
+                    message.obj=functionBean;
+                    handler.sendMessage(message);
+                    break;
+
+            }
         }
     }
     @Override

@@ -38,11 +38,14 @@ import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookcase.BookInfoBean;
+import com.jdhd.qynovels.module.bookcase.ConfigBean;
+import com.jdhd.qynovels.persenter.impl.bookcase.IConfigPresenterImpl;
 import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.activity.MuluActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.utils.FastBlurUtil;
+import com.jdhd.qynovels.view.bookcase.IConfigView;
 import com.jdhd.qynovels.widget.DislikeDialog;
 import com.jdhd.qynovels.widget.ExpandTextView;
 import com.jdhd.qynovels.widget.RatingBar;
@@ -61,6 +64,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private TTAdNative mTTAdNative;
     private TTAdDislike mTTAdDislike;
     private List<TTNativeExpressAd>  mTTAdList=new ArrayList<>();
+    private IConfigPresenterImpl configPresenter;
 
 
     public XqymAdapter(Context context, Activity activity) {
@@ -96,6 +100,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 //            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_xqbottom, parent, false);
 //            viewHolder=new BottomViewHolder(view);
 //        }
+
         return viewHolder;
     }
 
@@ -110,9 +115,10 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
            else {
               Log.e("bookbean",dataBean.getBook().toString());
            }
-           new MyThread(dataBean.getBook().getImage(),viewHolder.bj).start();
+
            if(dataBean.getBook().getImage()!=null){
                GlideUrl url = DeviceInfoUtils.getUrl(dataBean.getBook().getImage());
+               new MyThread(dataBean.getBook().getImage(),viewHolder.bj).start();
                Glide.with(context).load(url)
                        .apply(new RequestOptions().error(R.mipmap.book_100))
                        .apply(new RequestOptions().placeholder(R.mipmap.book_100))
@@ -151,7 +157,30 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
            TopViewHolder viewHolder= (TopViewHolder) holder;
            //loadBannerAd(viewHolder.img,viewHolder.gg);
            viewHolder.gg.setVisibility(View.GONE);
-           loadExpressAd("926447562",viewHolder.img,viewHolder.gg);
+           configPresenter=new IConfigPresenterImpl(new IConfigView() {
+               @Override
+               public void onConfigSuccess(ConfigBean configBean) {
+                   activity.runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+                           if(configBean.getData().getList().get(1).getStatus()==20){
+                               new Thread(new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       loadExpressAd("926447562",viewHolder.img,viewHolder.gg);
+                                   }
+                               }).start();
+                           }
+                       }
+                   });
+               }
+               @Override
+               public void onConfigError(String error) {
+                  Log.e("configerror",error);
+               }
+           },context);
+           configPresenter.loadData();
+
            if(dataBean.getBook()==null){
                return;
            }
@@ -486,6 +515,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         context.startActivity(intent);
     }
 
+
     class BookViewHolder extends RecyclerView.ViewHolder{
         private ImageView bj,back,book;
         private RatingBar start;
@@ -555,6 +585,7 @@ public class XqymAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         public void run() {
             super.run();
             final Bitmap blurBitmap2 = FastBlurUtil.GetUrlBitmap(url, 2);
+            Log.e("url",url+"");
             // 刷新ui必须在主线程中执行
             activity.runOnUiThread(new Runnable() {
                 @Override

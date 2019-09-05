@@ -55,9 +55,9 @@ public class IJxPresenterImpl implements IJxPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<ShopBean>(){})
                     .subscribe(shopBean->{
-                        if(shopBean.getCode()==200&&shopBean.getMsg().equals("请求成功")){
+                        //if(shopBean.getCode()==200&&shopBean.getMsg().equals("请求成功")){
                             iJxView.onSuccess(shopBean);
-                        }
+                       // }
                     },throwable->{
                         //iJxView.onError(throwable.getMessage());
                     });

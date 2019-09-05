@@ -2,6 +2,9 @@ package com.jdhd.qynovels.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
+
+import com.bumptech.glide.load.model.GlideUrl;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -9,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class FastBlurUtil {
@@ -27,7 +31,7 @@ public class FastBlurUtil {
      * @param url
      * @return
      */
-    public static int IO_BUFFER_SIZE = 2 * 1024;
+    public static int IO_BUFFER_SIZE = 1024;
 
 
     public static Bitmap GetUrlBitmap(String url, int scaleRatio) {
@@ -38,14 +42,18 @@ public class FastBlurUtil {
             scaleRatio = 10;
         }
 
-
+        Log.e("input",url+"--");
 
 
         Bitmap originBitmap = null;
         InputStream in = null;
         BufferedOutputStream out = null;
         try {
-            in = new BufferedInputStream(new URL(url).openStream(), IO_BUFFER_SIZE);
+            URL urls = new URL(url);
+            HttpURLConnection connection= (HttpURLConnection) urls.openConnection();
+            connection.setRequestProperty("User-Agent","Mozilla/5.0 (Linux; Android 4.4.2; MX4 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Mobile Crosswalk/10.39.235.16 Mobile Safari/537.36");
+            InputStream inputStream=connection.getInputStream();
+            in = new BufferedInputStream(inputStream, IO_BUFFER_SIZE);
             final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
             out = new BufferedOutputStream(dataStream, IO_BUFFER_SIZE);
             copy(in, out);
@@ -62,6 +70,7 @@ public class FastBlurUtil {
             return blurBitmap;
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e("error",e.getLocalizedMessage());
             return null;
         }
     }

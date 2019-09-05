@@ -11,6 +11,9 @@ import com.jdhd.qynovels.entry.ChapterItemBean;
 import com.jdhd.qynovels.readerpresenter.IBookContentPresenterImpl;
 import com.jdhd.qynovels.readerutil.DeviceInfoUtils;
 import com.jdhd.qynovels.readerview.IBookContentView;
+import com.jdhd.qynovels.readerwidget.ReaderView;
+import com.rxjava.rxlife.RxLife;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,37 +28,16 @@ import rxhttp.wrapper.parse.SimpleParser;
  * Created by Garrett on 2018/11/23.
  * contact me krouky@outlook.com
  */
-public class LocalServer implements IBookContentView {
-
-     public IBookContentPresenterImpl bookContentPresenter=new IBookContentPresenterImpl(this);
-     public static BookContentBean.DataBean bookContent=new BookContentBean.DataBean();
-     /**
-     * 模拟网络请求
-     *
-     * @param bookId 书ID
-     */
-    public static void getChapterList(String bookId, final OnResponseCallback onResponseCallback) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<ChapterItemBean> chapters = new ArrayList<>();
-                while (chapters.size() < 100) {
-                    ChapterItemBean chapterItemBean = new ChapterItemBean();
-                    chapterItemBean.setChapterId("id" + (chapters.size() + 1));
-                    chapterItemBean.setChapterName("第" + (chapters.size() + 1) + "章 名言名句");
-                    chapters.add(chapterItemBean);
-                }
-                onResponseCallback.onSuccess(chapters);
-            }
-        }).start();
-    }
+public class LocalServer {
+    public static BookContentBean.DataBean bookContent=new BookContentBean.DataBean();
+    public static int count=0;
 
     /**
      * 模拟网络同步下载
      *
      * @return 章节内容
      */
-    public static BookContentBean.DataBean syncDownloadContent(String token, BookListBean.DataBean.ListBean listBean) {
+    public static BookContentBean.DataBean syncDownloadContent(String token, BookListBean.DataBean.ListBean listBean,ReaderView.Adapter adapter) {
 
         int time= DeviceInfoUtils.getTime();
         Map<String,String> map=new HashMap<>();
@@ -71,16 +53,20 @@ public class LocalServer implements IBookContentView {
         Log.e("time",time+"");
         Log.e("token",token+"");
         Log.e("sign",sign+"");
-        if(token!=null){
+        if(!token.equals("")){
             RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
                     .addHeader("token",token)
                     .add(map)
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<BookContentBean>(){})
                     .subscribe(bookContentBean->{
-                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
-                            bookContent=bookContentBean.getData();
+                        Log.e("bookbookboo1",bookContentBean.getData().getContent()+"--");
+                        bookContent=bookContentBean.getData();
+                        if(count==0){
+                            adapter.notifyDataSetChanged();
                         }
+                        count++;
+                        Log.e("123",bookContent.getContent());
                     },throwable->{
                         Log.e("zjerror",throwable.getMessage());
                     });
@@ -91,80 +77,18 @@ public class LocalServer implements IBookContentView {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<BookContentBean>(){})
                     .subscribe(bookContentBean->{
-                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
-                            bookContent=bookContentBean.getData();
+                        Log.e("bookbookboo2",bookContentBean.getData().getContent()+"--");
+                        bookContent=bookContentBean.getData();
+                        if(count==0){
+                            adapter.notifyDataSetChanged();
                         }
+                        count++;
                     },throwable->{
                         Log.e("zjerror",throwable.getMessage());
                     });
         }
-        Log.e("bookcontent",bookContent.toString());
+
         return bookContent;
-    }
-
-
-    /**
-     * 模拟网络同步下载
-     *
-     * @return 章节内容
-     */
-    public static BookContentBean.DataBean syncgetContent(int id, String token) {
-        int time= DeviceInfoUtils.getTime();
-        Map<String,String> map=new HashMap<>();
-        map.put("time",time+"");
-        if(token!=null){
-            map.put("token",token);
-        }
-        map.put("id",id+"");
-        String compareTo = DeviceInfoUtils.getCompareTo(map);
-        String sign= DeviceInfoUtils.md5(compareTo);
-        map.put("sign",sign);
-        Log.e("zjid",id+"");
-        Log.e("time",time+"");
-        Log.e("token",token+"");
-        Log.e("sign",sign+"");
-        if(token!=null){
-            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
-                    .addHeader("token",token)
-                    .add(map)
-                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                    .asParser(new SimpleParser<BookContentBean>(){})
-                    .subscribe(bookContentBean->{
-                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
-                            bookContent=bookContentBean.getData();
-                            ExtendReaderActivity.mChapterSeekBar.setProgress(ExtendReaderActivity.mChapterSeekBar.getProgress()+1);
-                            Log.e("caprogress", ExtendReaderActivity.mChapterSeekBar.getProgress()+"");
-                        }
-                    },throwable->{
-                        Log.e("zjerror",throwable.getMessage());
-                    });
-        }
-        else{
-            RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
-                    .add(map)
-                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                    .asParser(new SimpleParser<BookContentBean>(){})
-                    .subscribe(bookContentBean->{
-                        if(bookContentBean.getCode()==200&&bookContentBean.getMsg().equals("请求成功")){
-                            bookContent=bookContentBean.getData();
-                            ExtendReaderActivity.mChapterSeekBar.setProgress(ExtendReaderActivity.mChapterSeekBar.getProgress()+1);
-                            Log.e("caprogress", ExtendReaderActivity.mChapterSeekBar.getProgress()+"");
-                        }
-                    },throwable->{
-                        Log.e("zjerror",throwable.getMessage());
-                    });
-        }
-        Log.e("bookcontent",bookContent.toString());
-        return bookContent;
-    }
-
-    @Override
-    public void onBookSuccess(BookContentBean bookContentBean) {
-        bookContent=bookContentBean.getData();
-    }
-
-    @Override
-    public void onBookError(String error) {
 
     }
 

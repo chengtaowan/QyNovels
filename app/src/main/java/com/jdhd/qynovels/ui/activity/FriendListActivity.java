@@ -74,12 +74,23 @@ public class FriendListActivity extends AppCompatActivity implements IShareListV
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                web.getJsAccessEntrace().quickCallJs("shareList", new ValueCallback<String>() {
+                new Thread(new Runnable() {
                     @Override
-                    public void onReceiveValue(String s) {
-                        Log.e("data",s);
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        web.getJsAccessEntrace().quickCallJs("shareList", new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String s) {
+                                Log.e("data",s);
+                            }
+                        },str);
                     }
-                },str);
+                }).start();
+
             }
         });
     }

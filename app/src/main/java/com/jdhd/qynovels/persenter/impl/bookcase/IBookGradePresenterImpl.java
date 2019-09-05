@@ -67,9 +67,9 @@ public class IBookGradePresenterImpl implements IBookGradePresenter {
                     .asParser(new SimpleParser<BookGradeBean>(){})
                     .subscribe(addBookBean->{
                         Log.e("qqq",addBookBean.getMsg());
-                        if(addBookBean.getCode()==200&&addBookBean.getMsg().equals("请求成功")){
+                        //if(addBookBean.getCode()==200&&addBookBean.getMsg().equals("请求成功")){
                             iBookGradeView.onGradeSuccess(addBookBean);
-                        }
+                        //}
                     },throwable->{
                         iBookGradeView.onGradeError(throwable.getMessage());
                     });

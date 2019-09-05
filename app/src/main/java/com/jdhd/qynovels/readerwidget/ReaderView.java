@@ -9,7 +9,10 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.os.BatteryManager;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.jdhd.qynovels.activities.ExtendReaderActivity;
 import com.jdhd.qynovels.readerview.ReaderSparseBooleanArray;
 import com.jdhd.qynovels.readerview.TurnStatus;
 import com.jdhd.qynovels.cache.Cache;
@@ -31,9 +35,12 @@ import com.jdhd.qynovels.readerutil.NetUtil;
 import com.jdhd.qynovels.readerutil.Request;
 import com.jdhd.qynovels.textconvert.TextBreakUtils;
 
+import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -73,6 +80,18 @@ public class ReaderView extends FrameLayout {
 
     private boolean isOpenPaperEffect = true;
     private String mTitle;
+    private int readrecLen=5;
+    private Timer readTimer=new Timer();
+    public static int count=0;
+    public static int changecount=0;
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Log.e("count",msg.arg1+"---"+ReaderView.count);
+        }
+    };
+
 
     public void setmTitle(String mTitle) {
         this.mTitle = mTitle;
@@ -96,6 +115,8 @@ public class ReaderView extends FrameLayout {
         mPageChangedCallback = simplePageChangedCallback;
         mPageDrawingCallback = simplePageChangedCallback;
         mObserver = new AdapterDataObserver();
+        changecount=count;
+
     }
 
     private Paint mPaperPaint = new Paint();
@@ -127,7 +148,7 @@ public class ReaderView extends FrameLayout {
         if (mReaderManager != null) {
             mReaderManager.onAreaChanged(width, height);
             if (mCurrPageCanvas != null) {
-                mReaderManager.drawPage(mCurrPageCanvas,mTitle);
+                mReaderManager.drawPage(mCurrPageCanvas);
             }
         }
         initEffectConfiguration();
@@ -232,6 +253,7 @@ public class ReaderView extends FrameLayout {
             canvas.drawPaint(mPaperPaint);
         }
         mEffect.onDraw(canvas);
+
     }
 
     @Override
@@ -278,22 +300,23 @@ public class ReaderView extends FrameLayout {
 
     public void invalidateCurrPage() {
         if (mCurrPageCanvas != null) {
-            mReaderManager.drawPage(mCurrPageCanvas,mTitle);
+            mReaderManager.drawPage(mCurrPageCanvas);
             postInvalidate();
         }
     }
 
     public void invalidateNextPage() {
         if (mNextPageCanvas != null) {
-            mReaderManager.drawPage(mNextPageCanvas,mTitle);
+            mReaderManager.drawPage(mNextPageCanvas);
             postInvalidate();
         }
     }
 
     public void invalidateBothPage() {
+        Log.e("pagecanvas",(mCurrPageCanvas==null)+"---"+(mNextPageCanvas==null));
         if (mCurrPageCanvas != null && mNextPageCanvas != null) {
-            mReaderManager.drawPage(mCurrPageCanvas,mTitle);
-            mReaderManager.drawPage(mNextPageCanvas,mTitle);
+            mReaderManager.drawPage(mCurrPageCanvas);
+            mReaderManager.drawPage(mNextPageCanvas);
             postInvalidate();
         }
     }
@@ -658,6 +681,7 @@ public class ReaderView extends FrameLayout {
          * 跳转到指定百分比
          */
         public final TurnStatus toPercent(final int chapterIndex, final int charIndex){
+            Log.e("toprent",chapterIndex+"--"+charIndex);
             return toSpecifiedChapter(chapterIndex,charIndex);
         }
 
@@ -704,15 +728,15 @@ public class ReaderView extends FrameLayout {
 //                DLog.d(TAG, "type :" + actualTypeArgument);
 //            }
 
-           // Object cache = mCache.get(adapter.obtainCacheKey(chapterItem), actualTypeArguments[1]);
+            // Object cache = mCache.get(adapter.obtainCacheKey(chapterItem), actualTypeArguments[1]);
 
             //if (cache == null) {
-                this.download(adapter, chapterItem, chapterIndex, charIndex, true);
-                return result(TurnStatus.DOWNLOADING);
+            this.download(adapter, chapterItem, chapterIndex, charIndex, true);
+            return result(TurnStatus.DOWNLOADING);
             //} else {
-                //setUpReaderResolve(chapterIndex, charIndex, adapter.obtainChapterName(chapterItem), adapter.obtainChapterContent(cache));
-               // return result(TurnStatus.LOAD_SUCCESS);
-           // }
+            //setUpReaderResolve(chapterIndex, charIndex, adapter.obtainChapterName(chapterItem), adapter.obtainChapterContent(cache));
+            // return result(TurnStatus.LOAD_SUCCESS);
+            // }
         }
 
         private TurnStatus result(TurnStatus turnStatus) {
@@ -720,54 +744,57 @@ public class ReaderView extends FrameLayout {
             return turnStatus;
         }
 
-//        @Override
-//        public void startFromCache(String key, int chapterIndex, int charIndex, @NonNull String chapterName) {
-//            if (mReaderView == null)
-//                throw new NullPointerException("mReaderView == null,Have you already called method ReaderView#setReaderMananger()");
-//            //startFromCache(mCache.getCacheDir(), key, chapterIndex, charIndex, chapterName);
-//        }
+        @Override
+        public void startFromCache(String key, int chapterIndex, int charIndex, @NonNull String chapterName) {
+            if (mReaderView == null)
+                throw new NullPointerException("mReaderView == null,Have you already called method ReaderView#setReaderMananger()");
+            //startFromCache(mCache.getCacheDir(), key, chapterIndex, charIndex, chapterName);
+        }
 
-//        @Override
-//        public void startFromCache(File cacheDir, String key, int chapterIndex, int charIndex, @NonNull String chapterName) {
-//            if (mReaderView == null)
-//                throw new NullPointerException("mReaderView == null,Have you already called method ReaderView#setReaderManger()?");
-//            Adapter adapter = mReaderView.getAdapter();
-//            if (adapter == null)
-//                throw new NullPointerException("Have you already called method ReaderView#setAdapter()?");
-//            mCache.setCacheDir(cacheDir);
-//            ParameterizedType parameterizedType = (ParameterizedType) adapter.getClass().getGenericSuperclass();
-//            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-//            Object cache = mCache.get(key, actualTypeArguments[1]);
-//            if (cache != null) {
-//                mReaderResolve.setArea(mReaderView.getMeasuredWidth(), mReaderView.getMeasuredHeight());
-//                mReaderResolve.setChapterSum(1);
-//                setUpReaderResolve(chapterIndex, charIndex, chapterName, adapter.obtainChapterContent(cache));
-//                mIsUsingCache = true;
-//                ReaderManager.this.mReaderView.invalidateBothPage();
-//            } else {
-//                mReaderResolve.setChapterIndex(chapterIndex);
-//                mReaderResolve.setCharIndex(charIndex);
-//            }
-//        }
+        @Override
+        public void startFromCache(File cacheDir, String key, int chapterIndex, int charIndex, @NonNull String chapterName) {
+            if (mReaderView == null)
+                throw new NullPointerException("mReaderView == null,Have you already called method ReaderView#setReaderManger()?");
+            Adapter adapter = mReaderView.getAdapter();
+            if (adapter == null)
+                throw new NullPointerException("Have you already called method ReaderView#setAdapter()?");
+            mCache.setCacheDir(cacheDir);
+            ParameterizedType parameterizedType = (ParameterizedType) adapter.getClass().getGenericSuperclass();
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+            Object cache = mCache.get(key, actualTypeArguments[1]);
+            if (cache != null) {
+                mReaderResolve.setArea(mReaderView.getMeasuredWidth(), mReaderView.getMeasuredHeight());
+                mReaderResolve.setChapterSum(1);
+                setUpReaderResolve(chapterIndex, charIndex, chapterName, adapter.obtainChapterContent(cache));
+                mIsUsingCache = true;
+                ReaderManager.this.mReaderView.invalidateBothPage();
+            } else {
+                mReaderResolve.setChapterIndex(chapterIndex);
+                mReaderResolve.setCharIndex(charIndex);
+            }
+        }
 
         void setReaderView(ReaderView readerView, @NonNull ReaderConfig readerConfig) {
             mReaderResolve = new ReaderResolve(readerConfig);
             this.mReaderView = readerView;
             if (mCache == null) {
-               // mCache = new DiskCache(readerView.getContext().getCacheDir());
+                // mCache = new DiskCache(readerView.getContext().getCacheDir());
             }
             initReaderResolve();
         }
 
         @Override
-        public void drawPage(@NonNull Canvas canvas,String mTitle) {
+        public void drawPage(@NonNull Canvas canvas) {
             BatteryManager batteryManager = (BatteryManager) mReaderView.getContext().getSystemService(BATTERY_SERVICE);
             if (batteryManager != null) {
                 int battery = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-                DLog.d(TAG, "battery:" + battery);
+                Log.e(TAG, "battery:" + battery);
                 mReaderResolve.setBattery(battery);
+                mReaderResolve.drawPage(canvas);
+
             }
-            mReaderResolve.drawPage(canvas,mTitle);
+            mReaderResolve.drawPage(canvas);
+
         }
 
         /**
@@ -809,7 +836,7 @@ public class ReaderView extends FrameLayout {
                 mOnReaderWatcherListener.onChapterChanged(chapterIndex, mReaderResolve.getPageIndex());
                 mOnReaderWatcherListener.onPageChanged(mReaderResolve.getPageIndex());
             }
-           // 章节发生变化后，缓存前后章节（如果没有缓存的话）
+            // 章节发生变化后，缓存前后章节（如果没有缓存的话）
             //cacheNearChapter(chapterIndex);
             mReaderView.invalidateCurrPage();
         }
@@ -863,6 +890,7 @@ public class ReaderView extends FrameLayout {
                     Request request = adapter.requestParams(chapterItem);
                     if (request == null) {
                         downLoad = adapter.downLoad(chapterItem);
+                        Log.e("chapterItem",chapterItem.toString()+"--");
                     } else {
                         ParameterizedType parameterizedType = (ParameterizedType) adapter.getClass().getGenericSuperclass();
                         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
@@ -900,7 +928,7 @@ public class ReaderView extends FrameLayout {
                             }
                         }
                         // 保存至缓存
-                      //  mCache.put(adapter.obtainCacheKey(chapterItem), downLoad);
+                        //  mCache.put(adapter.obtainCacheKey(chapterItem), downLoad);
                     } else {
                         // 章节下载失败
                         if (showAfterDownload && mOnReaderWatcherListener != null)
@@ -997,6 +1025,7 @@ public class ReaderView extends FrameLayout {
     private int mNextCanvasPage;
     private int mCurrCanvasPage;
 
+
     //提供一个简单的PageChangedCallback的实现
     public class SimplePageChangedCallback implements PageChangedCallback, PageDrawingCallback {
 
@@ -1008,26 +1037,35 @@ public class ReaderView extends FrameLayout {
         @Override
         public void drawCurrPage() {
             checkReaderManagerNonNull();
-            ReaderView.this.mReaderManager.drawPage(ReaderView.this.mCurrPageCanvas,mTitle);
+            count++;
+            Log.e("page","drawcurr--"+count);
+            ReaderView.this.mReaderManager.drawPage(ReaderView.this.mCurrPageCanvas);
             mCurrCanvasPage = mReaderManager.getReaderResolve().getPageIndex();
+
+            Message message=handler.obtainMessage();
+            message.arg1=ReaderView.count;
+            handler.sendMessageDelayed(message,5000);
         }
 
         @Override
         public void drawNextPage() {
             checkReaderManagerNonNull();
-            ReaderView.this.mReaderManager.drawPage(ReaderView.this.mNextPageCanvas,mTitle);
+            Log.e("page","drawnext");
+            ReaderView.this.mReaderManager.drawPage(ReaderView.this.mNextPageCanvas);
             mNextCanvasPage = mReaderManager.getReaderResolve().getPageIndex();
         }
 
         @Override
         public TurnStatus toPrevPage() {
             checkReaderManagerNonNull();
+            Log.e("page","toprev");
             return ReaderView.this.mReaderManager.toPrevPage();
         }
 
         @Override
         public TurnStatus toNextPage() {
             checkReaderManagerNonNull();
+            Log.e("page","tonext");
             return ReaderView.this.mReaderManager.toNextPage();
         }
     }

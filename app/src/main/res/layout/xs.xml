@@ -15,7 +15,7 @@
         android:layout_marginTop="7dp"
         android:textColor="#2F3236"
         android:text="挚爱梵高"
-        android:gravity="center"
+        android:gravity="left"
         android:textStyle="bold"
         android:lines="2"
         android:ellipsize="end"

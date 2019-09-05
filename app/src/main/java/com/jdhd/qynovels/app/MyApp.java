@@ -9,7 +9,7 @@ import android.os.StrictMode;
 import com.bytedance.sdk.openadsdk.TTAdConfig;
 import com.bytedance.sdk.openadsdk.TTAdConstant;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
-import com.facebook.drawee.backends.pipeline.Fresco;
+import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.umeng.analytics.MobclickAgent;
@@ -38,8 +38,8 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fresco.initialize(this);
-        UMConfigure.init(this, "5d50e0b90cafb24cf000049c", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, null);
+        String name= DeviceInfoUtils.getChannelName(this);
+        UMConfigure.init(this, "5d50e0b90cafb24cf000049c", name, UMConfigure.DEVICE_TYPE_PHONE, null);
         // 选用LEGACY_AUTO页面采集模式
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO);
         MyApp.context=getApplicationContext();
@@ -69,6 +69,7 @@ public class MyApp extends Application {
                 .supportMultiProcess(false)//是否支持多进程
                 //.httpStack(new MyOkStack3())//自定义网络库，demo中给出了okhttp3版本的样例，其余请自行开发或者咨询工作人员。
                 .build());
+
     }
     public static Context getAppContext() {
         return MyApp.context;
@@ -105,7 +106,6 @@ public class MyApp extends Application {
 
     public class ModuleType{
         // 10 banner 20 功能小图标 30 今日大热搜 40 本周看点 50 实时热搜 60 新书抢鲜 70 高分精选 80 重磅推荐 90 完结好书 100 热书更新 110 分类展示
-
          public static final int kSectionTypeBanner = 10,            // banner
                     kSectionTypeFunction = 20,          // 功能小图标
                     kSectionTypeTodayHotSearch =30,    // 今日大热搜
@@ -120,6 +120,39 @@ public class MyApp extends Application {
                     kSectionTypeHotBookUpdateList = 120;        // 热书更新 （今日更新顶部）
 
     }
+
+    // 进行数据分析的数据类型
+    public class kQYDataAnalysisEventType{
+    public static final int kQYDataAnalysisSystemEvent = 10;    // 10系统事件
+    public static final int kQYDataAnalysisTargetEvent = 20;    // 20按钮点击事件
+    public static final int kQYDataAnalysisPageEvent = 30;      // 30页面统计事件",
+    } ;
+
+// 事件内容 10 打开关闭app 20 我的-点击登录-登录页 30 红包--登录立即提现-登录页 40 书架-搜索页 50 书城-搜索页 60 福利-邀请好友-分享 70 福利-点击观看小视频 80 书城页面 90 福利页面 100 书架页面"
+
+    // 系操作类型枚举
+    public class kQYoperationType {
+        public static final int kQYSoperationTypeOpen = 10;       // 10 打开/关闭页面
+        public static final int kQoperationTypeCloseApp = 20;    // 20关闭app
+    } ;
+
+
+// 用户交互事件枚举（主要用于记录统计按钮点击事件）
+    public class kQYTargetDataAnalysis {
+    public static final int kQYTargetDataAnalysisMine_login = 20;           // 20 我的-点击登录-登录页
+    public static final int kQYTargetDataAnalysisActivity_login = 30;      // 30 红包--登录立即提现-登录页
+    public static final int kQYTargetDataAnalysisBookshelf_search = 40;     // 40 书架-搜索页
+    public static final int kQYTargetDataAnalysisBookCity_search = 50;      // 50 书城-搜索页
+    public static final int kQYTargetDataAnalysisWelfare_invite_share = 60; // 60 福利-邀请好友-分享
+    public static final int kQYTargetDataAnalysisWelfare_watchVideo = 70;   // 70 福利-点击观看小视频
+    } ;
+
+// 页面枚举
+    public class kQYPageDataAnalysis {
+    public static final int kQYPageDataAnalysisBookCity = 80;       // 80 书城页面
+    public static final int kQYPageDataAnalysisWelfare = 90;        // 90 福利页面
+    public static final int kQYPageDataAnalysisBookShelf = 100;     // 100 书架页面
+    } ;
 
     public static void addActivity(Activity activity){
         if(!list.contains(activity)){

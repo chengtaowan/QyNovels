@@ -79,9 +79,9 @@ public class IAddBookRankPresenterImpl implements IBookInfoPresenter {
                     .asParser(new SimpleParser<AddBookBean>(){})
                     .subscribe(addBookBean->{
                         Log.e("qqq",addBookBean.getMsg());
-                        if(addBookBean.getCode()==200&&addBookBean.getMsg().equals("请求成功")){
+                        //if(addBookBean.getCode()==200&&addBookBean.getMsg().equals("请求成功")){
                             iAddBookRankView.onSuccess(addBookBean);
-                        }
+                       // }
                     },throwable->{
                         iAddBookRankView.onAddError(throwable.getMessage());
                     });
