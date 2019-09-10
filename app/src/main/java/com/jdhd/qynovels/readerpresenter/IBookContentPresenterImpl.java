@@ -2,6 +2,7 @@ package com.jdhd.qynovels.readerpresenter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 
 import com.jdhd.qynovels.app.MyApp;
@@ -51,6 +52,7 @@ public class IBookContentPresenterImpl implements IBookContentPresenter {
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign= DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
+        Log.e("bookcon",token+"--"+time+"--"+id+"--"+sign);
         if(token!=null){
             RxHttp.postForm(MyApp.Url.baseUrl+"bookContent")
                     .addHeader("token",token)

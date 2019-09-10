@@ -141,9 +141,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         if(R.id.dl_gb==view.getId()){
-            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-            intent.putExtra("page",3);
-            startActivity(intent);
+//            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+//            intent.putExtra("page",3);
+//            startActivity(intent);
+            finish();
         }
         else if(R.id.dl_wx==view.getId()){
             if(!MyApp.getApi().isWXAppInstalled()){
@@ -216,6 +217,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     intent.putExtra("phone",tel);
                     intent.putExtra("type",type);
                     startActivity(intent);
+                    finish();
                 }
 
                 //yzm.setText(captchaBean.getData().getCode()+"");

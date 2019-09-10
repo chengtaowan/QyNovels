@@ -62,6 +62,7 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
     private SmartRefreshLayout sr;
     private boolean hasNetWork;
     private FunctionBean functionBean;
+    private boolean isfirst;
     private IVideoflPresenterImpl videoflPresenter;
     private String gamename,datapath,num;
     private Handler handler=new Handler(){
@@ -82,6 +83,8 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
                     break;
                 case 2:
                     loadAd("926447225", TTAdConstant.VERTICAL);
+
+
                     break;
             }
 
@@ -181,6 +184,15 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
                                     com.tencent.mm.opensdk.utils.Log.e("data",s);
                                 }
                             },string);
+                            if(isfirst){
+                                web.getJsAccessEntrace().quickCallJs("watchVideoSuccess", new ValueCallback<String>() {
+                                    @Override
+                                    public void onReceiveValue(String s) {
+                                        com.tencent.mm.opensdk.utils.Log.e("watchvideo",s);
+                                    }
+                                },"{}");
+                            }
+                            isfirst=true;
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -324,22 +336,13 @@ public class ZpActivity extends AppCompatActivity implements IPrizesView, View.O
 
                             //Toast.makeText(ZpActivity.this,"rewardVideoAd bar click",Toast.LENGTH_SHORT).show();
                         }
-
                         @Override
                         public void onAdClose() {
                             Log.e("watch","观看完成3");
                             prizePresenter.setGame_name(name);
                             prizePresenter.loadData();
-                            web.getJsAccessEntrace().quickCallJs("watchVideoSuccess", new ValueCallback<String>() {
-                                @Override
-                                public void onReceiveValue(String s) {
-                                    com.tencent.mm.opensdk.utils.Log.e("watchvideo",s);
-                                }
-                            },"{}");
-
                             //Toast.makeText(ZpActivity.this,"rewardVideoAd close",Toast.LENGTH_SHORT).show();
                         }
-
                         //视频播放完成回调
                         @Override
                         public void onVideoComplete() {

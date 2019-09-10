@@ -22,6 +22,10 @@ public class IPersonalPresenterImpl implements IPersonalPresenter {
     private Context context;
     private String token;
 
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public IPersonalPresenterImpl(IPersonalView personalView, Context context) {
         this.personalView = personalView;
         this.context = context;
@@ -29,16 +33,17 @@ public class IPersonalPresenterImpl implements IPersonalPresenter {
 
     @Override
     public void loadData() {
-        SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
-        token = preferences.getString("token", "");
+
         int time= DeviceInfoUtils.getTime();
         Map<String,String> map=new HashMap<>();
         map.put("time",time+"");
         map.put("token",token);
         String sign=DeviceInfoUtils.md5(DeviceInfoUtils.getCompareTo(map));
         map.put("sign",sign);
+        Log.e("casetoken",token);
         Log.e("time",time+"");
         Log.e("sign",sign);
+        Log.e("pertoken",token);
         RxHttp.get(MyApp.Url.baseUrl+"personal")
                 .addHeader("token",token)
                 .add(map)

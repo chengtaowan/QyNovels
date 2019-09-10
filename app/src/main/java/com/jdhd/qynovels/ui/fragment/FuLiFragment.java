@@ -61,6 +61,7 @@ import com.jdhd.qynovels.module.personal.FunctionBean;
 
 import com.jdhd.qynovels.module.personal.SignInVideoBean;
 import com.jdhd.qynovels.module.personal.SignSetingBean;
+import com.jdhd.qynovels.module.personal.TokenBean;
 import com.jdhd.qynovels.module.personal.UserEventBean;
 import com.jdhd.qynovels.module.personal.VideoflBean;
 import com.jdhd.qynovels.persenter.impl.personal.IDrawPresenterImpl;
@@ -195,46 +196,59 @@ public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSe
                     Toast.makeText(getContext(),"复制到剪切板",Toast.LENGTH_SHORT).show();
                     break;
                 case 6:
-                    Log.e("function",functionBean.toString());
-                    String type=functionBean.getType();
-                    String scene=functionBean.getScene();
-                    String img=functionBean.getShare_img();
+                    SharedPreferences sharedPreferences=getActivity().getSharedPreferences("token",Context.MODE_PRIVATE);
+                    String token=sharedPreferences.getString("token","");
+                    String islogin=sharedPreferences.getString("islogin","");
+                    if(!token.equals("")&&islogin.equals("1")){
+                        Log.e("function",functionBean.toString());
+                        String type=functionBean.getType();
+                        String scene=functionBean.getScene();
+                        String img=functionBean.getShare_img();
 
-                    if(type.equals("1")&&scene.equals("0")){
-                        getBitmap(getContext(), img, new FuLiFragment.GlideLoadBitmapCallback() {
-                            @Override
-                            public void getBitmapCallback(Bitmap bitmap) {
-                                map=bitmap;
-                                sharePicture(map, SendMessageToWX.Req.WXSceneSession);
-                                Log.e("asd","mapmapmap");
-                            }
-                        });
-                    }
-                    else if(type.equals("1")&&scene.equals("1")){
-                        getBitmap(getContext(), img, new FuLiFragment.GlideLoadBitmapCallback() {
-                            @Override
-                            public void getBitmapCallback(Bitmap bitmap) {
-                                map=bitmap;
-                                Log.e("asd","mapmapmap");
-                                sharePicture(map,SendMessageToWX.Req.WXSceneTimeline);
-                            }
-                        });
-
-                    }
-                    else if(type.equals("0")){
-                        getBitmap(getContext(), img, new FuLiFragment.GlideLoadBitmapCallback() {
-                            @Override
-                            public void getBitmapCallback(Bitmap bitmap) {
-                                map=bitmap;
-                                saveImageToGallery(getContext(),map);
-                                Log.e("asd","mapmapmap");
-                            }
-                        });
-                        if(map!=null){
+                        if(type.equals("1")&&scene.equals("0")){
+                            getBitmap(getContext(), img, new FuLiFragment.GlideLoadBitmapCallback() {
+                                @Override
+                                public void getBitmapCallback(Bitmap bitmap) {
+                                    map=bitmap;
+                                    sharePicture(map, SendMessageToWX.Req.WXSceneSession);
+                                    Log.e("asd","mapmapmap");
+                                }
+                            });
+                        }
+                        else if(type.equals("1")&&scene.equals("1")){
+                            getBitmap(getContext(), img, new FuLiFragment.GlideLoadBitmapCallback() {
+                                @Override
+                                public void getBitmapCallback(Bitmap bitmap) {
+                                    map=bitmap;
+                                    Log.e("asd","mapmapmap");
+                                    sharePicture(map,SendMessageToWX.Req.WXSceneTimeline);
+                                }
+                            });
 
                         }
+                        else if(type.equals("2")){
+                            Toast.makeText(getContext(),"功能暂未开放",Toast.LENGTH_SHORT).show();
+                        }
+                        else if(type.equals("0")){
+                            getBitmap(getContext(), img, new FuLiFragment.GlideLoadBitmapCallback() {
+                                @Override
+                                public void getBitmapCallback(Bitmap bitmap) {
+                                    map=bitmap;
+                                    saveImageToGallery(getContext(),map);
+                                    Log.e("asd","mapmapmap");
+                                }
+                            });
+                            if(map!=null){
 
+                            }
+
+                        }
                     }
+                    else{
+                        Intent intent2=new Intent(getContext(),LoginActivity.class);
+                        getContext().startActivity(intent2);
+                    }
+
                 break;
                 case 7:
                     int time=DeviceInfoUtils.getTime();
@@ -431,8 +445,8 @@ public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSe
 
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void getToken(String string){
-        token=string;
+    public void getToken(TokenBean tokenBean){
+        token=tokenBean.getData().getToken();
         signSetingPresenter=new ISignSetingPresenterImpl(new ISignSetingView() {
             @Override
             public void onSetingSuccess(String string) {
@@ -589,6 +603,9 @@ public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSe
         public void GGScriptMessageCommon(String str) {
             Log.e("name",str);
             Gson gson=new Gson();
+            SharedPreferences sharedPreferences=getActivity().getSharedPreferences("token",Context.MODE_PRIVATE);
+            String token=sharedPreferences.getString("token","");
+            String islogin=sharedPreferences.getString("islogin","");
             FunctionBean functionBean = gson.fromJson(str, FunctionBean.class);
 
                 switch (functionBean.getFunctionName()){
@@ -622,15 +639,30 @@ public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSe
                         break;
                     case "inviteFriend":
                         Log.e("path",functionBean.getPath());
-                        Message message=handler.obtainMessage(1);
-                        message.obj=functionBean;
-                        handler.sendMessage(message);
+
+                        if(!token.equals("")&&islogin.equals("1")){
+                            Message message=handler.obtainMessage(1);
+                            message.obj=functionBean;
+                            handler.sendMessage(message);
+                        }
+                        else{
+                            Intent intent=new Intent(getContext(),LoginActivity.class);
+                            getActivity().startActivity(intent);
+                        }
+
                         break;
                     case "bigWheel":
                         Log.e("path",functionBean.getPath());
-                        Message message1=handler.obtainMessage(2);
-                        message1.obj=functionBean;
-                        handler.sendMessage(message1);
+                        if(!token.equals("")&&islogin.equals("1")){
+                            Message message1=handler.obtainMessage(2);
+                            message1.obj=functionBean;
+                            handler.sendMessage(message1);
+                        }
+                        else{
+                            Intent intent=new Intent(getContext(),LoginActivity.class);
+                            getActivity().startActivity(intent);
+                        }
+
                         break;
                     case "watchVideo":
                         Message message7=handler.obtainMessage(7);

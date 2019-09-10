@@ -62,6 +62,7 @@ public class IDrawPresenterImpl implements IDrawPresenter {
         Log.e("time",time+"");
         Log.e("sign",sign);
         Log.e("game_name",game_name);
+        Log.e("game_num",game_num);
         RxHttp.postForm(MyApp.Url.baseUrl+datapath)
                 .addHeader("token",token)
                 .add(map)

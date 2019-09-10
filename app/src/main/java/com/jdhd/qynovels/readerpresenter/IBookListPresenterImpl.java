@@ -47,7 +47,7 @@ public class IBookListPresenterImpl implements IBookListPresenter {
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign= DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
-        Log.e("token",token);
+        Log.e("sjtoken",token+"--"+time+"--"+id+"--"+sign);
         Log.e("time",time+"");
         Log.e("id",id+"");
         Log.e("sign",sign);

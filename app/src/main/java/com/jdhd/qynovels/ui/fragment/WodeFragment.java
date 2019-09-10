@@ -205,10 +205,14 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
         sr.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {
+                Log.e("refreshtoken",token);
                 if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
                     sr.finishRefresh();
                 }
                 else{
+                    SharedPreferences preferences=getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
+                    token = preferences.getString("token", "");
+                    personalPresenter.setToken(token);
                     personalPresenter.loadData();
                 }
 
@@ -424,7 +428,11 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getToken(TokenBean tokenBean){
+        Log.e("weixintoken","---"+tokenBean.getData().getToken());
         if(tokenBean.getCode()==200){
+            SharedPreferences preferences=getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
+            token = preferences.getString("token", "");
+            personalPresenter.setToken(token);
             personalPresenter.loadData();
         }
     }
@@ -535,6 +543,7 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
                 //jz.setVisibility(View.GONE);
                 if(userBean==null){
                     return;
@@ -566,7 +575,7 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
                     wd_toux.setImageResource(R.mipmap.my_touxiang);
                     Toast.makeText(getContext(),userBean.getMsg(),Toast.LENGTH_SHORT).show();
                 }
-                else{
+                else if(userBean.getCode()==200){
                     sr.finishRefresh();
                     user=userBean;
                     Log.e("bindshow2",userBean.getData().getBind_show()+"");
@@ -602,7 +611,7 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
                         bindwx=user.getData().getBind_wx();
                         wxname=user.getData().getWx_name()+"";
                         Log.e("useravatar",userBean.getData().getAvatar()+"---");
-                        if (!user.getData().getAvatar() .equals("http://api.damobi.cn")) {
+                        if (!user.getData().getAvatar() .equals("http://api.damobi.cn")||user==null) {
                             Glide.with(getContext())
                                     .load(user.getData().getAvatar())
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -648,6 +657,9 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
             return;
         }
         personalPresenter=new IPersonalPresenterImpl(this,getContext());
+        SharedPreferences preferences=getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
+        token = preferences.getString("token", "");
+        personalPresenter.setToken(token);
         personalPresenter.loadData();
         //mHasLoadedOnce = true;
         Log.e(TAG,TAG+"加载数据");

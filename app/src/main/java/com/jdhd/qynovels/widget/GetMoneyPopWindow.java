@@ -102,6 +102,7 @@ public class GetMoneyPopWindow extends PopupWindow implements View.OnClickListen
                 iUserEventPresenter.loadData();
             }
             Intent intent=new Intent(context, LoginActivity.class);
+            intent.putExtra("type",1);
             context.startActivity(intent);
         }
 

@@ -19,12 +19,14 @@ import android.widget.Toast;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ExitBean;
+import com.jdhd.qynovels.module.personal.BindTelBean;
 import com.jdhd.qynovels.module.personal.BindWxBean;
 import com.jdhd.qynovels.ui.fragment.CaseFragment;
 import com.jdhd.qynovels.ui.fragment.ShopFragment;
 import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.StatusBarUtil;
+import com.jdhd.qynovels.wxapi.WXEntryActivity;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.umeng.analytics.MobclickAgent;
 
@@ -69,11 +71,27 @@ public class ZhglActivity extends AppCompatActivity implements View.OnClickListe
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getwxBean(BindWxBean bindWxBean){
-        if(!bindWxBean.getData().getWx_name().equals("")){
-           wx.setText(bindWxBean.getData().getWx_name());
-           wx.setClickable(false);
+        if(bindWxBean.getCode()==200){
+            Toast.makeText(ZhglActivity.this,"绑定成功",Toast.LENGTH_SHORT).show();
+            if(!bindWxBean.getData().getWx_name().equals("")){
+                wx.setText(bindWxBean.getData().getWx_name());
+                wx.setClickable(false);
+            }
+        }
+        else{
+            Toast.makeText(ZhglActivity.this,bindWxBean.getMsg(),Toast.LENGTH_LONG).show();
+
+        }
+
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getTelBean(BindTelBean bindTelBean){
+        if(!bindTelBean.getData().getMobile().equals("")){
+            sj.setText(bindTelBean.getData().getMobile());
+            sj.setClickable(false);
         }
     }
+
 
     private void init() {
         tc=findViewById(R.id.zh_tc);

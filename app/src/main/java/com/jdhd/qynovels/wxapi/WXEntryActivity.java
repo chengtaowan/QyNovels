@@ -54,6 +54,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
         api = MyApp.getApi();
         api.handleIntent(getIntent(), this);
         personalPresenter=new IPersonalPresenterImpl(this,WXEntryActivity.this);
+
         bindwxPresenter=new IBindwxPresenterImpl(this,WXEntryActivity.this);
     }
 
@@ -91,16 +92,9 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
                                  .add(map)
                                  .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                                  .asParser(new SimpleParser<BindWxBean>(){})
-                                 .subscribe(avatarBean->{
-                                     Log.e("avatar",avatarBean.getCode()+"--"+avatarBean.getMsg());
-                                     if(avatarBean.getCode()==200){
-                                         Toast.makeText(WXEntryActivity.this,"绑定成功",Toast.LENGTH_SHORT).show();
-                                         EventBus.getDefault().post(avatarBean);
-                                     }
-                                     else{
-                                         Toast.makeText(WXEntryActivity.this,avatarBean.getMsg(),Toast.LENGTH_SHORT).show();
-
-                                     }
+                                 .subscribe(bindWxBean->{
+                                     Log.e("avatar",bindWxBean.getCode()+"--"+bindWxBean.getMsg());
+                                     EventBus.getDefault().post(bindWxBean);
                                  },throwable->{
                                      Log.e("bindwxerror",throwable.getMessage());
                                  });
@@ -146,7 +140,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
                                  .asParser(new SimpleParser<TokenBean>(){})
                                  .subscribe(tokenBean->{
                                      Log.e("tokenbean",tokenBean.getMsg()+"--"+tokenBean.getCode());
-                                     if(tokenBean.getCode()==200&&tokenBean.getMsg().equals("success")){
+                                     if(tokenBean.getCode()==200){
                                          token=tokenBean.getData().getToken();
                                          SharedPreferences preferences=getSharedPreferences("token",MODE_PRIVATE);
                                          SharedPreferences.Editor editor=preferences.edit();
@@ -155,12 +149,12 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
                                          editor.putString("islogin",tokenBean.getData().getIs_login()+"");
                                          editor.commit();
                                          Log.e("weixintoken",token+"+++");
-                                         EventBus.getDefault().post(token);
+                                         EventBus.getDefault().post(tokenBean);
+                                         SharedPreferences sharedPreferences=getSharedPreferences("token",MODE_PRIVATE);
+                                         token=sharedPreferences.getString("token","");
+                                         personalPresenter.setToken(token);
                                          personalPresenter.loadData();
-                                         ShopFragment.lhb.setVisibility(View.GONE);
-                                         ShopFragment.closePopWindow();
-                                         CaseFragment.lhb.setVisibility(View.GONE);
-                                         CaseFragment.closePopWindow();
+
                                      }
                                  },throwable->{
                                      Log.e("asd","th"+throwable.getMessage());
@@ -202,6 +196,10 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler , IP
     public void onSuccess(UserBean userBean) {
         WodeFragment.user = userBean;
         EventBus.getDefault().post(userBean);
+        ShopFragment.lhb.setVisibility(View.GONE);
+        ShopFragment.closePopWindow();
+        CaseFragment.lhb.setVisibility(View.GONE);
+        CaseFragment.closePopWindow();
     }
 
     @Override

@@ -236,19 +236,7 @@ public class YzmActivity extends AppCompatActivity implements View.OnClickListen
                     editor.putString("login","success");
                     editor.putString("islogin",tokenBean.getData().getIs_login()+"");
                     editor.commit();
-                    Log.e("islogin",tokenBean.getData().getIs_login()+"+++");
-                    if(type==1){
-                        Intent intent=new Intent(YzmActivity.this,MainActivity.class);
-                        intent.putExtra("page", 2);
-                        startActivity(intent);
-                    }
-                    else{
-                        Intent intent=new Intent(YzmActivity.this,MainActivity.class);
-                        intent.putExtra("page", 3);
-                        intent.putExtra("action",0);
-                        startActivity(intent);
-                        EventBus.getDefault().post(tokenBean);
-                    }
+                    finish();
 
                     ShopFragment.lhb.setVisibility(View.GONE);
                     ShopFragment.closePopWindow();

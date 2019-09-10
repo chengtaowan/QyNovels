@@ -15,8 +15,8 @@ android {
         applicationId "com.jdhd.qynovels"
         minSdkVersion 22
         targetSdkVersion 26
-        versionCode 4
-        versionName "1.1.0"
+        versionCode 5
+        versionName "1.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         flavorDimensions "versionCode"
     }

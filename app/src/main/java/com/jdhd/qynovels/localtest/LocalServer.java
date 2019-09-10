@@ -49,7 +49,7 @@ public class LocalServer {
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign= DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
-        Log.e("zjid",listBean.getId()+"");
+        Log.e("zjid",listBean.getId()+"--"+time+"--"+token+"--"+sign);
         Log.e("time",time+"");
         Log.e("token",token+"");
         Log.e("sign",sign+"");

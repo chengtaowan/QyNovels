@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -50,12 +51,16 @@ public class ChoseSexActivity extends AppCompatActivity implements View.OnClickL
         sharedPreferences=getSharedPreferences("sex",MODE_PRIVATE);
         SharedPreferences.Editor editor=sharedPreferences.edit();
         if(R.id.boyll==view.getId()){
+           boy.setImageResource(R.mipmap.boy_on);
+           boytex.setTextColor(Color.parseColor("#E8564E"));
            editor.putString("sex","男");
            Intent intent=new Intent(ChoseSexActivity.this,MainActivity.class);
            intent.putExtra("page",1);
            startActivity(intent);
         }
         else if(R.id.girlll==view.getId()){
+            girl.setImageResource(R.mipmap.girl_on);
+            girltex.setTextColor(Color.parseColor("#E8564E"));
             editor.putString("sex","女");
             Intent intent=new Intent(ChoseSexActivity.this,MainActivity.class);
             intent.putExtra("page",1);

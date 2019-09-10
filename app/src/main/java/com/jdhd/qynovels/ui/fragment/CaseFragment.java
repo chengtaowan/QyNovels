@@ -52,6 +52,7 @@ import com.jdhd.qynovels.module.bookcase.AddBookBean;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
 import com.jdhd.qynovels.module.bookcase.ConfigBean;
 import com.jdhd.qynovels.module.personal.EventBean;
+import com.jdhd.qynovels.module.personal.TokenBean;
 import com.jdhd.qynovels.module.personal.UserBean;
 import com.jdhd.qynovels.module.personal.UserEventBean;
 import com.jdhd.qynovels.module.personal.VisitorBean;
@@ -165,6 +166,14 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
 
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getToken(TokenBean tokenBean){
+        casePresenter=new ICasePresenterImpl(this,getContext());
+        casePresenter.setToken(tokenBean.getData().getToken());
+        casePresenter.loadData();
+        lhb.setVisibility(View.GONE);
+        closePopWindow();
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void change(AddBookBean addBookBean){
         Log.e("addcode",addBookBean.getCode()+"[[");
         if(addBookBean.getCode()==9005){
@@ -202,7 +211,9 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
             }
         }
         else{
-
+            SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
+            token=sharedPreferences.getString("token","");
+            casePresenter.setToken(token);
             casePresenter.loadData();
         }
 
@@ -370,6 +381,9 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
                     jz.setVisibility(View.GONE);
                 }
                 else{
+                    SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
+                    token=sharedPreferences.getString("token","");
+                    casePresenter.setToken(token);
                     casePresenter.loadData();
                 }
 
@@ -461,11 +475,17 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
                           sr.finishRefresh();
                       }
                       else{
+                          SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
+                          token=sharedPreferences.getString("token","");
+                          casePresenter.setToken(token);
                           casePresenter.loadData();
                       }
 
                   }
                   else{
+                      SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
+                      token=sharedPreferences.getString("token","");
+                      casePresenter.setToken(token);
                       casePresenter.loadData();
                       mData.clear();
                       if(studia==20){
@@ -731,11 +751,17 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
             return;
         }
         personalPresenter=new IPersonalPresenterImpl(this,getContext());
+        SharedPreferences sharedPreferences1=getContext().getSharedPreferences("token",MODE_PRIVATE);
+        token=sharedPreferences1.getString("token","");
+        personalPresenter.setToken(token);
         personalPresenter.loadData();
         configPresenter=new IConfigPresenterImpl(this,getContext());
         configPresenter.loadData();
         casePresenter=new ICasePresenterImpl(this,getContext());
-        if(!token.equals("")){
+        if(!token.equals("")&&islogin.equals("1")){
+            SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
+            token=sharedPreferences.getString("token","");
+            casePresenter.setToken(token);
             casePresenter.loadData();
         }
         Log.e(TAG,TAG+"加载数据");

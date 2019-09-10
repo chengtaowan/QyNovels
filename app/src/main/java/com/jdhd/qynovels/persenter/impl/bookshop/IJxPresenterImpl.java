@@ -2,6 +2,7 @@ package com.jdhd.qynovels.persenter.impl.bookshop;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.jdhd.qynovels.app.MyApp;
 import com.jdhd.qynovels.module.bookshop.ShopBean;
@@ -48,6 +49,7 @@ public class IJxPresenterImpl implements IJxPresenter {
         String compareTo = DeviceInfoUtils.getCompareTo(map);
         String sign=DeviceInfoUtils.md5(compareTo);
         map.put("sign",sign);
+        Log.e("jxtoken",token+"--");
         if(token!=null){
             RxHttp.postForm(MyApp.Url.baseUrl+"moduleContent")
                     .addHeader("token",token)

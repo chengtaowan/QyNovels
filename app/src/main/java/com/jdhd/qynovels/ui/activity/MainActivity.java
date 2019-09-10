@@ -178,15 +178,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                     vp.setCurrentItem(1);
                 }
                 else if(radioGroup.getCheckedRadioButtonId()==R.id.rb_fl){
-                    SharedPreferences preferences=getSharedPreferences("token", MODE_PRIVATE);
-                    token = preferences.getString("token", "");
-                    islogin=preferences.getString("islogin","");
-                    Log.e("maintoken",token);
-                    if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
-                        Intent intent=new Intent(MainActivity.this,LoginActivity.class);
-                        intent.putExtra("type",1);
-                        startActivity(intent);
-                    }
                     vp.setCurrentItem(2);
                 }
                 else if(radioGroup.getCheckedRadioButtonId()==R.id.rb_wd){
@@ -198,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             @Override
             public void onBackPressed() {
                 super.onBackPressed();
-
                 //System.exit(0);
             }
 

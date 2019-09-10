@@ -264,6 +264,9 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                 adapter.refresh(bookInfoBean.getData());
                 Log.e("bookinfo",token+"---"+islogin);
                 if(!token.equals("")&&islogin.equals("1")){
+                    SharedPreferences sharedPreferences=getSharedPreferences("token",MODE_PRIVATE);
+                    token=sharedPreferences.getString("token","");
+                    casePresenter.setToken(token);
                     casePresenter.loadData();
                 }
                 else{

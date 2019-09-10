@@ -40,8 +40,10 @@ import com.jdhd.qynovels.module.bookshop.ExitBean;
 import com.jdhd.qynovels.module.bookshop.ModuleBean;
 import com.jdhd.qynovels.module.personal.ChangeSexBean;
 import com.jdhd.qynovels.module.personal.EventBean;
+import com.jdhd.qynovels.module.personal.TokenBean;
 import com.jdhd.qynovels.module.personal.UserEventBean;
 import com.jdhd.qynovels.module.personal.VisitorBean;
+import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookshop.IModulePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IUserEventPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IVisitorPresenterImpl;
@@ -123,7 +125,11 @@ public class ShopFragment extends BaseFragment implements TabLayout.OnTabSelecte
         lazyLoad();
         Log.e(TAG,"onstart");
     }
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getToken(TokenBean tokenBean){
+        lhb.setVisibility(View.GONE);
+        closePopWindow();
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

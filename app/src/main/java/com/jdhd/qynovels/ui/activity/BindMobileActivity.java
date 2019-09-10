@@ -26,6 +26,8 @@ import com.jdhd.qynovels.view.personal.IBindTelView;
 import com.jdhd.qynovels.view.personal.ICaptchaView;
 import com.umeng.analytics.MobclickAgent;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -166,11 +168,13 @@ public class BindMobileActivity extends AppCompatActivity implements View.OnClic
                    yy.setClickable(true);
                }
                else{
-                   Intent intent=new Intent(BindMobileActivity.this,ZhglActivity.class);
-                   intent.putExtra("mobile",bindTelBean.getData().getMobile());
-                   intent.setAction("bindtel");
-                   startActivity(intent);
-                   Toast.makeText(BindMobileActivity.this,"绑定成功",Toast.LENGTH_SHORT).show();
+                   finish();
+                   EventBus.getDefault().post(bindTelBean);
+//                   Intent intent=new Intent(BindMobileActivity.this,ZhglActivity.class);
+//                   intent.putExtra("mobile",bindTelBean.getData().getMobile());
+//                   intent.setAction("bindtel");
+//                   startActivity(intent);
+//                   Toast.makeText(BindMobileActivity.this,"绑定成功",Toast.LENGTH_SHORT).show();
                }
 
            }

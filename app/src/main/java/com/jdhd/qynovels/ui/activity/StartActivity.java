@@ -10,12 +10,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.SyncStateContract;
 import android.transition.Fade;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.bytedance.sdk.openadsdk.TTAdManager;
@@ -46,6 +48,26 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
 
     private IRefreshTokenPresenterImpl refreshTokenPresenter;
     public static int startTime=0;
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            SharedPreferences sharedPreferences=getSharedPreferences("sex",MODE_PRIVATE);
+            String sex=sharedPreferences.getString("sex","");
+            if(!sex.equals("")){
+                Intent intent=new Intent(StartActivity.this,MainActivity.class);
+                intent.putExtra("page",1);
+                startActivity(intent);
+                finish();
+            }
+            else{
+                Intent intent=new Intent(StartActivity.this,ChoseSexActivity.class);
+                startActivity(intent);
+                finish();
+            }
+            Log.e("sex",sex+"---");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +82,12 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
         getPermission();
 
     }
+
     //获取权限
     private void getPermission() {
         if (EasyPermissions.hasPermissions(this, permissions)) {
-
+            Message message=new Message();
+            handler.sendMessageDelayed(message,1000);
             //已经打开权限
             // Toast.makeText(this, "已经申请相关权限", Toast.LENGTH_SHORT).show();
         } else {

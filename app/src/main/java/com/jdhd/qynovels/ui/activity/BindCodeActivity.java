@@ -29,7 +29,6 @@ public class BindCodeActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bind_code);
         AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
-
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();

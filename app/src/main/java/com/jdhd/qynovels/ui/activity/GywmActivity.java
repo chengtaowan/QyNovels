@@ -20,8 +20,6 @@ public class GywmActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gywm);
         AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
-
-
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         init();
