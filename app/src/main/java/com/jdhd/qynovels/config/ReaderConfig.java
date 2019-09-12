@@ -95,7 +95,7 @@ public class ReaderConfig {
 
         private int mTextSize = 60;
 
-        private int[] mPadding = {40, 70, 40, 70};
+        private int[] mPadding = {60, 70, 50, 70};
 
         private int mLineSpace = 10;
 

@@ -72,12 +72,22 @@
             android:text="目录"
             android:textColor="#242424"
             android:textSize="@dimen/qb_px_44" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/qb_px_130" />
+            android:scrollbars="vertical"
+            android:layout_marginTop="@dimen/qb_px_128">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+            </RelativeLayout>
+
+        </ScrollView>
 
     </com.google.android.material.navigation.NavigationView>
 

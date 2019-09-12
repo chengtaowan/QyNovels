@@ -316,7 +316,7 @@ public class EffectOfRealOneWay extends Effect {
 
                 // 翻页成功，手指抬起来时，处理自动翻页
                 else if (mTurnStatus == TurnStatus.LOAD_SUCCESS) {
-                    mVelocityTracker.computeCurrentVelocity(1000);
+                    mVelocityTracker.computeCurrentVelocity(500);
                     mTouch.x = x;
                     setUpTouchY(y);
 

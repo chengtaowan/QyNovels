@@ -125,7 +125,7 @@ public class MyReaderResolve extends ReaderResolve {
 
     @Override
     protected void drawPercentage(Canvas canvas, float percent, float x, float y, Paint marginPaint) {
-//        super.drawPercentage(canvas, percent, x, y, marginPaint);
+        super.drawPercentage(canvas, percent, x, y, marginPaint);
         // 不画页码只需要注掉super.drawPagination()既可.
     }
 

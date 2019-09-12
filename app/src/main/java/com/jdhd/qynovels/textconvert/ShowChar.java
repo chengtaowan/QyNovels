@@ -30,7 +30,38 @@ public class ShowChar {
      * 当前字符 上下左右四个位置
      */
     public RectF rectF;
-//    public Point topLeftPosition = null;
+
+    public void setCharData(char charData) {
+        this.charData = charData;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public void setCharWidth(float charWidth) {
+        this.charWidth = charWidth;
+    }
+
+    public void setIndexInChapter(int indexInChapter) {
+        this.indexInChapter = indexInChapter;
+    }
+
+    public void setRectF(RectF rectF) {
+        this.rectF = rectF;
+    }
+
+    @Override
+    public String toString() {
+        return "ShowChar{" +
+                "charData=" + charData +
+                ", selected=" + selected +
+                ", charWidth=" + charWidth +
+                ", indexInChapter=" + indexInChapter +
+                ", rectF=" + rectF +
+                '}';
+    }
+    //    public Point topLeftPosition = null;
 //    public Point topRightPosition = null;
 //    public Point bottomLeftPosition = null;
 //    public Point bottomRightPosition = null;

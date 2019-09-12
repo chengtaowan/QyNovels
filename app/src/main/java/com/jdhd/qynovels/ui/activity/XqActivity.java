@@ -29,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bifan.txtreaderlib.utils.TextBreakUtil;
 import com.bumptech.glide.Glide;
 
 
@@ -45,6 +46,7 @@ import com.jdhd.qynovels.persenter.impl.bookcase.IAddBookRankPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookInfoPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IBookListPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
+import com.jdhd.qynovels.textconvert.TextBreakUtils;
 import com.jdhd.qynovels.utils.AndroidBug54971Workaround;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
@@ -208,6 +210,7 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
            finish();
        }
        else if(R.id.xq_yd==view.getId()){
+           TextBreakUtils.count=0;
           String time= DeviceInfoUtils.getTime()+"";
          Intent intent=new Intent(XqActivity.this, ExtendReaderActivity.class);
          intent.putExtra("id",id);
@@ -227,28 +230,31 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
          startActivity(intent);
          database=dbUtils.getWritableDatabase();
          Log.e("token--",token+"===");
-         if(!token.equals("")){
-             database.execSQL("delete from readhistory where user='user'and name='"+bookBean.getData().getBook().getName()+"'");
-             database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                     "values('user'," +
-                     "'"+bookBean.getData().getBook().getName()+"'," +
-                     "'"+bookBean.getData().getBook().getImage()+"'," +
-                     "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                     "'"+listBean.getData().getList().get(0).getName()+"'," +
-                     "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
-                     "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"')");
+         if(listBean.getData()!=null){
+             if(!token.equals("")){
+                 database.execSQL("delete from readhistory where user='user'and name='"+bookBean.getData().getBook().getName()+"'");
+                 database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                         "values('user'," +
+                         "'"+bookBean.getData().getBook().getName()+"'," +
+                         "'"+bookBean.getData().getBook().getImage()+"'," +
+                         "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                         "'"+listBean.getData().getList().get(0).getName()+"'," +
+                         "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
+                         "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"')");
+             }
+             else{
+                 database.execSQL("delete from readhistory where user='visitor'and name='"+bookBean.getData().getBook().getName()+"'");
+                 database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                         "values('visitor'," +
+                         "'"+bookBean.getData().getBook().getName()+"'," +
+                         "'"+bookBean.getData().getBook().getImage()+"'," +
+                         "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                         "'"+listBean.getData().getList().get(0).getName()+"'," +
+                         "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
+                         "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"')");
+             }
          }
-         else{
-             database.execSQL("delete from readhistory where user='visitor'and name='"+bookBean.getData().getBook().getName()+"'");
-             database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                     "values('visitor'," +
-                     "'"+bookBean.getData().getBook().getName()+"'," +
-                     "'"+bookBean.getData().getBook().getImage()+"'," +
-                     "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                     "'"+listBean.getData().getList().get(0).getName()+"'," +
-                     "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
-                     "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"')");
-         }
+
 
        }
 

@@ -17,7 +17,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.text.SpannableString;
+import android.text.style.LeadingMarginSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -81,12 +84,14 @@ import com.jdhd.qynovels.readerview.SimpleOnSeekBarChangeListener;
 import com.jdhd.qynovels.readerwidget.AddCasePopWindow;
 import com.jdhd.qynovels.readerwidget.DislikeDialog;
 import com.jdhd.qynovels.readerwidget.EffectOfCover;
+import com.jdhd.qynovels.readerwidget.EffectOfNon;
 import com.jdhd.qynovels.readerwidget.EffectOfRealBothWay;
 import com.jdhd.qynovels.readerwidget.EffectOfRealOneWay;
 import com.jdhd.qynovels.readerwidget.EffectOfSlide;
 import com.jdhd.qynovels.readerwidget.PageChangedCallback;
 import com.jdhd.qynovels.readerwidget.ReaderResolve;
 import com.jdhd.qynovels.readerwidget.ReaderView;
+import com.jdhd.qynovels.textconvert.TextBreakUtils;
 import com.jdhd.qynovels.ui.activity.XqActivity;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
@@ -161,12 +166,14 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
     private TimerTask task;
     private int seekbar,newseekbar;
     private IConfigPresenterImpl configPresenter;
+    private AddCasePopWindow addCasePopWindow;
     public ExtendReaderActivity() {
     }
     @Override
     protected void onStart() {
         super.onStart();
         //startTimer();
+        hideBottomUIMenu();
     }
     private void stopTimer(){
         if (timer != null) {
@@ -373,6 +380,8 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         //SeekBar textSpaceSeekBar = findViewById(R.id.text_space_seek_bar);
         mNavigationView = findViewById(R.id.navigation);
         mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setNestedScrollingEnabled(false);
         //mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_0));
         mReaderView.invalidateBothPage();
         initRecyclerViewAndDrawerLayout();
@@ -541,7 +550,31 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         return super.onOptionsItemSelected(item);
     }
 
-
+    /**
+     * @param context
+     * @param textView
+     * @param mPx
+     */
+    public SpannableString SJ(Context context,String str, int mPx) {
+        //1.先创建SpannableString对象
+        SpannableString spannableString = new SpannableString(str);
+        //2.设置文本缩进的样式，参数arg0，首行缩进的像素，arg1，剩余行缩进的像素,这里我将像素px转换成了手机独立像素dp
+        LeadingMarginSpan.Standard what = new LeadingMarginSpan.Standard(dp2px(context, mPx), 0);
+        //3.进行样式的设置了,其中参数what是具体样式的实现对象,start则是该样式开始的位置，end对应的是样式结束的位置，参数flags，定义在Spannable中的常量
+        spannableString.setSpan(what, 0, spannableString.length(), SpannableString.SPAN_INCLUSIVE_INCLUSIVE);
+        return spannableString;
+    }
+    /**
+     * dp转px
+     *
+     * @param context
+     * @param dpVal
+     * @return
+     */
+    public static int dp2px(Context context, float dpVal) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                dpVal, context.getResources().getDisplayMetrics());
+    }
 
     private void initReader() {
         bj1=findViewById(R.id.reader_bg_0);
@@ -559,6 +592,8 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
         mReaderView.setReaderManager(mReaderManager);
         mReaderView.setLineSpace((int) (mReaderView.getTextSize()*0.5));
         mReaderView.invalidateBothPage();
+        //mReaderView.setEffect(new EffectOfNon(this));
+        //mReaderView.addParagraph("\n");
         SharedPreferences backsharedPreferences=getSharedPreferences("background",MODE_PRIVATE);
         String back=backsharedPreferences.getString("background","");
         String color=backsharedPreferences.getString("fountcolor","");
@@ -744,7 +779,15 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             @Override
             public String obtainChapterContent(BookContentBean.DataBean dataBean) {
                 Log.e("nr",dataBean.getContent()+"--");
-                return dataBean.getContent();
+                String content=dataBean.getContent();
+//                if(content!=null){
+//                    SpannableString sj = SJ(ExtendReaderActivity.this, content, 10);
+//                    return sj.toString();
+//                }
+//                else{
+                    return dataBean.getContent();
+                //}
+
             }
             @Override
             public BookContentBean.DataBean downLoad(BookListBean.DataBean.ListBean listBean) {
@@ -921,7 +964,13 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
             mDisposable.dispose();
 
         }
+        if (addCasePopWindow != null && addCasePopWindow.isShowing()) {
 
+            addCasePopWindow.dismiss();
+
+            addCasePopWindow = null;
+
+        }
         EventBus.getDefault().unregister(this);
 
     }
@@ -1296,9 +1345,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 
             if(clicknum%2==0){
 
-                //mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
+                mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_0));
 
-                // mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_0));
+                 mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_0));
 
                 daynight.setImageResource(R.mipmap.yuedu_yj);
 
@@ -1312,9 +1361,9 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 
             else{
 
-                //mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
+                mDrawerLayout.setBackgroundColor(getResources().getColor(R.color.reader_bg_4));
 
-                //mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_4));
+                mReaderView.setBackground(getResources().getDrawable(R.color.reader_bg_4));
 
                 daynight.setImageResource(R.mipmap.yuedu_yj_on);
 
@@ -1454,8 +1503,7 @@ public class ExtendReaderActivity extends AppCompatActivity implements View.OnCl
 
     private void showPopWindow(ExtendReaderActivity activity, int type){
 
-        AddCasePopWindow addCasePopWindow=new AddCasePopWindow(ExtendReaderActivity.this,itemclick,type,id,backlistid);
-
+        addCasePopWindow=new AddCasePopWindow(ExtendReaderActivity.this,itemclick,type,id,backlistid);
         addCasePopWindow.showAtLocation(activity.getWindow().getDecorView(), Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
 
         addCasePopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {

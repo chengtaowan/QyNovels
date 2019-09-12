@@ -145,7 +145,8 @@ public class ReaderResolve {
 
         //正文所占行数
         if (!android.text.TextUtils.isEmpty(mContent)) {
-            mShowLines = TextBreakUtils.breakToLineList(mContent, usableWidth, 0, mMainBodyPaint);
+            mShowLines = TextBreakUtils.breakToLineList(mContent, usableWidth, 5, mMainBodyPaint);
+            Log.e("showline",mShowLines.get(0).charsData.toString()+"--");
         }
 
         //计算总页数
@@ -202,7 +203,7 @@ public class ReaderResolve {
     }
 
     public void drawPage(Canvas canvas) {
-//        DLog.d(TAG, "start drawPage,title:" + mTitle + " ,content:" + mContent);
+        DLog.d("drawpage", "start drawPage,title:" + mTitle + " ,content:" + mContent);
         drawBackground(canvas);
         drawMarginArea(canvas);
         if (mTitle != null) {
@@ -412,21 +413,22 @@ public class ReaderResolve {
             int charSum = showChars.size();
             float start = x;
 
-            int retractCharNum = 0;// 缩进符数量
-            String lineData = showLine.getLineData();
-            // 遍历计算缩进符数量
+            int retractCharNum = 0;//缩进符数量
             String tempData = showLine.getLineData();
+           // 遍历计算缩进符数量
             for (String retract : TextBreakUtils.sRetract) {
                 while (tempData.startsWith(retract)) {
-                    retractCharNum++;
-                    tempData = tempData.substring(retractCharNum);
+                    //retractCharNum++;
+                    tempData = tempData;
+                    Log.e("tempdata",tempData+"---");
+                    break;
                 }
             }
 
             Rect bounds = new Rect();
-            mMainBodyPaint.getTextBounds(lineData, 0, retractCharNum, bounds);
+            mMainBodyPaint.getTextBounds(String.valueOf(showLine.charsData), 0, retractCharNum, bounds);
 
-            float retractsWidth = retractCharNum == 0 ? 0 : mMainBodyPaint.measureText(lineData, 0, retractCharNum - 1);
+            float retractsWidth = retractCharNum == 0 ? 0 : mMainBodyPaint.measureText(String.valueOf(showLine.charsData), 0, retractCharNum -1);
             float landscapeSpace = (mAreaWidth - paddingLeft - paddingRight - retractsWidth - showChars.get(charSum - 1).charWidth)
                     * 1f / (charSum - retractCharNum - 1);
 
@@ -434,8 +436,10 @@ public class ReaderResolve {
 //                canvas.drawText(lineData.substring(0, retractCharNum - 1), x, y, mMainBodyPaint);
                 start += retractsWidth;
             }
-            for (int i = retractCharNum; i < showChars.size(); i++) {
-                ShowChar showChar = showChars.get(i);
+            char[] data=tempData.toCharArray();
+            for (int i = retractCharNum; i < data.length; i++) {
+                ShowChar showChar = new ShowChar();
+                showChar.charData=data[i];
                 canvas.drawText(String.valueOf(showChar.charData), start, y, mMainBodyPaint);
                 showChar.rectF = new RectF(start, topPosition, start + showChar.charWidth, bottomPosition);
                 start += landscapeSpace;

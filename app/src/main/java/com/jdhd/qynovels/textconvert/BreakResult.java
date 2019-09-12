@@ -1,5 +1,6 @@
 package com.jdhd.qynovels.textconvert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,9 +26,19 @@ public class BreakResult {
     /**
      * 测量了的字符数据
      */
-    public List<ShowChar> showChars = null;
+    public List<ShowChar> showChars = new ArrayList<>();
 
     public boolean hasData() {
         return showChars != null && showChars.size() > 0;
+    }
+
+    @Override
+    public String toString() {
+        return "BreakResult{" +
+                "chartNums=" + chartNums +
+                ", isFullLine=" + isFullLine +
+                ", endWithWrapMark=" + endWithWrapMark +
+                ", showChars=" + showChars +
+                '}';
     }
 }
