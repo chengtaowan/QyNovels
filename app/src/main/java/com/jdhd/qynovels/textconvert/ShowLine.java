@@ -46,4 +46,14 @@ public class ShowLine {
         }
         return charsData.get(charsData.size() - 1).indexInChapter;
     }
+
+    @Override
+    public String toString() {
+        return "ShowLine{" +
+                "charsData=" + charsData +
+                ", indexInChapter=" + indexInChapter +
+                ", isFullLine=" + isFullLine +
+                ", endWithWrapMark=" + endWithWrapMark +
+                '}';
+    }
 }

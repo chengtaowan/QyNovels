@@ -51,7 +51,7 @@ import java.util.List;
 public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
     private CaseBean.DataBean.HotBean hotBean=new CaseBean.DataBean.HotBean();
     private List<CaseBean.DataBean.ListBean> listBean=new ArrayList<>();
-    private Context context;
+    private Activity context;
     private FragmentActivity activity;
     public static final int TYPE_LIST=1;
     private onItemClick onItemClick;
@@ -78,7 +78,7 @@ public class CaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
         this.onItemClick = onItemClick;
     }
 
-    public CaseAdapter(Context context,FragmentActivity activity) {
+    public CaseAdapter(Activity context,FragmentActivity activity) {
         this.context = context;
         this.activity=activity;
     }

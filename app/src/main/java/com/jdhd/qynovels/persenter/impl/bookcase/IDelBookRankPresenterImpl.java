@@ -61,10 +61,10 @@ public class IDelBookRankPresenterImpl implements IBookInfoPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<DelBookRackBean>(){})
                     .subscribe(delBookRackBean->{
-                        Log.e("delbook",delBookRackBean.getMsg());
-                        if(delBookRackBean.getCode()==200&&delBookRackBean.getMsg().equals("请求成功")){
+                        Log.e("delbook",delBookRackBean.getMsg()+"---"+delBookRackBean.getCode());
+                        //if(delBookRackBean.getCode()==200&&delBookRackBean.getMsg().equals("请求成功")){
                             iDelBookRankView.onSuccess(delBookRackBean);
-                        }
+                       // }
                     },throwable->{
                         iDelBookRankView.onAddError(throwable.getMessage());
                     });
@@ -76,9 +76,9 @@ public class IDelBookRankPresenterImpl implements IBookInfoPresenter {
                     .asParser(new SimpleParser<DelBookRackBean>(){})
                     .subscribe(delBookRackBean->{
                         Log.e("qqq",delBookRackBean.getMsg());
-                        if(delBookRackBean.getCode()==200&&delBookRackBean.getMsg().equals("请求成功")){
+                        //if(delBookRackBean.getCode()==200&&delBookRackBean.getMsg().equals("请求成功")){
                             iDelBookRankView.onSuccess(delBookRackBean);
-                        }
+                       // }
                     },throwable->{
                         iDelBookRankView.onAddError(throwable.getMessage());
                     });

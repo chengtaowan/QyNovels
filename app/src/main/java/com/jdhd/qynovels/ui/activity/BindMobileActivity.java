@@ -44,10 +44,9 @@ public class BindMobileActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bind_mobile);
-        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
-
-        MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
+        AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
+        MyApp.addActivity(this);
         init();
     }
 

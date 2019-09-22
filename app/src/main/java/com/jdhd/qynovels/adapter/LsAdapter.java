@@ -93,6 +93,7 @@ public class LsAdapter extends RecyclerView.Adapter<LsAdapter.LsViewHolder>{
                intent.putExtra("name",list.get(position).getName());
                intent.putExtra("backlistid",0);
                intent.putExtra("charIndex",0);
+               intent.putExtra("type",0);
                context.startActivity(intent);
            }
        });

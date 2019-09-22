@@ -2,6 +2,8 @@ package com.jdhd.qynovels.ui.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -10,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,11 +46,13 @@ import java.util.List;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
-public class StartActivity extends AppCompatActivity implements IRefreshTokenView,EasyPermissions.PermissionCallbacks {
+public class StartActivity extends AppCompatActivity implements IRefreshTokenView,EasyPermissions.PermissionCallbacks ,IVisitorView{
     private String[] permissions = {Manifest.permission.READ_PHONE_STATE,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION};
 
     private IRefreshTokenPresenterImpl refreshTokenPresenter;
     public static int startTime=0;
+    private IVisitorPresenterImpl visitorPresenter;
+    int REQUEST_CALL_PHONE_PERMISSION=0;
     private Handler handler=new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -81,6 +86,7 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
         startTime= DeviceInfoUtils.getTime();
         getPermission();
 
+
     }
 
     //获取权限
@@ -88,6 +94,22 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
         if (EasyPermissions.hasPermissions(this, permissions)) {
             Message message=new Message();
             handler.sendMessageDelayed(message,1000);
+            SharedPreferences upsharedPreferences=getSharedPreferences("upvisitor",MODE_PRIVATE);
+            String str=upsharedPreferences.getString("upvisitor","");
+            if(!str.equals("true")){
+                //如果有权限直接执行
+                visitorPresenter=new IVisitorPresenterImpl(this,this);
+                visitorPresenter.loadData();
+                SharedPreferences sharedPreferences=getSharedPreferences("upvisitor",MODE_PRIVATE);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
+                editor.putString("upvisitor","true");
+                editor.commit();
+
+            }
+            else{
+                visitorPresenter=new IVisitorPresenterImpl(this,this);
+                visitorPresenter.loadData();
+            }
             //已经打开权限
             // Toast.makeText(this, "已经申请相关权限", Toast.LENGTH_SHORT).show();
         } else {
@@ -144,6 +166,22 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        SharedPreferences upsharedPreferences=getSharedPreferences("upvisitor",MODE_PRIVATE);
+        String str=upsharedPreferences.getString("upvisitor","");
+        if(!str.equals("true")){
+            //如果有权限直接执行
+            visitorPresenter=new IVisitorPresenterImpl(this,this);
+            visitorPresenter.loadData();
+            SharedPreferences sharedPreferences=getSharedPreferences("upvisitor",MODE_PRIVATE);
+            SharedPreferences.Editor editor=sharedPreferences.edit();
+            editor.putString("upvisitor","true");
+            editor.commit();
+
+        }
+        else{
+            visitorPresenter=new IVisitorPresenterImpl(this,this);
+            visitorPresenter.loadData();
+        }
         SharedPreferences sharedPreferences=getSharedPreferences("sex",MODE_PRIVATE);
         String sex=sharedPreferences.getString("sex","");
         if(!sex.equals("")){
@@ -162,6 +200,22 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        SharedPreferences upsharedPreferences=getSharedPreferences("upvisitor",MODE_PRIVATE);
+        String str=upsharedPreferences.getString("upvisitor","");
+        if(!str.equals("true")){
+            //如果有权限直接执行
+            visitorPresenter=new IVisitorPresenterImpl(this,this);
+            visitorPresenter.loadData();
+            SharedPreferences sharedPreferences=getSharedPreferences("upvisitor",MODE_PRIVATE);
+            SharedPreferences.Editor editor=sharedPreferences.edit();
+            editor.putString("upvisitor","true");
+            editor.commit();
+
+        }
+        else{
+            visitorPresenter=new IVisitorPresenterImpl(this,this);
+            visitorPresenter.loadData();
+        }
         SharedPreferences sharedPreferences=getSharedPreferences("sex",MODE_PRIVATE);
         String sex=sharedPreferences.getString("sex","");
         if(!sex.equals("")){
@@ -177,4 +231,38 @@ public class StartActivity extends AppCompatActivity implements IRefreshTokenVie
         }
         Log.e("sex",sex+"---");
     }
+
+    @Override
+    public void onVisitorSuccess(VisitorBean avatarBean) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(avatarBean.getCode()==4010){
+                    SharedPreferences sharedPreferences=getSharedPreferences("upvisitor",MODE_PRIVATE);
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putString("upvisitor","false");
+                    editor.commit();
+                    com.tencent.mm.opensdk.utils.Log.e("avatarbean",avatarBean.getMsg());
+                }
+                else {
+                    SharedPreferences preferences=getSharedPreferences("token",MODE_PRIVATE);
+                    SharedPreferences.Editor editor=preferences.edit();
+                    editor.putString("token",avatarBean.getData().getToken());
+                    editor.putString("login","fail");
+                    editor.putString("islogin",avatarBean.getData().getIs_login()+"");
+                    editor.commit();
+                    android.util.Log.e("islogin",avatarBean.getData().getIs_login()+"....");
+                }
+
+            }
+        });
+        android.util.Log.e("vivisot",avatarBean.getMsg());
+    }
+
+    @Override
+    public void onVisitorError(String error) {
+        android.util.Log.e("vivisoterror",error);
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package com.jdhd.qynovels.readerwidget;
 
 import com.jdhd.qynovels.readerutil.Request;
+import com.jdhd.qynovels.readerview.BookContentCallBack;
 
 /**
  * Created by Garrett on 2018/11/17.
@@ -13,7 +14,7 @@ interface IDownload<K, T> {
      * @param k 下载参数
      * @return 下载内容
      */
-    T downLoad(K k);
+    void  downLoad(K k, BookContentCallBack bookContentCallBack);
 
     /**
      * 获取同步下载参数

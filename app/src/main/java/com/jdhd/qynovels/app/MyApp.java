@@ -3,6 +3,7 @@ package com.jdhd.qynovels.app;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
 import android.os.StrictMode;
 
 
@@ -35,6 +36,7 @@ public class MyApp extends Application {
     private static final String APP_ID = "wxf2f9d368f73b6719";
     public static List<Activity> list=new ArrayList<>();
     public static int raduis=10;
+    public static Handler handler;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -57,10 +59,10 @@ public class MyApp extends Application {
        //穿山甲初始化
         TTAdSdk.init(this,new TTAdConfig.Builder()
                 .appId("5026447")
-               // .appId("5001121")
+                //.appId("5001121")
                 .useTextureView(true) //使用TextureView控件播放视频,默认为SurfaceView,当有SurfaceView冲突的场景，可以使用TextureView
                 .appName("趣阅小说_android")
-                //.appName("APP测试媒体")
+               // .appName("APP测试媒体")
                 .titleBarTheme(TTAdConstant.TITLE_BAR_THEME_DARK)
                 .allowShowNotify(true) //是否允许sdk展示通知栏提示
                 .allowShowPageWhenScreenLock(true) //是否在锁屏场景支持展示广告落地页
@@ -100,8 +102,8 @@ public class MyApp extends Application {
         @DefaultDomain()
         //public static final String baseUrl="http://192.168.1.199:19919/api.php/v1/";
         public static final String baseUrl = "http://api.damobi.cn/v1/";
-        public static final String webbaseUrl="http://h5.damobi.cn/";
-        //public static final String webbaseUrl="http://192.168.1.127:8848/";
+        //public static final String webbaseUrl="http://h5.damobi.cn/";
+        public static final String webbaseUrl="http://192.168.1.127:8848/";
     }
 
     public class ModuleType{

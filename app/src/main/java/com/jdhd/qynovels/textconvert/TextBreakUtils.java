@@ -75,17 +75,25 @@ public class TextBreakUtils {
                 m=String.valueOf(cs[i-1]).trim();
             }
             String measureStr = String.valueOf(cs[i]).trim();
+            //Log.e("measureStr",measureStr+"----");
             if(measureStr.equals("")&&m.equals("")){
                 continue;
             }
             float charWidth=0;
-            charWidth = paint.measureText(measureStr.trim());
+//            if(measureStr.equals("“")){
+//                charWidth=14.0f;
+//            }
+//            else{
+                charWidth = paint.measureText(measureStr.trim());
+
+           // }
             boolean isLineFeed = true;
             for (String paragraph : sParagraph) {
                 if (paragraph != null && paragraph.length() > 0 && size - i >= paragraph.length()) {
                     char[] paragraphArray = paragraph.toCharArray();
                     int length = paragraphArray.length;
                     for (int j = 0; j < length; j++) {
+                       // Log.e("dayin",paragraphArray[j]+"---"+cs[i + j]);
                         if (paragraphArray[j] != cs[i + j]) {
                             isLineFeed = false;
                             break;
@@ -93,7 +101,7 @@ public class TextBreakUtils {
                     }
                     if (isLineFeed) {
                         breakResult.chartNums = i + length;
-                        breakResult.isFullLine = true;
+                        breakResult.isFullLine = false;
                         breakResult.endWithWrapMark = true;
                         count=0;
                         flag=false;
@@ -111,7 +119,6 @@ public class TextBreakUtils {
                     flag=true;
                     count=0;
                 }
-
                 return breakResult;
             }
 
@@ -134,6 +141,10 @@ public class TextBreakUtils {
         newtext=newtext.replace("\r\r\n","\n\n");
         newtext=newtext.replace("\r\n","\n\n");
         newtext=newtext.replace("\n","\n\n");
+        //Log.e("newtext",newtext+"--");
+        if(newtext.startsWith("，")||newtext.startsWith("。")){
+           newtext=newtext.substring(1);
+        }
         count=0;
         return breakText(fromIndex, newtext.toCharArray(), measureWidth, textPadding, paint);
     }
@@ -168,32 +179,123 @@ public class TextBreakUtils {
         List<ShowLine> showLines = new ArrayList<>();
 
         int lineIndex = 0;
+        BreakResult mbreakResult=new BreakResult();
+        mbreakResult.endWithWrapMark=false;
+        int m=0;
         while (textData.length() > 0) {
             BreakResult breakResult = breakText(src.length() - textData.length(), textData, measureWidth, textPadding, paint);
             ShowLine showLine = new ShowLine();
-            if(breakResult.endWithWrapMark==false&&count==0){
+            if((breakResult.endWithWrapMark==true&&mbreakResult.endWithWrapMark==true)){
+              //  Log.e("truesss",breakResult.showChars.get(0)+"--"+breakResult.showChars.get(1));
                 ShowChar showChar=new ShowChar();
-                showChar.charData=" ".charAt(0);
+                showChar.charData="  ".charAt(0);
                 showChar.charWidth=60.0f;
                 showChar.indexInChapter=0;
                 ShowChar showChar1=new ShowChar();
-                showChar1.charData=" ".charAt(0);
+                showChar1.charData="  ".charAt(0);
+                showChar1.charWidth=60.0f;
+                showChar1.indexInChapter=1;
+                ShowChar showChar2=new ShowChar();
+                showChar2.charData="  ".charAt(0);
+                showChar2.charWidth=60.0f;
+                showChar2.indexInChapter=2;
+                ShowChar showChar3=new ShowChar();
+                showChar3.charData="  ".charAt(0);
+                showChar3.charWidth=60.0f;
+                showChar3.indexInChapter=3;
+                ShowChar showChar4=new ShowChar();
+                showChar4.charData="  ".charAt(0);
+                showChar4.charWidth=60.0f;
+                showChar4.indexInChapter=4;
+                ShowChar showChar5=new ShowChar();
+                showChar5.charData="  ".charAt(0);
+                showChar5.charWidth=60.0f;
+                showChar5.indexInChapter=5;
+                ShowChar showChar6=new ShowChar();
+                showChar6.charData="  ".charAt(0);
+                showChar6.charWidth=60.0f;
+                showChar6.indexInChapter=6;
+                ShowChar showChar7=new ShowChar();
+                showChar7.charData="  ".charAt(0);
+                showChar7.charWidth=60.0f;
+                showChar7.indexInChapter=7;
+                breakResult.showChars.add(0,showChar);
+                breakResult.showChars.add(1,showChar1);
+                breakResult.showChars.add(2,showChar2);
+                breakResult.showChars.add(3,showChar3);
+                breakResult.showChars.add(4,showChar4);
+                breakResult.showChars.add(5,showChar5);
+                breakResult.showChars.add(6,showChar6);
+                breakResult.showChars.add(7,showChar7);
+
+            }
+            else if(m==0&&breakResult.isFullLine==false){
+                ShowChar showChar=new ShowChar();
+                showChar.charData="  ".charAt(0);
+                showChar.charWidth=60.0f;
+                showChar.indexInChapter=0;
+                ShowChar showChar1=new ShowChar();
+                showChar1.charData="  ".charAt(0);
+                showChar1.charWidth=60.0f;
+                showChar1.indexInChapter=1;
+                ShowChar showChar2=new ShowChar();
+                showChar2.charData="  ".charAt(0);
+                showChar2.charWidth=60.0f;
+                showChar2.indexInChapter=2;
+                ShowChar showChar3=new ShowChar();
+                showChar3.charData="  ".charAt(0);
+                showChar3.charWidth=60.0f;
+                showChar3.indexInChapter=3;
+                ShowChar showChar4=new ShowChar();
+                showChar4.charData="  ".charAt(0);
+                showChar4.charWidth=60.0f;
+                showChar4.indexInChapter=4;
+                ShowChar showChar5=new ShowChar();
+                showChar5.charData="  ".charAt(0);
+                showChar5.charWidth=60.0f;
+                showChar5.indexInChapter=5;
+                ShowChar showChar6=new ShowChar();
+                showChar6.charData="  ".charAt(0);
+                showChar6.charWidth=60.0f;
+                showChar6.indexInChapter=6;
+                ShowChar showChar7=new ShowChar();
+                showChar7.charData="  ".charAt(0);
+                showChar7.charWidth=60.0f;
+                showChar7.indexInChapter=7;
+                breakResult.showChars.add(0,showChar);
+                breakResult.showChars.add(1,showChar1);
+                breakResult.showChars.add(2,showChar2);
+                breakResult.showChars.add(3,showChar3);
+                breakResult.showChars.add(4,showChar4);
+                breakResult.showChars.add(5,showChar5);
+                breakResult.showChars.add(6,showChar6);
+                breakResult.showChars.add(7,showChar7);
+            }
+           // Log.e("breakResult1",breakResult.endWithWrapMark+"---"+mbreakResult.endWithWrapMark);
+            else if((breakResult.endWithWrapMark==false&&count==0)||m==0){
+                ShowChar showChar=new ShowChar();
+                showChar.charData="  ".charAt(0);
+                showChar.charWidth=60.0f;
+                showChar.indexInChapter=0;
+                ShowChar showChar1=new ShowChar();
+                showChar1.charData="  ".charAt(0);
                 showChar1.charWidth=60.0f;
                 showChar1.indexInChapter=1;
                 breakResult.showChars.add(0,showChar);
                 breakResult.showChars.add(1,showChar1);
             }
 
+            mbreakResult.endWithWrapMark=breakResult.endWithWrapMark;
             showLine.charsData = breakResult.showChars;
             showLine.isFullLine = breakResult.isFullLine;
             showLine.endWithWrapMark = breakResult.endWithWrapMark;
-
+            m=1;
             if (showLine.getLineFirstIndexInChapter() != -1) {
                 showLine.indexInChapter = lineIndex;
                 showLines.add(showLine);
                 lineIndex++;
             }
-            //Log.e("text1111",textData+"----"+breakResult.chartNums);
+           // Log.e("text1111",textData+"----"+breakResult.chartNums);
             textData = textData.substring(breakResult.chartNums).trim();
         }
 
@@ -207,6 +309,12 @@ public class TextBreakUtils {
             for (ShowChar everyChar : everyLine.charsData) {
                 everyChar.indexInChapter = indexCharInChapter;
                 indexCharInChapter++;
+            }
+        }
+        for(int i=0;i<showLines.size();i++){
+            if(showLines.get(i)!=null){
+               // Log.e("showline111",showLines.get(i).toString());
+
             }
         }
         return showLines;

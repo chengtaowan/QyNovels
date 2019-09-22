@@ -122,16 +122,18 @@
             android:layout_marginRight="16dp"
             android:src="@mipmap/back_x"
             android:id="@+id/xg_n3"/>
+
         <TextView
+            android:id="@+id/xb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="11dp"
+            android:layout_marginBottom="14dp"
+            android:layout_toLeftOf="@+id/xg_n3"
             android:text="男"
             android:textColor="#ff94939a"
-            android:textSize="15sp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/xg_n3"
-            android:layout_marginRight="11dp"
-            android:id="@+id/xb"/>
+            android:textSize="15sp" />
     </RelativeLayout>
 
     <RelativeLayout

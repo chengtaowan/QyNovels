@@ -232,26 +232,36 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
          Log.e("token--",token+"===");
          if(listBean.getData()!=null){
              if(!token.equals("")){
-                 database.execSQL("delete from readhistory where user='user'and name='"+bookBean.getData().getBook().getName()+"'");
-                 database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                         "values('user'," +
-                         "'"+bookBean.getData().getBook().getName()+"'," +
-                         "'"+bookBean.getData().getBook().getImage()+"'," +
-                         "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                         "'"+listBean.getData().getList().get(0).getName()+"'," +
-                         "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
-                         "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                 new Thread(new Runnable() {
+                     @Override
+                     public void run() {
+                         database.execSQL("delete from readhistory where user='user'and name='"+bookBean.getData().getBook().getName()+"'");
+                         database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                                 "values('user'," +
+                                 "'"+bookBean.getData().getBook().getName()+"'," +
+                                 "'"+bookBean.getData().getBook().getImage()+"'," +
+                                 "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                                 "'"+listBean.getData().getList().get(0).getName()+"'," +
+                                 "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
+                                 "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                     }
+                 }).start();
              }
              else{
-                 database.execSQL("delete from readhistory where user='visitor'and name='"+bookBean.getData().getBook().getName()+"'");
-                 database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                         "values('visitor'," +
-                         "'"+bookBean.getData().getBook().getName()+"'," +
-                         "'"+bookBean.getData().getBook().getImage()+"'," +
-                         "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                         "'"+listBean.getData().getList().get(0).getName()+"'," +
-                         "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
-                         "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                 new Thread(new Runnable() {
+                     @Override
+                     public void run() {
+                         database.execSQL("delete from readhistory where user='visitor'and name='"+bookBean.getData().getBook().getName()+"'");
+                         database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                                 "values('visitor'," +
+                                 "'"+bookBean.getData().getBook().getName()+"'," +
+                                 "'"+bookBean.getData().getBook().getImage()+"'," +
+                                 "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                                 "'"+listBean.getData().getList().get(0).getName()+"'," +
+                                 "10," + "10," + "'"+bookBean.getData().getBook().getBookId()+"'," +
+                                 "0," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                     }
+                 }).start();
              }
          }
 
@@ -277,22 +287,27 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                 }
                 else{
                     List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
-                    database=dbUtils.getReadableDatabase();
-                    listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
-                    while(listcursor.moveToNext()){
-                        CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
-                        listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
-                        listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
-                        listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
-                        listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
-                        listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
-                        listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
-                        listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
-                        listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
-                        listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
-                        listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
-                        list.add(listBean);
-                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            database=dbUtils.getReadableDatabase();
+                            listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
+                            while(listcursor.moveToNext()){
+                                CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                                listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                                listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                                listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                                listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                                listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                                listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                                listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                                listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                                listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                                listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                                list.add(listBean);
+                            }
+                        }
+                    }).start();
                     for(int i=0;i<list.size();i++){
                         Log.e("bookinfolist",list.get(i).getName()+"--"+list.get(i).getBookId());
                         Log.e("visitor",list.get(i).getBookId()+"--"+bookBean.getData().getBook().getBookId());
@@ -342,15 +357,20 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                     database=dbUtils.getWritableDatabase();
                      if(bookBean.getData().getBook()!=null&&listBean.getData().getList()!=null){
                          Log.e("addbookid",bookBean.getData().getBook().getBookId()+"==="+bookBean.getData().getBook().getName());
-                            database.execSQL("delete from usercase where name='"+bookBean.getData().getBook().getName()+"'");
-                            database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
-                                    "values('visitor'," +
-                                    "'"+bookBean.getData().getBook().getName()+"'," +
-                                    "'"+bookBean.getData().getBook().getImage()+"'," +
-                                    "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                                    "'"+listBean.getData().getList().get(0).getName()+"'," +
-                                    "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
-                                    "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                           new Thread(new Runnable() {
+                               @Override
+                               public void run() {
+                                   database.execSQL("delete from usercase where name='"+bookBean.getData().getBook().getName()+"'");
+                                   database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
+                                           "values('visitor'," +
+                                           "'"+bookBean.getData().getBook().getName()+"'," +
+                                           "'"+bookBean.getData().getBook().getImage()+"'," +
+                                           "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                                           "'"+listBean.getData().getList().get(0).getName()+"'," +
+                                           "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
+                                           "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                               }
+                           }).start();
                      }
                     EventBus.getDefault().post(addBookBean);
                 }
@@ -366,14 +386,19 @@ public class XqActivity extends AppCompatActivity implements View.OnClickListene
                     database=dbUtils.getWritableDatabase();
                     EventBus.getDefault().post(addBookBean);
                         if(bookBean.getData().getBook()!=null){
-                            database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
-                                    "values('user'," +
-                                    "'"+bookBean.getData().getBook().getName()+"'," +
-                                    "'"+bookBean.getData().getBook().getImage()+"'," +
-                                    "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                                    "'"+listBean.getData().getList().get(0).getName()+"'," +
-                                    "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
-                                    "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
+                                            "values('user'," +
+                                            "'"+bookBean.getData().getBook().getName()+"'," +
+                                            "'"+bookBean.getData().getBook().getImage()+"'," +
+                                            "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                                            "'"+listBean.getData().getList().get(0).getName()+"'," +
+                                            "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
+                                            "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                                }
+                            }).start();
                         }
 
 

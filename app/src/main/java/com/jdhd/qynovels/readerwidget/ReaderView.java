@@ -24,6 +24,8 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.jdhd.qynovels.activities.ExtendReaderActivity;
+import com.jdhd.qynovels.entry.BookContentBean;
+import com.jdhd.qynovels.readerview.BookContentCallBack;
 import com.jdhd.qynovels.readerview.ReaderSparseBooleanArray;
 import com.jdhd.qynovels.readerview.TurnStatus;
 import com.jdhd.qynovels.cache.Cache;
@@ -109,7 +111,7 @@ public class ReaderView extends FrameLayout {
         super(context, attrs, defStyleAttr);
         initPaper();
         setWillNotDraw(false);
-        mEffect = new EffectOfRealOneWay(context);
+        mEffect = new EffectOfCover(context);
         mReaderConfig = new ReaderConfig.Builder().build();
         SimplePageChangedCallback simplePageChangedCallback = new SimplePageChangedCallback();
         mPageChangedCallback = simplePageChangedCallback;
@@ -889,8 +891,52 @@ public class ReaderView extends FrameLayout {
                     Object downLoad;
                     Request request = adapter.requestParams(chapterItem);
                     if (request == null) {
-                        downLoad = adapter.downLoad(chapterItem);
-                        Log.e("chapterItem",chapterItem.toString()+"--");
+                       adapter.downLoad(chapterItem, new BookContentCallBack() {
+                           @Override
+                           public void onBookContentSuccess(BookContentBean bookContentBean) {
+                               if(bookContentBean!=null){
+                                   DLog.d(ReaderManager.TAG, "download " + chapterIndex
+                                           + " success,content:" + adapter.obtainChapterContent(bookContentBean));
+
+                                   if (mDownloadingQueue.get(chapterIndex)) {
+                                       ReaderManager.this.toastInAsync("下载成功");
+                                       if (mOnReaderWatcherListener != null)
+                                           mOnReaderWatcherListener.onChapterDownloadSuccess(chapterIndex);
+
+                                       if (mLastTurnStatus != TurnStatus.LOAD_SUCCESS) {
+                                           // 当字符索引未知时，需要计算一下
+                                           int tempCharIndex = charIndex;
+                                           if (tempCharIndex == ReaderResolve.UNKNOWN) {
+                                               if (ReaderManager.this.mReaderResolve.getChapterIndex() < chapterIndex) {
+                                                   tempCharIndex = ReaderResolve.FIRST_INDEX;
+                                               } else {
+                                                   tempCharIndex = ReaderResolve.LAST_INDEX;
+                                               }
+                                           }
+                                           setUpReaderResolve(chapterIndex, tempCharIndex, adapter.obtainChapterName(chapterItem), adapter.obtainChapterContent(bookContentBean));
+                                           if (showAfterDownload) {
+//                                    if (mReaderResolve.getChapterIndex() == chapterIndex)
+                                               ReaderManager.this.mReaderView.invalidateBothPage();
+//                                    else
+                                           }
+                                       }
+                                   }
+                                   // 保存至缓存
+                                   //  mCache.put(adapter.obtainCacheKey(chapterItem), downLoad);
+                               }
+                               else{
+                                   // 章节下载失败
+                                   if (showAfterDownload && mOnReaderWatcherListener != null)
+                                       mOnReaderWatcherListener.onChapterDownloadError(chapterIndex);
+                               }
+                               ReaderManager.this.mDownloadingQueue.delete(chapterIndex);
+                           }
+
+                           @Override
+                           public void onBookError(String error) {
+
+                           }
+                       });
                     } else {
                         ParameterizedType parameterizedType = (ParameterizedType) adapter.getClass().getGenericSuperclass();
                         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
@@ -899,42 +945,6 @@ public class ReaderView extends FrameLayout {
                         downLoad = new Gson().fromJson(downloadStr, actualTypeArguments[1]);
                     }
 
-                    if (downLoad != null) {
-                        DLog.d(ReaderManager.TAG, "download " + chapterIndex
-                                + " success,content:" + adapter.obtainChapterContent(downLoad));
-
-                        if (mDownloadingQueue.get(chapterIndex)) {
-                            ReaderManager.this.toastInAsync("下载成功");
-
-                            if (mOnReaderWatcherListener != null)
-                                mOnReaderWatcherListener.onChapterDownloadSuccess(chapterIndex);
-
-                            if (mLastTurnStatus != TurnStatus.LOAD_SUCCESS) {
-                                // 当字符索引未知时，需要计算一下
-                                int tempCharIndex = charIndex;
-                                if (tempCharIndex == ReaderResolve.UNKNOWN) {
-                                    if (ReaderManager.this.mReaderResolve.getChapterIndex() < chapterIndex) {
-                                        tempCharIndex = ReaderResolve.FIRST_INDEX;
-                                    } else {
-                                        tempCharIndex = ReaderResolve.LAST_INDEX;
-                                    }
-                                }
-                                setUpReaderResolve(chapterIndex, tempCharIndex, adapter.obtainChapterName(chapterItem), adapter.obtainChapterContent(downLoad));
-                                if (showAfterDownload) {
-//                                    if (mReaderResolve.getChapterIndex() == chapterIndex)
-                                    ReaderManager.this.mReaderView.invalidateBothPage();
-//                                    else
-                                }
-                            }
-                        }
-                        // 保存至缓存
-                        //  mCache.put(adapter.obtainCacheKey(chapterItem), downLoad);
-                    } else {
-                        // 章节下载失败
-                        if (showAfterDownload && mOnReaderWatcherListener != null)
-                            mOnReaderWatcherListener.onChapterDownloadError(chapterIndex);
-                    }
-                    ReaderManager.this.mDownloadingQueue.delete(chapterIndex);
                 }
             });
         }
@@ -1044,7 +1054,7 @@ public class ReaderView extends FrameLayout {
 
             Message message=handler.obtainMessage();
             message.arg1=ReaderView.count;
-            handler.sendMessageDelayed(message,5000);
+            handler.sendMessageDelayed(message,500);
         }
 
         @Override

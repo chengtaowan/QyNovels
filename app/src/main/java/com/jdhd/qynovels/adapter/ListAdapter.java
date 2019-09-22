@@ -102,6 +102,10 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private TTAdNative mTTAdNative;
     private String islogin;
 
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     public void setType(int type) {
         this.type = type;
     }
@@ -126,6 +130,12 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public void refreshfeed(List<TTNativeExpressAd> feedlist){
         this.feedlist=feedlist;
         notifyDataSetChanged();
+
+    }
+
+    public void deleterefresh(int index){
+        list.remove(index);
+        notifyItemRemoved(index);
     }
 
 
@@ -134,6 +144,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         this.list.clear();
         this.list=list;
         notifyDataSetChanged();
+        Log.e("asdlistsize",list.size()+"=====");
     }
 
     public ListAdapter(Context context, FragmentActivity activity) {
@@ -146,63 +157,62 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(list.size()>5){
-            shownum=list.size()/5;
-        }
-        else{
-           shownum=1;
-        }
         if(feedlist.size()>0){
-            newfeedlist.clear();
-            for(int i=0;i<30;i++){
-                int num = (int) (Math.random() * (feedlist.size() - 0)) + 0;
-                newfeedlist.add(feedlist.get(num));
+            for(int i=0;i<200;i++){
+                int num = (int) (Math.random() * (feedlist.size() )) + 0;
+
+                if(feedlist.get(num).getExpressAdView().getWidth()==0){
+                    newfeedlist.add(feedlist.get(num));
+                }
+
             }
         }
-        if(count==0){
+        Log.e("feedlistsize",feedlist.size()+"----");
+        Log.e("listlistsize",list.size()+"---");
+        for(int i=0;i<list.size();i++){
+            Log.e("title",list.get(i).getName()+"000");
+            if(list.get(i).getName()==null){
+                list.remove(i);
+
+            }
+        }
+        Log.e("zhixing","zhixing");
+        if(feedlist.size()!=0){
+            Log.e("feedlistsizesss",list.size()+"-------");
             for(int i=0;i<list.size();i++){
-                Log.e("title",list.get(i).getName()+"000");
-                if(list.get(i).getName()==null){
-                    list.remove(i);
-
+                if(list.size()==0||list.size()==1||list.size()==2||list.size()==3||list.size()==4||list.size()==5){
+                    list.add(new CaseBean.DataBean.ListBean());
+                    break;
                 }
-                listsize=list.size();
-            }
-            if(feedlist.size()!=0){
-                for(int i=0;i<listsize;i++){
-                    if(list.size()==0||list.size()==1||list.size()==2||list.size()==3||list.size()==4||list.size()==5){
-                        list.add(new CaseBean.DataBean.ListBean());
-                        break;
-                    }
-                    else if(list.size()>5&&i==5){
-                        Log.e("123","1234"+"--"+list.size()+"--"+i);
-                        list.add(i,new CaseBean.DataBean.ListBean());
-                    }
-                    else if(list.size()>5&&i%8==0&&i>5){
-                        Log.e("123","1234"+"--"+list.size()+"--"+i);
-                        list.add(i,new CaseBean.DataBean.ListBean());
-                    }
-                    else if(list.size()>5&&i%11==0&&i>8){
-                        Log.e("123","1234"+"--"+list.size()+"--"+i);
-                        list.add(i,new CaseBean.DataBean.ListBean());
-                    }
-                    else if(list.size()>5&&i%14==0&&i>11){
-                        Log.e("123","1234"+"--"+list.size()+"--"+i);
-                        list.add(i,new CaseBean.DataBean.ListBean());
-                    }
-                    else if(list.size()>5&&i%17==0&&i>14){
-                        Log.e("123","1234"+"--"+list.size()+"--"+i);
-                        list.add(i,new CaseBean.DataBean.ListBean());
-                    }
-                    else if(list.size()>5&&i%20==0&&i>17){
-                        Log.e("123","1234"+"--"+list.size()+"--"+i);
-                        list.add(i,new CaseBean.DataBean.ListBean());
-                    }
+                else if(list.size()>5&&i==5){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
                 }
-            }
+                else if(list.size()>5&&i%8==0&&i>5){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
+                }
+                else if(list.size()>5&&i%11==0&&i>8){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
+                }
+                else if(list.size()>5&&i%14==0&&i>11){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
+                }
+                else if(list.size()>5&&i%17==0&&i>14){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
+                }
+                else if(list.size()>5&&i%20==0&&i>17){
+                    Log.e("123","1234"+"--"+list.size()+"--"+i);
+                    list.add(i,new CaseBean.DataBean.ListBean());
+                }
 
+            }
+            Log.e("listsize",list.size()+"'''''");
+            listsize=list.size();
         }
-        count=1;
         SharedPreferences preferences=context.getSharedPreferences("token", Context.MODE_PRIVATE);
         token = preferences.getString("token", "");
         islogin=preferences.getString("islogin","");
@@ -324,27 +334,37 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                                             bookBean=bookListBean;
                                             database=dbUtils.getWritableDatabase();
                                             if(!token.equals("")&&islogin.equals("1")){
-                                                database.execSQL("delete from readhistory where user='user'and name='"+list.get(position).getName()+"'");
-                                                database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                                                        "values('user'," +
-                                                        "'"+list.get(position).getName()+"'," +
-                                                        "'"+list.get(position).getImage()+"'," +
-                                                        "'"+list.get(position).getAuthor()+"'," +
-                                                        "'"+ ReaderResolve.mTitle +"'," +
-                                                        "20," + "'"+list.get(position).getBookStatus()+"'," + "'"+list.get(position).getBookId()+"'," +
-                                                        "'"+ReaderResolve.percent+"'," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+list.get(position).getBacklistId()+"')");
+                                               new Thread(new Runnable() {
+                                                   @Override
+                                                   public void run() {
+                                                       database.execSQL("delete from readhistory where user='user'and name='"+list.get(position).getName()+"'");
+                                                       database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                                                               "values('user'," +
+                                                               "'"+list.get(position).getName()+"'," +
+                                                               "'"+list.get(position).getImage()+"'," +
+                                                               "'"+list.get(position).getAuthor()+"'," +
+                                                               "'"+ ReaderResolve.mTitle +"'," +
+                                                               "20," + "'"+list.get(position).getBookStatus()+"'," + "'"+list.get(position).getBookId()+"'," +
+                                                               "'"+ReaderResolve.percent+"'," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+list.get(position).getBacklistId()+"')");
+                                                   }
+                                               }).start();
 
                                             }
                                             else{
-                                                database.execSQL("delete from readhistory where user='visitor'and name='"+list.get(position).getName()+"'");
-                                                database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                                                        "values('visitor'," +
-                                                        "'"+list.get(position).getName()+"'," +
-                                                        "'"+list.get(position).getImage()+"'," +
-                                                        "'"+list.get(position).getAuthor()+"'," +
-                                                        "'"+ ReaderResolve.mTitle +"'," +
-                                                        "20," + "'"+list.get(position).getBookStatus()+"'," + "'"+list.get(position).getBookId()+"'," +
-                                                        "'"+ReaderResolve.percent+"'," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+list.get(position).getBacklistId()+"')");
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        database.execSQL("delete from readhistory where user='visitor'and name='"+list.get(position).getName()+"'");
+                                                        database.execSQL("insert into readhistory(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                                                                "values('visitor'," +
+                                                                "'"+list.get(position).getName()+"'," +
+                                                                "'"+list.get(position).getImage()+"'," +
+                                                                "'"+list.get(position).getAuthor()+"'," +
+                                                                "'"+ ReaderResolve.mTitle +"'," +
+                                                                "20," + "'"+list.get(position).getBookStatus()+"'," + "'"+list.get(position).getBookId()+"'," +
+                                                                "'"+ReaderResolve.percent+"'," + "'"+DeviceInfoUtils.changeData(time)+"日"+"'," + "'"+list.get(position).getBacklistId()+"')");
+                                                    }
+                                                }).start();
                                             }
                                         }
 
@@ -381,16 +401,31 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             FeedViewHolder viewHolder= (FeedViewHolder) holder;
 
             if(newfeedlist.size()!=0){
-                Log.e("111","111");
+                Log.e("newfeedlist","111==="+newfeedlist.size());
+                if(newfeedlist.size()<list.size()){
+                    for(int i=0;i<100;i++){
+                        int num = (int) (Math.random() * (feedlist.size() )) + 0;
+
+                        if(feedlist.get(num).getExpressAdView().getWidth()==0){
+                            newfeedlist.add(feedlist.get(num));
+                        }
+
+                    }
+                }
                 View view=newfeedlist.get(position).getExpressAdView();
                 if(view!=null){
                     if(view.getParent()==null){
-                        viewHolder.ll.removeAllViews();
-                        viewHolder.ll.addView(view);
+                        if(newfeedlist.get(position).getExpressAdView().getWidth()==0){
+                            viewHolder.ll.removeAllViews();
+                            viewHolder.ll.addView(view);
+                        }
                     }
                 }
 
+
+
                 bindData(viewHolder,newfeedlist.get(position));
+
                 Log.e("kg",newfeedlist.get(position).getExpressAdView().getWidth()+"--"+newfeedlist.get(position).getExpressAdView().getHeight());
 
 
@@ -480,8 +515,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public int getItemCount() {
-        Log.e("num",list.size()+"--");
-
+        Log.e("num",listsize+"--");
             return list.size();
 
 

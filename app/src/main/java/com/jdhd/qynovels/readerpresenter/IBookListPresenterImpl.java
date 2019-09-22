@@ -58,9 +58,10 @@ public class IBookListPresenterImpl implements IBookListPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<BookListBean>(){})
                     .subscribe(bookListBean->{
-                        if(bookListBean.getCode()==200&&bookListBean.getMsg().equals("请求成功")){
+                        Log.e("booklistbean",bookListBean.getCode()+"--"+bookListBean.getMsg());
+                       // if(bookListBean.getCode()==200&&bookListBean.getMsg().equals("请求成功")){
                             iBookListView.onSuccess(bookListBean);
-                        }
+                       // }
                     },throwable->{
                         iBookListView.onError(throwable.getMessage());
                     });
@@ -71,9 +72,9 @@ public class IBookListPresenterImpl implements IBookListPresenter {
                     .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
                     .asParser(new SimpleParser<BookListBean>(){})
                     .subscribe(bookListBean->{
-                        if(bookListBean.getCode()==200&&bookListBean.getMsg().equals("请求成功")){
+                        //if(bookListBean.getCode()==200&&bookListBean.getMsg().equals("请求成功")){
                             iBookListView.onSuccess(bookListBean);
-                        }
+                       // }
                     },throwable->{
                         iBookListView.onError(throwable.getMessage());
                     });

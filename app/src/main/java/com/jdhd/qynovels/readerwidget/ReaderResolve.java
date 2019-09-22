@@ -415,22 +415,45 @@ public class ReaderResolve {
 
             int retractCharNum = 0;//缩进符数量
             String tempData = showLine.getLineData();
+            //Log.e("tempdata",tempData+"---");
+//            if(tempData.startsWith("，")||tempData.startsWith("。")){
+//                tempData=tempData.substring(1);
+//            }
+//            else{
+//                tempData=tempData;
+//            }
            // 遍历计算缩进符数量
             for (String retract : TextBreakUtils.sRetract) {
                 while (tempData.startsWith(retract)) {
                     //retractCharNum++;
                     tempData = tempData;
-                    Log.e("tempdata",tempData+"---");
+
                     break;
                 }
             }
 
             Rect bounds = new Rect();
             mMainBodyPaint.getTextBounds(String.valueOf(showLine.charsData), 0, retractCharNum, bounds);
+            float retractsWidth=0;
+            retractsWidth = retractCharNum == 0 ? 0 : mMainBodyPaint.measureText(String.valueOf(showLine.charsData), 0, retractCharNum -1);
+            float landscapeSpace=0;
 
-            float retractsWidth = retractCharNum == 0 ? 0 : mMainBodyPaint.measureText(String.valueOf(showLine.charsData), 0, retractCharNum -1);
-            float landscapeSpace = (mAreaWidth - paddingLeft - paddingRight - retractsWidth - showChars.get(charSum - 1).charWidth)
-                    * 1f / (charSum - retractCharNum - 1);
+            if(tempData.indexOf("“")!=-1){
+                if(tempData.indexOf("“")!=-1&&tempData.endsWith("“")){
+                    landscapeSpace = (mAreaWidth - paddingLeft - paddingRight - retractsWidth - showChars.get(charSum - 1).charWidth)
+                            * 1f / (charSum - retractCharNum-1);
+                }
+                else{
+                    landscapeSpace = (mAreaWidth - paddingLeft - paddingRight - retractsWidth - showChars.get(charSum - 1).charWidth-28)
+                            * 1f / (charSum - retractCharNum - 2);
+                }
+
+            }
+
+            else{
+                landscapeSpace = (mAreaWidth - paddingLeft - paddingRight - retractsWidth - showChars.get(charSum - 1).charWidth)
+                        * 1f / (charSum - retractCharNum - 1);
+            }
 
             if (retractCharNum > 0) {
 //                canvas.drawText(lineData.substring(0, retractCharNum - 1), x, y, mMainBodyPaint);
@@ -440,13 +463,39 @@ public class ReaderResolve {
             for (int i = retractCharNum; i < data.length; i++) {
                 ShowChar showChar = new ShowChar();
                 showChar.charData=data[i];
-                canvas.drawText(String.valueOf(showChar.charData), start, y, mMainBodyPaint);
-                showChar.rectF = new RectF(start, topPosition, start + showChar.charWidth, bottomPosition);
-                start += landscapeSpace;
-            }
-        } else {
-            canvas.drawText(showLine.getLineData(), x, y, mMainBodyPaint);
+                if((showChar.charData+"").equals("“")){
+                    canvas.drawText(String.valueOf(showChar.charData), start, y, mMainBodyPaint);
+                    showChar.rectF = new RectF(start, topPosition, start + showChar.charWidth, bottomPosition);
+                    start += 28.0;
+                }
+                else{
+                    canvas.drawText(String.valueOf(showChar.charData), start, y, mMainBodyPaint);
+                    showChar.rectF = new RectF(start, topPosition, start + showChar.charWidth, bottomPosition);
+                    start += landscapeSpace;
+                }
 
+            }
+        }
+        else {
+            String newtext="";
+            //Log.e("getLineData",showLine.getLineData());
+//            if(showLine.getLineData().startsWith("，")||showLine.getLineData().startsWith("。")){
+//                if(!showLine.getLineData().equals("。")){
+//                    newtext=showLine.getLineData().substring(1);
+//                    Log.e("newlinedata",showLine.getLineData());
+//                    canvas.drawText(newtext, x, y, mMainBodyPaint);
+//                }
+//                else{
+//                    return;
+//                }
+//
+//            }
+//            else{
+//                newtext=showLine.getLineData();
+//                Log.e("newtext111",newtext+"===");
+//                canvas.drawText(newtext, x, y, mMainBodyPaint);
+//            }
+            canvas.drawText(showLine.getLineData(), x, y, mMainBodyPaint);
             // 计算每个字符的位置
             for (ShowChar showChar : showLine.charsData) {
                 rightPosition = x + showChar.charWidth;

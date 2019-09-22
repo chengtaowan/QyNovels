@@ -27,12 +27,16 @@
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@id/gf_book">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#434D5A"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:lines="1"
+            android:ellipsize="end"
+            android:layout_toLeftOf="@+id/ff"
             android:layout_marginTop="7dp"
+            android:layout_marginRight="10dp"
             android:text="冰与火之歌权力的游戏"
             android:id="@+id/gf_name"/>
         <LinearLayout
@@ -40,7 +44,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="7dp">
+            android:layout_marginTop="7dp"
+            android:id="@+id/ff">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

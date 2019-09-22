@@ -71,6 +71,7 @@ public class HelpActivity extends AppCompatActivity implements View.OnClickListe
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         Intent intent = getIntent();
         token=intent.getStringExtra("token");
+        islogin=intent.getStringExtra("islogin");
         init();
     }
 

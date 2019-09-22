@@ -24,9 +24,13 @@ public class ISignSetingPresenterImpl implements ISignSetingPresenter {
     private Context context;
     private String token;
     private String file;
-
+    private String islogin;
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public void setIslogin(String islogin) {
+        this.islogin = islogin;
     }
 
     public ISignSetingPresenterImpl(ISignSetingView  iSignSetingView, Context context) {
@@ -52,16 +56,20 @@ public class ISignSetingPresenterImpl implements ISignSetingPresenter {
         Log.e("signtoken",token+"##");
         Log.e("time",time+"");
         Log.e("sign",sign);
-        RxHttp.postForm(MyApp.Url.baseUrl+"signSetting")
-                .addHeader("token",token)
-                .add(map)
-                .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
-                .asString()
-                .subscribe(avatarBean->{
-                   iSignSetingView.onSetingSuccess(avatarBean);
-                },throwable->{
-                    iSignSetingView.onSetingError(throwable.getMessage());
-                });
+        Log.e("signsetingislogin",islogin);
+        if(islogin.equals("1")){
+            RxHttp.postForm(MyApp.Url.baseUrl+"signSetting")
+                    .addHeader("token",token)
+                    .add(map)
+                    .cacheControl(CacheControl.FORCE_NETWORK)  //缓存控制
+                    .asString()
+                    .subscribe(avatarBean->{
+                        iSignSetingView.onSetingSuccess(avatarBean);
+                    },throwable->{
+                        iSignSetingView.onSetingError(throwable.getMessage());
+                    });
+        }
+
     }
 
 

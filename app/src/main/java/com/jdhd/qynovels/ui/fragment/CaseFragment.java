@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -60,13 +61,9 @@ import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IConfigPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IPersonalPresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IUserEventPresenterImpl;
-import com.jdhd.qynovels.persenter.impl.personal.IVisitorPresenterImpl;
 import com.jdhd.qynovels.ui.activity.LsActivity;
-import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.activity.SsActivity;
-import com.jdhd.qynovels.ui.activity.StartActivity;
 import com.jdhd.qynovels.ui.activity.XqActivity;
-import com.jdhd.qynovels.utils.AppSigning;
 import com.jdhd.qynovels.utils.DbUtils;
 import com.jdhd.qynovels.utils.DeviceInfoUtils;
 import com.jdhd.qynovels.utils.EventDbUtils;
@@ -74,24 +71,15 @@ import com.jdhd.qynovels.view.bookcase.ICaseView;
 import com.jdhd.qynovels.view.bookcase.IConfigView;
 import com.jdhd.qynovels.view.personal.IPersonalView;
 import com.jdhd.qynovels.view.personal.IUserEventView;
-import com.jdhd.qynovels.view.personal.IVisitorView;
-import com.jdhd.qynovels.widget.DislikeDialog;
 import com.jdhd.qynovels.widget.GetMoneyPopWindow;
-import com.jdhd.qynovels.widget.MRefreshHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Request;
-
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -110,7 +98,7 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
     private SQLiteDatabase database;
     private Cursor hotcursor;
     private Cursor listcursor;
-    private SmartRefreshLayout sr;
+    public static SmartRefreshLayout sr;
     private boolean hasNetWork;
     private String token;
     private RelativeLayout rl;
@@ -159,7 +147,7 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e(TAG,"oncreate");
-        adapter=new CaseAdapter(getContext(),getActivity());
+        adapter=new CaseAdapter(getActivity(),getActivity());
         mTTAdNative = TTAdSdk.getAdManager().createAdNative(getContext());
         casePresenter=new ICasePresenterImpl(this,getContext());
 
@@ -176,32 +164,40 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void change(AddBookBean addBookBean){
         Log.e("addcode",addBookBean.getCode()+"[[");
+        //未登录查找数据库中游客书架
         if(addBookBean.getCode()==9005){
             List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
             List<CaseBean.DataBean.ListBean> newlist =new ArrayList<>();
             database=dbUtils.getReadableDatabase();
-            listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
-            while(listcursor.moveToNext()){
-                CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
-                listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
-                listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
-                listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
-                listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
-                listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
-                listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
-                listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
-                listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
-                listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
-                listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
-                list.add(listBean);
-            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
+                    while(listcursor.moveToNext()){
+                        CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                        listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                        listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                        listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                        listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                        listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                        listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                        listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                        listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                        listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                        listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                        list.add(listBean);
+                    }
+                }
+            }).start();
             Log.e("caselistsizerl",list.size()+"[[");
+            //将推荐的书不展示
             for(int i=0;i<list.size();i++){
                 if(!list.get(i).getReadContent().equals("")){
                     newlist.add(list.get(i));
                 }
 
             }
+            //刷新适配器
             if(newlist.size()!=0){
                 adapter.refreshlist(newlist);
                 if(sr!=null){
@@ -210,6 +206,7 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
 
             }
         }
+        //如果登录直接请求书架接口
         else{
             SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
             token=sharedPreferences.getString("token","");
@@ -288,87 +285,112 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
         init(rootView);
         hasNetWork = DeviceInfoUtils.hasNetWork(getContext());
         Log.e("hasnetwork",hasNetWork+"---");
+        //如果没有网络
         if(!hasNetWork){
             jz.setVisibility(View.GONE);
            database=dbUtils.getReadableDatabase();
            String hotsql="select * from hot";
-           hotcursor=database.rawQuery(hotsql,new String[]{});
-           while(hotcursor.moveToNext()){
-               CaseBean.DataBean.HotBean hotBean=new CaseBean.DataBean.HotBean();
-               hotBean.setBookId(hotcursor.getInt(hotcursor.getColumnIndex("bookid")));
-               hotBean.setName(hotcursor.getString(hotcursor.getColumnIndex("name")));
-               hotBean.setImage(hotcursor.getString(hotcursor.getColumnIndex("image")));
-               hotBean.setAuthor(hotcursor.getString(hotcursor.getColumnIndex("author")));
-               hotBean.setIntro(hotcursor.getString(hotcursor.getColumnIndex("intro")));
-               Log.e("hotbean",hotBean.toString());
-               adapter.refreshhot(hotBean);
-           }
+           new Thread(new Runnable() {
+               @Override
+               public void run() {
+                   hotcursor=database.rawQuery(hotsql,new String[]{});
+                   while(hotcursor.moveToNext()){
+                       CaseBean.DataBean.HotBean hotBean=new CaseBean.DataBean.HotBean();
+                       hotBean.setBookId(hotcursor.getInt(hotcursor.getColumnIndex("bookid")));
+                       hotBean.setName(hotcursor.getString(hotcursor.getColumnIndex("name")));
+                       hotBean.setImage(hotcursor.getString(hotcursor.getColumnIndex("image")));
+                       hotBean.setAuthor(hotcursor.getString(hotcursor.getColumnIndex("author")));
+                       hotBean.setIntro(hotcursor.getString(hotcursor.getColumnIndex("intro")));
+                       Log.e("hotbean",hotBean.toString());
+                       adapter.refreshhot(hotBean);
+                   }
+               }
+           }).start();
            Log.e("casetoken",token+"---");
+           //如果为用户
            if((!token.equals("")&&islogin.equals("1"))){
                List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
-               database=dbUtils.getReadableDatabase();
-               listcursor=database.rawQuery("select * from usercase where user='user'",new String[]{});
-               while(listcursor.moveToNext()){
-                   CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
-                   listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
-                   listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
-                   listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
-                   listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
-                   listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
-                   listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
-                   listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
-                   listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
-                   listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
-                   listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
-                   list.add(listBean);
-               }
+               new Thread(new Runnable() {
+                   @Override
+                   public void run() {
+                       database=dbUtils.getReadableDatabase();
+                       listcursor=database.rawQuery("select * from usercase where user='user'",new String[]{});
+                       while(listcursor.moveToNext()){
+                           CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                           listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                           listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                           listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                           listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                           listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                           listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                           listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                           listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                           listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                           listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                           list.add(listBean);
+                       }
+                   }
+               }).start();
                adapter.refreshlist(list);
            }
+           //如果为游客
            else{
                List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
-               database=dbUtils.getReadableDatabase();
-               listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
-               while(listcursor.moveToNext()){
-                   CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
-                   listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
-                   listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
-                   listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
-                   listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
-                   listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
-                   listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
-                   listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
-                   listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
-                   listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
-                   listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
-                   list.add(listBean);
-               }
+               new Thread(new Runnable() {
+                   @Override
+                   public void run() {
+                       database=dbUtils.getReadableDatabase();
+                       listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
+                       while(listcursor.moveToNext()){
+                           CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                           listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                           listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                           listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                           listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                           listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                           listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                           listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                           listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                           listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                           listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                           list.add(listBean);
+                       }
+                   }
+               }).start();
                adapter.refreshlist(list);
            }
         }
+        //有网络
         else{
             Log.e("casetoken",token+"---");
             if(!token.equals("")&&islogin.equals("1")){
-
+                casePresenter.setToken(token);
+                casePresenter.loadData();
             }
             else{
                 List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
                 List<CaseBean.DataBean.ListBean> newlist =new ArrayList<>();
-                database=dbUtils.getReadableDatabase();
-                listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
-                while(listcursor.moveToNext()){
-                    CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
-                    listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
-                    listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
-                    listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
-                    listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
-                    listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
-                    listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
-                    listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
-                    listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
-                    listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
-                    listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
-                    list.add(listBean);
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        database=dbUtils.getReadableDatabase();
+                        listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
+                        while(listcursor.moveToNext()){
+                            CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+                            listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                            listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                            listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                            listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                            listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                            listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                            listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                            listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                            listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                            listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                            list.add(listBean);
+                        }
+                    }
+                }).start();
                 Log.e("caselistsize",list.size()+"]]]");
                 for(int i=0;i<list.size();i++){
                     if(!list.get(i).getReadContent().equals("")){
@@ -432,6 +454,19 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
       rv.setAdapter(adapter);
         //loadListAd();
       Glide.with(getContext()).load(R.mipmap.re).into(gif);
+        rv.setOnTouchListener(
+                new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (sr.isRefreshing()) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                });
+
       sr.setOnRefreshListener(new OnRefreshListener() {
           @Override
           public void onRefresh(RefreshLayout refreshLayout) {
@@ -444,61 +479,72 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
 
               }
               else{
-                  if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
-                      List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
-                      List<CaseBean.DataBean.ListBean> newlist =new ArrayList<>();
-                      database=dbUtils.getReadableDatabase();
-                      listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
-                      while(listcursor.moveToNext()){
-                          CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
-                          listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
-                          listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
-                          listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
-                          listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
-                          listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
-                          listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
-                          listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
-                          listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
-                          listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
-                          listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
-                          list.add(listBean);
-                      }
-                      Log.e("caselistsizerl",list.size()+"[[");
-                      for(int i=0;i<list.size();i++){
-                          if(!list.get(i).getReadContent().equals("")){
-                              newlist.add(list.get(i));
+                  new Thread(new Runnable() {
+                      @Override
+                      public void run() {
+                          try {
+                              Thread.sleep(1000);
+                          } catch (InterruptedException e) {
+                              e.printStackTrace();
                           }
-
-                      }
-                      if(newlist.size()!=0){
-                          adapter.refreshlist(newlist);
                           sr.finishRefresh();
                       }
-                      else{
-                          SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
-                          token=sharedPreferences.getString("token","");
-                          casePresenter.setToken(token);
-                          casePresenter.loadData();
-                      }
-
-                  }
-                  else{
-                      SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
-                      token=sharedPreferences.getString("token","");
-                      casePresenter.setToken(token);
-                      casePresenter.loadData();
-                      mData.clear();
-                      if(studia==20){
-                          new Thread(new Runnable() {
-                              @Override
-                              public void run() {
-                                  loadListAd();
-                                 // loadExpressAd("901121253", ListAdapter.FeedViewHolder.ll);
-                              }
-                          }).start();
-                      }
-                      adapter.refreshfeed(mData);
-                  }
+                  }).start();
+//                  if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
+//                      List<CaseBean.DataBean.ListBean> list =new ArrayList<>();
+//                      List<CaseBean.DataBean.ListBean> newlist =new ArrayList<>();
+//                      database=dbUtils.getReadableDatabase();
+//                      listcursor=database.rawQuery("select * from usercase where user='visitor'",new String[]{});
+//                      while(listcursor.moveToNext()){
+//                          CaseBean.DataBean.ListBean listBean=new CaseBean.DataBean.ListBean();
+//                          listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+//                          listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+//                          listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+//                          listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+//                          listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+//                          listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+//                          listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+//                          listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+//                          listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+//                          listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+//                          list.add(listBean);
+//                      }
+//                      Log.e("caselistsizerl",list.size()+"[[");
+//                      for(int i=0;i<list.size();i++){
+//                          if(!list.get(i).getReadContent().equals("")){
+//                              newlist.add(list.get(i));
+//                          }
+//
+//                      }
+//                      if(newlist.size()!=0){
+//                          adapter.refreshlist(newlist);
+//                          sr.finishRefresh();
+//                      }
+//                      else{
+//                          SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
+//                          token=sharedPreferences.getString("token","");
+//                          casePresenter.setToken(token);
+//                          casePresenter.loadData();
+//                      }
+//
+//                  }
+//                  else{
+//                      SharedPreferences sharedPreferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
+//                      token=sharedPreferences.getString("token","");
+//                      casePresenter.setToken(token);
+//                      casePresenter.loadData();
+//                      mData.clear();
+//                      if(studia==20){
+//                          new Thread(new Runnable() {
+//                              @Override
+//                              public void run() {
+//                                  loadListAd();
+//                                 // loadExpressAd("901121253", ListAdapter.FeedViewHolder.ll);
+//                              }
+//                          }).start();
+//                      }
+//                      adapter.refreshfeed(mData);
+//                  }
 
               }
 
@@ -544,7 +590,10 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
         }
     }
 
-
+    /**
+     * 书架接口请求完成
+     * @param caseBean
+     */
     @Override
     public void onSuccess(CaseBean caseBean) {
         getActivity().runOnUiThread(new Runnable() {
@@ -555,50 +604,87 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
                     sr.finishRefresh();
                 }
                 jz.setVisibility(View.GONE);
-                database=dbUtils.getWritableDatabase();
-                database.execSQL("delete from hot");
-                database.execSQL("delete from usercase");
-                String sql="insert into hot(bookid,name,image,intro,author) values('"+caseBean.getData().getHot().getBookId()+"','"+caseBean.getData().getHot().getName()+"','"+caseBean.getData().getHot().getImage()+"','"+caseBean.getData().getHot().getIntro()+"','"+caseBean.getData().getHot().getAuthor()+"')";
-                if(!token.equals("")){
-                    for(int i=0;i<caseBean.getData().getList().size();i++){
-                        database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                                " values('user'," +
-                                "'"+caseBean.getData().getList().get(i).getName()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getImage()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getAuthor()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getReadContent()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getReadStatus()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getBookStatus()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getBookId()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getBacklistPercent()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getLastTime()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getBacklistId()+"')");
+                //如果请求成功使用请求的数据刷新适配器
+                if(caseBean.getCode()==200){
+                    database=dbUtils.getWritableDatabase();
+                    //先清空用户书架的数据
+                    database.execSQL("delete from hot");
+                    database.execSQL("delete from usercase where user='user'");
+                    String sql="insert into hot(bookid,name,image,intro,author) values('"+caseBean.getData().getHot().getBookId()+"','"+caseBean.getData().getHot().getName()+"','"+caseBean.getData().getHot().getImage()+"','"+caseBean.getData().getHot().getIntro()+"','"+caseBean.getData().getHot().getAuthor()+"')";
+                    //将数据插入到用户书架的数据库中
+                    if(!token.equals("")&&islogin.equals("1")){
+                        for(int i=0;i<caseBean.getData().getList().size();i++){
+                            database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+                                    " values('user'," +
+                                    "'"+caseBean.getData().getList().get(i).getName()+"'," +
+                                    "'"+caseBean.getData().getList().get(i).getImage()+"'," +
+                                    "'"+caseBean.getData().getList().get(i).getAuthor()+"'," +
+                                    "'"+caseBean.getData().getList().get(i).getReadContent()+"'," +
+                                    "'"+caseBean.getData().getList().get(i).getReadStatus()+"'," +
+                                    "'"+caseBean.getData().getList().get(i).getBookStatus()+"'," +
+                                    "'"+caseBean.getData().getList().get(i).getBookId()+"'," +
+                                    "'"+caseBean.getData().getList().get(i).getBacklistPercent()+"'," +
+                                    "'"+caseBean.getData().getList().get(i).getLastTime()+"'," +
+                                    "'"+caseBean.getData().getList().get(i).getBacklistId()+"')");
+                        }
                     }
+//                else{
+//                    for(int i=0;i<caseBean.getData().getList().size();i++){
+//                        Log.e("notokencontent",caseBean.getData().getList().get(i).getReadContent()+"---");
+//                        database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
+//                                " values('visitor'," +
+//                                "'"+caseBean.getData().getList().get(i).getName()+"'," +
+//                                "'"+caseBean.getData().getList().get(i).getImage()+"'," +
+//                                "'"+caseBean.getData().getList().get(i).getAuthor()+"'," +
+//                                "'"+caseBean.getData().getList().get(i).getReadContent()+"'," +
+//                                "'"+caseBean.getData().getList().get(i).getReadStatus()+"'," +
+//                                "'"+caseBean.getData().getList().get(i).getBookStatus()+"'," +
+//                                "'"+caseBean.getData().getList().get(i).getBookId()+"'," +
+//                                "'"+caseBean.getData().getList().get(i).getBacklistPercent()+"'," +
+//                                "'"+caseBean.getData().getList().get(i).getLastTime()+"'," +
+//                                "'"+caseBean.getData().getList().get(i).getBacklistId()+"')");
+//                    }
+//                }
+                    //刷新适配器
+                    database.execSQL(sql);
+                    jz.setVisibility(View.GONE);
+                    list=caseBean.getData().getList();
+                    adapter.refreshhot(caseBean.getData().getHot());
+                    adapter.refreshlist(caseBean.getData().getList());
+                    hotid=caseBean.getData().getHot().getBookId();
                 }
-                else{
-                    for(int i=0;i<caseBean.getData().getList().size();i++){
-                        Log.e("notokencontent",caseBean.getData().getList().get(i).getReadContent()+"---");
-                        database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId)" +
-                                " values('visitor'," +
-                                "'"+caseBean.getData().getList().get(i).getName()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getImage()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getAuthor()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getReadContent()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getReadStatus()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getBookStatus()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getBookId()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getBacklistPercent()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getLastTime()+"'," +
-                                "'"+caseBean.getData().getList().get(i).getBacklistId()+"')");
+                //没有请求成功使用用户书架数据刷新适配器
+                else {
+                    List<CaseBean.DataBean.ListBean> list = new ArrayList<>();
+                    List<CaseBean.DataBean.ListBean> newlist = new ArrayList<>();
+                    database = dbUtils.getReadableDatabase();
+                    listcursor = database.rawQuery("select * from usercase where user='user'", new String[]{});
+                    while (listcursor.moveToNext()) {
+                        CaseBean.DataBean.ListBean listBean = new CaseBean.DataBean.ListBean();
+                        listBean.setName(listcursor.getString(listcursor.getColumnIndex("name")));
+                        listBean.setImage(listcursor.getString(listcursor.getColumnIndex("image")));
+                        listBean.setAuthor(listcursor.getString(listcursor.getColumnIndex("author")));
+                        listBean.setReadContent(listcursor.getString(listcursor.getColumnIndex("readContent")));
+                        listBean.setReadStatus(listcursor.getInt(listcursor.getColumnIndex("readStatus")));
+                        listBean.setBookStatus(listcursor.getInt(listcursor.getColumnIndex("bookStatus")));
+                        listBean.setBookId(listcursor.getInt(listcursor.getColumnIndex("bookid")));
+                        listBean.setBacklistPercent(listcursor.getInt(listcursor.getColumnIndex("backlistPercent")));
+                        listBean.setLastTime(listcursor.getInt(listcursor.getColumnIndex("lastTime")));
+                        listBean.setBacklistId(listcursor.getInt(listcursor.getColumnIndex("backlistId")));
+                        list.add(listBean);
                     }
-                }
+                    Log.e("caselistsize", list.size() + "]]]");
+                    for (int i = 0; i < list.size(); i++) {
+                        if (!list.get(i).getReadContent().equals("")) {
+                            newlist.add(list.get(i));
+                        }
 
-                database.execSQL(sql);
-                jz.setVisibility(View.GONE);
-                list=caseBean.getData().getList();
-                adapter.refreshhot(caseBean.getData().getHot());
-                adapter.refreshlist(caseBean.getData().getList());
-                hotid=caseBean.getData().getHot().getBookId();
+                    }
+                    if (newlist.size() != 0) {
+                        adapter.refreshlist(newlist);
+                        jz.setVisibility(View.GONE);
+                    }
+                }
             }
         });
 
@@ -680,16 +766,17 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
         //step4:创建feed广告请求类型参数AdSlot,具体参数含义参考文档
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId("926447523")
+               // .setCodeId("901121253")
                 .setSupportDeepLink(true)
-                .setImageAcceptedSize(320, 640)
-                .setExpressViewAcceptedSize(500, 500) //期望模板广告view的size,单位dp
+                .setImageAcceptedSize(150, 200)
+                .setExpressViewAcceptedSize(150, 200) //期望模板广告view的size,单位dp
                 .setAdCount(3) //请求广告数量为1到3条
                 .build();
         //step5:请求广告，调用feed广告异步请求接口，加载到广告后，拿到广告素材自定义渲染
         mTTAdNative.loadNativeExpressAd(adSlot, new TTAdNative.NativeExpressAdListener() {
             @Override
             public void onError(int code, String message) {
-                Log.e("message",message+"---");
+                Log.e("message",message+"---===");
                // Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
                 //TToast.show(NativeExpressListActivity.this, message);
             }
@@ -730,7 +817,7 @@ public class CaseFragment extends BaseFragment implements View.OnClickListener, 
                 @Override
                 public void onRenderSuccess(View view, float width, float height) {
                     //返回view的宽高 单位 dp
-                    Log.e("message","渲染成功");
+                    Log.e("message","渲染成功"+width+"--"+height);
                    // TToast.show(NativeExpressListActivity.this, "渲染成功");
                    // adapter.notifyDataSetChanged();
                 }

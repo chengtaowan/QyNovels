@@ -46,7 +46,6 @@ import com.jdhd.qynovels.module.personal.VisitorBean;
 import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookshop.IModulePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.personal.IUserEventPresenterImpl;
-import com.jdhd.qynovels.persenter.impl.personal.IVisitorPresenterImpl;
 import com.jdhd.qynovels.ui.activity.LoginActivity;
 import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.activity.SsActivity;
@@ -71,7 +70,7 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ShopFragment extends BaseFragment implements TabLayout.OnTabSelectedListener,View.OnClickListener, IModuleView , IVisitorView, IUserEventView {
+public class ShopFragment extends BaseFragment implements TabLayout.OnTabSelectedListener,View.OnClickListener, IModuleView ,  IUserEventView {
 
     private ImageView search;
     private ViewPager home_vp;
@@ -83,12 +82,12 @@ public class ShopFragment extends BaseFragment implements TabLayout.OnTabSelecte
     private JxFragment jxFragment=new JxFragment();
     private ManFragment manFragment=new ManFragment();
     private WmanFragment wmanFragment=new WmanFragment();
-    private IVisitorPresenterImpl visitorPresenter;
+
     public static ImageView lhb;
     private String token="";
     private String islogin="";
     private RelativeLayout rl;
-    int REQUEST_CALL_PHONE_PERMISSION=0;
+
     private boolean upvisitor;
     private IUserEventPresenterImpl iUserEventPresenter;
     private DbUtils dbUtils;
@@ -148,23 +147,7 @@ public class ShopFragment extends BaseFragment implements TabLayout.OnTabSelecte
         iUserEventPresenter=new IUserEventPresenterImpl(this,getContext());
         Intent intent=getActivity().getIntent();
         type=intent.getIntExtra("lx",1);
-        SharedPreferences upsharedPreferences=getActivity().getSharedPreferences("upvisitor",MODE_PRIVATE);
-        String str=upsharedPreferences.getString("upvisitor","");
-        if(!str.equals("true")){
-            //如果有权限直接执行
-            if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE)== PackageManager.PERMISSION_GRANTED){
-                visitorPresenter=new IVisitorPresenterImpl(this,getContext());
-                visitorPresenter.loadData();
-                SharedPreferences sharedPreferences=getActivity().getSharedPreferences("upvisitor",MODE_PRIVATE);
-                SharedPreferences.Editor editor=sharedPreferences.edit();
-                editor.putString("upvisitor","true");
-                editor.commit();
-            }
-            //如果没有权限那么申请权限
-            else{
-                ActivityCompat.requestPermissions(getActivity(),new String[]{android.Manifest.permission.CALL_PHONE},REQUEST_CALL_PHONE_PERMISSION);
-            }
-        }
+
 
         return rootView;
     }
@@ -335,53 +318,8 @@ public class ShopFragment extends BaseFragment implements TabLayout.OnTabSelecte
         mHasLoadedOnce = true;
     }
 
-    @Override
-    public void onVisitorSuccess(VisitorBean avatarBean) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(avatarBean.getCode()==4010){
-                    SharedPreferences sharedPreferences=getActivity().getSharedPreferences("upvisitor",MODE_PRIVATE);
-                    SharedPreferences.Editor editor=sharedPreferences.edit();
-                    editor.putString("upvisitor","false");
-                    editor.commit();
-                    Log.e("avatarbean",avatarBean.getMsg());
-                }
-                else {
-                    SharedPreferences preferences=getContext().getSharedPreferences("token",MODE_PRIVATE);
-                    SharedPreferences.Editor editor=preferences.edit();
-                    editor.putString("token",avatarBean.getData().getToken());
-                    editor.putString("login","fail");
-                    editor.putString("islogin",avatarBean.getData().getIs_login()+"");
-                    editor.commit();
-                    android.util.Log.e("islogin",avatarBean.getData().getIs_login()+"....");
-                }
 
-            }
-        });
-        android.util.Log.e("vivisot",avatarBean.getMsg());
-    }
 
-    @Override
-    public void onVisitorError(String error) {
-        android.util.Log.e("vivisoterror",error);
-    }
-
-    /*
-55     * 当请求获取权限后会执行此回调方法，来执行自己的业务逻辑
-56     * */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode==this.REQUEST_CALL_PHONE_PERMISSION){
-            if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                visitorPresenter=new IVisitorPresenterImpl(this,getContext());
-                visitorPresenter.loadData();
-            }else{
-                Toast.makeText(getContext(), "拒绝了权限", Toast.LENGTH_SHORT).show();
-            }
-        }
-        super.onRequestPermissionsResult(requestCode,permissions,grantResults);
-    }
 
     @Override
     public void onPause() {

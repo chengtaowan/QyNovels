@@ -1,10 +1,13 @@
 package com.jdhd.qynovels.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -22,21 +25,26 @@ import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.jdhd.qynovels.R;
 import com.jdhd.qynovels.module.bookcase.CaseBean;
 import com.jdhd.qynovels.module.bookcase.DelBookRackBean;
+import com.jdhd.qynovels.persenter.impl.bookcase.ICasePresenterImpl;
 import com.jdhd.qynovels.persenter.impl.bookcase.IDelBookRankPresenterImpl;
 import com.jdhd.qynovels.ui.activity.MainActivity;
 import com.jdhd.qynovels.ui.fragment.CaseFragment;
 import com.jdhd.qynovels.utils.DbUtils;
+import com.jdhd.qynovels.view.bookcase.ICaseView;
 import com.jdhd.qynovels.view.bookcase.IDelBookRankView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements IDelBookRankView {
+public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements IDelBookRankView, ICaseView {
     private static final int TYPE_LIST=0;
     private static final int TYPE_FOOT=1;
     private IDelBookRankPresenterImpl delBookRankPresenter;
     private DbUtils dbUtils;
     private SQLiteDatabase database;
+    private ICasePresenterImpl casePresenter;
+    private String token;
+    private String islogin;
     /**
      * 是否显示ｃｈｅｃｋｂｏｘ
      */
@@ -46,7 +54,7 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
      */
     private List<String> checkList=new ArrayList<>();
     private ListAdapter adapter;
-    private Context context;
+    private Activity context;
     private FragmentActivity activity;
     private List<CaseBean.DataBean.ListBean> list=new ArrayList<>();
     public void refresh(List<CaseBean.DataBean.ListBean> list){
@@ -59,7 +67,7 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyDataSetChanged();
     }
 
-    public CaseContentAdapter(Context context, FragmentActivity activity) {
+    public CaseContentAdapter(Activity context, FragmentActivity activity) {
         this.context = context;
         this.activity = activity;
     }
@@ -68,6 +76,10 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         delBookRankPresenter=new IDelBookRankPresenterImpl(this,context);
+        casePresenter=new ICasePresenterImpl(this,context);
+        SharedPreferences sharedPreferences=context.getSharedPreferences("token",Context.MODE_PRIVATE);
+        token=sharedPreferences.getString("token","");
+        islogin=sharedPreferences.getString("islogin","");
         RecyclerView.ViewHolder viewHolder=null;
         dbUtils=new DbUtils(context);
         if(viewType==TYPE_LIST){
@@ -86,8 +98,21 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if(holder instanceof ListViewHolder){
            GridLayoutManager manager=new GridLayoutManager(context, 3);
             ((ListViewHolder) holder).rv.setLayoutManager(manager);
+            ((ListViewHolder) holder).rv.setOnTouchListener(
+                    new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if (CaseFragment.sr.isRefreshing()) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
+                    });
             adapter=new ListAdapter(context,activity);
             adapter.refresh(list);
+            Log.e("listname",list.size()+"---");
             adapter.refreshfeed(feedlist);
             initListener();
             ((ListViewHolder) holder).rv.setAdapter(adapter);
@@ -124,8 +149,24 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                adapter.notifyDataSetChanged();
-                Toast.makeText(context,"删除成功",Toast.LENGTH_SHORT).show();
+                if(delBookRackBean.getCode()==200){
+                    for(int i=0;i<checkList.size();i++){
+                        String name=list.get(Integer.parseInt(checkList.get(i))).getName();
+                        list.remove(Integer.parseInt(checkList.get(i)));
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                database.execSQL("delete from usercase where user='user' and name='"+name+"'");
+                            }
+                        }).start();
+                    }
+                    MainActivity.ll.setVisibility(View.GONE);
+                    adapter.setShowCheckBox(false);
+                    adapter.setType(0);
+                    checkList.clear();
+                    adapter.notifyDataSetChanged();
+                }
+
             }
         });
     }
@@ -133,6 +174,25 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onAddError(String error) {
        Log.e("delbookerror",error);
+    }
+
+    @Override
+    public void onSuccess(CaseBean caseBean) {
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.refresh(caseBean.getData().getList());
+                for(int i=0;i<caseBean.getData().getList().size();i++){
+                    Log.e("casebeanlist",caseBean.getData().getList().get(i).getName()+"--");
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onError(String error) {
+
     }
 
     class ListViewHolder extends RecyclerView.ViewHolder{
@@ -168,47 +228,51 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         MainActivity.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(checkList.size()==1){
-                    delBookRankPresenter.setType(10);
-                    delBookRankPresenter.setId(list.get(Integer.parseInt(checkList.get(0))).getId()+"");
-                    delBookRankPresenter.loadData();
-                }
-                else if(checkList.size()>1){
-                    delBookRankPresenter.setType(20);
-
-                    StringBuffer id=new StringBuffer();
-                    for(int i=0;i<checkList.size();i++){
-                        if(i==checkList.size()-1){
-                            id.append(list.get(Integer.parseInt(checkList.get(i))).getId());
-                        }
-                        else{
-                            id.append(list.get(Integer.parseInt(checkList.get(i))).getId()+",");
-                        }
-                    }
-                    delBookRankPresenter.setId(id.toString());
-                    delBookRankPresenter.loadData();
-                }
                 database=dbUtils.getWritableDatabase();
-                SharedPreferences sharedPreferences=context.getSharedPreferences("token",Context.MODE_PRIVATE);
-                String token=sharedPreferences.getString("token","");
-                for(int i=0;i<checkList.size();i++){
-                    Log.e("checklist",checkList.get(i)+"");
-                    if(token.equals("")){
-                        database.execSQL("delete from usercase where user='visitor' and name='"+list.get(Integer.parseInt(checkList.get(i))).getName()+"'");
-                    }
-                    else{
-                        database.execSQL("delete from usercase where user='user' and name='"+list.get(Integer.parseInt(checkList.get(i))).getName()+"'");
-                    }
-                    list.remove(Integer.parseInt(checkList.get(i)));
+                //用户
+                if(islogin.equals("1")){
+                   if(checkList.size()==1){
+                       delBookRankPresenter.setType(10);
+                       delBookRankPresenter.setId(list.get(Integer.parseInt(checkList.get(0))).getId()+"");
+                       delBookRankPresenter.loadData();
+                   }
+                   else{
+                       delBookRankPresenter.setType(20);
+                       StringBuffer id=new StringBuffer();
+                       for(int i=0;i<checkList.size();i++){
+                           if(i==checkList.size()-1){
+                               id.append(list.get(Integer.parseInt(checkList.get(i))).getId());
+                           }
+                           else{
+                               id.append(list.get(Integer.parseInt(checkList.get(i))).getId()+",");
+                           }
+                       }
+                       delBookRankPresenter.setId(id.toString());
+                       delBookRankPresenter.loadData();
+                   }
                 }
+                //游客
+                else{
+                   for(int i=0;i<checkList.size();i++){
+                       Log.e("index",checkList.get(i));
+                       String name=list.get(Integer.parseInt(checkList.get(i))).getName();
+                       list.remove(Integer.parseInt(checkList.get(i)));
+                       //adapter.notifyItemRemoved(Integer.parseInt(checkList.get(i)));
 
+                       Log.e("bookname",name+"----");
+                       new Thread(new Runnable() {
+                           @Override
+                           public void run() {
+                               database.execSQL("delete from usercase where user='visitor' and name='"+name+"'");
+                           }
+                       }).start();
+                   }
+                }
                 MainActivity.ll.setVisibility(View.GONE);
                 adapter.setShowCheckBox(false);
                 adapter.setType(0);
+                checkList.clear();
                 adapter.notifyDataSetChanged();
-               //Toast.makeText(context, checkList.toString(), Toast.LENGTH_SHORT).show();
-                delBookRankPresenter.loadData();
-
             }
         });
         MainActivity.cancle.setOnClickListener(new View.OnClickListener() {
@@ -243,8 +307,8 @@ public class CaseContentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if (isShowCheck) {
                     MainActivity.ll.setVisibility(View.GONE);
                     adapter.setShowCheckBox(false);
-                    adapter.notifyDataSetChanged();
                     checkList.clear();
+                    adapter.notifyDataSetChanged();
                 } else {
                     adapter.setShowCheckBox(true);
                     adapter.notifyDataSetChanged();

@@ -66,36 +66,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom">
-            <ImageView
-                android:id="@+id/reader_catalogue"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginBottom="21dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="24dp"
-                android:src="@mipmap/yuedu_ml"
-                />
-            <ImageView
-                android:id="@+id/daynight"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="21dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="24dp"
-                android:src="@drawable/yuedu_yj"
-                />
-            <ImageView
-                android:id="@+id/setting"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="24dp"
-                android:layout_marginBottom="21dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="24dp"
-                android:src="@mipmap/yuedu_zt"
-                />
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:id="@+id/reader_catalogue">
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="24dp"
+                    android:src="@mipmap/yuedu_ml"
+                    />
+            </LinearLayout>
+             <LinearLayout
+                 android:layout_width="100dp"
+                 android:layout_height="match_parent"
+                 android:layout_centerInParent="true"
+                 android:id="@+id/changeday">
+                 <ImageView
+                     android:id="@+id/daynight"
+                     android:layout_width="25dp"
+                     android:layout_height="25dp" android:layout_gravity="center"
+                     android:layout_marginLeft="34dp"
+                     android:src="@drawable/yuedu_yj" />
+             </LinearLayout>
+             <LinearLayout
+                 android:layout_width="100dp"
+                 android:layout_height="match_parent"
+                 android:layout_alignParentRight="true"
+                 android:id="@+id/setting">
+                 <ImageView
+
+                     android:layout_width="25dp"
+                     android:layout_height="25dp"
+                     android:layout_marginRight="24dp"
+                     android:layout_marginLeft="44dp"
+                     android:src="@mipmap/yuedu_zt"
+                     android:layout_gravity="center"/>
+             </LinearLayout>
+
         </RelativeLayout>
 
     </LinearLayout>

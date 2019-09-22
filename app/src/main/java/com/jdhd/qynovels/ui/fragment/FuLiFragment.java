@@ -161,6 +161,7 @@ public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSe
     private int startTime,endTime;
     private DbUtils dbUtils;
     private SQLiteDatabase database;
+    private String islogin;
     private IUserEventPresenterImpl iUserEventPresenter;
     private Handler handler=new Handler(){
         @Override
@@ -319,6 +320,7 @@ public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSe
             @Override
             public void run() {
                 Log.e("singsuccess","1");
+                Log.e("issinging",string+"----");
                 web.getJsAccessEntrace().quickCallJs("signSetting", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String s) {
@@ -341,6 +343,11 @@ public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSe
             public void run() {
                 Log.e("singstring",string);
                 Toast.makeText(getContext(),"签到成功",Toast.LENGTH_SHORT).show();
+                SharedPreferences preferences=getActivity().getSharedPreferences("token",Context.MODE_PRIVATE);
+                token=preferences.getString("token","");
+                islogin=preferences.getString("islogin","");
+                signSetingPresenter.setToken(token);
+                signSetingPresenter.setIslogin(islogin);
                 signSetingPresenter.loadData();
             }
         });
@@ -469,7 +476,11 @@ public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSe
 
             }
         },getContext());
+        SharedPreferences preferences=getActivity().getSharedPreferences("token",Context.MODE_PRIVATE);
+        token=preferences.getString("token","");
+        islogin=preferences.getString("islogin","");
         signSetingPresenter.setToken(token);
+        signSetingPresenter.setIslogin(islogin);
         signSetingPresenter.loadData();
     }
 
@@ -551,6 +562,11 @@ public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSe
                 }
                 else{
                     welfarePresenter.loadData();
+                    SharedPreferences sharedPreferences=getActivity().getSharedPreferences("token",Context.MODE_PRIVATE);
+                    token=sharedPreferences.getString("token","");
+                    islogin=sharedPreferences.getString("islogin","");
+                    signSetingPresenter.setIslogin(islogin);
+                    signSetingPresenter.setToken(token);
                     signSetingPresenter.loadData();
                 }
 
@@ -1069,8 +1085,12 @@ public class FuLiFragment extends BaseFragment implements  IVideoflView, ISignSe
             }
         }, getContext());
         welfarePresenter.loadData();
+        SharedPreferences preferences=getActivity().getSharedPreferences("token",Context.MODE_PRIVATE);
+        token=preferences.getString("token","");
+        islogin=preferences.getString("islogin","");
         signSetingPresenter=new ISignSetingPresenterImpl(this,getContext());
         signSetingPresenter.setToken(token);
+        signSetingPresenter.setIslogin(islogin);
         signSetingPresenter.loadData();
         Log.e(TAG,TAG+"加载数据");
        // mHasLoadedOnce = true;

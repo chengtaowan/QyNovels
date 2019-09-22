@@ -88,6 +88,7 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
     private DbUtils dbUtils;
     private SQLiteDatabase database;
     private IUserEventPresenterImpl iUserEventPresenter;
+    private RelativeLayout rldl;
     public WodeFragment() {
         // Required empty public constructor
     }
@@ -98,7 +99,7 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
         Log.e(TAG,"onstart");
         SharedPreferences preferences=getActivity().getSharedPreferences("token", MODE_PRIVATE);
         token = preferences.getString("token", "");
-
+        islogin=preferences.getString("islogin","");
 //        personalPresenter=new IPersonalPresenterImpl(this,getContext());
 //        personalPresenter.loadData();
     }
@@ -182,6 +183,8 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
         wd_lb=view.findViewById(R.id.wd_lb);
         wd_yq=view.findViewById(R.id.wd_yq);
         wd_xj=view.findViewById(R.id.wd_xj);
+        rldl=view.findViewById(R.id.rldl);
+        rldl.setOnClickListener(this);
         wd_lb.setOnClickListener(this);
         wd_yq.setOnClickListener(this);
 //        jz=view.findViewById(R.id.jz);
@@ -283,7 +286,10 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
         }
         else if(R.id.wd_tx==view.getId()){
 
-                if(user.getData()!=null){
+                if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
+                    Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+                }
+                else{
                     Intent intent=new Intent(getContext(), TxActivity.class);
                     intent.putExtra("time",user.getData().getRead_time()/60);
                     intent.putExtra("money",user.getData().getMoney());
@@ -291,21 +297,14 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
                     intent.putExtra("totle",user.getData().getTotal_gold());
                     intent.putExtra("jb", DeviceInfoUtils.NumtFormat(user.getData().getBalance()));
                     startActivity(intent);
-                }
-                else{
-                    Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
 
                 }
         }
         else if(R.id.wd_fk==view.getId()){
-            if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
-                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
-            }
-            else{
-                Intent intent=new Intent(getContext(), HelpActivity.class);
-                intent.putExtra("token",token);
-                startActivity(intent);
-            }
+            Intent intent=new Intent(getContext(), HelpActivity.class);
+            intent.putExtra("token",token);
+            intent.putExtra("islogin",islogin);
+            startActivity(intent);
         }
         else if(R.id.wd_sz==view.getId()){
             Intent intent=new Intent(getContext(), SzActivity.class);
@@ -326,7 +325,9 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
             token=sharedPreferences.getString("token","");
             String islogin=sharedPreferences.getString("islogin","");
             if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
-                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(getContext(), LoginActivity.class);
+                intent.putExtra("type",0);
+                startActivity(intent);
             }
             else{
                 if(user.getData()!=null){
@@ -353,7 +354,10 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
         }
         else if(R.id.wd_wdjb==view.getId()){
             Intent intent=new Intent(getContext(), JbActivity.class);
-            if(user.getData()!=null){
+            if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
+                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+            }
+            else{
                 intent.putExtra("ye",user.getData().getBalance());
                 intent.putExtra("money",user.getData().getMoney());
                 intent.putExtra("today",user.getData().getToday_gold());
@@ -362,9 +366,6 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
                 intent.putExtra("time",user.getData().getRead_time());
                 startActivity(intent);
             }
-            else{
-                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
-            }
 
         }
         else if(R.id.wd_xx==view.getId()){
@@ -372,12 +373,13 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
            startActivity(intent);
         }
         else if(R.id.wd_xj==view.getId()){
-            if(user.getData()!=null){
-                Intent intent=new Intent(getContext(),BindCodeActivity.class);
-                startActivity(intent);
+            if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
+                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+
             }
             else{
-                Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(getContext(),BindCodeActivity.class);
+                startActivity(intent);
             }
 
         }
@@ -386,6 +388,13 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
         }
         else if(R.id.wd_yq==view.getId()){
             Toast.makeText(getContext(),"请登录",Toast.LENGTH_SHORT).show();
+        }
+        else if(R.id.rldl==view.getId()){
+            if(islogin.equals("0")){
+                Intent intent=new Intent(getContext(), LoginActivity.class);
+                intent.putExtra("type",0);
+                startActivity(intent);
+            }
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -671,8 +680,14 @@ public class WodeFragment extends BaseFragment implements View.OnClickListener,I
             @Override
             public void run() {
                 if(userEventBean.getCode()==200){
-                    database=dbUtils.getWritableDatabase();
-                    database.execSQL("delete from userevent");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            database=dbUtils.getWritableDatabase();
+                            database.execSQL("delete from userevent");
+                        }
+                    }).start();
+
                 }
             }
         });

@@ -235,8 +235,13 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
            @Override
            public void run() {
                if(userEventBean.getCode()==200){
-                   database=dbUtils.getWritableDatabase();
-                   database.execSQL("delete from userevent");
+                   new Thread(new Runnable() {
+                       @Override
+                       public void run() {
+                           database=dbUtils.getWritableDatabase();
+                           database.execSQL("delete from userevent");
+                       }
+                   }).start();
 
                    MyApp.removeallActivity();
                    Intent home = new Intent(Intent.ACTION_MAIN);

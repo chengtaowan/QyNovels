@@ -131,15 +131,20 @@ public class AddCasePopWindow extends PopupWindow implements IAddBookRankView, I
                     database=dbUtils.getWritableDatabase();
                     if(bookBean.getData().getBook()!=null&&listBean.getData().getList()!=null){
                         Log.e("addbookid",bookBean.getData().getBook().getBookId()+"==="+bookBean.getData().getBook().getName());
-                        database.execSQL("delete from usercase where name='"+bookBean.getData().getBook().getName()+"'");
-                        database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
-                                "values('visitor'," +
-                                "'"+bookBean.getData().getBook().getName()+"'," +
-                                "'"+bookBean.getData().getBook().getImage()+"'," +
-                                "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                                "'"+listBean.getData().getList().get(0).getName()+"'," +
-                                "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
-                                "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                       new Thread(new Runnable() {
+                           @Override
+                           public void run() {
+                               database.execSQL("delete from usercase where name='"+bookBean.getData().getBook().getName()+"'");
+                               database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
+                                       "values('visitor'," +
+                                       "'"+bookBean.getData().getBook().getName()+"'," +
+                                       "'"+bookBean.getData().getBook().getImage()+"'," +
+                                       "'"+bookBean.getData().getBook().getAuthor()+"'," +
+                                       "'"+listBean.getData().getList().get(0).getName()+"'," +
+                                       "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
+                                       "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                           }
+                       }).start();
                     }
                     EventBus.getDefault().post(addBookBean);
                 }
@@ -155,14 +160,12 @@ public class AddCasePopWindow extends PopupWindow implements IAddBookRankView, I
                     database=dbUtils.getWritableDatabase();
                     EventBus.getDefault().post(addBookBean);
                     if(bookBean.getData().getBook()!=null&&listBean.getData().getList()!=null){
-                        database.execSQL("insert into usercase(user,name,image,author,readContent,readStatus,bookStatus,bookid,backlistPercent,lastTime,backlistId) " +
-                                "values('user'," +
-                                "'"+bookBean.getData().getBook().getName()+"'," +
-                                "'"+bookBean.getData().getBook().getImage()+"'," +
-                                "'"+bookBean.getData().getBook().getAuthor()+"'," +
-                                "'"+listBean.getData().getList().get(0).getName()+"'," +
-                                "10,+10,+'"+bookBean.getData().getBook().getBookId()+"'," +
-                                "0,'',+'"+bookBean.getData().getBook().getBacklistNum()+"')");
+                       new Thread(new Runnable() {
+                           @Override
+                           public void run() {
+
+                           }
+                       }).start();
                     }
 
                 }

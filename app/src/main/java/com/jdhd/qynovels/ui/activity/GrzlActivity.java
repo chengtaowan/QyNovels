@@ -87,14 +87,16 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
     private String imgurl;
     private TextView bd;
     private String type;
+    private String token,islogin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grzl);
         AndroidBug54971Workaround.assistActivity(findViewById(android.R.id.content),this);
-
-
         getPermission();
+        SharedPreferences preferences=getSharedPreferences("token",MODE_PRIVATE);
+        token=preferences.getString("token","");
+        islogin=preferences.getString("islogin","");
         MyApp.addActivity(this);
         StatusBarUtil.setStatusBarMode(this, true, R.color.c_ffffff);
         EventBus.getDefault().register(this);
@@ -112,6 +114,12 @@ public class GrzlActivity extends AppCompatActivity implements View.OnClickListe
         avatarPresenter=new IAvatarPresenterImpl(this,GrzlActivity.this);
         sexPresenter=new ISexPresenterImpl(this,GrzlActivity.this);
         init();
+        if((!token.equals("")&&islogin.equals("0"))||token.equals("")){
+            tx.setImageResource(R.mipmap.my_touxiang);
+            xgnc.setText("");
+            xgxb.setText("");
+            bd.setText("未绑定");
+        }
         xgnc.setText(nickname);
         Log.e("nickname",nickname);
         Intent intent=getIntent();
